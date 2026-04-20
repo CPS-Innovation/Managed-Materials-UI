@@ -64,6 +64,42 @@ const renderErrorPage = (win: Window) => {
       </div>
     </main>`;
 };
+const renderPdfUrlInIframe = (p: { win: Window; pdfUrl: string }) => {
+  p.win.document.documentElement.style.cssText =
+    'margin:0;padding:0;height:100%;overflow:hidden;';
+  p.win.document.body.style.cssText =
+    'margin:0;padding:0;height:100%;overflow:hidden;';
+
+  const titleElement = p.win.document.createElement('title');
+  titleElement.textContent = 'Document Preview';
+  p.win.document.head.appendChild(titleElement);
+
+  // Clear loading  content
+  p.win.document.body.innerHTML = '';
+
+  const iframe = p.win.document.createElement('iframe');
+  iframe.src = p.pdfUrl;
+  iframe.style.cssText = 'display:block;width:100%;height:100%;border:none;';
+  p.win.document.body.appendChild(iframe);
+};
+
+const openReadyTab = async () => {
+  try {
+    const win = window.open('', '_blank') as Window | null;
+    if (!win) return null;
+
+    await new Promise<void>((resolve) => {
+      if (win!.document.readyState === 'complete') {
+        resolve();
+      } else {
+        win!.addEventListener('load', () => resolve(), { once: true });
+      }
+    });
+    return win;
+  } catch {
+    return null;
+  }
+};
 
 export const useOpenDocumentInNewWindow = () => {
   const request = useAxiosInstance();
@@ -117,19 +153,10 @@ export const useOpenDocumentInNewTab = () => {
   const openPreview = async (materialId: number) => {
     if (!caseInfo) return;
 
-    let win: Window | null = null;
+    const win = await openReadyTab();
+    if (!win) return;
 
     try {
-      win = window.open('', '_blank');
-      await new Promise<void>((resolve) => {
-        if (win!.document.readyState === 'complete') {
-          resolve();
-        } else {
-          win!.addEventListener('load', () => resolve(), { once: true });
-        }
-      });
-      if (!win) return;
-
       renderLoadingPage(win);
 
       const response = await request.get(
@@ -139,9 +166,9 @@ export const useOpenDocumentInNewTab = () => {
 
       const pdfUrl = URL.createObjectURL(response.data);
 
-      win.location.href = pdfUrl;
+      renderPdfUrlInIframe({ win, pdfUrl });
 
-      win.addEventListener('load', () => {
+      win.addEventListener('beforeunload', () => {
         URL.revokeObjectURL(pdfUrl);
       });
     } catch (error) {
