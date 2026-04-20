@@ -104,7 +104,7 @@ export const DocumentSidebarNotes = (p: {
                 p.onNoteSavedSuccess();
               }}
             >
-              Save and close
+              Save
             </GovUkButton>
             <GovUkLink onClick={() => p.onBackButtonClick()}>Cancel</GovUkLink>
           </div>
