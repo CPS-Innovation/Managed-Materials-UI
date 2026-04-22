@@ -39,12 +39,12 @@ export const GovUkAccordionSectionTemplate = (p: {
   }, [isExpanded]);
 
   useEffect(() => {
-    if (!isFirstRenderRef.current) setIsExpanded(p.isExpandedController);
-  }, [p.isExpandedController]);
+    (() => {
+      if (isFirstRenderRef.current) return (isFirstRenderRef.current = false);
 
-  useEffect(() => {
-    isFirstRenderRef.current = false;
-  }, []);
+      setIsExpanded(p.isExpandedController);
+    })();
+  }, [p.isExpandedController]);
 
   return (
     <>
