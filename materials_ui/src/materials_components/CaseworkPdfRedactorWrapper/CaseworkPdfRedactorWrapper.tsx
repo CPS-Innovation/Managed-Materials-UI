@@ -169,6 +169,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
             <PdfRedactorCenteredModal
               onBackgroundClick={closeModal}
               onEscPress={closeModal}
+              ariaLabel="Unable to redact"
             >
               <GovUkBanner
                 variant="error"
@@ -192,6 +193,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
             <PdfRedactorCenteredModal
               onBackgroundClick={closeModal}
               onEscPress={closeModal}
+              ariaLabel="Failed to redact document"
             >
               <div style={{ background: 'white', padding: '20px' }}>
                 <h1 className="govuk-heading-m">Failed to redact document</h1>
@@ -217,6 +219,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
               coordY={redactionPopupProps.y}
               onBackgroundClick={handleCloseModal}
               onEscPress={handleCloseModal}
+              ariaLabel="Redaction details"
             >
               <RedactionDetailsForm
                 redactionIds={redactionPopupProps.redactionIds}
@@ -252,6 +255,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
               coordY={deleteReasonPopupProps.y}
               onBackgroundClick={handleCloseModal}
               onEscPress={handleCloseModal}
+              ariaLabel="Deletion reason"
             >
               <DeletionReasonForm
                 pageNumber={deleteReasonPopupProps.pageNumber}

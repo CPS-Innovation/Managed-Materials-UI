@@ -5,7 +5,19 @@ import './PdfRedactorComponents.scss';
 
 export const RedactionTooltip = (p: { onClick: () => void }) => {
   return (
-    <div className="redaction-tooltip" onClick={p.onClick}>
+    <button
+      type="button"
+      className="redaction-tooltip"
+      onClick={p.onClick}
+      style={{
+        background: 'none',
+        border: 'none',
+        padding: 0,
+        cursor: 'pointer',
+        font: 'inherit',
+        color: 'inherit'
+      }}
+    >
       <div
         style={{
           display: 'inline-flex',
@@ -38,7 +50,7 @@ export const RedactionTooltip = (p: { onClick: () => void }) => {
           }}
         ></div>
       </div>
-    </div>
+    </button>
   );
 };
 
@@ -84,7 +96,11 @@ export const RedactionBox = (p: {
   return (
     <div
       className={`redaction-box ${p.interactive ? 'interactive' : ''}`}
-      tabIndex={0}
+      tabIndex={p.interactive ? 0 : -1}
+      role={p.interactive ? 'button' : undefined}
+      aria-label={
+        p.interactive ? 'Redaction area. Press Enter to remove.' : undefined
+      }
       style={{
         position: 'relative',
         boxSizing: 'border-box',
@@ -94,7 +110,10 @@ export const RedactionBox = (p: {
         width: '100%'
       }}
       onKeyDown={(e) => {
-        if (e.code === 'Enter') p.onEnterPress?.();
+        if (e.code === 'Enter' || e.code === 'Space') {
+          e.preventDefault();
+          p.onEnterPress?.();
+        }
       }}
     >
       {p.children}

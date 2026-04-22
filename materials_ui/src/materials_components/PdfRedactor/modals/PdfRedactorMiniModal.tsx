@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useFocusTrap } from '../../../caseWorkApp/hooks/useFocusTrap';
+import { useLastFocus } from '../../../caseWorkApp/hooks/useLastFocus';
 
 export const useWindowMouseListener = () => {
   const mousePosRef = useRef({ x: 0, y: 0 });
@@ -24,9 +26,13 @@ export const PdfRedactorMiniModal = (p: {
   children: ReactNode;
   onBackgroundClick: () => void;
   onEscPress: () => void;
+  ariaLabel: string;
 }) => {
   const popupRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: p.coordX, y: p.coordY });
+
+  useFocusTrap('#pdf-redactor-mini-modal');
+  useLastFocus();
 
   useEffect(() => {
     if (!popupRef.current) return;
@@ -77,6 +83,10 @@ export const PdfRedactorMiniModal = (p: {
       />
       <div
         ref={popupRef}
+        id="pdf-redactor-mini-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label={p.ariaLabel}
         style={{
           position: 'fixed',
           left: `${position.x}px`,

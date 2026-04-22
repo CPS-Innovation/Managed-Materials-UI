@@ -346,6 +346,7 @@ export const PdfRedactor = (p: {
         <PdfRedactorCenteredModal
           onBackgroundClick={() => setDisplayToProceedModal(undefined)}
           onEscPress={() => setDisplayToProceedModal(undefined)}
+          ariaLabel="Save changes before proceeding"
         >
           {['areaRedact', 'textRedact'].includes(displayToProceedModal) && (
             <SaveToProceedToRedactionsModal
@@ -383,6 +384,8 @@ export const PdfRedactor = (p: {
                   p.mode === 'areaRedact' ? '' : 'govuk-button--secondary'
                 }`}
                 onClick={() => p.onModeChange('areaRedact')}
+                aria-label="Area redaction mode"
+                aria-pressed={p.mode === 'areaRedact'}
               >
                 <AreaIcon width={20} height={20} />
               </button>
@@ -391,6 +394,8 @@ export const PdfRedactor = (p: {
                   p.mode === 'textRedact' ? '' : 'govuk-button--secondary'
                 }`}
                 onClick={() => p.onModeChange('textRedact')}
+                aria-label="Text redaction mode"
+                aria-pressed={p.mode === 'textRedact'}
               >
                 <EditIcon width={20} height={20} />
               </button>
@@ -399,6 +404,7 @@ export const PdfRedactor = (p: {
               <button
                 className="govuk-button govuk-button--secondary"
                 onClick={() => redactHighlightedTextTrigger.fire()}
+                aria-label="Apply text redaction"
               >
                 <TickCircleIcon width={20} height={20} />
               </button>
@@ -410,18 +416,21 @@ export const PdfRedactor = (p: {
             <button
               className="govuk-button govuk-button--secondary"
               onClick={() => scaleHelper.decreaseScale()}
+              aria-label="Decrease zoom"
             >
               -
             </button>
             <button
               className="govuk-button govuk-button--secondary"
               onClick={() => scaleHelper.increaseScale()}
+              aria-label="Increase zoom"
             >
               +
             </button>
             <button
               className="govuk-button govuk-button--secondary"
               onClick={() => scaleHelper.resetScale()}
+              aria-label="Reset zoom"
             >
               x 1.00
             </button>

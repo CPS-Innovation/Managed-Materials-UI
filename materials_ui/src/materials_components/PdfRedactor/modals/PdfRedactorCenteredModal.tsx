@@ -1,11 +1,17 @@
 import { useEffect, useRef, type ReactNode } from 'react';
+import { useFocusTrap } from '../../../caseWorkApp/hooks/useFocusTrap';
+import { useLastFocus } from '../../../caseWorkApp/hooks/useLastFocus';
 
 export const PdfRedactorCenteredModal = (p: {
   children: ReactNode;
   onBackgroundClick: () => void;
   onEscPress: () => void;
+  ariaLabel: string;
 }) => {
   const popupRef = useRef<HTMLDivElement>(null);
+
+  useFocusTrap('#pdf-redactor-modal');
+  useLastFocus();
 
   useEffect(() => {
     const fn = (e: KeyboardEvent) => {
@@ -41,6 +47,10 @@ export const PdfRedactorCenteredModal = (p: {
       >
         <div
           ref={popupRef}
+          id="pdf-redactor-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-label={p.ariaLabel}
           style={{
             position: 'relative',
             borderRadius: '8px',
