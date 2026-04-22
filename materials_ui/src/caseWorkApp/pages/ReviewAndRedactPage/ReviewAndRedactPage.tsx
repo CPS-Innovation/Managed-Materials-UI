@@ -71,6 +71,7 @@ export const ReviewAndRedactPage = () => {
   const [openDocumentIds, setOpenDocumentIds] = useState<string[]>([]);
 
   const [activeDocumentId, setActiveDocumentId] = useState('');
+  const [newVersionDocumentId, setNewVersionDocumentId] = useState('');
   const [mode, setMode] = useState<TMode>('textRedact');
 
   const [searchModalOpen, setSearchModalOpen] = useState(false);
@@ -213,7 +214,10 @@ export const ReviewAndRedactPage = () => {
               [doc.documentId]: redactions
             }));
           }}
-          onModification={() => reloadSidebarTrigger.fire()}
+          onModification={(document) => {
+            setNewVersionDocumentId(document.documentId);
+            reloadSidebarTrigger.fire();
+          }}
           initRedactions={redactionsIndexedOnDocId[doc.documentId]}
           onViewInNewWindowClick={() => {
             openPreview(Number(getDocumentIdWithoutPrefix(doc.documentId)));
@@ -351,6 +355,7 @@ export const ReviewAndRedactPage = () => {
                   urn={urn}
                   caseId={caseId}
                   activeDocumentId={activeTabId}
+                  newVersionDocumentId={newVersionDocumentId}
                   openDocumentIds={openDocumentIds}
                   onSetDocumentOpenIds={setOpenDocumentIds}
                   onDocumentClick={setActiveDocumentId}
@@ -362,17 +367,15 @@ export const ReviewAndRedactPage = () => {
           }
         >
           {tabItems.length > 0 && (
-            <>
-              <Tabs
-                items={tabItems}
-                activeTabId={activeDocumentId}
-                handleTabSelection={setActiveDocumentId}
-                handleCloseTab={handleCloseTab}
-                noMargin
-                onShowHideCategoriesClick={() => setIsSidebarVisible((v) => !v)}
-                isShowCategories={isSidebarVisible}
-              />
-            </>
+            <Tabs
+              items={tabItems}
+              activeTabId={activeDocumentId}
+              handleTabSelection={setActiveDocumentId}
+              handleCloseTab={handleCloseTab}
+              noMargin
+              onShowHideCategoriesClick={() => setIsSidebarVisible((v) => !v)}
+              isShowCategories={isSidebarVisible}
+            />
           )}
         </TwoCol>
       </div>

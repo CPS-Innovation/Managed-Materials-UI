@@ -36,7 +36,7 @@ export type DocumentTabPanelProps = {
   mode: TMode;
   onModeChange: (mode: TMode) => void;
   onRedactionsChange: (redactions: TRedaction[]) => void;
-  onModification: () => void;
+  onModification: (x: TDocument) => void;
   onViewInNewWindowClick: () => void;
   initRedactions?: TRedaction[];
   onRedactionLogClick: () => void;
