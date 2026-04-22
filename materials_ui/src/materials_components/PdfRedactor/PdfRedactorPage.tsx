@@ -160,19 +160,26 @@ export const PdfRedactorRotationOverlay = (p: {
             </span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <span
+            <button
+              type="button"
               onClick={() => {
                 p.onPageRotationChange(0);
                 setRotationOn(false);
               }}
               className="govuk-link"
               style={{
-                color: '#ffffff'
-                // visibility: p.pageRotation === 0 ? 'hidden' : 'unset'
+                color: '#ffffff',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: 0,
+                font: 'inherit',
+                lineHeight: 'inherit',
+                textDecoration: 'underline'
               }}
             >
               Cancel
-            </span>
+            </button>
           </div>
         </div>
       </div>
@@ -281,13 +288,23 @@ export const PdfRedactorDeletionOverlay = (p: {
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <span
+                <button
+                  type="button"
                   onClick={() => p.onPageIsDeleteChange(false)}
                   className="govuk-link"
-                  style={{ color: '#ffffff' }}
+                  style={{
+                    color: '#ffffff',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: 0,
+                    font: 'inherit',
+                    lineHeight: 'inherit',
+                    textDecoration: 'underline'
+                  }}
                 >
                   Cancel
-                </span>
+                </button>
               </div>
             </div>
           </div>
@@ -425,7 +442,6 @@ export const PdfRedactorPage = (p: {
           <div
             ref={pdfPageWrapperElmRef}
             style={{ position: 'relative' }}
-            tabIndex={0}
             className="react-pdf-page-wrapper"
           >
             <Page
