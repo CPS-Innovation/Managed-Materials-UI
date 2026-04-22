@@ -1,16 +1,50 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
+import z from 'zod';
+import { safeJsonParse } from '../utils/generalUtils';
 import './GovUkAccordion.scss';
+
+const safeGetFromLocalStorage = <T extends z.ZodType>(p: {
+  key: string;
+  schema: T;
+}): z.infer<T> | null => {
+  const parsedJson = safeJsonParse(window.localStorage.getItem(p.key));
+  const validated = p.schema.safeParse(parsedJson.data);
+  return validated.success ? validated.data : null;
+};
+
+const safeSetToLocalStorage = (p: { key: string; value: unknown }) => {
+  window.localStorage.setItem(p.key, JSON.stringify(p.value));
+};
+
+const safeGetAccordionSectionIsExpandedFromLocalStorage = (p: {
+  key: string;
+}) => safeGetFromLocalStorage({ key: p.key, schema: z.boolean() });
 
 export const GovUkAccordionSectionTemplate = (p: {
   title: string;
   children: ReactNode;
   isExpandedController: boolean;
+  localStorageKey: string;
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const isFirstRenderRef = useRef(true);
+  const [isExpanded, setIsExpanded] = useState(
+    () =>
+      safeGetAccordionSectionIsExpandedFromLocalStorage({
+        key: p.localStorageKey
+      }) === true
+  );
 
   useEffect(() => {
-    setIsExpanded(p.isExpandedController);
+    safeSetToLocalStorage({ key: p.localStorageKey, value: isExpanded });
+  }, [isExpanded]);
+
+  useEffect(() => {
+    if (!isFirstRenderRef.current) setIsExpanded(p.isExpandedController);
   }, [p.isExpandedController]);
+
+  useEffect(() => {
+    isFirstRenderRef.current = false;
+  }, []);
 
   return (
     <>
