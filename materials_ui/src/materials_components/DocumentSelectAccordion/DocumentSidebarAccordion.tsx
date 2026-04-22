@@ -21,6 +21,11 @@ import {
 } from './utils/DocumentSidebarLocalStorageUtils';
 import { areSetsEqual } from './utils/generalUtils';
 
+const createOpenDocumentAccordionSectionKey = (p: {
+  caseId: number;
+  sectionTitle: string;
+}) => `openDocumentAccordionSection-${p.caseId}-${p.sectionTitle}`;
+
 export const DocumentSidebarAccordion = (p: {
   caseId: number;
   urn: string;
@@ -96,6 +101,10 @@ export const DocumentSidebarAccordion = (p: {
                 key={item.key}
                 title={`${item.label} (${item.documents.length})`}
                 isExpandedController={isExpandedController}
+                localStorageKey={createOpenDocumentAccordionSectionKey({
+                  caseId: p.caseId,
+                  sectionTitle: item.label
+                })}
               >
                 {item.documents.length === 0 ? (
                   <DocumentSidebarAccordionNoDocumentsAvailable />
