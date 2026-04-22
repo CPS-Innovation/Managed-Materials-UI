@@ -27,6 +27,7 @@ export const DocumentSidebarAccordion = (p: {
   documentList: TDocumentList;
   openDocumentIds: string[];
   activeDocumentId: string | undefined | null;
+  newVersionDocumentId: string | undefined | null;
   onNotesClick: (docId: string) => void;
   onSetActiveDocumentIds: (docIds: string[]) => void;
   onDocumentClick?: (docId: string) => void;
@@ -104,6 +105,7 @@ export const DocumentSidebarAccordion = (p: {
                       key={`${item.key}-${document.documentId}`}
                       document={document}
                       activeDocumentId={p.activeDocumentId}
+                      newVersionDocumentId={p.newVersionDocumentId}
                       openDocumentIds={openDocumentIds}
                       readDocumentIds={readDocumentIds}
                       onDocumentClick={() => {
