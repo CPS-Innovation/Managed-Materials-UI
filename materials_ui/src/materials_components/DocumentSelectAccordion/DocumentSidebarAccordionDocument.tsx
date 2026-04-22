@@ -4,10 +4,10 @@ import { TDocument } from './getters/getDocumentList';
 import { useGetDocumentNotes } from './getters/getDocumentNotes';
 import './templates/GovUkAccordion.scss';
 import {
-  NotesIcon,
-  NotesStatus,
   NOTES_ARIA_LABELS,
-  NOTES_STATUS
+  NOTES_STATUS,
+  NotesIcon,
+  NotesStatus
 } from './templates/NotesIcon';
 import { formatShortDate } from './utils/dateUtils';
 
@@ -61,6 +61,7 @@ export const DocumentSidebarAccordionDocument = (p: {
   caseId: number;
   document: TDocument;
   activeDocumentId: string | null | undefined;
+  newVersionDocumentId: string | null | undefined;
   openDocumentIds: string[];
   readDocumentIds: string[];
   onDocumentClick: () => void;
@@ -92,6 +93,7 @@ export const DocumentSidebarAccordionDocument = (p: {
       documentDate={formatShortDate(p.document.cmsFileCreatedDate)}
       ActiveDocumentTag={p.activeDocumentId === p.document.documentId}
       NewTag={!p.readDocumentIds.includes(p.document.documentId)}
+      NewVersionTag={p.newVersionDocumentId === p.document.documentId}
       showLeftBorder={p.activeDocumentId === p.document.documentId}
       showRightBorder={p.openDocumentIds.includes(p.document.documentId)}
       backgroundColor={

@@ -69,7 +69,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
   caseId: number;
   versionId: number;
   documentId: string;
-  onModification: () => void;
+  onModification: (x: TDocument) => void;
   document: null | undefined | TDocument;
   onRedactionsChange: (x: TRedaction[]) => void;
   initRedactions: TRedaction[];
@@ -323,7 +323,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
             });
             setRedactions([]);
             p.onRedactionSaveStatusChange('saved');
-            p.onModification();
+            if (p.document) p.onModification(p.document);
             await documentCheckOutRequest.checkIn({
               documentId: p.documentId,
               versionId: p.versionId
@@ -399,7 +399,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
             documentId: p.documentId,
             deletions: Object.values(indexedDeletion)
           });
-          p.onModification();
+          if (p.document) p.onModification(p.document);
           await documentCheckOutRequest.checkIn({
             documentId: p.documentId,
             versionId: p.versionId
@@ -414,7 +414,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
             documentId: p.documentId,
             rotations: Object.values(indexedRotation)
           });
-          p.onModification();
+          if (p.document) p.onModification(p.document);
           await documentCheckOutRequest.checkIn({
             documentId: p.documentId,
             versionId: p.versionId
