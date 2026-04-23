@@ -20,11 +20,14 @@ export const useAxiosInstances = () => {
     return instance;
   };
 
+  const redactionLogScope = import.meta.env.VITE_REDACTION_LOG_SCOPE;
+
   return {
     axiosInstance: createInstance(import.meta.env.VITE_POLARIS_GATEWAY_URL),
-    redactionLogAxios: createInstance(import.meta.env.VITE_REDACTION_LOG_URL, [
-      import.meta.env.VITE_REDACTION_LOG_SCOPE
-    ])
+    redactionLogAxios: createInstance(
+      import.meta.env.VITE_REDACTION_LOG_URL,
+      redactionLogScope ? [redactionLogScope] : undefined
+    )
   };
 };
 
@@ -70,9 +73,7 @@ export const getPdfFiles = async (p: {
 
 export const getLookups = async (p: { axiosInstance: AxiosInstance }) => {
   try {
-    const response = await p.axiosInstance.get(
-      `${import.meta.env.VITE_REDACTION_LOG_URL}/api/lookUps`
-    );
+    const response = await p.axiosInstance.get('/api/lookUps');
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError)
@@ -85,10 +86,7 @@ export const postRedactionLog = async (p: {
   data: RedactionLogData;
 }) => {
   try {
-    const response = await p.axiosInstance.post(
-      `${import.meta.env.VITE_REDACTION_LOG_URL}/api/redactionLogs`,
-      p.data
-    );
+    const response = await p.axiosInstance.post('/api/redactionLogs', p.data);
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError)

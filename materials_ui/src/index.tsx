@@ -20,29 +20,34 @@ if (import.meta.env.DEV && !import.meta.env.VITE_E2E) {
   });
 }
 
-const pca = new PublicClientApplication(msalConfig);
+const msalInstance = new PublicClientApplication(msalConfig);
 
-pca.initialize().then(() => {
-  ReactDOM.createRoot(document.getElementById('root')!).render(
-    <MsalProvider instance={pca}>
-      <SWRConfig
-        value={{
-          errorRetryCount: 0,
-          revalidateOnFocus: false,
-          shouldRetryOnError: false
-        }}
+await msalInstance.initialize();
+const redirectResult = await msalInstance.handleRedirectPromise();
+
+if (redirectResult?.account) {
+  msalInstance.setActiveAccount(redirectResult.account);
+}
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <MsalProvider instance={msalInstance}>
+    <SWRConfig
+      value={{
+        errorRetryCount: 0,
+        revalidateOnFocus: false,
+        shouldRetryOnError: false
+      }}
+    >
+      <BrowserRouter
+        basename={import.meta.env.BASE_URL}
+        future={{ v7_startTransition: false, v7_relativeSplatPath: false }}
       >
-        <BrowserRouter
-          basename={import.meta.env.BASE_URL}
-          future={{ v7_startTransition: false, v7_relativeSplatPath: false }}
-        >
-          <AppContextProvider>
-            <FilterProvider>
-              <App />
-            </FilterProvider>
-          </AppContextProvider>
-        </BrowserRouter>
-      </SWRConfig>
-    </MsalProvider>
-  );
-});
+        <AppContextProvider>
+          <FilterProvider>
+            <App />
+          </FilterProvider>
+        </AppContextProvider>
+      </BrowserRouter>
+    </SWRConfig>
+  </MsalProvider>
+);
