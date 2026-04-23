@@ -179,7 +179,9 @@ test.describe('form submission', () => {
     await page.getByLabel('What is the material').selectOption('1064');
     await page.getByRole('button', { name: 'Continue' }).click();
     await page.getByRole('button', { name: 'Save' }).click();
-    await page.waitForLoadState('domcontentloaded');
+    await page
+      .getByRole('heading', { name: 'Please wait..', includeHidden: true })
+      .waitFor({ state: 'detached' });
     await expect(
       page.getByText('Material reclassified successfully')
     ).toBeVisible();
