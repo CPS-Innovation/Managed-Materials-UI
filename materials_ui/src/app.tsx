@@ -8,16 +8,9 @@ export const App = () => {
   const { instance, accounts } = useMsal();
 
   useEffect(() => {
-    instance.handleRedirectPromise().then((response) => {
-      if (response && response.account) {
-        instance.setActiveAccount(response.account);
-      }
-
-      const activeAccount = instance.getActiveAccount();
-      if (!activeAccount && accounts.length === 0) {
-        instance.loginRedirect(loginRequest).catch(console.error);
-      }
-    });
+    if (!instance.getActiveAccount() && accounts.length === 0) {
+      instance.loginRedirect(loginRequest).catch(console.error);
+    }
   }, [instance, accounts]);
 
   const account = instance.getActiveAccount() || accounts[0];

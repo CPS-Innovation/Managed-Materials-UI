@@ -29,7 +29,7 @@ import { RedactionLogModal } from '../../../materials_components/RedactionLog/Re
 import type { SearchTermResultType } from '../../../schemas/documents';
 import { getDocumentIdWithoutPrefix } from '../../../utils/string';
 import { Tabs } from '../../components/tabs';
-import { getLookups, useAxiosInstance } from '../../components/utils/getData';
+import { getLookups, useAxiosInstances } from '../../components/utils/getData';
 import { TLookupsResponse } from '../../types/redaction';
 import { CloseTabUnsavedRedactionsModal } from './CloseTabUnsavedRedactionsModal';
 import { UnsavedRedactionsModal } from './UnsavedRedactionsModal';
@@ -87,12 +87,13 @@ export const ReviewAndRedactPage = () => {
   >();
   const [documents, setDocuments] = useState<TDocument[] | null | undefined>();
   const documentsRef = useRef<TDocument[] | null | undefined>(undefined);
+
   useEffect(() => {
     documentsRef.current = documents;
   }, [documents]);
 
   useEffect(() => {
-    window.addEventListener('beforeunload', () => {
+    const onBeforeUnload = () => {
       documentsRef.current?.forEach((document) => {
         if (document && caseId && urn)
           checkInDocumentFromAxiosInstance({
@@ -103,13 +104,16 @@ export const ReviewAndRedactPage = () => {
             versionId: document.versionId
           });
       });
-    });
+    };
+
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
   }, []);
 
   const [showRedactionLogModal, setShowRedactionLogModal] = useState(false);
   const [lookups, setLookups] = useState<TLookupsResponse>();
 
-  const axiosInstance = useAxiosInstance();
+  const { redactionLogAxios, axiosInstance } = useAxiosInstances();
 
   useEffect(() => {
     if (!caseId) return;
@@ -269,7 +273,7 @@ export const ReviewAndRedactPage = () => {
 
   useEffect(() => {
     if (showRedactionLogModal) {
-      getLookups({ axiosInstance: axiosInstance }).then((data) => {
+      getLookups({ axiosInstance: redactionLogAxios }).then((data) => {
         setLookups(data);
       });
     }
