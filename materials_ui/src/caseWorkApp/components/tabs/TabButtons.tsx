@@ -45,6 +45,16 @@ const TabButtons: React.FC<TabButtonProps> = ({
         ev.preventDefault();
       }
     }
+    if (ev.code === 'ArrowDown') {
+      ev.preventDefault();
+      document.getElementById('tabs-dropdown')?.click();
+      setTimeout(() => {
+        const firstItem = document.querySelector<HTMLElement>(
+          '#dropdown-panel button:not(:disabled)'
+        );
+        firstItem?.focus();
+      }, 0);
+    }
   };
 
   const moveToNextOrPreviousTab = (thisShift: number) => {

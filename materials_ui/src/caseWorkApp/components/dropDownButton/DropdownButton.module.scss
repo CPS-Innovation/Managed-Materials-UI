@@ -1,5 +1,11 @@
+@import 'govuk-frontend/dist/govuk/base';
+
 .dropDownButtonWrapper {
   position: relative;
+
+  button:focus:not(:disabled) {
+    @include govuk-focused-text;
+  }
 }
 
 .panel {

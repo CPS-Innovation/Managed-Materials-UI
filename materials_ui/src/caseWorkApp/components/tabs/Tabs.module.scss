@@ -1,4 +1,4 @@
-@import "./styles.scss";
+@import './styles.scss';
 
 :global(.govuk-tabs > .govuk-tabs__panel) {
   padding: 0 !important;
@@ -40,11 +40,11 @@
 .tabListItem {
   display: flex;
   position: relative;
-  max-width: 13rem; 
+  max-width: 13rem;
 }
 
 .tabButton {
-  font-family: "NewTransport", "Arial", sans-serif;
+  font-family: 'NewTransport', 'Arial', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   display: flex;
@@ -55,13 +55,11 @@
   border: none;
   background-color: transparent;
   cursor: pointer;
-  border-bottom: .625rem solid transparent;
+  border-bottom: 0.625rem solid transparent;
 
   &:focus {
-    outline: 0;
-    color: #0b0c0c;
-    background-color: transparent;
-    border-bottom: .625rem solid #1d70b8;
+    @include govuk-focused-text;
+    border-bottom: 0.625rem solid #1d70b8;
 
     span {
       font-weight: bold;
@@ -86,7 +84,7 @@
   position: absolute;
   border: none;
   right: 0.5rem;
-  /* top: 1rem; */
+  top: 3px;
   padding: 0;
   color: white;
   cursor: pointer;
@@ -94,12 +92,18 @@
   background-color: #b1b4b6;
   &:focus {
     outline: 0;
-    background-color: #0b0c0c; 
-    color: #fff;
+    background-color: #ffdd00;
+    color: #0b0c0c;
   }
 }
 
 .outlineOnFocus {
+  &:focus {
+    outline: 0.2rem solid #ffdd00;
+  }
+}
+
+:global(#document-tabs) {
   &:focus {
     outline: 0.2rem solid #ffdd00;
   }
