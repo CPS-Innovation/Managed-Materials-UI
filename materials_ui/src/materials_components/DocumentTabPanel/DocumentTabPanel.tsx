@@ -1,10 +1,14 @@
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
-import { getPdfFiles } from '../../caseWorkApp/components/utils/getData';
+import {
+  getLookups,
+  getPdfFiles,
+  useAxiosInstances
+} from '../../caseWorkApp/components/utils/getData';
+import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
 import { Banner } from '../../components';
 import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
 import { CaseworkPdfRedactorWrapper } from '../CaseworkPdfRedactorWrapper/CaseworkPdfRedactorWrapper';
-import { useAxiosInstance } from '../DocumentSelectAccordion/getters/getAxiosInstance';
 import { TDocument } from '../DocumentSelectAccordion/getters/getDocumentList';
 import { DocumentViewportArea } from '../documenViewportArea';
 import { TRedactionType } from '../PdfRedactor/PdfRedactionTypeForm';
@@ -62,7 +66,7 @@ export const DocumentTabPanel = ({
   onFocusedSearchIndexChange,
   onBackToSearchResults
 }: DocumentTabPanelProps) => {
-  const axiosInstance = useAxiosInstance();
+  const { redactionLogAxios, axiosInstance } = useAxiosInstances();
 
   const [pdfFileUrl, setPdfFileUrl] = useState<string>('');
   const [status, setStatus] = useState<LoadStatus>('loading');
@@ -75,6 +79,7 @@ export const DocumentTabPanel = ({
   >();
   const [redactionLogModalData, setRedactionLogModalData] =
     useState<RedactionLogModalData>();
+  const [lookups, setLookups] = useState<TLookupsResponse>();
 
   useEffect(() => {
     const loadPdf = async () => {
@@ -115,11 +120,22 @@ export const DocumentTabPanel = ({
   }, [documentId, versionId, urn, caseId]);
   const [numOfDocumentPages, setNumOfDocumentPages] = useState(0);
 
+  useEffect(() => {
+    const loadLookups = async () => {
+      const data = await getLookups({ axiosInstance: redactionLogAxios });
+      if (data) {
+        setLookups(data);
+      }
+    };
+    loadLookups();
+  }, []);
+
   return (
     <div>
       {showRedactionLogModal && redactionLogModalData && (
         <RedactionLogModal
           urn={urn}
+          caseId={caseId}
           isOpen={showRedactionLogModal}
           onClose={() => {
             setShowRedactionLogModal(false);
@@ -129,6 +145,7 @@ export const DocumentTabPanel = ({
           redactions={redactionLogModalData.redactions}
           selectedRedactionTypes={redactionLogModalData.selectedRedactionTypes}
           activeDocument={document}
+          lookups={lookups}
           redactionSaveStatus={redactionSaveStatus}
         />
       )}

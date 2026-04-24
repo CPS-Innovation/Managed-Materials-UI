@@ -97,10 +97,7 @@ export const DocumentSidebarNotes = (p: {
                   text
                 });
                 setSavedSuccessfully(true);
-                await documentNotes.mutate();
-
-                setText('');
-
+                documentNotes.mutate();
                 p.onNoteSavedSuccess();
               }}
             >

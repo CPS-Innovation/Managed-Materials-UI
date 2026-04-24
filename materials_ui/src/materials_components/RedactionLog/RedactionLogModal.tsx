@@ -1,9 +1,12 @@
+import { useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import {
   postRedactionLog,
   useAxiosInstances
 } from '../../caseWorkApp/components/utils/getData';
 import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
+import { ChargeStatusCode } from '../../constants/chargeStatus';
+import { useCaseDetails } from '../../hooks/search/useCaseSearch';
 import { TDocument } from '../DocumentSelectAccordion/getters/getDocumentList';
 import { TRedactionType } from '../PdfRedactor/PdfRedactionTypeForm';
 import { TRedaction } from '../PdfRedactor/utils/coordUtils';
@@ -23,7 +26,7 @@ export type RedactionLogFormInputs = {
   areasAndDivisionsId: string;
   businessUnitId: string;
   investigatingAgencyId: string;
-  chargeStatus: 'Pre-charge' | 'Post-charge';
+  chargeStatus: ChargeStatusCode;
   documentTypeId: string | number;
 
   category: 'under' | 'over' | null;
@@ -60,6 +63,7 @@ export const RedactionLogModal = ({
   urn,
   activeDocument,
   isOpen,
+  caseId,
   onClose,
   lookups,
   mode,
@@ -67,6 +71,24 @@ export const RedactionLogModal = ({
   selectedRedactionTypes,
   redactionSaveStatus
 }: RedactionLogModalProps) => {
+  const { data: caseDetailsResponse } = useCaseDetails({ urn });
+
+  const chargeStatusFromCase = useMemo((): ChargeStatusCode | undefined => {
+    if (!caseId || !caseDetailsResponse?.data) {
+      return undefined;
+    }
+
+    const row = caseDetailsResponse.data.find(({ id }) => id === caseId);
+
+    if (!row) {
+      return undefined;
+    }
+
+    return row.isCaseCharged
+      ? ChargeStatusCode.PostCharge
+      : ChargeStatusCode.PreCharge;
+  }, [caseId, caseDetailsResponse]);
+
   const policeCode = urn.substring(0, 2);
 
   const existingInvestigatingAgencyId = lookups?.ouCodeMapping.find(
@@ -86,7 +108,7 @@ export const RedactionLogModal = ({
       areasAndDivisionsId: '',
       businessUnitId: '',
       investigatingAgencyId: existingInvestigatingAgencyId || '',
-      chargeStatus: 'Pre-charge',
+      chargeStatus: chargeStatusFromCase ?? ChargeStatusCode.PreCharge,
       documentTypeId: activeDocument?.cmsDocType.documentTypeId || '',
       supportingNotes: ''
     }
@@ -141,6 +163,7 @@ export const RedactionLogModal = ({
           )}
 
           <RedactionLogModalHeader urn={urn} lookups={lookups} />
+
           <RedactionLogModalBody
             activeDocument={activeDocument}
             mode={mode}

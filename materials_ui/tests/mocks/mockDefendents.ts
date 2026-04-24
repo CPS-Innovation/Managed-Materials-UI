@@ -4,7 +4,7 @@ const defendants: DefendantsResponseType = {
   defendants: [
     {
       id: 2771708,
-      caseId: 2155069,
+      caseId: 2167259,
       listOrder: 1,
       type: 'Person',
       firstNames: 'Will',

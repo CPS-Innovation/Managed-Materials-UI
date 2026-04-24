@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
+import { CHARGE_STATUS_SELECT_OPTIONS } from '../../constants/chargeStatus';
 import { Popover } from './Popover';
 import { RedactionLogFormInputs } from './RedactionLogModal';
 import styles from './RedactionLogModal.module.scss';
@@ -16,12 +17,6 @@ export const RedactionLogModalHeader = ({
   const divisions = lookups?.divisions || [];
   const investigatingAgencies = lookups?.investigatingAgencies || [];
 
-  // TODO: Temp data for charge statuses - to be replaced with API data when available
-  const chargeStatuses = [
-    { id: 'Pre-charge', name: 'Pre-charge' },
-    { id: 'Post-charge', name: 'Post-charge' }
-  ];
-
   const areasAndDivisions = [...areas, ...divisions];
   const [selectedId, setSelectedId] = useState<string>('');
   const selectedItem = areasAndDivisions.find((item) => item.id === selectedId);
@@ -34,10 +29,15 @@ export const RedactionLogModalHeader = ({
     formState: { errors }
   } = useFormContext<RedactionLogFormInputs>();
 
+  const documentTypes = (lookups?.documentTypes ?? [])
+    .filter((dt) => dt.cmsDocTypeId !== '')
+    .map((dt) => ({ id: dt.cmsDocTypeId.toString(), name: dt.name }));
+
   if (errors.areasAndDivisionsId) {
     errors.areasAndDivisionsId.message =
       'Please enter valid CPS Area or Central Casework Division';
   }
+
   if (errors.businessUnitId) {
     errors.businessUnitId.message = 'Please enter valid CPS Business Unit';
   }
@@ -178,12 +178,13 @@ export const RedactionLogModalHeader = ({
               label="Charge Status: "
               id="charge-status-select"
               name={field.name}
-              options={chargeStatuses}
+              options={CHARGE_STATUS_SELECT_OPTIONS}
               value={field.value}
               onChange={(e) => field.onChange(e.target.value)}
             />
           )}
         />
+
         <Controller
           name="documentTypeId"
           control={control}
@@ -193,7 +194,7 @@ export const RedactionLogModalHeader = ({
               label="Document Type: "
               id="document-type-select"
               name={field.name}
-              options={lookups?.documentTypes || []}
+              options={documentTypes}
               value={field.value}
               onChange={(e) => field.onChange(e.target.value)}
             />

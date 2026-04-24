@@ -92,7 +92,7 @@ export const transformFormDataToApiFormat = (
   );
 
   const documentType = lookups.documentTypes?.find(
-    (dt) => dt.id.toString() === formData.documentTypeId.toString()
+    (dt) => dt.cmsDocTypeId.toString() === formData.documentTypeId.toString()
   );
 
   const redactions = createRedactionsArray(
@@ -115,21 +115,23 @@ export const transformFormDataToApiFormat = (
       name: investigatingAgency?.name || ''
     },
     documentType: {
-      id: documentType?.id.toString() || formData.documentTypeId.toString(),
+      id:
+        documentType?.cmsDocTypeId.toString() ||
+        formData.documentTypeId.toString(),
       name: documentType?.name || ''
     },
     redactions,
     notes: formData.supportingNotes,
-    chargeStatus: formData.chargeStatus === 'Pre-charge' ? 1 : 2,
+    chargeStatus: formData.chargeStatus,
     cmsValues: {
       originalFileName: activeDocument?.cmsOriginalFileName || '',
       documentId: activeDocument?.documentId
         ? activeDocument.documentId.replace(/^CMS-/, '')
         : 0,
-      documentType: activeDocument?.cmsDocType?.documentType || '',
+      documentType: documentType?.name || '',
       fileCreatedDate:
         activeDocument?.cmsFileCreatedDate || new Date().toISOString(),
-      documentTypeId: activeDocument?.cmsDocType?.documentTypeId || 0
+      documentTypeId: parseInt(formData.documentTypeId.toString())
     }
   };
 };
