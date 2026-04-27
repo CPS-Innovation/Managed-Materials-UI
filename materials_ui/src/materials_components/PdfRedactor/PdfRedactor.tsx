@@ -442,7 +442,7 @@ export const PdfRedactor = (p: {
           ref={containerRef}
           style={{
             position: 'relative',
-            height: '700px',
+            height: '80vh',
             width: '100%',
             overflowX: 'scroll',
             overflowY: 'scroll',
