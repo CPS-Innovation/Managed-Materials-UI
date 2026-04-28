@@ -316,11 +316,6 @@ export const CaseworkPdfRedactorWrapper = (p: {
         redactions={redactions}
         onRedactionsChange={(newRedactions) => setRedactions(newRedactions)}
         onAddRedactions={async (add) => {
-          console.log({
-            isUnredactableDocumentCategory,
-            isDocumentDispatched,
-            doc: p.document
-          });
           if (isUnredactableDocumentCategory || isDocumentDispatched) {
             removeRedactions(add.map((x) => x.id));
             const message = (() => {
