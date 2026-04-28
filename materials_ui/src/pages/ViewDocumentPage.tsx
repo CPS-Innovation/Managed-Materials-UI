@@ -26,6 +26,10 @@ const getDocumentBlobFromAxiosInstance = async (p: {
     return { success: false, error } as const;
   }
 };
+
+const stripCmsPrefix = (str: string) =>
+  str.startsWith('CMS-') ? str.slice(4) : str;
+
 const LoadAndViewPdf = (p: {
   urn: string;
   caseId: number;
@@ -38,7 +42,9 @@ const LoadAndViewPdf = (p: {
     (async () => {
       const resp = await getDocumentBlobFromAxiosInstance({
         axiosInstance,
-        ...p
+        urn: p.urn,
+        caseId: p.caseId,
+        documentId: stripCmsPrefix(p.documentId)
       });
 
       if (!resp.success) return setPdfUrl(null);
