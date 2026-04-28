@@ -18,6 +18,7 @@ import {
   ServerErrorPage
 } from './pages';
 import { CaseSearchPage } from './pages/CaseSearch';
+import { ViewDocumentPage } from './pages/ViewDocumentPage';
 
 export const Routes = () => {
   const { getRoute } = useAppRoute();
@@ -56,6 +57,10 @@ export const Routes = () => {
         path={getRoute('CASE_SEARCH', false)}
         element={<CaseSearchPage />}
       />
+      <Route
+        path={'/:urn/:caseId/view-document/:documentId'}
+        element={<ViewDocumentPage />}
+      />
 
       <Route path={`:urn/:caseId`}>
         <Route
@@ -77,6 +82,10 @@ export const Routes = () => {
         <Route
           path={getRoute('COMMUNICATIONS', false)}
           element={<CommunicationsPage />}
+        />
+        <Route
+          path={getRoute('REVIEW_REDACT', false)}
+          element={<ReviewAndRedactPage />}
         />
         <Route
           path={getRoute('REVIEW_REDACT', false)}
