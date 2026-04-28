@@ -3,6 +3,7 @@ import { Button } from '../../caseWorkApp/components/button';
 import { useAxiosInstance } from '../DocumentSelectAccordion/getters/getAxiosInstance';
 import { TDocument } from '../DocumentSelectAccordion/getters/getDocumentList';
 import { GovUkBanner } from '../DocumentSelectAccordion/templates/GovUkBanner';
+import { categoriseDocument } from '../DocumentSelectAccordion/utils/categoriseDocument';
 import { PdfRedactorCenteredModal } from '../PdfRedactor/modals/PdfRedactorCenteredModal';
 import { PdfRedactorMiniModal } from '../PdfRedactor/modals/PdfRedactorMiniModal';
 import { DeletionReasonForm } from '../PdfRedactor/PdfDeletionReasonForm';
@@ -99,6 +100,15 @@ export const CaseworkPdfRedactorWrapper = (p: {
 
   const [deletionDetails, setDeletionDetails] = useState<TDeletionDetail[]>([]);
 
+  const documentCategory = p.document
+    ? categoriseDocument(p.document)
+    : undefined;
+  const isUnredactableDocumentCategory = ['review', 'defendant'].includes(
+    documentCategory ?? ''
+  );
+  const isDocumentDispatched =
+    p.document?.presentationFlags?.write === 'IsDispatched';
+
   const cleanupDeletionDetails = () => {
     const deletionIds = Object.values(indexedDeletion)
       .filter((del) => del.isDeleted)
@@ -118,6 +128,10 @@ export const CaseworkPdfRedactorWrapper = (p: {
 
   const [documentIsCheckedOutPopupProps, setDocumentIsCheckedOutPopupProps] =
     useState<{ message: string } | null>(null);
+  const [
+    documentIsUnableToBeRedactedPopupProps,
+    setDocumentIsUnableToBeRedactedPopupProps
+  ] = useState<{ message: string } | null>(null);
   const [redactionDisabledModalProps, setRedactionDisabledModalProps] =
     useState<{ message: string } | null>(null);
 
@@ -206,6 +220,28 @@ export const CaseworkPdfRedactorWrapper = (p: {
             </PdfRedactorCenteredModal>
           );
         })()}
+      {documentIsUnableToBeRedactedPopupProps &&
+        (() => {
+          const closeModal = () =>
+            setDocumentIsUnableToBeRedactedPopupProps(null);
+
+          return (
+            <PdfRedactorCenteredModal
+              onBackgroundClick={closeModal}
+              onEscPress={closeModal}
+              ariaLabel="Unable to redact document"
+            >
+              <div style={{ background: 'white', padding: '20px' }}>
+                <h1 className="govuk-heading-m">Unable to redact document</h1>
+                <div>{documentIsUnableToBeRedactedPopupProps.message}</div>
+                <br />
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <GovUkButton onClick={closeModal}>Ok</GovUkButton>
+                </div>
+              </div>
+            </PdfRedactorCenteredModal>
+          );
+        })()}
       {redactionPopupProps &&
         (() => {
           const handleCloseModal = () => {
@@ -280,6 +316,16 @@ export const CaseworkPdfRedactorWrapper = (p: {
         redactions={redactions}
         onRedactionsChange={(newRedactions) => setRedactions(newRedactions)}
         onAddRedactions={async (add) => {
+          if (isUnredactableDocumentCategory || isDocumentDispatched) {
+            removeRedactions(add.map((x) => x.id));
+            const message = (() => {
+              if (isDocumentDispatched) return 'This is a dispatched document';
+              return 'Redaction is not supported for this document type.';
+            })();
+            setDocumentIsUnableToBeRedactedPopupProps({ message });
+            return;
+          }
+
           const checkoutResponsePromise = checkCheckoutStatus();
           const redactionDisabledMessage = getDocumentRedactionDisabledMessage(
             p.document
@@ -300,6 +346,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
             setDocumentIsCheckedOutPopupProps({ message });
             return;
           }
+
           setRedactionPopupProps(() => ({
             x: mousePos.current.x,
             y: mousePos.current.y,
