@@ -2,6 +2,8 @@ import type { PDFDocumentProxy } from 'pdfjs-dist';
 import pdfWorker from 'pdfjs-dist/build/pdf.worker?url';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Document, pdfjs } from 'react-pdf';
+import { useDocumentFocus } from './hooks/useDocumentFocus';
+import { useShiftReleaseRedactTrigger } from './hooks/useShiftReleaseRedactTrigger';
 import { AreaIcon } from './icons/AreaIcon';
 import { EditIcon } from './icons/EditIcon';
 import { TickCircleIcon } from './icons/TickCircleIcon';
@@ -211,7 +213,10 @@ export const PdfRedactor = (p: {
   mode: TMode;
   onModeChange: (x: TMode) => void;
   onRedactionsChange: (redactions: TRedaction[]) => void;
-  onAddRedactions: (redactions: TRedaction[]) => void;
+  onAddRedactions: (
+    redactions: TRedaction[],
+    triggerSource?: 'mouse' | 'keyboard'
+  ) => void;
   onRemoveRedactions: (redactionIds: string[]) => void;
   onSaveRedactions: () => Promise<void>;
   onSaveDeletions: () => Promise<void>;
@@ -325,8 +330,11 @@ export const PdfRedactor = (p: {
   };
 
   const redactHighlightedTextTrigger = useTrigger();
+  const triggerSourceRef = useRef<'mouse' | 'keyboard'>('mouse');
   const redactHighlightedIfTextRedactionMode = () => {
-    if (modeRef.current === 'textRedact') redactHighlightedTextTrigger.fire();
+    if (modeRef.current !== 'textRedact') return;
+    triggerSourceRef.current = 'mouse';
+    redactHighlightedTextTrigger.fire();
   };
 
   useEffect(() => {
@@ -338,10 +346,24 @@ export const PdfRedactor = (p: {
       elm.removeEventListener('mouseup', redactHighlightedIfTextRedactionMode);
   }, []);
 
+  useDocumentFocus({ containerRef: pdfRedactorWrapperElmRef });
+  useShiftReleaseRedactTrigger({
+    modeRef,
+    containerRef: pdfRedactorWrapperElmRef,
+    fire: () => {
+      triggerSourceRef.current = 'keyboard';
+      redactHighlightedTextTrigger.fire();
+    }
+  });
+
   const pageDeleteButtonDisabled = (numPages ?? 0) - deletions.length <= 1;
 
   return (
-    <div className={modeClassMap[p.mode]} ref={pdfRedactorWrapperElmRef}>
+    <div
+      className={modeClassMap[p.mode]}
+      ref={pdfRedactorWrapperElmRef}
+      tabIndex={-1}
+    >
       {displayToProceedModal && (
         <PdfRedactorCenteredModal
           onBackgroundClick={() => setDisplayToProceedModal(undefined)}
@@ -476,7 +498,7 @@ export const PdfRedactor = (p: {
                 onPageRedactionsChange={() => {}}
                 onAddRedactions={(x) => {
                   p.onRedactionsChange([...p.redactions, ...x]);
-                  p.onAddRedactions(x);
+                  p.onAddRedactions(x, triggerSourceRef.current);
                 }}
                 onRemoveRedactions={(ids) => {
                   p.onRedactionsChange(
