@@ -315,7 +315,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
         onModeChange={p.onModeChange}
         redactions={redactions}
         onRedactionsChange={(newRedactions) => setRedactions(newRedactions)}
-        onAddRedactions={async (add) => {
+        onAddRedactions={async (add, triggerSource) => {
           if (isUnredactableDocumentCategory || isDocumentDispatched) {
             removeRedactions(add.map((x) => x.id));
             const message = (() => {
@@ -325,6 +325,19 @@ export const CaseworkPdfRedactorWrapper = (p: {
             setDocumentIsUnableToBeRedactedPopupProps({ message });
             return;
           }
+
+          const popoverAnchor = (() => {
+            if (triggerSource !== 'keyboard') {
+              return { x: mousePos.current.x, y: mousePos.current.y };
+            }
+            const rect = window
+              .getSelection()
+              ?.getRangeAt(0)
+              ?.getBoundingClientRect();
+            return rect && rect.width > 0
+              ? { x: rect.right, y: rect.bottom }
+              : { x: mousePos.current.x, y: mousePos.current.y };
+          })();
 
           const checkoutResponsePromise = checkCheckoutStatus();
           const redactionDisabledMessage = getDocumentRedactionDisabledMessage(
@@ -348,8 +361,8 @@ export const CaseworkPdfRedactorWrapper = (p: {
           }
 
           setRedactionPopupProps(() => ({
-            x: mousePos.current.x,
-            y: mousePos.current.y,
+            x: popoverAnchor.x,
+            y: popoverAnchor.y,
             redactionIds: add.map((x) => x.id),
             documentId: 'This document does not exist',
             urn: 'This URN does not exist',

@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useCaseDetails } from '../../hooks/search/useCaseSearch';
 import {
   postRedactionLog,
   useAxiosInstances
 } from '../../caseWorkApp/components/utils/getData';
 import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
+import { ChargeStatusCode } from '../../constants/chargeStatus';
+import { useCaseDetails } from '../../hooks/search/useCaseSearch';
 import { TDocument } from '../DocumentSelectAccordion/getters/getDocumentList';
 import { TRedactionType } from '../PdfRedactor/PdfRedactionTypeForm';
 import { TRedaction } from '../PdfRedactor/utils/coordUtils';
@@ -14,7 +15,6 @@ import styles from './RedactionLogModal.module.scss';
 import { RedactionLogModalBody } from './RedactionLogModalBody';
 import { RedactionLogModalHeader } from './RedactionLogModalHeader';
 import { transformFormDataToApiFormat } from './utils/transformFormData';
-import { ChargeStatusCode } from '../../constants/chargeStatus';
 
 export type RedactionLogFormInputs = {
   underRedactionSelected: boolean;

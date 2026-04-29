@@ -1,4 +1,7 @@
-import { IPublicClientApplication, InteractionRequiredAuthError } from '@azure/msal-browser';
+import {
+  IPublicClientApplication,
+  InteractionRequiredAuthError
+} from '@azure/msal-browser';
 
 export const getAccessTokenFromMsalInstance = async (
   msalInstance: IPublicClientApplication,
@@ -9,7 +12,7 @@ export const getAccessTokenFromMsalInstance = async (
   try {
     const tokenResponse = await msalInstance.acquireTokenSilent({
       scopes: scopes || [import.meta.env.VITE_POLARIS_GATEWAY_SCOPE],
-      account: account!,
+      account: account!
     });
 
     return tokenResponse.accessToken;

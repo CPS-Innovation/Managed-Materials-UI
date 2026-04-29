@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
-import { Popover } from './Popover';
 import { CHARGE_STATUS_SELECT_OPTIONS } from '../../constants/chargeStatus';
+import { Popover } from './Popover';
 import { RedactionLogFormInputs } from './RedactionLogModal';
 import styles from './RedactionLogModal.module.scss';
 import { SelectDropdown } from './templates/Select';

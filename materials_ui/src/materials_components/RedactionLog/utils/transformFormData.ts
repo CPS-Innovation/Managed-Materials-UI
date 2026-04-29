@@ -115,7 +115,9 @@ export const transformFormDataToApiFormat = (
       name: investigatingAgency?.name || ''
     },
     documentType: {
-      id: documentType?.cmsDocTypeId.toString() || formData.documentTypeId.toString(),
+      id:
+        documentType?.cmsDocTypeId.toString() ||
+        formData.documentTypeId.toString(),
       name: documentType?.name || ''
     },
     redactions,

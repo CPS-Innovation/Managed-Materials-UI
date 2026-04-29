@@ -55,7 +55,6 @@ export const getPdfFiles = async (p: {
   caseId: number | string;
   documentId: number | string;
   versionId?: number | string;
-
 }): Promise<Blob> => {
   try {
     const response = await p.axiosInstance.get(

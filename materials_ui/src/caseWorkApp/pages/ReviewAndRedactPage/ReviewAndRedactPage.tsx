@@ -30,6 +30,7 @@ import type { SearchTermResultType } from '../../../schemas/documents';
 import { getDocumentIdWithoutPrefix } from '../../../utils/string';
 import { Tabs } from '../../components/tabs';
 import { getLookups, useAxiosInstances } from '../../components/utils/getData';
+import { useSwitchContentArea } from '../../hooks/useSwitchContentArea';
 import { TLookupsResponse } from '../../types/redaction';
 import { CloseTabUnsavedRedactionsModal } from './CloseTabUnsavedRedactionsModal';
 import { UnsavedRedactionsModal } from './UnsavedRedactionsModal';
@@ -66,6 +67,7 @@ export const ReviewAndRedactPage = () => {
   >({});
 
   const reloadSidebarTrigger = useTrigger();
+  useSwitchContentArea();
 
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [openDocumentIds, setOpenDocumentIds] = useState<string[]>([]);

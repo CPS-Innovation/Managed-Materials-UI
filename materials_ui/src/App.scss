@@ -570,6 +570,10 @@ strong {
   padding: 0;
   cursor: pointer;
 
+  &:focus {
+    @include govuk-focused-text;
+  }
+
   &--disabled {
     cursor: not-allowed;
     opacity: 0.6;

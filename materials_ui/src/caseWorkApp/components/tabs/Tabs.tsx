@@ -28,9 +28,34 @@ export const Tabs: React.FC<TabsProps> = ({
   const activeTabArrayPos = items.findIndex((item) => item.id === activeTabId);
   const activeTabIndex = activeTabArrayPos === -1 ? 0 : activeTabArrayPos;
 
+  const handleRegionKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (
+    ev
+  ) => {
+    if (ev.target !== ev.currentTarget) return;
+    if (ev.code === 'ArrowLeft' || ev.code === 'ArrowRight') {
+      ev.preventDefault();
+      const shift = ev.code === 'ArrowLeft' ? -1 : 1;
+      const nextId = items[activeTabIndex + shift]?.id;
+      if (nextId) handleTabSelection(nextId);
+    } else if (ev.code === 'ArrowDown') {
+      ev.preventDefault();
+      document.getElementById('tabs-dropdown')?.click();
+      setTimeout(() => {
+        document
+          .querySelector<HTMLElement>('#dropdown-panel button:not(:disabled)')
+          ?.focus();
+      }, 0);
+    }
+  };
+
   return (
     <>
       <div
+        id="document-tabs"
+        role="region"
+        aria-labelledby="document-tabs-region-label"
+        tabIndex={0}
+        onKeyDown={handleRegionKeyDown}
         style={{
           display: 'flex',
           gap: '8px',

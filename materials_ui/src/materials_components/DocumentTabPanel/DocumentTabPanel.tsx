@@ -1,6 +1,11 @@
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
-import { getLookups, getPdfFiles, useAxiosInstances } from '../../caseWorkApp/components/utils/getData';
+import {
+  getLookups,
+  getPdfFiles,
+  useAxiosInstances
+} from '../../caseWorkApp/components/utils/getData';
+import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
 import { Banner } from '../../components';
 import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
 import { CaseworkPdfRedactorWrapper } from '../CaseworkPdfRedactorWrapper/CaseworkPdfRedactorWrapper';
@@ -11,7 +16,6 @@ import { TRedaction } from '../PdfRedactor/utils/coordUtils';
 import { TMode } from '../PdfRedactor/utils/modeUtils';
 import type { TSearchHighlight } from '../PdfRedactor/utils/searchHighlightUtils';
 import { RedactionLogModal } from '../RedactionLog/RedactionLogModal';
-import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
 
 export type DocSearchContext = {
   searchTerm: string;
@@ -77,7 +81,6 @@ export const DocumentTabPanel = ({
     useState<RedactionLogModalData>();
   const [lookups, setLookups] = useState<TLookupsResponse>();
 
-
   useEffect(() => {
     const loadPdf = async () => {
       setStatus('loading');
@@ -117,7 +120,6 @@ export const DocumentTabPanel = ({
   }, [documentId, versionId, urn, caseId]);
   const [numOfDocumentPages, setNumOfDocumentPages] = useState(0);
 
-
   useEffect(() => {
     const loadLookups = async () => {
       const data = await getLookups({ axiosInstance: redactionLogAxios });
@@ -127,7 +129,6 @@ export const DocumentTabPanel = ({
     };
     loadLookups();
   }, []);
-
 
   return (
     <div>
