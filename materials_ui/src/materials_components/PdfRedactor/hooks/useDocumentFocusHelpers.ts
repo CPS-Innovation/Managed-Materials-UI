@@ -1,5 +1,5 @@
 export const getWordStartingIndices = (sentence: string): number[] =>
-  Array.from(sentence.matchAll(/\b\w+\b/g), (match) => match.index!);
+  Array.from(sentence.matchAll(/\S+/g), (match) => match.index!);
 
 const getTextSpans = (element: Element): Element[] =>
   element.children.length

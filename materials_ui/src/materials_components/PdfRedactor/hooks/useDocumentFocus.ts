@@ -4,11 +4,12 @@ import {
   getWordStartingIndices
 } from './useDocumentFocusHelpers';
 
+type WordPosition = { span: Element; offset: number };
+
 export const useDocumentFocus = (p: {
   containerRef: RefObject<HTMLElement | null>;
 }) => {
-  const activeSpanIndex = useRef(-1);
-  const wordStartOffset = useRef(0);
+  const currentWordIndex = useRef(-1);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -24,52 +25,17 @@ export const useDocumentFocus = (p: {
 
       e.preventDefault();
 
-      const textLayers = container.querySelectorAll('.textLayer');
-      if (!textLayers.length) return;
+      const words = collectWordPositions(container);
+      if (!words.length) return;
 
-      const spans = Array.from(textLayers).flatMap((tl) =>
-        getOrderedTextSpans(tl.children)
-      );
-      if (!spans.length) return;
-
-      const direction: 'forward' | 'backward' = isBackward
-        ? 'backward'
-        : 'forward';
-
-      const advancedWithinSpan = tryAdvanceWordWithinSpan(
-        spans,
-        activeSpanIndex,
-        wordStartOffset,
-        direction
+      const step = isBackward ? -1 : 1;
+      currentWordIndex.current = clamp(
+        currentWordIndex.current + step,
+        0,
+        words.length - 1
       );
 
-      if (!advancedWithinSpan) {
-        moveToNextSpan(spans, activeSpanIndex, direction);
-      }
-
-      const targetSpan = spans[activeSpanIndex.current];
-      if (!targetSpan?.firstChild) return;
-
-      (targetSpan as HTMLElement).scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      });
-
-      const range = document.createRange();
-      const textNode = targetSpan.firstChild;
-      const textLength = textNode.textContent?.length ?? 0;
-      const start = Math.min(
-        wordStartOffset.current,
-        Math.max(0, textLength - 1)
-      );
-      range.setStart(textNode, start);
-      range.setEnd(textNode, Math.min(start + 1, textLength));
-
-      const selection = window.getSelection();
-      selection?.removeAllRanges();
-      selection?.addRange(range);
-
-      container.focus({ preventScroll: true });
+      placeCaretAt(words[currentWordIndex.current]!, container);
     };
 
     window.addEventListener('keydown', handler);
@@ -77,51 +43,39 @@ export const useDocumentFocus = (p: {
   }, [p.containerRef]);
 };
 
-const tryAdvanceWordWithinSpan = (
-  spans: Element[],
-  activeSpanIndex: { current: number },
-  wordStartOffset: { current: number },
-  direction: 'forward' | 'backward'
-): boolean => {
-  const currentSpan = spans[activeSpanIndex.current];
-  const wordStarts = getWordStartingIndices(currentSpan?.textContent ?? '');
-  const currentWordIdx = wordStarts.findIndex(
-    (idx) => idx === wordStartOffset.current
+const collectWordPositions = (container: HTMLElement): WordPosition[] => {
+  const textLayers = container.querySelectorAll('.textLayer');
+  const spans = Array.from(textLayers).flatMap((tl) =>
+    getOrderedTextSpans(tl.children)
   );
-
-  if (direction === 'forward') {
-    if (currentWordIdx !== -1 && currentWordIdx < wordStarts.length - 1) {
-      wordStartOffset.current = wordStarts[currentWordIdx + 1]!;
-      return true;
-    }
-    wordStartOffset.current = 0;
-    return false;
-  }
-
-  if (currentWordIdx > 0) {
-    wordStartOffset.current = wordStarts[currentWordIdx - 1]!;
-    return true;
-  }
-  const prevSpanWords = getWordStartingIndices(
-    spans[activeSpanIndex.current - 1]?.textContent ?? ''
+  return spans.flatMap((span) =>
+    getWordStartingIndices(span.textContent ?? '').map((offset) => ({
+      span,
+      offset
+    }))
   );
-  wordStartOffset.current = prevSpanWords.length
-    ? prevSpanWords[prevSpanWords.length - 1]!
-    : 0;
-  return false;
 };
 
-const moveToNextSpan = (
-  spans: Element[],
-  activeSpanIndex: { current: number },
-  direction: 'forward' | 'backward'
+const placeCaretAt = (
+  { span, offset }: WordPosition,
+  container: HTMLElement
 ) => {
-  if (direction === 'forward') {
-    activeSpanIndex.current = Math.min(
-      activeSpanIndex.current + 1,
-      spans.length - 1
-    );
-  } else {
-    activeSpanIndex.current = Math.max(activeSpanIndex.current - 1, 0);
-  }
+  const textNode = span.firstChild;
+  if (!textNode) return;
+
+  span.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  const range = document.createRange();
+  const textLength = textNode.textContent?.length ?? 0;
+  range.setStart(textNode, offset);
+  range.setEnd(textNode, Math.min(offset + 1, textLength));
+
+  const selection = window.getSelection();
+  selection?.removeAllRanges();
+  selection?.addRange(range);
+
+  container.focus({ preventScroll: true });
 };
+
+const clamp = (value: number, min: number, max: number) =>
+  Math.max(min, Math.min(value, max));
