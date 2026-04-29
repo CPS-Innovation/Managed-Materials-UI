@@ -1,64 +1,35 @@
-import { AxiosInstance } from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useAxiosInstance } from '../hooks/ui/useRequest';
+import { LoadingSpinner } from '../components';
+import { useDocumentPdfUrl } from '../hooks/documents/useDocumentPdfUrl';
+import { GovUkBanner } from '../materials_components/DocumentSelectAccordion/templates/GovUkBanner';
 import './ViewDocumentPage.scss';
-
-const getDocumentBlobFromAxiosInstance = async (p: {
-  axiosInstance: AxiosInstance;
-  urn: string;
-  caseId: number;
-  documentId: string;
-}) => {
-  try {
-    const response = await p.axiosInstance.get(
-      `/urns/${p.urn}/cases/${p.caseId}/materials/${p.documentId}/document`,
-      { responseType: 'blob' }
-    );
-
-    const blob = response.data;
-    if (!(blob instanceof Blob)) {
-      throw new Error(`Expected Blob but received ${typeof blob}`);
-    }
-
-    return { success: true, data: blob } as const;
-  } catch (error) {
-    return { success: false, error } as const;
-  }
-};
-
-const stripCmsPrefix = (str: string) =>
-  str.startsWith('CMS-') ? str.slice(4) : str;
 
 const LoadAndViewPdf = (p: {
   urn: string;
   caseId: number;
-  documentId: string;
+  materialId: string;
 }) => {
-  const [pdfUrl, setPdfUrl] = useState<string | null | undefined>();
-  const axiosInstance = useAxiosInstance();
+  const { data: pdfUrl } = useDocumentPdfUrl(p);
 
-  useEffect(() => {
-    (async () => {
-      const resp = await getDocumentBlobFromAxiosInstance({
-        axiosInstance,
-        urn: p.urn,
-        caseId: p.caseId,
-        documentId: stripCmsPrefix(p.documentId)
-      });
-
-      if (!resp.success) return setPdfUrl(null);
-
-      setPdfUrl(URL.createObjectURL(resp.data));
-    })();
-    return () => {
-      if (pdfUrl) URL.revokeObjectURL(pdfUrl);
-    };
-  }, []);
   return (
     <div>
-      {pdfUrl === undefined && <div>Loading...</div>}
-      {pdfUrl === null && <div>Error</div>}
+      {pdfUrl === undefined && (
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <LoadingSpinner isLoading={true} textContent="Fetching document" />
+        </div>
+      )}
+      {pdfUrl === null && (
+        <div>
+          <br />
+          <GovUkBanner
+            variant="info"
+            headerTitle="Error"
+            contentHeading="Unable to fetch document"
+            contentBody="This could be due to an error, the wrong url or you do not have access to this document"
+          />
+        </div>
+      )}
       {!!pdfUrl && (
         <object
           data={pdfUrl}
@@ -87,7 +58,7 @@ export const ViewDocumentPage = () => {
   if (!!urn && !!caseId && caseIdInt > 0 && !!documentId) {
     return (
       <div>
-        <LoadAndViewPdf urn={urn} caseId={caseIdInt} documentId={documentId} />
+        <LoadAndViewPdf urn={urn} caseId={caseIdInt} materialId={documentId} />
       </div>
     );
   }
