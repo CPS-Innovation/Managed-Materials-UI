@@ -2,7 +2,6 @@ import { AxiosInstance } from 'axios';
 import { useEffect, useState } from 'react';
 import { stripCmsPrefix } from '../../utils/cmsStringTransform';
 import { useAxiosInstance } from '../ui/useRequest';
-import './ViewDocumentPage.scss';
 
 const getDocumentBlobFromAxiosInstance = async (p: {
   axiosInstance: AxiosInstance;
