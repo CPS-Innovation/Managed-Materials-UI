@@ -2,11 +2,6 @@ import { useCallback, useEffect, useRef } from 'react';
 
 const SWITCH_CONTENT_AREA_KEY = '.';
 
-/**
- * Cycles keyboard focus between the main content regions on Ctrl+Period.
- * Regions are identified by DOM id and filtered at each keypress so that
- * dynamically hidden/shown areas (e.g. sidebar, tabs) are skipped.
- */
 export const useSwitchContentArea = () => {
   const lastActiveContentIndex = useRef(0);
 
