@@ -164,7 +164,7 @@ export const DocumentKeywordSearch = ({
     <div style={{ marginBottom: '20px' }}>
       <SearchInput
         id="search-within-case"
-        label="Search within a case"
+        label="Search within material"
         onSearch={handleSearchSubmit}
         placeholder="Enter search term"
         hideButton={false}
