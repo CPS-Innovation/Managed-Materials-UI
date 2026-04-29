@@ -88,10 +88,6 @@ export const Routes = () => {
           element={<ReviewAndRedactPage />}
         />
         <Route
-          path={getRoute('REVIEW_REDACT', false)}
-          element={<ReviewAndRedactPage />}
-        />
-        <Route
           path={getRoute('RECLASSIFY_TO_UNUSED', false)}
           element={<ReclassifyToUnusedPage />}
         />

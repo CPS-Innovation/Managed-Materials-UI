@@ -8,7 +8,7 @@ import {
   TwoCol
 } from '../../../components';
 import { useCaseInfoStore } from '../../../hooks';
-import { useOpenDocumentInNewTab } from '../../../hooks/ui/useOpenDocumentInNewWindow';
+import { navigateToViewDocumentPageInNewTab } from '../../../hooks/ui/navigateToViewDocumentPageInNewTab';
 import { checkInDocumentFromAxiosInstance } from '../../../materials_components/CaseworkPdfRedactorWrapper/hooks/useDocumentCheckOutRequest';
 import { DocumentSidebar } from '../../../materials_components/DocumentSelectAccordion/DocumentSidebar';
 import { TDocument } from '../../../materials_components/DocumentSelectAccordion/getters/getDocumentList';
@@ -27,7 +27,6 @@ import { convertMatchesToSearchHighlights } from '../../../materials_components/
 import { useTrigger } from '../../../materials_components/PdfRedactor/utils/useTriggger';
 import { RedactionLogModal } from '../../../materials_components/RedactionLog/RedactionLogModal';
 import type { SearchTermResultType } from '../../../schemas/documents';
-import { getDocumentIdWithoutPrefix } from '../../../utils/string';
 import { Tabs } from '../../components/tabs';
 import { getLookups, useAxiosInstance } from '../../components/utils/getData';
 import { TLookupsResponse } from '../../types/redaction';
@@ -75,8 +74,6 @@ export const ReviewAndRedactPage = () => {
   const [mode, setMode] = useState<TMode>('textRedact');
 
   const [searchModalOpen, setSearchModalOpen] = useState(false);
-
-  const { openPreview } = useOpenDocumentInNewTab();
 
   const [showBlockNavigationModal, setShowBlockNavigationModal] =
     useState(false);
@@ -220,7 +217,16 @@ export const ReviewAndRedactPage = () => {
           }}
           initRedactions={redactionsIndexedOnDocId[doc.documentId]}
           onViewInNewWindowClick={() => {
-            openPreview(Number(getDocumentIdWithoutPrefix(doc.documentId)));
+            if (!urn || !caseId) return;
+            navigateToViewDocumentPageInNewTab({
+              urn,
+              caseId,
+              materialId: doc.documentId
+            });
+
+            window.open(
+              `${import.meta.env.BASE_URL}${urn}/${caseId}/view-document/${doc.documentId}`
+            );
           }}
           onRedactionLogClick={() => setShowRedactionLogModal(true)}
           searchContext={searchContextByDocId[doc.documentId]}

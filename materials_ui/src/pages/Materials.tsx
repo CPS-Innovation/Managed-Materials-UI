@@ -18,11 +18,15 @@ import {
   useCaseMaterials,
   useTableActions
 } from '../hooks';
-import { useMaterialTags, useSelectedItemsStore } from '../stores';
+import {
+  useCaseInfoStore,
+  useMaterialTags,
+  useSelectedItemsStore
+} from '../stores';
 
 import { useNavigate } from 'react-router-dom';
 import { URL } from '../constants/url';
-import { useOpenDocumentInNewTab } from '../hooks/ui/useOpenDocumentInNewWindow';
+import { navigateToViewDocumentPageInNewTab } from '../hooks/ui/navigateToViewDocumentPageInNewTab';
 import { CaseMaterialsType } from '../schemas';
 
 export const MaterialsPage = () => {
@@ -31,6 +35,7 @@ export const MaterialsPage = () => {
   const [showFilter, setShowFilter] = useState(true);
   const [selectedMaterial, setSelectedMaterial] =
     useState<CaseMaterialsType | null>(null);
+  const { caseInfo } = useCaseInfoStore();
 
   const { mutate: refreshCaseMaterials, loading: caseMaterialsLoading } =
     useCaseMaterials({ dataType: 'materials' });
@@ -40,7 +45,6 @@ export const MaterialsPage = () => {
   const { items: selectedItems, clear: clearSelectedItems } =
     useSelectedItemsStore();
   const { setTags } = useMaterialTags();
-  const { openPreview } = useOpenDocumentInNewTab();
 
   const {
     handleReclassifyClick,
@@ -102,7 +106,11 @@ export const MaterialsPage = () => {
     if (!selectedItems.materials) return;
 
     for (const item of selectedItems.materials) {
-      await openPreview(item.materialId);
+      const materialId = item.materialId;
+      const urn = caseInfo?.urn;
+      const caseId = caseInfo?.id;
+      if (!urn || !caseId) return;
+      navigateToViewDocumentPageInNewTab({ urn, caseId, materialId });
     }
   };
 

@@ -18,7 +18,7 @@ import {
   useCaseMaterials,
   useTableActions
 } from '../hooks';
-import { useOpenDocumentInNewTab } from '../hooks/ui/useOpenDocumentInNewWindow';
+import { navigateToViewDocumentPageInNewTab } from '../hooks/ui/navigateToViewDocumentPageInNewTab';
 import { CaseMaterialsType } from '../schemas';
 import { useMaterialTags, useSelectedItemsStore } from '../stores';
 
@@ -35,8 +35,6 @@ export const CommunicationsPage = () => {
   const [showFilter, setShowFilter] = useState(true);
   const { items: selectedItems, clear: clearSelectedItems } =
     useSelectedItemsStore();
-
-  const { openPreview } = useOpenDocumentInNewTab();
 
   const {
     handleEditClick,
@@ -89,7 +87,7 @@ export const CommunicationsPage = () => {
   const handleViewInNewWindowClick = async () => {
     if (!row) return;
 
-    await openPreview(row.materialId);
+    navigateToViewDocumentPageInNewTab({ urn: '', caseId: 0, materialId: '' });
   };
 
   const menuItems = [
