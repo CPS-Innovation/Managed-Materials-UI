@@ -223,10 +223,6 @@ export const ReviewAndRedactPage = () => {
               caseId,
               materialId: doc.documentId
             });
-
-            window.open(
-              `${import.meta.env.BASE_URL}${urn}/${caseId}/view-document/${doc.documentId}`
-            );
           }}
           onRedactionLogClick={() => setShowRedactionLogModal(true)}
           searchContext={searchContextByDocId[doc.documentId]}

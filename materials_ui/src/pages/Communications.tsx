@@ -20,7 +20,11 @@ import {
 } from '../hooks';
 import { navigateToViewDocumentPageInNewTab } from '../hooks/ui/navigateToViewDocumentPageInNewTab';
 import { CaseMaterialsType } from '../schemas';
-import { useMaterialTags, useSelectedItemsStore } from '../stores';
+import {
+  useCaseInfoStore,
+  useMaterialTags,
+  useSelectedItemsStore
+} from '../stores';
 
 export const CommunicationsPage = () => {
   const [selectedMaterial, setSelectedMaterial] =
@@ -35,6 +39,7 @@ export const CommunicationsPage = () => {
   const [showFilter, setShowFilter] = useState(true);
   const { items: selectedItems, clear: clearSelectedItems } =
     useSelectedItemsStore();
+  const { caseInfo } = useCaseInfoStore();
 
   const {
     handleEditClick,
@@ -85,9 +90,12 @@ export const CommunicationsPage = () => {
   const row = selectedItems.communications?.[0];
 
   const handleViewInNewWindowClick = async () => {
-    if (!row) return;
+    const materialId = row?.materialId;
+    const urn = caseInfo?.urn;
+    const caseId = caseInfo?.id;
+    if (!materialId || !urn || !caseId) return;
 
-    navigateToViewDocumentPageInNewTab({ urn: '', caseId: 0, materialId: '' });
+    navigateToViewDocumentPageInNewTab({ urn, caseId, materialId });
   };
 
   const menuItems = [
