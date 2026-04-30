@@ -21,6 +21,7 @@ export const useAxiosInstances = () => {
   };
 
   const redactionLogScope = import.meta.env.VITE_REDACTION_LOG_SCOPE;
+  console.log({ redactionLogScope });
 
   return {
     axiosInstance: createInstance(import.meta.env.VITE_POLARIS_GATEWAY_URL),

@@ -2,6 +2,7 @@ type TChildren = [{ id: string; name: string }];
 
 export type TLookupsResponse = {
   areas: { id: string; name: string; children: TChildren }[];
+  businessUnits: { ou: string; areaId: string | null; unitId: string | null }[];
   divisions: { id: string; name: string; children: TChildren }[];
   documentTypes: {
     id: string;
