@@ -43,7 +43,7 @@ export const SelectDropdown = ({
         Please select
       </option>
       {options.map((option) => (
-        <option key={option.id} value={option.id}>
+        <option key={`${option.id}-${option.name}`} value={option.id}>
           {option.name}
         </option>
       ))}

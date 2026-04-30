@@ -15,11 +15,12 @@ export const RedactionLogModalHeader = ({
 }: RedactionLogModalHeaderProps) => {
   const areas = lookups?.areas || [];
   const divisions = lookups?.divisions || [];
+  const businessUnits = lookups?.businessUnits || [];
   const investigatingAgencies = lookups?.investigatingAgencies || [];
 
-  const areasAndDivisions = [...areas, ...divisions];
-  const [selectedId, setSelectedId] = useState<string>('');
-  const selectedItem = areasAndDivisions.find((item) => item.id === selectedId);
+  const areasAndDivisions = [...areas, ...divisions].filter((x) => !!x.name);
+  const [_, setSelectedId] = useState<string>('');
+  // const selectedItem = areasAndDivisions.find((item) => item.id === selectedId);
 
   const [showPopover, setShowPopover] = useState<boolean>(false);
 
@@ -143,9 +144,14 @@ export const RedactionLogModalHeader = ({
               label="CPS Business Unit: "
               id="unified-child-select"
               name={field.name}
-              options={selectedItem?.children || []}
+              options={businessUnits
+                .filter((x) => !!x.areaId)
+                .map((x) => ({ id: x.areaId!, name: x.ou }))}
               value={field.value}
-              onChange={(e) => field.onChange(e.target.value)}
+              onChange={(e) => {
+                field.onChange(e.target.value);
+                setValue('businessUnitId', e.target.value);
+              }}
               error={
                 errors.businessUnitId ? 'Select a Business Unit' : undefined
               }

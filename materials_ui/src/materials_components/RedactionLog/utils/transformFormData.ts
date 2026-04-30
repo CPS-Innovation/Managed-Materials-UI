@@ -108,7 +108,7 @@ export const transformFormDataToApiFormat = (
       id: unit?.id || formData.businessUnitId,
       type: 'Area',
       areaDivisionName: area?.name || '',
-      name: unit?.name || ''
+      name: unit?.name || 'asd'
     },
     investigatingAgency: {
       id: investigatingAgency?.id || formData.investigatingAgencyId,
@@ -117,7 +117,8 @@ export const transformFormDataToApiFormat = (
     documentType: {
       id:
         documentType?.cmsDocTypeId.toString() ||
-        formData.documentTypeId.toString(),
+        formData.documentTypeId.toString() ||
+        'name',
       name: documentType?.name || ''
     },
     redactions,
