@@ -22,12 +22,16 @@ export const App = () => {
   return (
     <>
       <div className="govuk-width-container custom-width-container">
-        <cps-global-header></cps-global-header>
+        <div className="header-container">
+          <cps-global-header></cps-global-header>
+        </div>
         <RouteChangeListener />
         <Routes />
       </div>
 
-      <footer className="govuk-footer"></footer>
+      <div className="footer-container">
+        <footer className="govuk-footer"></footer>
+      </div>
     </>
   );
 };

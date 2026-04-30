@@ -11,6 +11,7 @@ export const APP_ROUTES = {
   RECLASSIFICATION: 'reclassify',
   RECLASSIFY_TO_UNUSED: 'reclassify-to-unused',
   REVIEW_REDACT: 'review-and-redact',
+  VIEW_DOCUMENT: 'view-document',
   SERVER_ERROR: 'service-down',
   UNAUTHORISED: 'unauthorized',
   CASE_SEARCH: 'case-search',
