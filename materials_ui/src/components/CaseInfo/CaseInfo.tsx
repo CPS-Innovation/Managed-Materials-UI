@@ -65,7 +65,7 @@ export const CaseInfo = ({ caseInfo }: Props) => {
                 <AutoReclassifyButton />
 
                 <a
-                  href={`https://polaris-qa-notprod.cps.gov.uk/case-review-redirect/cps-tst/test?CMSCaseId=${caseInfo.id}`}
+                  href={`${import.meta.env.VITE_CASE_REVIEW_REDIRECT_URL}?CMSCaseId=${caseInfo.id}`}
                   target="_blank"
                   role="button"
                   className="govuk-button"
