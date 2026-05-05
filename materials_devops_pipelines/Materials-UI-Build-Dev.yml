@@ -92,6 +92,8 @@ stages:
               VITE_POLARIS_GATEWAY_URL: $(POLARIS_GATEWAY_URL)
               VITE_POLARIS_GATEWAY_SCOPE: $(POLARIS_GATEWAY_SCOPE)
               VITE_GLOBAL_SCRIPT_URL: $(GLOBAL_SCRIPT_URL)
+              VITE_REDACTION_LOG_URL: $(VITE_REDACTION_LOG_URL)
+              VITE_REDACTION_LOG_SCOPE: $(VITE_REDACTION_LOG_SCOPE)
 
           - task: replacetokens@5
             displayName: "Set environment specific CSP in serve.json"

@@ -204,6 +204,8 @@ stages:
               VITE_GLOBAL_SCRIPT_URL: $(GLOBAL_SCRIPT_URL)
               VITE_BASE_URL: $(BASE_URL)
               VITE_E2E: True
+              VITE_REDACTION_LOG_URL: $(VITE_REDACTION_LOG_URL)
+              VITE_REDACTION_LOG_SCOPE: $(VITE_REDACTION_LOG_SCOPE)
 
 # ---------- E2E TESTS (Playwright) ----------
           - task: Npm@1
