@@ -9,20 +9,14 @@ const findAreaAndUnit = (
   unitId: string
 ) => {
   for (const area of lookups.areas || []) {
-    if (
-      area.id === areaId ||
-      area.children?.some((child) => child.id === unitId)
-    ) {
+    if (area.id === areaId) {
       const unit = area.children?.find((child) => child.id === unitId);
       return { area, unit };
     }
   }
 
   for (const division of lookups.divisions || []) {
-    if (
-      division.id === areaId ||
-      division.children?.some((child) => child.id === unitId)
-    ) {
+    if (division.id === areaId) {
       const unit = division.children?.find((child) => child.id === unitId);
       return { area: division, unit };
     }
