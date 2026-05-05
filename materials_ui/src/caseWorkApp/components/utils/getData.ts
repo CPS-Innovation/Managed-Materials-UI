@@ -85,7 +85,9 @@ export const postRedactionLog = async (p: {
   data: RedactionLogData;
 }) => {
   try {
-    const response = await p.axiosInstance.post('/api/redactionLogs', p.data);
+    const response = await p.axiosInstance.post('/api/redactionLogs', p.data, {
+      headers: { Accept: '*/*', 'Content-Type': 'text/plain; charset=UTF-8' }
+    });
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError)
