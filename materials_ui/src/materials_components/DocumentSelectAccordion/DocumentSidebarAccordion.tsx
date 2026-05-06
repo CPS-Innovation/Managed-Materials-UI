@@ -113,7 +113,6 @@ export const DocumentSidebarAccordion = (p: {
               title={`${item.label} (${item.documents.length})`}
               isExpandedController={isExpandedController}
               onIsExpandedToggle={(newIsExpanded) => {
-                console.log({ newIsExpanded });
                 setIsExpandedSectionsTracker((prev) => {
                   const newArr = [...prev];
                   newArr[j] = newIsExpanded;
