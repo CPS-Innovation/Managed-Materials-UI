@@ -72,7 +72,7 @@ export const DocumentSidebarAccordion = (p: {
     const categoryName = categoriseDocument(doc);
     docsOnDocCategoryNames[categoryName].push(doc);
   });
-  const newData = categoryDetails
+  const cleanDocData = categoryDetails
     .map((x) => ({
       key: x.label,
       label: x.label,
@@ -105,7 +105,7 @@ export const DocumentSidebarAccordion = (p: {
       />
       <DocumentSidebarWrapper>
         <GovUkAccordionTemplate>
-          {newData.map((item, j) => (
+          {cleanDocData.map((item, j) => (
             <GovUkAccordionSectionTemplate
               key={item.key}
               title={`${item.label} (${item.documents.length})`}
