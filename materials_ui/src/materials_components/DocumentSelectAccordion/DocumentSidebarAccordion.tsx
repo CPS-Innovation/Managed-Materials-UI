@@ -79,10 +79,12 @@ export const DocumentSidebarAccordion = (p: {
       categoryName: x.categoryName,
       documents: docsOnDocCategoryNames[x.categoryName]
     }))
-    .filter((x) => x.categoryName !== 'communication')
-    .filter(
-      (x) => !(x.categoryName === 'uncategorised' && x.documents.length === 0)
-    );
+    .filter((x) => {
+      if (x.categoryName === 'communication') return false;
+      if (x.categoryName === 'uncategorised' && x.documents.length === 0)
+        return false;
+      return true;
+    });
 
   const [isExpandedController, setIsExpandedController] = useState(false);
   const [isExpandedSectionsTracker, setIsExpandedSectionsTracker] = useState<
