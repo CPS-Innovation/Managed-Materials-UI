@@ -23,6 +23,6 @@
     "noUncheckedIndexedAccess": true,
     "types": ["node", "vitest/globals", "@testing-library/jest-dom"]
   },
-  "include": ["src", "../materials_components/documenViewportArea/index.tsx"]
+  "include": ["src"]
 }
 

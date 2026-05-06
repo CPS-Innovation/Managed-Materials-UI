@@ -25,6 +25,7 @@ export const GovUkAccordionSectionTemplate = (p: {
   children: ReactNode;
   isExpandedController: boolean;
   localStorageKey: string;
+  onIsExpandedToggle: (x: boolean) => void;
 }) => {
   const isFirstRenderRef = useRef(true);
   const [isExpanded, setIsExpanded] = useState(
@@ -36,6 +37,8 @@ export const GovUkAccordionSectionTemplate = (p: {
 
   useEffect(() => {
     safeSetToLocalStorage({ key: p.localStorageKey, value: isExpanded });
+    console.log('hwll');
+    p.onIsExpandedToggle(isExpanded);
   }, [isExpanded]);
 
   useEffect(() => {
