@@ -37,7 +37,6 @@ export const GovUkAccordionSectionTemplate = (p: {
 
   useEffect(() => {
     safeSetToLocalStorage({ key: p.localStorageKey, value: isExpanded });
-    console.log('hwll');
     p.onIsExpandedToggle(isExpanded);
   }, [isExpanded]);
 
