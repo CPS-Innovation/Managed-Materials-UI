@@ -194,23 +194,23 @@ export const DocumentSidebarAccordionDocumentTemplate = (p: {
                   position: 'absolute',
                   top: '0',
                   left: '50%',
-                  transform: 'translate(-50%, -100%)'
+                  transform: 'translate(-50%, -100%)',
+                  zIndex: 850
                 }}
               >
                 <Tooltip text={p.tooltipText} />
               </span>
             )}
-            <button
-              type="button"
-              className={`notes-icon-button${p.notesStatus === NOTES_STATUS.DISABLED ? ' notes-icon-button--disabled' : ''}`}
-              aria-label={NOTES_ARIA_LABELS[p.notesStatus]}
-              disabled={p.notesStatus === NOTES_STATUS.DISABLED}
-              onClick={() => {
-                p.onNotesClick();
-              }}
-            >
-              <NotesIcon width={20} notesStatus={p.notesStatus} />
-            </button>
+            {p.notesStatus !== NOTES_STATUS.DISABLED && (
+              <button
+                type="button"
+                className="notes-icon-button"
+                aria-label={NOTES_ARIA_LABELS[p.notesStatus]}
+                onClick={() => p.onNotesClick()}
+              >
+                <NotesIcon width={20} notesStatus={p.notesStatus} />
+              </button>
+            )}
           </span>
         </div>
       </div>
