@@ -43,7 +43,7 @@ type RedactionLogModalProps = {
   onClose: () => void;
   children?: React.ReactNode;
   lookups?: TLookupsResponse;
-  mode?: 'over-under' | 'list';
+  mode: 'over-under' | 'list';
   redactions?: TRedaction[];
   selectedRedactionTypes?: TRedactionType[];
   redactionSaveStatus?: 'saving' | 'saved';
@@ -68,7 +68,7 @@ export const RedactionLogModal = ({
   lookups,
   mode,
   redactions,
-  selectedRedactionTypes,
+  selectedRedactionTypes = [],
   redactionSaveStatus
 }: RedactionLogModalProps) => {
   const { data: caseDetailsResponse } = useCaseDetails({ urn });
@@ -116,12 +116,14 @@ export const RedactionLogModal = ({
 
   const onSubmit = async (values: RedactionLogFormInputs) => {
     try {
-      const apiData = transformFormDataToApiFormat(
-        values,
+      const apiData = transformFormDataToApiFormat({
+        formData: values,
         urn,
         activeDocument,
-        lookups
-      );
+        lookups,
+        mode,
+        listModeRedactionTypes: selectedRedactionTypes
+      });
 
       // TODO: ensure documentType values are taken from the dropdown selection
       // and propagated into apiData.documentType and apiData.cmsValues.

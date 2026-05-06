@@ -314,7 +314,12 @@ export const CaseworkPdfRedactorWrapper = (p: {
         hideToolbar
         onModeChange={p.onModeChange}
         redactions={redactions}
-        onRedactionsChange={(newRedactions) => setRedactions(newRedactions)}
+        onRedactionsChange={(newRedactions) => {
+          setRedactions(newRedactions);
+          if (newRedactions.length === 0) {
+            setSelectedRedactionTypes([]);
+          }
+        }}
         onAddRedactions={async (add, triggerSource) => {
           if (isUnredactableDocumentCategory || isDocumentDispatched) {
             removeRedactions(add.map((x) => x.id));
@@ -390,6 +395,8 @@ export const CaseworkPdfRedactorWrapper = (p: {
             });
           } catch (error) {
             console.error('Failed to save redactions:', error);
+            setRedactions([]);
+            setSelectedRedactionTypes([]);
             p.onRedactionSaveStatusChange(undefined);
           }
         }}
