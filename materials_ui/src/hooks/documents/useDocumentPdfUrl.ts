@@ -22,6 +22,7 @@ const getDocumentBlobFromAxiosInstance = async (p: {
 
     return { success: true, data: blob } as const;
   } catch (error) {
+    console.log({ error });
     return { success: false, error } as const;
   }
 };
@@ -42,6 +43,8 @@ export const useDocumentPdfUrl = (p: {
         caseId: p.caseId,
         materialId: stripCmsPrefix(p.materialId)
       });
+
+      console.log({ resp });
 
       if (!resp.success) return setPdfUrl(null);
 
