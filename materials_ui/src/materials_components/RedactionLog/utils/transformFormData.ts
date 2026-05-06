@@ -1,6 +1,7 @@
 import { TLookupsResponse } from '../../../caseWorkApp/types/redaction';
 import { RedactionLogData } from '../../../caseWorkApp/types/redactionLog';
 import { TDocument } from '../../DocumentSelectAccordion/getters/getDocumentList';
+import { TRedactionType } from '../../PdfRedactor/PdfRedactionTypeForm';
 import { RedactionLogFormInputs } from '../RedactionLogModal';
 
 const normalize = (value: string | number | undefined | null): string =>
@@ -17,9 +18,7 @@ const findAreaAndUnit = (
   for (const area of lookups.areas || []) {
     if (
       normalize(area.id) === normalizedAreaId &&
-      area.children?.some(
-        (child) => normalize(child.id) === normalizedUnitId
-      )
+      area.children?.some((child) => normalize(child.id) === normalizedUnitId)
     ) {
       const unit = area.children?.find(
         (child) => normalize(child.id) === normalizedUnitId
@@ -45,7 +44,7 @@ const findAreaAndUnit = (
   return { area: null, unit: null };
 };
 
-const createRedactionsArray = (
+const createOverUnderModeRedactions = (
   lookups: TLookupsResponse,
   underRedactionTypeIds: number[],
   overRedactionTypeIds: number[],
@@ -64,10 +63,7 @@ const createRedactionsArray = (
     const redactionType = findRedactionType(typeId);
     if (redactionType) {
       redactionsArray.push({
-        missedRedaction: {
-          id: redactionType.id,
-          name: redactionType.name
-        },
+        missedRedaction: { id: redactionType.id, name: redactionType.name },
         redactionType: 1,
         returnedToInvestigativeAuthority: isReturnedToIA
       });
@@ -79,10 +75,7 @@ const createRedactionsArray = (
     const redactionType = findRedactionType(typeId);
     if (redactionType) {
       redactionsArray.push({
-        missedRedaction: {
-          id: redactionType.id,
-          name: redactionType.name
-        },
+        missedRedaction: { id: redactionType.id, name: redactionType.name },
         redactionType: 2,
         returnedToInvestigativeAuthority: isReturnedToIA
       });
@@ -92,12 +85,32 @@ const createRedactionsArray = (
   return redactionsArray;
 };
 
-export const transformFormDataToApiFormat = (
-  formData: RedactionLogFormInputs,
-  urn: string,
-  activeDocument: TDocument | null | undefined,
-  lookups: TLookupsResponse | undefined
-): RedactionLogData => {
+const createListModeRedactions = (
+  types: TRedactionType[]
+): RedactionLogData['redactions'] =>
+  types.map(({ id, name }) => ({
+    missedRedaction: { id, name },
+    redactionType: 1,
+    returnedToInvestigativeAuthority: false
+  }));
+
+type TransformFormDataToApiFormatParams = {
+  formData: RedactionLogFormInputs;
+  urn: string;
+  activeDocument: TDocument | null | undefined;
+  lookups: TLookupsResponse | undefined;
+  mode: 'over-under' | 'list';
+  listModeRedactionTypes: TRedactionType[];
+};
+
+export const transformFormDataToApiFormat = ({
+  formData,
+  urn,
+  activeDocument,
+  lookups,
+  mode,
+  listModeRedactionTypes
+}: TransformFormDataToApiFormatParams): RedactionLogData => {
   if (!lookups) {
     throw new Error('Lookups data is required for form transformation');
   }
@@ -115,16 +128,18 @@ export const transformFormDataToApiFormat = (
   const documentType = lookups.documentTypes?.find(
     (dt) =>
       normalize(dt.cmsDocTypeId) &&
-      normalize(dt.cmsDocTypeId) ===
-      normalize(formData.documentTypeId)
+      normalize(dt.cmsDocTypeId) === normalize(formData.documentTypeId)
   );
 
-  const redactions = createRedactionsArray(
-    lookups,
-    formData.underRedactionTypeIds,
-    formData.overRedactionTypeIds,
-    formData.overReason
-  );
+  const redactions =
+    mode === 'list'
+      ? createListModeRedactions(listModeRedactionTypes)
+      : createOverUnderModeRedactions(
+          lookups,
+          formData.underRedactionTypeIds,
+          formData.overRedactionTypeIds,
+          formData.overReason
+        );
 
   return {
     urn,
@@ -155,10 +170,7 @@ export const transformFormDataToApiFormat = (
       documentType: documentType?.name || '',
       fileCreatedDate:
         activeDocument?.cmsFileCreatedDate || new Date().toISOString(),
-      documentTypeId: parseInt(
-        normalize(formData.documentTypeId) || '0',
-        10
-      )
+      documentTypeId: parseInt(normalize(formData.documentTypeId) || '0', 10)
     }
   };
 };
