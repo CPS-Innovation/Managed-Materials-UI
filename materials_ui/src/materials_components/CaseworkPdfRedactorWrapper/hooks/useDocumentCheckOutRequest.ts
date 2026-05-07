@@ -37,7 +37,7 @@ const checkOutDocumentFromAxiosInstance = async (p: {
   }
 };
 
-export const checkInDocumentFromAxiosInstance = async (p: {
+export const checkInDocumentFromAxiosInstance = async (_: {
   axiosInstance: AxiosInstance;
   caseId: number;
   urn: string;
@@ -45,9 +45,9 @@ export const checkInDocumentFromAxiosInstance = async (p: {
   versionId: number | string;
 }) => {
   try {
-    await p.axiosInstance.delete(
-      `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.versionId}/checkout`
-    );
+    // await p.axiosInstance.delete(
+    //   `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.versionId}/checkout`
+    // );
 
     return { success: true } as const;
   } catch (error: unknown) {
