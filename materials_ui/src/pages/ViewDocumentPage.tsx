@@ -38,7 +38,7 @@ const LoadAndViewPdf = (p: {
       {!!pdfUrl && (
         <Document
           file={pdfUrl}
-          onLoadSuccess={async (pdf) => setNumPages(pdf.numPages)}
+          onLoadSuccess={(pdf) => setNumPages(pdf.numPages)}
         >
           {[...Array(numPages)].map((_, j) => (
             <Page key={j} pageNumber={j + 1} />
