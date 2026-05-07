@@ -27,6 +27,24 @@ const getDocumentBlobFromAxiosInstance = async (p: {
   }
 };
 
+const convertBlobToDataUrl = async (blob: Blob) => {
+  try {
+    const data = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+
+    if (typeof data !== 'string')
+      throw new Error('data url must be type of string');
+
+    return { success: true, data } as const;
+  } catch (error) {
+    return { success: false, error } as const;
+  }
+};
+
 export const useDocumentPdfUrl = (p: {
   urn: string;
   caseId: number;
@@ -47,8 +65,10 @@ export const useDocumentPdfUrl = (p: {
       console.log({ resp });
 
       if (!resp.success) return setPdfUrl(null);
+      const dataUrlResp = await convertBlobToDataUrl(resp.data);
 
-      setPdfUrl(URL.createObjectURL(resp.data));
+      if (!dataUrlResp.success) return setPdfUrl(null);
+      setPdfUrl(dataUrlResp.data);
     })();
     return () => {
       if (pdfUrl) URL.revokeObjectURL(pdfUrl);
