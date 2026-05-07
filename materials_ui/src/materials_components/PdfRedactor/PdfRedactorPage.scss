@@ -1,4 +1,8 @@
+.react-pdf-page-wrapper .textLayer {
+  mix-blend-mode: multiply;
+}
+
 .react-pdf-page-wrapper::selection {
-  background-color: #fbe79680;
-  color: black;
+  background-color: #fbe796;
+  color: transparent;
 }
