@@ -28,7 +28,8 @@ export const useSearchTracker = (trigger: unknown) => {
     {
       refreshInterval: (latest) =>
         latest?.data.status === 'Running' ||
-        latest?.data.status === 'NotStarted'
+        latest?.data.status === 'NotStarted' ||
+        latest?.data.status === 'DocumentsRetrieved'
           ? 1000
           : 0,
       dedupingInterval: 0,
@@ -44,9 +45,7 @@ export const useSearchTracker = (trigger: unknown) => {
         doc.status === 'OcrAndIndexFailure'
     ) ?? [];
 
-  const isComplete =
-    trackerData?.data.status === 'Completed' ||
-    trackerData?.data.status === 'DocumentsRetrieved';
+  const isComplete = trackerData?.data.status === 'Completed';
 
   return { trackerData, trackerLoading, isComplete, failedToConvert };
 };
