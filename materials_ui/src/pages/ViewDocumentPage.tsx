@@ -1,9 +1,13 @@
-import { useEffect } from 'react';
+import pdfWorker from 'pdfjs-dist/build/pdf.worker?url';
+import { useEffect, useState } from 'react';
+import { Document, Page, pdfjs } from 'react-pdf';
 import { useParams } from 'react-router-dom';
 import { LoadingSpinner } from '../components';
 import { useDocumentPdfUrl } from '../hooks/documents/useDocumentPdfUrl';
 import { GovUkBanner } from '../materials_components/DocumentSelectAccordion/templates/GovUkBanner';
 import './ViewDocumentPage.scss';
+
+pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 const LoadAndViewPdf = (p: {
   urn: string;
@@ -11,6 +15,7 @@ const LoadAndViewPdf = (p: {
   materialId: string;
 }) => {
   const { data: pdfUrl } = useDocumentPdfUrl(p);
+  const [numPages, setNumPages] = useState<number>();
 
   return (
     <div>
@@ -31,11 +36,14 @@ const LoadAndViewPdf = (p: {
         </div>
       )}
       {!!pdfUrl && (
-        <object
-          data={pdfUrl}
-          type="application/pdf"
-          style={{ width: '100%', height: '99vh' }}
-        />
+        <Document
+          file={pdfUrl}
+          onLoadSuccess={async (pdf) => setNumPages(pdf.numPages)}
+        >
+          {[...Array(numPages)].map((_, j) => (
+            <Page key={j} pageNumber={j + 1} />
+          ))}
+        </Document>
       )}
     </div>
   );
