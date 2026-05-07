@@ -57,9 +57,9 @@ const getDocumentRedactionDisabledMessage = (
   return value ? value : null;
 };
 
-const createCheckoutMessageFromCheckoutResponse = (p: { message?: string }) =>
+const createCheckoutMessageFromCheckoutResponse = (p: { action? : string, message?: string }) =>
   p.message
-    ? `It is not possible to redact as ${p.message}. Please try again later.`
+    ? `It is not possible to ${p.action} as ${p.message}. Please try again later.`
     : 'Something has gone wrong, please try again later';
 
 export const CaseworkPdfRedactorWrapper = (p: {
@@ -127,7 +127,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
   > | null>(null);
 
   const [documentIsCheckedOutPopupProps, setDocumentIsCheckedOutPopupProps] =
-    useState<{ message: string } | null>(null);
+    useState<{ action: string; message: string } | null>(null);
   const [
     documentIsUnableToBeRedactedPopupProps,
     setDocumentIsUnableToBeRedactedPopupProps
@@ -210,7 +210,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
               ariaLabel="Failed to redact document"
             >
               <div style={{ background: 'white', padding: '20px' }}>
-                <h1 className="govuk-heading-m">Failed to redact document</h1>
+                <h1 className="govuk-heading-m">Failed to {documentIsCheckedOutPopupProps.action} document</h1>
                 <div>{documentIsCheckedOutPopupProps.message}</div>
                 <br />
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -359,9 +359,10 @@ export const CaseworkPdfRedactorWrapper = (p: {
           if (!checkoutResponse.success) {
             removeRedactions(add.map((x) => x.id));
             const message = createCheckoutMessageFromCheckoutResponse({
+              action: 'redact',
               message: checkoutResponse.message
             });
-            setDocumentIsCheckedOutPopupProps({ message });
+            setDocumentIsCheckedOutPopupProps({ action: 'redact', message });
             return;
           }
 
@@ -417,9 +418,10 @@ export const CaseworkPdfRedactorWrapper = (p: {
           unrotatePage(newRotation.pageNumber);
 
           const message = createCheckoutMessageFromCheckoutResponse({
+            action: 'rotate',
             message: checkoutResponse.message
           });
-          setDocumentIsCheckedOutPopupProps({ message });
+          setDocumentIsCheckedOutPopupProps({ action: 'rotate', message });
         }}
         onRotationRemove={() => {}}
         indexedDeletion={indexedDeletion}
@@ -431,9 +433,10 @@ export const CaseworkPdfRedactorWrapper = (p: {
             undeletePage(add.pageNumber);
 
             const message = createCheckoutMessageFromCheckoutResponse({
+              action: 'delete',
               message: checkoutResponse.message
             });
-            setDocumentIsCheckedOutPopupProps({ message });
+            setDocumentIsCheckedOutPopupProps({ action: 'delete', message });
             return;
           }
 
@@ -473,6 +476,20 @@ export const CaseworkPdfRedactorWrapper = (p: {
           });
         }}
         onSaveRotations={async () => {
+          const checkoutResponse = await checkCheckoutStatus();
+
+          if (!checkoutResponse.success) {
+            const message = createCheckoutMessageFromCheckoutResponse({
+            action: 'rotate',
+            message: checkoutResponse.message
+            });
+            
+            setDocumentIsCheckedOutPopupProps({
+              action: 'rotate',
+              message
+            });
+          }
+
           await saveRotations({
             axiosInstance,
             urn: p.urn,

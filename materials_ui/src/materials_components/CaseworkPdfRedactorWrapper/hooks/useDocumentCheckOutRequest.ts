@@ -1,10 +1,18 @@
 import { AxiosError, AxiosInstance } from 'axios';
 import { useState } from 'react';
 
-import z from 'zod';
 import { useAxiosInstance } from '../../../caseWorkApp/components/utils/getData';
 
 type UseDocumentCheckoutOptions = { caseId?: number; urn?: string };
+type ErrorResponse = { Error?: unknown };
+
+const defaultMessage = 'An unexpected server error occurred';
+
+
+function normalizeMessage(error: string): string {
+  return error.charAt(0).toLowerCase() + error.slice(1);
+}
+
 
 const checkOutDocumentFromAxiosInstance = async (p: {
   axiosInstance: AxiosInstance;
@@ -20,20 +28,37 @@ const checkOutDocumentFromAxiosInstance = async (p: {
 
     return { success: true, data: { response } } as const;
   } catch (error: unknown) {
-    const schema = z.object({
-      response: z.object({ data: z.object({ detail: z.string() }) })
-    });
-    const parsedResp = schema.safeParse(error);
-    const message = parsedResp.success
-      ? parsedResp.data.response.data.detail
-          .split('Exception Message: ')[1]
-          ?.toLowerCase()
-      : undefined;
+    if (!(error instanceof AxiosError)) {
+      return {
+        success: false,
+        status: 'generic error',
+        message: 'An unexpected error occurred'
+      } as const;
+    }
 
-    if (error instanceof AxiosError && error.status === 409)
-      return { success: false, status: 'locked', message } as const;
+    const { status, data } = error.response ?? {};
+    
+    let message = defaultMessage;
 
-    return { success: false, status: 'generic error', message } as const;
+    if (data && typeof data === 'object') {
+      const error = (data as ErrorResponse).Error;
+
+      if (typeof error === 'string' && error.length > 0) {
+        message = normalizeMessage(error);
+      }
+    }
+
+    return status === 409
+      ? ({
+          success: false,
+          status: 'locked',
+          message
+        } as const)
+      : ({
+          success: false,
+          status: 'generic error',
+          message
+        } as const);
   }
 };
 
