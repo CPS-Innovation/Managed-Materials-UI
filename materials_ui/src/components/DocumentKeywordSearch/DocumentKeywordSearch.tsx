@@ -266,10 +266,14 @@ export const DocumentKeywordSearch = ({
                       </Link>
                     </h2>
 
-                    <p className="govuk-body-s">
-                      Uploaded: {formatDateLong(doc.cmsFileCreatedDate)} Type{' '}
-                      {doc.cmsDocType.documentType}
+                    <p className="govuk-body-s govuk-!-margin-bottom-0">
+                      Uploaded: {formatDateLong(doc.cmsFileCreatedDate)}
                     </p>
+                    {doc.cmsDocType.documentType && (
+                      <p className="govuk-body-s">
+                        Type: {doc.cmsDocType.documentType}
+                      </p>
+                    )}
 
                     <div className="govuk-inset-text">
                       <p>
