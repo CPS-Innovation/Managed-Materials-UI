@@ -1,10 +1,22 @@
-import { AxiosError, AxiosInstance } from 'axios';
+import { AxiosInstance } from 'axios';
 import { useState } from 'react';
 
 import z from 'zod';
 import { useAxiosInstance } from '../../../caseWorkApp/components/utils/getData';
 
 type UseDocumentCheckoutOptions = { caseId?: number; urn?: string };
+
+const extractReadableMessageFromError = (error: unknown) => {
+  const errorSchema = z.object({
+    response: z.object({ data: z.object({ Error: z.string() }) })
+  });
+  const parsed = errorSchema.safeParse(error);
+  if (!parsed.success) return null;
+
+  const errorMessage = parsed.data.response.data.Error;
+
+  return errorMessage.charAt(0).toLowerCase() + errorMessage.slice(1);
+};
 
 const checkOutDocumentFromAxiosInstance = async (p: {
   axiosInstance: AxiosInstance;
@@ -20,20 +32,20 @@ const checkOutDocumentFromAxiosInstance = async (p: {
 
     return { success: true, data: { response } } as const;
   } catch (error: unknown) {
-    const schema = z.object({
-      response: z.object({ data: z.object({ detail: z.string() }) })
-    });
-    const parsedResp = schema.safeParse(error);
-    const message = parsedResp.success
-      ? parsedResp.data.response.data.detail
-          .split('Exception Message: ')[1]
-          ?.toLowerCase()
-      : undefined;
+    const errorStatusSchema = z.object({ status: z.number() });
+    const parsedResp = errorStatusSchema.safeParse(error);
 
-    if (error instanceof AxiosError && error.status === 409)
+    const defaultMessage = 'An unexpected server error occurred';
+    if (parsedResp.success && parsedResp.data.status === 409) {
+      const message = extractReadableMessageFromError(error) ?? defaultMessage;
       return { success: false, status: 'locked', message } as const;
+    }
 
-    return { success: false, status: 'generic error', message } as const;
+    return {
+      success: false,
+      status: 'generic error',
+      message: defaultMessage
+    } as const;
   }
 };
 
