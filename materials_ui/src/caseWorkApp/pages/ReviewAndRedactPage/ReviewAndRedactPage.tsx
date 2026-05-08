@@ -259,6 +259,16 @@ export const ReviewAndRedactPage = () => {
       setActiveDocumentId(nextDocumentId);
     }
     setOpenDocumentIds((prev) => prev.filter((id) => id !== documentId));
+    if (documentId) {
+      setSearchContextByDocId((prev) => {
+        if (!(documentId in prev)) {
+          return prev;
+        }
+        const next = { ...prev };
+        delete next[documentId];
+        return next;
+      });
+    }
   };
 
   const handleCloseTab = (documentId: string | undefined) => {
