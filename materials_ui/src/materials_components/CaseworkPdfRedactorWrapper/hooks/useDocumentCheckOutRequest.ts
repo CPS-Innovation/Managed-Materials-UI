@@ -1,17 +1,22 @@
 import { AxiosError, AxiosInstance } from 'axios';
 import { useState } from 'react';
+import { z } from 'zod';
 
 import { useAxiosInstance } from '../../../caseWorkApp/components/utils/getData';
 
 type UseDocumentCheckoutOptions = { caseId?: number; urn?: string };
-type ErrorResponse = { Error?: unknown };
 
-const defaultMessage = 'An unexpected server error occurred';
+const extractReadableMessageFromError = (error: unknown) => {
+  const errorSchema = z.object({
+    response: z.object({ data: z.object({ Error: z.string() }) })
+  });
+  const parsed = errorSchema.safeParse(error);
+  if (!parsed.success) return null;
 
+  const errorMessage = parsed.data.response.data.Error;
 
-function normalizeMessage(error: string): string {
-  return error.charAt(0).toLowerCase() + error.slice(1);
-}
+  return errorMessage.charAt(0).toLowerCase() + errorMessage.slice(1);
+};
 
 
 const checkOutDocumentFromAxiosInstance = async (p: {
@@ -28,37 +33,17 @@ const checkOutDocumentFromAxiosInstance = async (p: {
 
     return { success: true, data: { response } } as const;
   } catch (error: unknown) {
-    if (!(error instanceof AxiosError)) {
-      return {
-        success: false,
-        status: 'generic error',
-        message: 'An unexpected error occurred'
-      } as const;
+    const errorStatusSchema = z.object({ status: z.number() });
+    const parsedResp = errorStatusSchema.safeParse(error);
+
+    const defaultMessage = 'An unexpected server error occurred';
+    if (parsedResp.success && parsedResp.data.status === 409) {
+      const message = extractReadableMessageFromError(error) ?? defaultMessage;
+      return { success: false, status: 'locked', message } as const;
     }
 
-    const { status, data } = error.response ?? {};
-    
-    let message = defaultMessage;
-
-    if (data && typeof data === 'object') {
-      const error = (data as ErrorResponse).Error;
-
-      if (typeof error === 'string' && error.length > 0) {
-        message = normalizeMessage(error);
-      }
-    }
-
-    return status === 409
-      ? ({
-          success: false,
-          status: 'locked',
-          message
-        } as const)
-      : ({
-          success: false,
-          status: 'generic error',
-          message
-        } as const);
+    return {
+      success: false, status: 'generic error',message: defaultMessage } as const;
   }
 };
 
