@@ -159,7 +159,6 @@ export default defineConfig(({ mode }) => {
       environment: 'jsdom',
       outputFile: { junit: './unit-test-results.xml' },
       setupFiles: './src/setupTests.ts',
-      silent: true,
       exclude: ['e2e', 'node_modules']
     }
   };

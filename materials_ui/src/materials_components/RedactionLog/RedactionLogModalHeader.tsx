@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
+import { TLookups } from '../../caseWorkApp/components/utils/getData';
 import { CHARGE_STATUS_SELECT_OPTIONS } from '../../constants/chargeStatus';
 import { Popover } from './Popover';
 import { RedactionLogFormInputs } from './RedactionLogModal';
 import styles from './RedactionLogModal.module.scss';
 import { SelectDropdown } from './templates/Select';
 
-type RedactionLogModalHeaderProps = { urn: string; lookups?: TLookupsResponse };
+type RedactionLogModalHeaderProps = { urn: string; lookups: TLookups };
 
 export const RedactionLogModalHeader = ({
   urn,

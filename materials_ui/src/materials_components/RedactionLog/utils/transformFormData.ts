@@ -1,4 +1,4 @@
-import { TLookupsResponse } from '../../../caseWorkApp/types/redaction';
+import { TLookups } from '../../../caseWorkApp/components/utils/getData';
 import { RedactionLogData } from '../../../caseWorkApp/types/redactionLog';
 import { TDocument } from '../../DocumentSelectAccordion/getters/getDocumentList';
 import { TRedactionType } from '../../PdfRedactor/PdfRedactionTypeForm';
@@ -7,37 +7,25 @@ import { RedactionLogFormInputs } from '../RedactionLogModal';
 const normalize = (value: string | number | undefined | null): string =>
   value === undefined || value === null ? '' : value.toString().trim();
 
-const findAreaAndUnit = (
-  lookups: TLookupsResponse,
-  areaId: string,
-  unitId: string
-) => {
+const findAreaAndUnit = (lookups: TLookups, areaId: string, unitId: string) => {
   const normalizedAreaId = normalize(areaId);
   const normalizedUnitId = normalize(unitId);
 
-  for (const area of lookups.areas || []) {
-    if (
-      normalize(area.id) === normalizedAreaId &&
-      area.children?.some((child) => normalize(child.id) === normalizedUnitId)
-    ) {
-      const unit = area.children?.find(
+  for (const area of lookups.areas) {
+    if (normalize(area.id) === normalizedAreaId) {
+      const unit = area.children.find(
         (child) => normalize(child.id) === normalizedUnitId
       );
-      return { area, unit };
+      if (area && unit) return { area, unit };
     }
   }
 
-  for (const division of lookups.divisions || []) {
-    if (
-      normalize(division.id) === normalizedAreaId &&
-      division.children?.some(
-        (child) => normalize(child.id) === normalizedUnitId
-      )
-    ) {
-      const unit = division.children?.find(
+  for (const division of lookups.divisions) {
+    if (normalize(division.id) === normalizedAreaId) {
+      const unit = division.children.find(
         (child) => normalize(child.id) === normalizedUnitId
       );
-      return { area: division, unit };
+      if (division && unit) return { area: division, unit };
     }
   }
 
@@ -45,7 +33,7 @@ const findAreaAndUnit = (
 };
 
 const createOverUnderModeRedactions = (
-  lookups: TLookupsResponse,
+  lookups: TLookups,
   underRedactionTypeIds: number[],
   overRedactionTypeIds: number[],
   overReason: 'investigative-agency' | 'cps-colleague' | null
@@ -98,7 +86,7 @@ type TransformFormDataToApiFormatParams = {
   formData: RedactionLogFormInputs;
   urn: string;
   activeDocument: TDocument | null | undefined;
-  lookups: TLookupsResponse | undefined;
+  lookups: TLookups;
   mode: 'over-under' | 'list';
   listModeRedactionTypes: TRedactionType[];
 };
@@ -111,10 +99,6 @@ export const transformFormDataToApiFormat = ({
   mode,
   listModeRedactionTypes
 }: TransformFormDataToApiFormatParams): RedactionLogData => {
-  if (!lookups) {
-    throw new Error('Lookups data is required for form transformation');
-  }
-
   const { area, unit } = findAreaAndUnit(
     lookups,
     formData.areasAndDivisionsId,

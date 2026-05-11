@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
+import { TLookups } from '../../caseWorkApp/components/utils/getData';
 import { TDocument } from '../DocumentSelectAccordion/getters/getDocumentList';
 import { TRedactionType } from '../PdfRedactor/PdfRedactionTypeForm';
 import { TRedaction } from '../PdfRedactor/utils/coordUtils';
@@ -16,7 +16,7 @@ type RedactionLogModalBodyProps = {
   mode?: Mode;
   redactions?: TRedaction[];
   selectedRedactionTypes?: TRedactionType[];
-  lookups?: TLookupsResponse;
+  lookups: TLookups;
 };
 
 export type RedactionLogFormValues = {
