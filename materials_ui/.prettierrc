@@ -1,7 +1,7 @@
 {
   "plugins": ["prettier-plugin-organize-imports"],
   "singleQuote": true,
-  "trailingComma": "none",
+  "trailingComma": "all",
   "objectWrap": "collapse",
   "semi": true,
   "useTabs": false,
