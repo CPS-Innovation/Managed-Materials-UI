@@ -15,6 +15,7 @@ export const useAxiosInstances = () => {
       );
       config.headers.Authorization = `Bearer ${accessToken}`;
       config.headers['Correlation-Id'] = crypto.randomUUID();
+      config.headers.ClientName = 'ManageMaterials';
       return config;
     });
     return instance;
