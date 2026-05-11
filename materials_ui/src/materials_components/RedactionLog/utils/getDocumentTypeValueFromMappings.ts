@@ -7,8 +7,8 @@ export type RedactionLogMappingData = {
   }[];
 };
 
-const MANUALLY_SELECT_DOCUMENT_TYPE_IDS = [-1, 1029, 1200];
-const DEFENDANT_CATEGORY_DOCUMENT_TYPE_IDS = [1056, 1057];
+const MANUALLY_SELECT_DOCUMENT_TYPE_IDS = new Set([-1, 1029, 1200]);
+const DEFENDANT_CATEGORY_DOCUMENT_TYPE_IDS = new Set([1056, 1057]);
 const PNC_PRINT_DOCUMENT_TYPE_ID = '34';
 
 export function getDocumentTypeValueFromMappings(
@@ -16,17 +16,17 @@ export function getDocumentTypeValueFromMappings(
   documentTypeMappings: RedactionLogMappingData | null | undefined
 ): string | undefined {
   const documentIsManuallySelected =
-    MANUALLY_SELECT_DOCUMENT_TYPE_IDS.includes(documentTypeId);
+    MANUALLY_SELECT_DOCUMENT_TYPE_IDS.has(documentTypeId);
 
   const currentDocumentType = documentTypeMappings?.documentTypes.find(
     ({ cmsDocTypeId }) => cmsDocTypeId === `${documentTypeId}`
   );
 
   if (documentIsManuallySelected || !currentDocumentType?.docTypeId) {
-    return undefined;
+    return;
   }
 
-  if (DEFENDANT_CATEGORY_DOCUMENT_TYPE_IDS.includes(documentTypeId)) {
+  if (DEFENDANT_CATEGORY_DOCUMENT_TYPE_IDS.has(documentTypeId)) {
     return PNC_PRINT_DOCUMENT_TYPE_ID;
   }
 
