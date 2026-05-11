@@ -13,7 +13,7 @@ const PNC_PRINT_DOCUMENT_TYPE_ID = '34';
 
 export function getDocumentTypeValueFromMappings(
   documentTypeId: number,
-  documentTypeMappings: RedactionLogMappingData | null | undefined
+  documentTypeMappings: RedactionLogMappingData | null
 ): string | undefined {
   const documentIsManuallySelected =
     MANUALLY_SELECT_DOCUMENT_TYPE_IDS.has(documentTypeId);

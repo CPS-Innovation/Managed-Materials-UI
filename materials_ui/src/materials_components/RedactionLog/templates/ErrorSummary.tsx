@@ -6,7 +6,6 @@ export const ErrorSummary = ({
 }: {
   errors: FieldErrors<RedactionLogFormValues>;
 }) => {
-  console.log({ errors });
   if (Object.keys(errors).length === 0) return null;
 
   return (

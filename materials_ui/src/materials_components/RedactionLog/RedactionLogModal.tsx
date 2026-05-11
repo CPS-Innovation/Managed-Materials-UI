@@ -137,7 +137,7 @@ export const RedactionLogModal = ({
   useEffect(() => {
     const cmsDocumentTypeId = activeDocument?.cmsDocType.documentTypeId;
 
-    if (cmsDocumentTypeId === undefined || cmsDocumentTypeId === null) {
+    if (!cmsDocumentTypeId) {
       return;
     }
 
@@ -147,10 +147,6 @@ export const RedactionLogModal = ({
     );
 
     if (!documentTypeIdValue) {
-      return;
-    }
-
-    if (`${form.getValues('documentTypeId')}` === documentTypeIdValue) {
       return;
     }
 
