@@ -4,6 +4,15 @@ import { TDocument } from '../../DocumentSelectAccordion/getters/getDocumentList
 import { TRedactionType } from '../../PdfRedactor/PdfRedactionTypeForm';
 import { RedactionLogFormInputs } from '../RedactionLogModal';
 
+type TransformFormDataToApiFormatParams = {
+  formData: RedactionLogFormInputs;
+  urn: string;
+  activeDocument: TDocument | null | undefined;
+  lookups: TLookupsResponse | undefined;
+  mode: 'over-under' | 'list';
+  listModeRedactionTypes: TRedactionType[];
+};
+
 const normalize = (value: string | number | undefined | null): string =>
   value === undefined || value === null ? '' : value.toString().trim();
 
@@ -94,15 +103,6 @@ const createListModeRedactions = (
     returnedToInvestigativeAuthority: false
   }));
 
-type TransformFormDataToApiFormatParams = {
-  formData: RedactionLogFormInputs;
-  urn: string;
-  activeDocument: TDocument | null | undefined;
-  lookups: TLookupsResponse | undefined;
-  mode: 'over-under' | 'list';
-  listModeRedactionTypes: TRedactionType[];
-};
-
 export const transformFormDataToApiFormat = ({
   formData,
   urn,
@@ -126,9 +126,8 @@ export const transformFormDataToApiFormat = ({
   );
 
   const documentType = lookups.documentTypes?.find(
-    (dt) =>
-      normalize(dt.cmsDocTypeId) &&
-      normalize(dt.cmsDocTypeId) === normalize(formData.documentTypeId)
+    (documentType) =>
+      normalize(documentType.id) === normalize(formData.documentTypeId)
   );
 
   const redactions =
@@ -154,9 +153,7 @@ export const transformFormDataToApiFormat = ({
       name: investigatingAgency?.name || ''
     },
     documentType: {
-      id:
-        normalize(documentType?.cmsDocTypeId) ??
-        normalize(formData.documentTypeId),
+      id: documentType?.id || normalize(formData.documentTypeId),
       name: documentType?.name || ''
     },
     redactions,
@@ -167,10 +164,10 @@ export const transformFormDataToApiFormat = ({
       documentId: activeDocument?.documentId
         ? activeDocument.documentId.replace(/^CMS-/, '')
         : 0,
-      documentType: documentType?.name || '',
+      documentType: activeDocument?.cmsDocType.documentType || '',
       fileCreatedDate:
         activeDocument?.cmsFileCreatedDate || new Date().toISOString(),
-      documentTypeId: parseInt(normalize(formData.documentTypeId) || '0', 10)
+      documentTypeId: activeDocument?.cmsDocType.documentTypeId || 0
     }
   };
 };

@@ -70,6 +70,18 @@ export const getPdfFiles = async (p: {
   }
 };
 
+export const getDocumentTypeMappings = async (p: {
+  axiosInstance: AxiosInstance;
+}) => {
+  try {
+    const response = await p.axiosInstance.get('/api/polarisMappings');
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError)
+      console.error(`Error getting document type mappings: ${error.message}`);
+  }
+};
+
 export const getLookups = async (p: { axiosInstance: AxiosInstance }) => {
   try {
     const response = await p.axiosInstance.get('/api/lookUps');
