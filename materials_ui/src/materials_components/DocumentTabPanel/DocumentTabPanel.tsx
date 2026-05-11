@@ -1,11 +1,11 @@
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import {
-  getLookups,
   getPdfFiles,
+  safeGetLookups,
+  TLookups,
   useAxiosInstances
 } from '../../caseWorkApp/components/utils/getData';
-import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
 import { Banner } from '../../components';
 import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
 import { CaseworkPdfRedactorWrapper } from '../CaseworkPdfRedactorWrapper/CaseworkPdfRedactorWrapper';
@@ -79,7 +79,7 @@ export const DocumentTabPanel = ({
   >();
   const [redactionLogModalData, setRedactionLogModalData] =
     useState<RedactionLogModalData>();
-  const [lookups, setLookups] = useState<TLookupsResponse>();
+  const [lookups, setLookups] = useState<TLookups | null | undefined>();
 
   useEffect(() => {
     const loadPdf = async () => {
@@ -122,17 +122,15 @@ export const DocumentTabPanel = ({
 
   useEffect(() => {
     const loadLookups = async () => {
-      const data = await getLookups({ axiosInstance: redactionLogAxios });
-      if (data) {
-        setLookups(data);
-      }
+      const resp = await safeGetLookups({ axiosInstance: redactionLogAxios });
+      setLookups(resp.success ? resp.data : null);
     };
     loadLookups();
   }, []);
 
   return (
     <div>
-      {showRedactionLogModal && redactionLogModalData && (
+      {showRedactionLogModal && redactionLogModalData && lookups && (
         <RedactionLogModal
           urn={urn}
           caseId={caseId}

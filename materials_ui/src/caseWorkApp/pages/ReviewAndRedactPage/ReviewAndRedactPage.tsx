@@ -28,9 +28,12 @@ import { useTrigger } from '../../../materials_components/PdfRedactor/utils/useT
 import { RedactionLogModal } from '../../../materials_components/RedactionLog/RedactionLogModal';
 import type { SearchTermResultType } from '../../../schemas/documents';
 import { Tabs } from '../../components/tabs';
-import { getLookups, useAxiosInstances } from '../../components/utils/getData';
+import {
+  safeGetLookups,
+  TLookups,
+  useAxiosInstances
+} from '../../components/utils/getData';
 import { useSwitchContentArea } from '../../hooks/useSwitchContentArea';
-import { TLookupsResponse } from '../../types/redaction';
 import { CloseTabUnsavedRedactionsModal } from './CloseTabUnsavedRedactionsModal';
 import { UnsavedRedactionsModal } from './UnsavedRedactionsModal';
 
@@ -110,7 +113,7 @@ export const ReviewAndRedactPage = () => {
   }, []);
 
   const [showRedactionLogModal, setShowRedactionLogModal] = useState(false);
-  const [lookups, setLookups] = useState<TLookupsResponse>();
+  const [lookups, setLookups] = useState<TLookups | null | undefined>();
 
   const { redactionLogAxios, axiosInstance } = useAxiosInstances();
 
@@ -277,8 +280,8 @@ export const ReviewAndRedactPage = () => {
 
   useEffect(() => {
     if (showRedactionLogModal) {
-      getLookups({ axiosInstance: redactionLogAxios }).then((data) => {
-        setLookups(data);
+      safeGetLookups({ axiosInstance: redactionLogAxios }).then((x) => {
+        setLookups(x.success ? x.data : null);
       });
     }
   }, [showRedactionLogModal]);
@@ -337,7 +340,7 @@ export const ReviewAndRedactPage = () => {
           />
         )}
 
-        {showRedactionLogModal && (
+        {showRedactionLogModal && lookups && (
           <RedactionLogModal
             urn={urn!}
             caseId={caseId!}

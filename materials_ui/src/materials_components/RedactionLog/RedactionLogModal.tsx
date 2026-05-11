@@ -2,9 +2,9 @@ import { useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import {
   postRedactionLog,
+  TLookups,
   useAxiosInstances
 } from '../../caseWorkApp/components/utils/getData';
-import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
 import { ChargeStatusCode } from '../../constants/chargeStatus';
 import { useCaseDetails } from '../../hooks/search/useCaseSearch';
 import { TDocument } from '../DocumentSelectAccordion/getters/getDocumentList';
@@ -35,19 +35,19 @@ export type RedactionLogFormInputs = {
   supportingNotes: string;
 };
 
-type RedactionLogModalProps = {
-  urn: string;
-  caseId?: number;
-  activeDocument?: TDocument | null;
-  isOpen: boolean;
-  onClose: () => void;
-  children?: React.ReactNode;
-  lookups?: TLookupsResponse;
-  mode: 'over-under' | 'list';
-  redactions?: TRedaction[];
-  selectedRedactionTypes?: TRedactionType[];
-  redactionSaveStatus?: 'saving' | 'saved';
-};
+// type RedactionLogModalProps = {
+//   urn: string;
+//   caseId?: number;
+//   activeDocument?: TDocument | null;
+//   isOpen: boolean;
+//   onClose: () => void;
+//   children?: React.ReactNode;
+//   lookups: TLookups;
+//   mode: 'over-under' | 'list';
+//   redactions?: TRedaction[];
+//   selectedRedactionTypes?: TRedactionType[];
+//   redactionSaveStatus?: 'saving' | 'saved';
+// };
 
 const WhiteTickIcon = () => (
   <svg
@@ -70,7 +70,19 @@ export const RedactionLogModal = ({
   redactions,
   selectedRedactionTypes = [],
   redactionSaveStatus
-}: RedactionLogModalProps) => {
+}: {
+  urn: string;
+  caseId?: number;
+  activeDocument?: TDocument | null;
+  isOpen: boolean;
+  onClose: () => void;
+  children?: React.ReactNode;
+  lookups: TLookups;
+  mode: 'over-under' | 'list';
+  redactions?: TRedaction[];
+  selectedRedactionTypes?: TRedactionType[];
+  redactionSaveStatus?: 'saving' | 'saved';
+}) => {
   const { data: caseDetailsResponse } = useCaseDetails({ urn });
 
   const chargeStatusFromCase = useMemo((): ChargeStatusCode | undefined => {

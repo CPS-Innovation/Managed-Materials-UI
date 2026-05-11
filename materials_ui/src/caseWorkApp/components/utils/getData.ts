@@ -1,5 +1,6 @@
 import { useMsal } from '@azure/msal-react';
 import axios, { AxiosError, AxiosInstance } from 'axios';
+import z from 'zod';
 import { getAccessTokenFromMsalInstance } from '../../../materials_components/DocumentSelectAccordion/getters/getAccessTokenFromMsalInstance';
 import { RedactionLogData } from '../../types/redactionLog';
 
@@ -70,13 +71,63 @@ export const getPdfFiles = async (p: {
   }
 };
 
-export const getLookups = async (p: { axiosInstance: AxiosInstance }) => {
+export const lookupsSchema = z.object({
+  areas: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      children: z.array(z.object({ id: z.string(), name: z.string() }))
+    })
+  ),
+  divisions: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      children: z.array(z.object({ id: z.string(), name: z.string() }))
+    })
+  ),
+  documentTypes: z.array(
+    z.object({ id: z.string(), name: z.string(), cmsDocTypeId: z.string() })
+  ),
+  investigatingAgencies: z.array(
+    z.object({ id: z.string(), name: z.string() })
+  ),
+  missedRedactions: z.array(
+    z.object({ id: z.string(), name: z.string(), isDeletedPage: z.boolean() })
+  ),
+  ouCodeMapping: z.array(
+    z.object({
+      ouCode: z.string(),
+      areaCode: z.string(),
+      areaName: z.string(),
+      investigatingAgencyCode: z.string(),
+      investigatingAgencyName: z.string()
+    })
+  ),
+  polarisInvestigatingAgencies: z.array(
+    z.object({ ouCode: z.string(), investigatingAgencyId: z.string() })
+  ),
+  businessUnits: z.array(
+    z.object({
+      ou: z.string(),
+      areaId: z.string().nullable(),
+      unitId: z.string().nullable()
+    })
+  )
+});
+
+export type TLookups = z.infer<typeof lookupsSchema>;
+
+export const safeGetLookups = async (p: { axiosInstance: AxiosInstance }) => {
   try {
     const response = await p.axiosInstance.get('/api/lookUps');
-    return response.data;
+    const parsed = lookupsSchema.safeParse(response.data);
+    return parsed;
   } catch (error) {
     if (error instanceof AxiosError)
       console.error(`Error getting lookups: ${error.message}`);
+
+    return { success: false, error } as const;
   }
 };
 
@@ -95,11 +146,5 @@ export const postRedactionLog = async (p: {
 };
 
 export const GetDataFromAxios = () => {
-  return {
-    useAxiosInstance,
-    getDocuments,
-    getPdfFiles,
-    getLookups,
-    postRedactionLog
-  };
+  return { useAxiosInstance, getDocuments, getPdfFiles, postRedactionLog };
 };
