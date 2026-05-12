@@ -9,7 +9,7 @@ test.describe('PCD Request Page', () => {
   }) => {
     mockRoute(page, 'pcds/2167259/pcd-request-core', mockPcdCoreResponse());
     mockRoute(page, 'pcd-request', mockPcdRequestResponse());
-    await page.goto('pcd-request/145739');
+    await page.goto('./pcd-request/145739');
     await page.waitForRequest('**/case-info/2167259');
     await expect(
       page.getByRole('heading', { name: 'Loading case', includeHidden: true }),
@@ -36,7 +36,7 @@ test.describe('PCD Request Page', () => {
   }) => {
     mockRoute(page, 'pcds/2167259/pcd-request-core', mockPcdCoreResponse());
     mockRoute(page, 'pcd-request', mockPcdRequestResponse());
-    await page.goto('pcd-request/145739');
+    await page.goto('./pcd-request/145739');
     await page.waitForRequest('**/case-info/2167259');
     await expect(
       page.getByRole('heading', { name: 'Loading case', includeHidden: true }),
@@ -56,7 +56,7 @@ test.describe('PCD Request Page', () => {
   }) => {
     mockRoute(page, 'pcds/2167259/pcd-request-core', []);
     mockRoute(page, 'pcds/145739/pcd-request', {});
-    await page.goto('pcd-request/145739');
+    await page.goto('./pcd-request/145739');
     await page.waitForRequest('**/case-info/2167259');
     expect(
       page
