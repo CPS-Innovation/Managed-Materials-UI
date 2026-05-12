@@ -8,7 +8,7 @@ export const documentSchema = z.object({
   status: z.string(),
   cmsDocType: z.object({
     documentTypeId: z.number(),
-    documentType: z.string().nullish(),
+    documentType: z.string().nullable(),
     documentCategory: z.string()
   }),
   cmsOriginalFileName: z.string(),

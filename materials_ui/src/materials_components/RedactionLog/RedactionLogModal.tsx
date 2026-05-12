@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import {
+  getDocumentTypeMappings,
   postRedactionLog,
   useAxiosInstances
 } from '../../caseWorkApp/components/utils/getData';
@@ -14,6 +15,10 @@ import { Modal } from './Modal';
 import styles from './RedactionLogModal.module.scss';
 import { RedactionLogModalBody } from './RedactionLogModalBody';
 import { RedactionLogModalHeader } from './RedactionLogModalHeader';
+import {
+  getDocumentTypeValueFromMappings,
+  type RedactionLogMappingData
+} from './utils/getDocumentTypeValueFromMappings';
 import { transformFormDataToApiFormat } from './utils/transformFormData';
 
 export type RedactionLogFormInputs = {
@@ -71,6 +76,8 @@ export const RedactionLogModal = ({
   selectedRedactionTypes = [],
   redactionSaveStatus
 }: RedactionLogModalProps) => {
+  const [documentTypeMappings, setDocumentTypeMappings] =
+    useState<RedactionLogMappingData | null>(null);
   const { data: caseDetailsResponse } = useCaseDetails({ urn });
 
   const chargeStatusFromCase = useMemo((): ChargeStatusCode | undefined => {
@@ -97,6 +104,19 @@ export const RedactionLogModal = ({
 
   const { redactionLogAxios } = useAxiosInstances();
 
+  useEffect(() => {
+    const loadDocumentTypeMappings = async () => {
+      const data = await getDocumentTypeMappings({
+        axiosInstance: redactionLogAxios
+      });
+      if (data) {
+        setDocumentTypeMappings(data);
+      }
+    };
+
+    loadDocumentTypeMappings();
+  }, []);
+
   const form = useForm<RedactionLogFormInputs>({
     defaultValues: {
       underRedactionSelected: false,
@@ -113,6 +133,29 @@ export const RedactionLogModal = ({
       supportingNotes: ''
     }
   });
+
+  useEffect(() => {
+    const cmsDocumentTypeId = activeDocument?.cmsDocType.documentTypeId;
+
+    if (!cmsDocumentTypeId) {
+      return;
+    }
+
+    const documentTypeIdValue = getDocumentTypeValueFromMappings(
+      cmsDocumentTypeId,
+      documentTypeMappings
+    );
+
+    if (!documentTypeIdValue) {
+      return;
+    }
+
+    form.setValue('documentTypeId', documentTypeIdValue, {
+      shouldDirty: false,
+      shouldTouch: false,
+      shouldValidate: false
+    });
+  }, [activeDocument?.cmsDocType.documentTypeId, documentTypeMappings, form]);
 
   const onSubmit = async (values: RedactionLogFormInputs) => {
     try {
