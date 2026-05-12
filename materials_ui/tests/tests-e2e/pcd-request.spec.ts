@@ -58,11 +58,9 @@ test.describe('PCD Request Page', () => {
     mockRoute(page, 'pcds/145739/pcd-request', {});
     await page.goto('./pcd-request/145739');
     await page.waitForRequest('**/case-info/2167259');
-    expect(
-      page
-        .getByRole('heading', { name: 'Loading case', includeHidden: true })
-        .waitFor({ state: 'attached' }),
-    ).toBeTruthy();
+    await expect(
+      page.getByRole('heading', { name: 'Loading case', includeHidden: true }),
+    ).toBeVisible();
     await page
       .getByRole('heading', { name: 'Loading case', includeHidden: true })
       .waitFor({ state: 'detached' });
