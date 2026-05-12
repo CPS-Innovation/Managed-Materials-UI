@@ -24,6 +24,7 @@ export const useRequest = () => {
 
     config.headers['Authorization'] = `Bearer ${tokenResponse.accessToken}`;
     config.headers['Correlation-Id'] = crypto.randomUUID();
+    config.headers.ClientName = 'ManageMaterials';
 
     return config;
   });
@@ -77,6 +78,7 @@ export const useAxiosInstance = () => {
 
     config.headers['Authorization'] = `Bearer ${tokenResponse.accessToken}`;
     config.headers['Correlation-Id'] = crypto.randomUUID();
+    config.headers.ClientName = 'ManageMaterials';
 
     return config;
   });
