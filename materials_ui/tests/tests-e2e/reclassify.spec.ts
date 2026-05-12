@@ -8,6 +8,7 @@ import { mockWitness } from '../mocks/mockWitness';
 test.beforeEach(async ({ page }) => {
   await mockRoute(page, '/case-materials', mockCaseMaterials());
   await page.goto('./materials', { waitUntil: 'domcontentloaded' });
+  await page.waitForRequest('**/case-info/2167259');
   await page
     .getByRole('heading', { name: 'Loading case', includeHidden: true })
     .waitFor({ state: 'detached' });
@@ -29,7 +30,7 @@ test('page loads as expected', async ({ page }) => {
   const mainHeading = page.getByRole('heading', { level: 1 });
   const backLink = page.getByRole('link', { name: 'Back' });
   const firstQuestion = page.getByText(
-    'What is the new material classification category?'
+    'What is the new material classification category?',
   );
   const radios = page.getByRole('radio');
   const submitButton = page.getByRole('button', { name: 'Continue' });
@@ -69,7 +70,7 @@ test.describe('validation', () => {
     await page.getByRole('button', { name: 'Continue' }).click();
 
     const errorMessage = page.getByRole('link', {
-      name: 'Choose a new material classification category'
+      name: 'Choose a new material classification category',
     });
     await expect(errorMessage).toBeVisible();
 
@@ -80,13 +81,13 @@ test.describe('validation', () => {
     await page.getByRole('radio', { name: 'Statement' }).check();
     await page.getByRole('button', { name: 'Continue' }).click();
     const dateErrorMessage = page.getByRole('link', {
-      name: 'Select if statement has a date'
+      name: 'Select if statement has a date',
     });
     const statementNumberErrorMessage = page.getByRole('link', {
-      name: 'Enter a statement number'
+      name: 'Enter a statement number',
     });
     const witnessErrorMessage = page.getByRole('link', {
-      name: 'Choose a witness'
+      name: 'Choose a witness',
     });
     await expect(dateErrorMessage).toBeVisible();
     await expect(statementNumberErrorMessage).toBeVisible();
@@ -103,28 +104,28 @@ test.describe('validation', () => {
     await page.getByRole('button', { name: 'Continue' }).click();
     await page.getByRole('button', { name: 'Continue' }).click();
     const firstNameErorMessage = page.getByRole('link', {
-      name: 'Enter the first name'
+      name: 'Enter the first name',
     });
     const lastNameErrorMessage = page.getByRole('link', {
-      name: 'Enter the last name'
+      name: 'Enter the last name',
     });
     const contestedIssueErrorMessage = page.getByRole('link', {
-      name: 'Enter the contested issue'
+      name: 'Enter the contested issue',
     });
     const requestErrorMessage = page.getByRole('link', {
-      name: 'Choose what you want to request'
+      name: 'Choose what you want to request',
     });
     const defendantErrorMessage = page.getByRole('link', {
-      name: 'Select a defendant the action plan relates to'
+      name: 'Select a defendant the action plan relates to',
     });
     const actionPlanErrorMessage = page.getByRole('link', {
-      name: 'Enter the action plan description'
+      name: 'Enter the action plan description',
     });
     const dateNeededErrorMessage = page.getByRole('link', {
-      name: 'Enter a valid date in the future'
+      name: 'Enter a valid date in the future',
     });
     const followUpErrorMessage = page.getByRole('link', {
-      name: 'Select if you want to add a follow up'
+      name: 'Select if you want to add a follow up',
     });
     await expect(firstNameErorMessage).toBeVisible();
     await expect(lastNameErrorMessage).toBeVisible();
@@ -139,11 +140,11 @@ test.describe('validation', () => {
     await page.getByRole('radio', { name: 'Exhibit' }).check();
     await page.getByRole('button', { name: 'Continue' }).click();
     const exhibitTypeErrorMessage = page.getByRole('link', {
-      name: 'Choose a material classification type'
+      name: 'Choose a material classification type',
     });
     const itemErrorMessage = page.getByRole('link', { name: 'Enter the item' });
     const exhibitRefErrorMessage = page.getByRole('link', {
-      name: 'Enter the exhibit reference'
+      name: 'Enter the exhibit reference',
     });
     await expect(exhibitTypeErrorMessage).toBeVisible();
     await expect(itemErrorMessage).toBeVisible();
@@ -153,7 +154,7 @@ test.describe('validation', () => {
     await page.getByRole('radio', { name: 'MG Forms' }).check();
     await page.getByRole('button', { name: 'Continue' }).click();
     const formTypeErrorMessage = page.getByRole('link', {
-      name: 'Choose a material classification type'
+      name: 'Choose a material classification type',
     });
     await expect(formTypeErrorMessage).toBeVisible();
   });
@@ -161,7 +162,7 @@ test.describe('validation', () => {
     await page.getByRole('radio', { name: 'Other' }).check();
     await page.getByRole('button', { name: 'Continue' }).click();
     const otherTypeErrorMessage = page.getByRole('link', {
-      name: 'Choose a material classification type'
+      name: 'Choose a material classification type',
     });
     await expect(otherTypeErrorMessage).toBeVisible();
   });
@@ -172,7 +173,7 @@ test.describe('form submission', () => {
     await mockRoute(
       page,
       'material/8836399/reclassify-complete',
-      mockOchestration()
+      mockOchestration(),
     );
 
     await page.getByRole('radio', { name: 'MG Forms' }).check();
@@ -183,7 +184,7 @@ test.describe('form submission', () => {
       .getByRole('heading', { name: 'Please wait..', includeHidden: true })
       .waitFor({ state: 'detached' });
     await expect(
-      page.getByText('Material reclassified successfully')
+      page.getByText('Material reclassified successfully'),
     ).toBeVisible();
   });
 
@@ -192,7 +193,7 @@ test.describe('form submission', () => {
     await mockRoute(
       page,
       'material/8836399/reclassify-complete',
-      mockOchestration()
+      mockOchestration(),
     );
     await page.unroute('api/case-materials');
     await mockRoute(
@@ -202,8 +203,8 @@ test.describe('form submission', () => {
         category: 'Statement',
         type: 'MG11',
         witnessId: 2794967,
-        documentTypeId: 1031
-      })
+        documentTypeId: 1031,
+      }),
     );
 
     await page.getByRole('radio', { name: 'Statement' }).check();
@@ -218,7 +219,7 @@ test.describe('form submission', () => {
       .getByRole('heading', { name: 'Please wait..', includeHidden: true })
       .waitFor({ state: 'detached' });
     await expect(
-      page.getByText('Material reclassified successfully')
+      page.getByText('Material reclassified successfully'),
     ).toBeVisible();
   });
 
@@ -227,7 +228,7 @@ test.describe('form submission', () => {
     await mockRoute(
       page,
       'material/8836399/reclassify-complete',
-      mockOchestration()
+      mockOchestration(),
     );
     await page.unroute('api/case-materials');
     await mockRoute(
@@ -237,8 +238,8 @@ test.describe('form submission', () => {
         category: 'Statement',
         type: 'MG11',
         witnessId: 2794967,
-        documentTypeId: 1031
-      })
+        documentTypeId: 1031,
+      }),
     );
     await mockRoute(page, 'case-defendants?caseId=2167259', mockDefendants());
     await page.getByRole('radio', { name: 'Statement' }).check();
@@ -274,7 +275,7 @@ test.describe('form submission', () => {
       .waitFor({ state: 'detached' });
 
     await expect(
-      page.getByText('Material reclassified and witness added successfully.')
+      page.getByText('Material reclassified and witness added successfully.'),
     ).toBeVisible();
   });
 
@@ -283,7 +284,7 @@ test.describe('form submission', () => {
     await mockRoute(
       page,
       'api/material/8836399/reclassify-complete',
-      mockOchestration()
+      mockOchestration(),
     );
 
     await page.unroute('api/case-materials');
@@ -298,13 +299,13 @@ test.describe('form submission', () => {
         originalFileName: 'Case Action Plan 4 (test)',
         subject: 'Test action plan',
         materialId: 4242662,
-        documentTypeId: 1062
-      })
+        documentTypeId: 1062,
+      }),
     );
     await mockRoute(
       page,
       'api/case-defendants?caseId=2167259',
-      mockDefendants()
+      mockDefendants(),
     );
     await page.getByRole('radio', { name: 'Exhibit' }).check();
     await page
@@ -317,10 +318,13 @@ test.describe('form submission', () => {
     await page.getByRole('button', { name: 'Continue' }).click();
     await page.getByRole('button', { name: 'Save' }).click();
     await expect(
-      page.getByRole('heading', { name: 'Please wait...', includeHidden: true })
+      page.getByRole('heading', {
+        name: 'Please wait...',
+        includeHidden: true,
+      }),
     ).toBeVisible();
     await expect(
-      page.getByText('Material reclassified successfully')
+      page.getByText('Material reclassified successfully'),
     ).toBeVisible();
   });
 
@@ -329,7 +333,7 @@ test.describe('form submission', () => {
     await mockRoute(
       page,
       'api/material/4242662/reclassify-complete',
-      mockOchestration()
+      mockOchestration(),
     );
 
     await page.unroute('api/case-materials');
@@ -344,19 +348,19 @@ test.describe('form submission', () => {
         originalFileName: 'Case Action Plan 4 (test)',
         subject: 'Test action plan',
         materialId: 4242662,
-        documentTypeId: 1062
-      })
+        documentTypeId: 1062,
+      }),
     );
     await mockRoute(
       page,
       'api/case-defendants?caseId=2147043',
-      mockDefendants()
+      mockDefendants(),
     );
 
     await mockRoute(
       page,
       'api/material/8836399/reclassify-complete',
-      mockOchestration()
+      mockOchestration(),
     );
 
     await page.getByRole('radio', { name: 'Other' }).check();
@@ -369,7 +373,7 @@ test.describe('form submission', () => {
       .getByRole('heading', { name: 'Please wait..', includeHidden: true })
       .waitFor({ state: 'detached' });
     await expect(
-      page.getByText('Material reclassified successfully')
+      page.getByText('Material reclassified successfully'),
     ).toBeVisible();
   });
 });
