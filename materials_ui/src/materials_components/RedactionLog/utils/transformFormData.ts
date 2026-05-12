@@ -4,16 +4,9 @@ import { TDocument } from '../../DocumentSelectAccordion/getters/getDocumentList
 import { TRedactionType } from '../../PdfRedactor/PdfRedactionTypeForm';
 import { RedactionLogFormInputs } from '../RedactionLogModal';
 
-type TransformFormDataToApiFormatParams = {
-  formData: RedactionLogFormInputs;
-  urn: string;
-  activeDocument: TDocument | null | undefined;
-  lookups: TLookupsResponse | undefined;
-  mode: 'over-under' | 'list';
-  listModeRedactionTypes: TRedactionType[];
-};
-
-const normalize = (value: string | number | undefined | null): string =>
+const normalizeToString = (
+  value: string | number | undefined | null
+): string =>
   value === undefined || value === null ? '' : value.toString().trim();
 
 const findAreaAndUnit = (
@@ -21,16 +14,18 @@ const findAreaAndUnit = (
   areaId: string,
   unitId: string
 ) => {
-  const normalizedAreaId = normalize(areaId);
-  const normalizedUnitId = normalize(unitId);
+  const trimmedAreaId = normalizeToString(areaId);
+  const trimmedUnitId = normalizeToString(unitId);
 
   for (const area of lookups.areas || []) {
     if (
-      normalize(area.id) === normalizedAreaId &&
-      area.children?.some((child) => normalize(child.id) === normalizedUnitId)
+      normalizeToString(area.id) === trimmedAreaId &&
+      area.children?.some(
+        (child) => normalizeToString(child.id) === trimmedUnitId
+      )
     ) {
       const unit = area.children?.find(
-        (child) => normalize(child.id) === normalizedUnitId
+        (child) => normalizeToString(child.id) === trimmedUnitId
       );
       return { area, unit };
     }
@@ -38,13 +33,13 @@ const findAreaAndUnit = (
 
   for (const division of lookups.divisions || []) {
     if (
-      normalize(division.id) === normalizedAreaId &&
+      normalizeToString(division.id) === trimmedAreaId &&
       division.children?.some(
-        (child) => normalize(child.id) === normalizedUnitId
+        (child) => normalizeToString(child.id) === trimmedUnitId
       )
     ) {
       const unit = division.children?.find(
-        (child) => normalize(child.id) === normalizedUnitId
+        (child) => normalizeToString(child.id) === trimmedUnitId
       );
       return { area: division, unit };
     }
@@ -64,7 +59,7 @@ const createOverUnderModeRedactions = (
 
   const findRedactionType = (typeId: number) =>
     lookups.missedRedactions?.find(
-      (rt) => normalize(rt.id) === normalize(typeId)
+      (rt) => normalizeToString(rt.id) === normalizeToString(typeId)
     );
 
   // under redactions
@@ -103,6 +98,15 @@ const createListModeRedactions = (
     returnedToInvestigativeAuthority: false
   }));
 
+type TransformFormDataToApiFormatParams = {
+  formData: RedactionLogFormInputs;
+  urn: string;
+  activeDocument: TDocument | null | undefined;
+  lookups: TLookupsResponse | undefined;
+  mode: 'over-under' | 'list';
+  listModeRedactionTypes: TRedactionType[];
+};
+
 export const transformFormDataToApiFormat = ({
   formData,
   urn,
@@ -122,12 +126,16 @@ export const transformFormDataToApiFormat = ({
   );
 
   const investigatingAgency = lookups.investigatingAgencies?.find(
-    (ia) => normalize(ia.id) === normalize(formData.investigatingAgencyId)
+    (ia) =>
+      normalizeToString(ia.id) ===
+      normalizeToString(formData.investigatingAgencyId)
   );
 
   const documentType = lookups.documentTypes?.find(
-    (documentType) =>
-      normalize(documentType.id) === normalize(formData.documentTypeId)
+    (dt) =>
+      normalizeToString(dt.cmsDocTypeId) &&
+      normalizeToString(dt.cmsDocTypeId) ===
+        normalizeToString(formData.documentTypeId)
   );
 
   const redactions =
@@ -153,7 +161,7 @@ export const transformFormDataToApiFormat = ({
       name: investigatingAgency?.name || ''
     },
     documentType: {
-      id: documentType?.id || normalize(formData.documentTypeId),
+      id: documentType?.id || normalizeToString(formData.documentTypeId),
       name: documentType?.name || ''
     },
     redactions,
