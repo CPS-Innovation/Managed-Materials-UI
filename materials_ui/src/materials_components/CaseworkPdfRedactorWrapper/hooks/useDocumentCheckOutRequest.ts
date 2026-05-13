@@ -1,4 +1,4 @@
-import { AxiosError, AxiosInstance } from 'axios';
+import { AxiosInstance } from 'axios';
 import { useState } from 'react';
 import { z } from 'zod';
 
