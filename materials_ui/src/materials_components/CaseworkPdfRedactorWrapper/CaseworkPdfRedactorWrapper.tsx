@@ -22,6 +22,10 @@ import {
   TRotation
 } from '../PdfRedactor/utils/rotationUtils';
 import type { TSearchHighlight } from '../PdfRedactor/utils/searchHighlightUtils';
+import {
+  TTriggerData,
+  useTriggerListener
+} from '../PdfRedactor/utils/useTriggger';
 import { useWindowMouseListener } from '../PdfRedactor/utils/useWindowMouseListener';
 import { useDocumentCheckOutRequest } from './hooks/useDocumentCheckOutRequest';
 import {
@@ -83,6 +87,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
   onNumOfPagesDocumentChange: (x: number) => void;
   searchHighlights?: TSearchHighlight[];
   focusedSearchIndex?: number;
+  checkInDocumentTriggerData: TTriggerData;
 }) => {
   const [isDocumentCheckedOut, setIsDocumentCheckedOut] = useState(false);
   const [selectedRedactionTypes, setSelectedRedactionTypes] = useState<
@@ -93,6 +98,24 @@ export const CaseworkPdfRedactorWrapper = (p: {
     caseId: p.caseId,
     urn: p.urn
   });
+  const checkInDocument = async () => {
+    if (!isDocumentCheckedOut) return;
+    const resp = await documentCheckOutRequest.checkIn({
+      documentId: p.documentId,
+      versionId: p.versionId
+    });
+    if (resp.success) setIsDocumentCheckedOut(false);
+  };
+  useTriggerListener({
+    triggerData: p.checkInDocumentTriggerData,
+    fn: () => checkInDocument()
+  });
+
+  useEffect(() => {
+    return () => {
+      checkInDocument();
+    };
+  }, []);
 
   const [redactions, setRedactions] = useState<TRedaction[]>(p.initRedactions);
   const [indexedRotation, setIndexedRotation] = useState<TIndexedRotation>({});

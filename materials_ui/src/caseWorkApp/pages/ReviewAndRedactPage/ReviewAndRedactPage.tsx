@@ -66,6 +66,7 @@ export const ReviewAndRedactPage = () => {
   >({});
 
   const reloadSidebarTrigger = useTrigger();
+  const checkInDocumentTrigger = useTrigger();
   useSwitchContentArea();
 
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
@@ -92,18 +93,7 @@ export const ReviewAndRedactPage = () => {
   }, [documents]);
 
   useEffect(() => {
-    const onBeforeUnload = () => {
-      documentsRef.current?.forEach((document) => {
-        if (document && caseId && urn)
-          checkInDocumentFromAxiosInstance({
-            axiosInstance,
-            caseId,
-            urn,
-            documentId: document.documentId,
-            versionId: document.versionId
-          });
-      });
-    };
+    const onBeforeUnload = async () => checkInDocumentTrigger.fire();
 
     window.addEventListener('beforeunload', onBeforeUnload);
     return () => window.removeEventListener('beforeunload', onBeforeUnload);
@@ -245,6 +235,7 @@ export const ReviewAndRedactPage = () => {
             setFocusedSearchIndex(doc.documentId, index)
           }
           onBackToSearchResults={() => setSearchModalOpen(true)}
+          checkInDocumentTriggerData={checkInDocumentTrigger.data}
         />
       )
     }

@@ -15,6 +15,7 @@ import { TRedactionType } from '../PdfRedactor/PdfRedactionTypeForm';
 import { TRedaction } from '../PdfRedactor/utils/coordUtils';
 import { TMode } from '../PdfRedactor/utils/modeUtils';
 import type { TSearchHighlight } from '../PdfRedactor/utils/searchHighlightUtils';
+import { TTriggerData } from '../PdfRedactor/utils/useTriggger';
 import { RedactionLogModal } from '../RedactionLog/RedactionLogModal';
 
 export type DocSearchContext = {
@@ -47,6 +48,7 @@ export type DocumentTabPanelProps = {
   searchContext?: DocSearchContext;
   onFocusedSearchIndexChange?: (index: number) => void;
   onBackToSearchResults?: () => void;
+  checkInDocumentTriggerData: TTriggerData;
 };
 
 export const DocumentTabPanel = ({
@@ -64,7 +66,8 @@ export const DocumentTabPanel = ({
   onRedactionLogClick,
   searchContext,
   onFocusedSearchIndexChange,
-  onBackToSearchResults
+  onBackToSearchResults,
+  checkInDocumentTriggerData
 }: DocumentTabPanelProps) => {
   const { redactionLogAxios, axiosInstance } = useAxiosInstances();
 
@@ -220,6 +223,7 @@ export const DocumentTabPanel = ({
             onNumOfPagesDocumentChange={(x) => setNumOfDocumentPages(x)}
             searchHighlights={searchContext?.highlights}
             focusedSearchIndex={searchContext?.focusedIndex}
+            checkInDocumentTriggerData={checkInDocumentTriggerData}
           />
         </>
       )}
