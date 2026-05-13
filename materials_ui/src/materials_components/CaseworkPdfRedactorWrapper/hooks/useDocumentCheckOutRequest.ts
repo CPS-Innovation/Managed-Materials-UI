@@ -15,13 +15,13 @@ const checkOutDocumentFromAxiosInstance = async (p: {
 }) => {
   try {
     const response = await p.axiosInstance.post(
-      `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.versionId}/checkout`,
+      `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.versionId}/checkout`
     );
 
     return { success: true, data: { response } } as const;
   } catch (error: unknown) {
     const schema = z.object({
-      response: z.object({ data: z.object({ detail: z.string() }) }),
+      response: z.object({ data: z.object({ detail: z.string() }) })
     });
     const parsedResp = schema.safeParse(error);
     const message = parsedResp.success
@@ -47,7 +47,7 @@ export const checkInDocumentFromAxiosInstance = async (p: {
   try {
     await p.axiosInstance.delete(
       `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.versionId}/checkout`,
-      { fetchOptions: { keepalive: true } },
+      { fetchOptions: { keepalive: true } }
     );
 
     return { success: true } as const;
@@ -61,7 +61,7 @@ export const checkInDocumentFromAxiosInstance = async (p: {
 
 export const useDocumentCheckOutRequest = ({
   caseId,
-  urn,
+  urn
 }: UseDocumentCheckoutOptions) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const axiosInstance = useAxiosInstance();
@@ -79,7 +79,7 @@ export const useDocumentCheckOutRequest = ({
       axiosInstance,
       urn,
       caseId,
-      ...fnProps,
+      ...fnProps
     });
     setIsLoading(false);
 
@@ -99,7 +99,7 @@ export const useDocumentCheckOutRequest = ({
       axiosInstance,
       urn,
       caseId,
-      ...fnProps,
+      ...fnProps
     });
     setIsLoading(false);
 
