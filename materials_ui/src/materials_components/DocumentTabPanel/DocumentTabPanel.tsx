@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   getLookups,
   getPdfFiles,
-  useAxiosInstances
+  useAxiosInstances,
 } from '../../caseWorkApp/components/utils/getData';
 import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
 import { Banner } from '../../components';
@@ -15,6 +15,7 @@ import { TRedactionType } from '../PdfRedactor/PdfRedactionTypeForm';
 import { TRedaction } from '../PdfRedactor/utils/coordUtils';
 import { TMode } from '../PdfRedactor/utils/modeUtils';
 import type { TSearchHighlight } from '../PdfRedactor/utils/searchHighlightUtils';
+import { TTriggerData } from '../PdfRedactor/utils/useTriggger';
 import { RedactionLogModal } from '../RedactionLog/RedactionLogModal';
 
 export type DocSearchContext = {
@@ -47,6 +48,7 @@ export type DocumentTabPanelProps = {
   searchContext?: DocSearchContext;
   onFocusedSearchIndexChange?: (index: number) => void;
   onBackToSearchResults?: () => void;
+  checkInDocumentTriggerData: TTriggerData;
 };
 
 export const DocumentTabPanel = ({
@@ -64,7 +66,8 @@ export const DocumentTabPanel = ({
   onRedactionLogClick,
   searchContext,
   onFocusedSearchIndexChange,
-  onBackToSearchResults
+  onBackToSearchResults,
+  checkInDocumentTriggerData,
 }: DocumentTabPanelProps) => {
   const { redactionLogAxios, axiosInstance } = useAxiosInstances();
 
@@ -91,7 +94,7 @@ export const DocumentTabPanel = ({
           urn,
           caseId,
           documentId,
-          versionId
+          versionId,
         });
 
         if (blob instanceof Blob) {
@@ -104,7 +107,7 @@ export const DocumentTabPanel = ({
         }
       } catch (e) {
         setStatusCode(
-          axios.isAxiosError(e) ? (e.response?.status ?? null) : null
+          axios.isAxiosError(e) ? (e.response?.status ?? null) : null,
         );
         setStatus('error');
       }
@@ -186,16 +189,16 @@ export const DocumentTabPanel = ({
                     focusedIndex: searchContext.focusedIndex,
                     onPrev: () =>
                       onFocusedSearchIndexChange?.(
-                        Math.max(0, searchContext.focusedIndex - 1)
+                        Math.max(0, searchContext.focusedIndex - 1),
                       ),
                     onNext: () =>
                       onFocusedSearchIndexChange?.(
                         Math.min(
                           searchContext.highlights.length - 1,
-                          searchContext.focusedIndex + 1
-                        )
+                          searchContext.focusedIndex + 1,
+                        ),
                       ),
-                    onBackToSearchResults: () => onBackToSearchResults?.()
+                    onBackToSearchResults: () => onBackToSearchResults?.(),
                   }
                 : undefined
             }
@@ -220,6 +223,7 @@ export const DocumentTabPanel = ({
             onNumOfPagesDocumentChange={(x) => setNumOfDocumentPages(x)}
             searchHighlights={searchContext?.highlights}
             focusedSearchIndex={searchContext?.focusedIndex}
+            checkInDocumentTriggerData={checkInDocumentTriggerData}
           />
         </>
       )}

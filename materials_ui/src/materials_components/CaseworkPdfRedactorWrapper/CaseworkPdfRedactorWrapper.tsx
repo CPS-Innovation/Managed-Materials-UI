@@ -9,7 +9,7 @@ import { PdfRedactorMiniModal } from '../PdfRedactor/modals/PdfRedactorMiniModal
 import { DeletionReasonForm } from '../PdfRedactor/PdfDeletionReasonForm';
 import {
   RedactionDetailsForm,
-  TRedactionType
+  TRedactionType,
 } from '../PdfRedactor/PdfRedactionTypeForm';
 import { PdfRedactor } from '../PdfRedactor/PdfRedactor';
 import { CloseIcon } from '../PdfRedactor/PdfRedactorComponents';
@@ -19,14 +19,18 @@ import { TIndexedDeletion } from '../PdfRedactor/utils/deletionUtils';
 import { TMode } from '../PdfRedactor/utils/modeUtils';
 import {
   TIndexedRotation,
-  TRotation
+  TRotation,
 } from '../PdfRedactor/utils/rotationUtils';
 import type { TSearchHighlight } from '../PdfRedactor/utils/searchHighlightUtils';
+import {
+  TTriggerData,
+  useTriggerListener,
+} from '../PdfRedactor/utils/useTriggger';
 import { useWindowMouseListener } from '../PdfRedactor/utils/useWindowMouseListener';
 import { useDocumentCheckOutRequest } from './hooks/useDocumentCheckOutRequest';
 import {
   combineDeletionsWithDeletionDetails,
-  TDeletionDetail
+  TDeletionDetail,
 } from './utils/combineRedactionsDeletions';
 import { saveDeletions } from './utils/saveDeletionsUtils';
 import { saveRedactions } from './utils/saveRedactionsUtils';
@@ -42,10 +46,10 @@ const presentationWriteFlagToRedactionDisabledMessageMap: {
   OriginalFileTypeNotAllowed: 'Redaction is not supported for this file type.',
   IsDispatched: 'This is a dispatched document.',
   IsPageRotationModeOn:
-    'Redaction is unavailable in page rotation mode, please turn off page rotation to continue with redaction.'
+    'Redaction is unavailable in page rotation mode, please turn off page rotation to continue with redaction.',
 };
 const getDocumentRedactionDisabledMessage = (
-  doc: TDocument | null | undefined
+  doc: TDocument | null | undefined,
 ) => {
   const writePresentationFlag = doc?.presentationFlags?.write;
   if (!writePresentationFlag) return null;
@@ -83,6 +87,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
   onNumOfPagesDocumentChange: (x: number) => void;
   searchHighlights?: TSearchHighlight[];
   focusedSearchIndex?: number;
+  checkInDocumentTriggerData: TTriggerData;
 }) => {
   const [isDocumentCheckedOut, setIsDocumentCheckedOut] = useState(false);
   const [selectedRedactionTypes, setSelectedRedactionTypes] = useState<
@@ -91,8 +96,26 @@ export const CaseworkPdfRedactorWrapper = (p: {
 
   const documentCheckOutRequest = useDocumentCheckOutRequest({
     caseId: p.caseId,
-    urn: p.urn
+    urn: p.urn,
   });
+  const checkInDocument = async () => {
+    if (!isDocumentCheckedOut) return;
+    const resp = await documentCheckOutRequest.checkIn({
+      documentId: p.documentId,
+      versionId: p.versionId,
+    });
+    if (resp.success) setIsDocumentCheckedOut(false);
+  };
+  useTriggerListener({
+    triggerData: p.checkInDocumentTriggerData,
+    fn: () => checkInDocument(),
+  });
+
+  useEffect(() => {
+    return () => {
+      checkInDocument();
+    };
+  }, []);
 
   const [redactions, setRedactions] = useState<TRedaction[]>(p.initRedactions);
   const [indexedRotation, setIndexedRotation] = useState<TIndexedRotation>({});
@@ -104,7 +127,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
     ? categoriseDocument(p.document)
     : undefined;
   const isUnredactableDocumentCategory = ['review', 'defendant'].includes(
-    documentCategory ?? ''
+    documentCategory ?? '',
   );
   const isDocumentDispatched =
     p.document?.presentationFlags?.write === 'IsDispatched';
@@ -114,7 +137,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
       .filter((del) => del.isDeleted)
       .map((del) => del.id);
     setDeletionDetails((prev) =>
-      prev.filter((detail) => deletionIds.includes(detail.deletionId))
+      prev.filter((detail) => deletionIds.includes(detail.deletionId)),
     );
   };
 
@@ -130,7 +153,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
     useState<{ message: string } | null>(null);
   const [
     documentIsUnableToBeRedactedPopupProps,
-    setDocumentIsUnableToBeRedactedPopupProps
+    setDocumentIsUnableToBeRedactedPopupProps,
   ] = useState<{ message: string } | null>(null);
   const [redactionDisabledModalProps, setRedactionDisabledModalProps] =
     useState<{ message: string } | null>(null);
@@ -157,7 +180,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
       const noRotation: TRotation = {
         id: crypto.randomUUID(),
         pageNumber,
-        rotationDegrees: 0
+        rotationDegrees: 0,
       };
       return { ...prev, [pageNumber]: noRotation };
     });
@@ -167,7 +190,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
     if (isDocumentCheckedOut) return { success: true } as const;
     const checkoutResponse = await documentCheckOutRequest.checkOut({
       documentId: p.documentId,
-      versionId: p.versionId
+      versionId: p.versionId,
     });
     setIsDocumentCheckedOut(checkoutResponse.success);
     return checkoutResponse;
@@ -346,12 +369,12 @@ export const CaseworkPdfRedactorWrapper = (p: {
 
           const checkoutResponsePromise = checkCheckoutStatus();
           const redactionDisabledMessage = getDocumentRedactionDisabledMessage(
-            p.document
+            p.document,
           );
           if (redactionDisabledMessage) {
             removeRedactions(add.map((x) => x.id));
             setRedactionDisabledModalProps({
-              message: redactionDisabledMessage
+              message: redactionDisabledMessage,
             });
             return;
           }
@@ -359,7 +382,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
           if (!checkoutResponse.success) {
             removeRedactions(add.map((x) => x.id));
             const message = createCheckoutMessageFromCheckoutResponse({
-              message: checkoutResponse.message
+              message: checkoutResponse.message,
             });
             setDocumentIsCheckedOutPopupProps({ message });
             return;
@@ -371,7 +394,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
             redactionIds: add.map((x) => x.id),
             documentId: 'This document does not exist',
             urn: 'This URN does not exist',
-            caseId: 'This case does not exist'
+            caseId: 'This case does not exist',
           }));
         }}
         onRemoveRedactions={() => {}}
@@ -384,14 +407,14 @@ export const CaseworkPdfRedactorWrapper = (p: {
               caseId: p.caseId,
               versionId: p.versionId,
               documentId: p.documentId,
-              redactions
+              redactions,
             });
             setRedactions([]);
             p.onRedactionSaveStatusChange('saved');
             if (p.document) p.onModification(p.document);
             await documentCheckOutRequest.checkIn({
               documentId: p.documentId,
-              versionId: p.versionId
+              versionId: p.versionId,
             });
           } catch (error) {
             console.error('Failed to save redactions:', error);
@@ -404,7 +427,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
           p.onShowRedactionLogModal({
             mode: 'list',
             redactions,
-            selectedRedactionTypes
+            selectedRedactionTypes,
           });
         }}
         indexedRotation={indexedRotation}
@@ -417,7 +440,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
           unrotatePage(newRotation.pageNumber);
 
           const message = createCheckoutMessageFromCheckoutResponse({
-            message: checkoutResponse.message
+            message: checkoutResponse.message,
           });
           setDocumentIsCheckedOutPopupProps({ message });
         }}
@@ -431,7 +454,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
             undeletePage(add.pageNumber);
 
             const message = createCheckoutMessageFromCheckoutResponse({
-              message: checkoutResponse.message
+              message: checkoutResponse.message,
             });
             setDocumentIsCheckedOutPopupProps({ message });
             return;
@@ -439,7 +462,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
 
           const newDeletionDetails = {
             deletionId: add.id,
-            randomId: `This deletion does ${crypto.randomUUID()}`
+            randomId: `This deletion does ${crypto.randomUUID()}`,
           };
           setDeletionDetails((prev) => [...prev, newDeletionDetails]);
           setDeleteReasonPopupProps(() => ({
@@ -448,14 +471,14 @@ export const CaseworkPdfRedactorWrapper = (p: {
             pageNumber: add.pageNumber,
             documentId: 'This document does not exist',
             urn: 'This URN does not exist',
-            caseId: 'This case does not exist'
+            caseId: 'This case does not exist',
           }));
         }}
         onDeletionRemove={() => {}}
         onSaveDeletions={async () => {
           combineDeletionsWithDeletionDetails({
             deletions: Object.values(indexedDeletion),
-            deletionDetails
+            deletionDetails,
           });
 
           await saveDeletions({
@@ -464,12 +487,12 @@ export const CaseworkPdfRedactorWrapper = (p: {
             caseId: p.caseId,
             versionId: p.versionId,
             documentId: p.documentId,
-            deletions: Object.values(indexedDeletion)
+            deletions: Object.values(indexedDeletion),
           });
           if (p.document) p.onModification(p.document);
           await documentCheckOutRequest.checkIn({
             documentId: p.documentId,
-            versionId: p.versionId
+            versionId: p.versionId,
           });
         }}
         onSaveRotations={async () => {
@@ -479,12 +502,12 @@ export const CaseworkPdfRedactorWrapper = (p: {
             caseId: p.caseId,
             versionId: p.versionId,
             documentId: p.documentId,
-            rotations: Object.values(indexedRotation)
+            rotations: Object.values(indexedRotation),
           });
           if (p.document) p.onModification(p.document);
           await documentCheckOutRequest.checkIn({
             documentId: p.documentId,
-            versionId: p.versionId
+            versionId: p.versionId,
           });
         }}
         initRedactions={p.initRedactions}

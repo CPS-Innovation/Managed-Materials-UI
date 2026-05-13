@@ -5,7 +5,7 @@ import {
   Layout,
   LoadingSpinner,
   RenameDrawer,
-  TwoCol
+  TwoCol,
 } from '../../../components';
 import { useCaseInfoStore } from '../../../hooks';
 import { navigateToViewDocumentPageInNewTab } from '../../../hooks/ui/navigateToViewDocumentPageInNewTab';
@@ -15,11 +15,11 @@ import { TDocument } from '../../../materials_components/DocumentSelectAccordion
 import {
   clearOpenDocumentTabsFromLocalStorage,
   safeGetOpenDocumentTabsFromLocalStorage,
-  safeSetOpenDocumentTabsFromLocalStorage
+  safeSetOpenDocumentTabsFromLocalStorage,
 } from '../../../materials_components/DocumentSelectAccordion/utils/OpenDocumentTabsLocalStorageUtils';
 import {
   DocSearchContext,
-  DocumentTabPanel
+  DocumentTabPanel,
 } from '../../../materials_components/DocumentTabPanel/DocumentTabPanel';
 import { TRedaction } from '../../../materials_components/PdfRedactor/utils/coordUtils';
 import { TMode } from '../../../materials_components/PdfRedactor/utils/modeUtils';
@@ -40,7 +40,7 @@ export const ReviewAndRedactPage = () => {
     docType: docTypeParam,
     materialId: materialIdParam,
     searchTerm: searchTermParam,
-    searchMatches: searchMatchesParam
+    searchMatches: searchMatchesParam,
   } = (locationState || {}) as {
     docType?: string;
     materialId?: string;
@@ -66,6 +66,7 @@ export const ReviewAndRedactPage = () => {
   >({});
 
   const reloadSidebarTrigger = useTrigger();
+  const checkInDocumentTrigger = useTrigger();
   useSwitchContentArea();
 
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
@@ -92,18 +93,7 @@ export const ReviewAndRedactPage = () => {
   }, [documents]);
 
   useEffect(() => {
-    const onBeforeUnload = () => {
-      documentsRef.current?.forEach((document) => {
-        if (document && caseId && urn)
-          checkInDocumentFromAxiosInstance({
-            axiosInstance,
-            caseId,
-            urn,
-            documentId: document.documentId,
-            versionId: document.versionId
-          });
-      });
-    };
+    const onBeforeUnload = async () => checkInDocumentTrigger.fire();
 
     window.addEventListener('beforeunload', onBeforeUnload);
     return () => window.removeEventListener('beforeunload', onBeforeUnload);
@@ -131,7 +121,7 @@ export const ReviewAndRedactPage = () => {
       safeSetOpenDocumentTabsFromLocalStorage({
         caseId,
         openDocumentIds,
-        activeDocumentId
+        activeDocumentId,
       });
     }
   }, [caseId, openDocumentIds, activeDocumentId]);
@@ -142,7 +132,7 @@ export const ReviewAndRedactPage = () => {
       setOpenDocumentIds((openedDocumentIds) =>
         openedDocumentIds.includes(`${materialIdParam}`)
           ? openedDocumentIds
-          : [...openedDocumentIds, `${materialIdParam}`]
+          : [...openedDocumentIds, `${materialIdParam}`],
       );
 
       if (searchTermParam && searchMatchesParam) {
@@ -152,8 +142,8 @@ export const ReviewAndRedactPage = () => {
           [materialIdParam]: {
             searchTerm: searchTermParam,
             highlights,
-            focusedIndex: 0
-          }
+            focusedIndex: 0,
+          },
         }));
       }
 
@@ -174,7 +164,7 @@ export const ReviewAndRedactPage = () => {
       const filteredDocs = documents.filter(
         (doc) =>
           doc.cmsDocType.documentType === docTypeParam &&
-          !openDocumentIds.includes(doc.documentId)
+          !openDocumentIds.includes(doc.documentId),
       );
 
       if (filteredDocs.length) {
@@ -182,7 +172,7 @@ export const ReviewAndRedactPage = () => {
         if (newActiveDocId) setActiveDocumentId(newActiveDocId);
         setOpenDocumentIds((prev) => [
           ...prev,
-          ...filteredDocs.map((doc) => doc.documentId)
+          ...filteredDocs.map((doc) => doc.documentId),
         ]);
       }
     }
@@ -214,7 +204,7 @@ export const ReviewAndRedactPage = () => {
           onRedactionsChange={(redactions) => {
             setRedactionsIndexedOnDocId((prev) => ({
               ...prev,
-              [doc.documentId]: redactions
+              [doc.documentId]: redactions,
             }));
           }}
           onModification={(document) => {
@@ -227,7 +217,7 @@ export const ReviewAndRedactPage = () => {
             navigateToViewDocumentPageInNewTab({
               urn,
               caseId,
-              materialId: doc.documentId
+              materialId: doc.documentId,
             });
           }}
           onRedactionLogClick={() => setShowRedactionLogModal(true)}
@@ -236,9 +226,10 @@ export const ReviewAndRedactPage = () => {
             setFocusedSearchIndex(doc.documentId, index)
           }
           onBackToSearchResults={() => setSearchModalOpen(true)}
+          checkInDocumentTriggerData={checkInDocumentTrigger.data}
         />
-      )
-    }
+      ),
+    },
   }));
 
   const performCloseTab = (documentId: string | undefined) => {
@@ -249,7 +240,7 @@ export const ReviewAndRedactPage = () => {
         caseId,
         urn,
         documentId: document.documentId,
-        versionId: document.versionId
+        versionId: document.versionId,
       });
     }
     if (documentId && documentId === activeDocumentId) {
@@ -272,7 +263,7 @@ export const ReviewAndRedactPage = () => {
   const activeTabId = activeDocumentId || openDocumentIds[0] || '';
 
   const activeDocument = openDocuments.find(
-    (doc) => doc.documentId === activeTabId
+    (doc) => doc.documentId === activeTabId,
   );
 
   useEffect(() => {
@@ -288,7 +279,7 @@ export const ReviewAndRedactPage = () => {
       title="Review and Redact"
       shouldBlockNavigationCheck={(tab) => {
         const shouldBlock = Object.values(redactionsIndexedOnDocId).some(
-          (redacts) => redacts.length > 0
+          (redacts) => redacts.length > 0,
         );
         if (!shouldBlock) return false;
 
