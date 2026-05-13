@@ -88,13 +88,13 @@ export const RedactionDetailsForm = (p: {
         >
           Redact
         </GovUkButton>
-        {p.highlightedText && Math.random() > 1 && (
+        {/* {p.highlightedText && (
           <GovUkButton
             onClick={() => navigator.clipboard.writeText(p.highlightedText!)}
           >
             Copy
           </GovUkButton>
-        )}
+        )} */}
       </div>
     </div>
   );
