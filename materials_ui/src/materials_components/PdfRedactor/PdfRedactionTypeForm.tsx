@@ -60,6 +60,7 @@ export const RedactionDetailsForm = (p: {
   documentId: string;
   urn: string;
   caseId: string;
+  highlightedText: string | undefined;
   onRedactionTypeChange?: (x: TRedactionType | undefined) => void;
   onCancelClick: () => void;
   onSaveSuccess: () => void;
@@ -87,6 +88,13 @@ export const RedactionDetailsForm = (p: {
         >
           Redact
         </GovUkButton>
+        {p.highlightedText && Math.random() > 1 && (
+          <GovUkButton
+            onClick={() => navigator.clipboard.writeText(p.highlightedText!)}
+          >
+            Copy
+          </GovUkButton>
+        )}
       </div>
     </div>
   );

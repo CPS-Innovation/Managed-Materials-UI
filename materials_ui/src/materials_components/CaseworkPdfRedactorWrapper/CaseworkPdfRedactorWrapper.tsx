@@ -144,10 +144,13 @@ export const CaseworkPdfRedactorWrapper = (p: {
   useEffect(() => cleanupDeletionDetails(), [indexedDeletion]);
   useEffect(() => p.onRedactionsChange(redactions), [redactions]);
 
-  const [redactionPopupProps, setRedactionPopupProps] = useState<Omit<
-    ComponentProps<typeof RedactionDetailsForm> & TCoord,
-    'onSaveSuccess' | 'onCancelClick'
-  > | null>(null);
+  const [redactionPopupProps, setRedactionPopupProps] = useState<
+    | (Omit<
+        ComponentProps<typeof RedactionDetailsForm> & TCoord,
+        'onSaveSuccess' | 'onCancelClick'
+      > & { highlightedText?: string })
+    | null
+  >(null);
 
   const [documentIsCheckedOutPopupProps, setDocumentIsCheckedOutPopupProps] =
     useState<{ message: string } | null>(null);
@@ -285,6 +288,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
                 documentId={redactionPopupProps.documentId}
                 urn={redactionPopupProps.urn}
                 caseId={redactionPopupProps.caseId}
+                highlightedText={redactionPopupProps.highlightedText}
                 onRedactionTypeChange={(type) => {
                   if (!type) return;
                   setSelectedRedactionTypes((prev) => {
@@ -343,7 +347,11 @@ export const CaseworkPdfRedactorWrapper = (p: {
             setSelectedRedactionTypes([]);
           }
         }}
-        onAddRedactions={async (add, triggerSource) => {
+        onAddRedactions={async ({
+          redactions: add,
+          triggerSource,
+          highlightedText
+        }) => {
           if (isUnredactableDocumentCategory || isDocumentDispatched) {
             removeRedactions(add.map((x) => x.id));
             const message = (() => {
@@ -394,7 +402,8 @@ export const CaseworkPdfRedactorWrapper = (p: {
             redactionIds: add.map((x) => x.id),
             documentId: 'This document does not exist',
             urn: 'This URN does not exist',
-            caseId: 'This case does not exist'
+            caseId: 'This case does not exist',
+            highlightedText
           }));
         }}
         onRemoveRedactions={() => {}}
