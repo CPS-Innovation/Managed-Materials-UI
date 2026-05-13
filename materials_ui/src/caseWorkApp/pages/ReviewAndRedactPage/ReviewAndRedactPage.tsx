@@ -169,6 +169,15 @@ export const ReviewAndRedactPage = () => {
     });
   };
 
+  const clearSearchContextForDoc = (docId: string) => {
+    setSearchContextByDocId((prev) => {
+      if (!(docId in prev)) return prev;
+      const next = { ...prev };
+      delete next[docId];
+      return next;
+    });
+  };
+
   useEffect(() => {
     if (docTypeParam && documents && documents.length > 0) {
       const filteredDocs = documents.filter(
@@ -259,16 +268,7 @@ export const ReviewAndRedactPage = () => {
       setActiveDocumentId(nextDocumentId);
     }
     setOpenDocumentIds((prev) => prev.filter((id) => id !== documentId));
-    if (documentId) {
-      setSearchContextByDocId((prev) => {
-        if (!(documentId in prev)) {
-          return prev;
-        }
-        const next = { ...prev };
-        delete next[documentId];
-        return next;
-      });
-    }
+    if (documentId) clearSearchContextForDoc(documentId);
   };
 
   const handleCloseTab = (documentId: string | undefined) => {
