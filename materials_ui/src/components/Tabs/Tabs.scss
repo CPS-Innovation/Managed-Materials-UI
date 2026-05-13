@@ -1,3 +1,5 @@
+@import 'govuk-frontend/dist/govuk/base';
+
 .govuk-frontend-supported .govuk-tabs__panel {
   border: none !important;
 }
@@ -8,3 +10,14 @@
   cursor: pointer;
   font-size: 19px;
 }
+
+@media (max-width: 1024px) {
+  .govuk-tabs__list-item {
+    display: block;
+    text-align: left;
+  }
+  .govuk-tabs__list-item--selected .govuk-tabs__tab {
+    font-weight: bold;
+  }
+}
+
