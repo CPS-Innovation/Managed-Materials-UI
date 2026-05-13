@@ -213,10 +213,11 @@ export const PdfRedactor = (p: {
   mode: TMode;
   onModeChange: (x: TMode) => void;
   onRedactionsChange: (redactions: TRedaction[]) => void;
-  onAddRedactions: (
-    redactions: TRedaction[],
-    triggerSource?: 'mouse' | 'keyboard'
-  ) => void;
+  onAddRedactions: (p: {
+    redactions: TRedaction[];
+    triggerSource?: 'mouse' | 'keyboard';
+    highlightedText: string | undefined;
+  }) => void;
   onRemoveRedactions: (redactionIds: string[]) => void;
   onSaveRedactions: () => Promise<void>;
   onSaveDeletions: () => Promise<void>;
@@ -498,7 +499,11 @@ export const PdfRedactor = (p: {
                 onPageRedactionsChange={() => {}}
                 onAddRedactions={(x) => {
                   p.onRedactionsChange([...p.redactions, ...x]);
-                  p.onAddRedactions(x, triggerSourceRef.current);
+                  p.onAddRedactions({
+                    redactions: x,
+                    triggerSource: triggerSourceRef.current,
+                    highlightedText: window.getSelection()?.toString()
+                  });
                 }}
                 onRemoveRedactions={(ids) => {
                   p.onRedactionsChange(
