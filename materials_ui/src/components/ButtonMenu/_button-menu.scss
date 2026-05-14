@@ -1,3 +1,5 @@
+@import '../../styles/accessibility';
+
 /* ==========================================================================
    #COLOURS
    ========================================================================== */
@@ -65,6 +67,11 @@ $govuk-focus-text-colour: rgb(255, 255, 255);
 
   &--right {
     right: 0;
+  }
+
+  @include at-a11y-zoom-breapoint {
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
   }
 }
 
@@ -148,4 +155,3 @@ $govuk-focus-text-colour: rgb(255, 255, 255);
     box-shadow: 0 2px 0 $govuk-focus-text-colour;
   }
 }
-

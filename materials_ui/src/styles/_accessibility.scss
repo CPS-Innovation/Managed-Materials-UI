@@ -1,0 +1,6 @@
+@mixin at-a11y-zoom-breapoint {
+  @media (max-width: 40em) {
+    @content;
+  }
+}
+

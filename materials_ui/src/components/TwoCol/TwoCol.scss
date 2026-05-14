@@ -1,3 +1,5 @@
+@import '../../styles/accessibility';
+
 .two-col {
   display: flex;
   gap: 30px;
@@ -14,4 +16,15 @@
 .two-col__content {
   min-width: 0;
   width: 100%;
+}
+
+@include at-a11y-zoom-breapoint {
+  .two-col {
+    flex-direction: column;
+  }
+
+  .two-col__sidebar {
+    flex: 0 0 auto;
+    min-width: 0;
+  }
 }
