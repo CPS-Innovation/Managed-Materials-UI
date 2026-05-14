@@ -1,3 +1,5 @@
+@import '../../styles/accessibility';
+
 .drawer-container {
   position: fixed;
   top: 0;
@@ -10,7 +12,7 @@
   box-shadow: 5px 0px 4px 0px #00000040;
   height: 100%;
 
-  @media (max-width: 40em) {
+  @include at-a11y-zoom-breapoint {
     overflow-y: auto;
   }
 }

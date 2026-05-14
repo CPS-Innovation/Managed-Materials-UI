@@ -1,3 +1,5 @@
+@import '../../styles/accessibility';
+
 .two-col {
   display: flex;
   gap: 30px;
@@ -16,7 +18,7 @@
   width: 100%;
 }
 
-@media (max-width: 40em) {
+@include at-a11y-zoom-breapoint {
   .two-col {
     flex-direction: column;
   }

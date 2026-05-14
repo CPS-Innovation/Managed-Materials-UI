@@ -1,0 +1,16 @@
+// At high browser zoom levels (~200%–400%) the effective CSS viewport
+// becomes narrow enough that several layout-style components squash or
+// clip their content. Below this width those components reflow or
+// constrain themselves so the page stays usable.
+//
+// 40em (640px at the default font size) sits just below GOV.UK's tablet
+// breakpoint, and using em rather than px means the threshold scales with
+// the user's browser font-size preference.
+//
+// Aligns with WCAG 1.4.10 Reflow.
+@mixin at-a11y-zoom-breapoint {
+  @media (max-width: 40em) {
+    @content;
+  }
+}
+
