@@ -9,6 +9,10 @@
   color: black;
   box-shadow: 5px 0px 4px 0px #00000040;
   height: 100%;
+
+  @media (max-width: 40em) {
+    overflow-y: auto;
+  }
 }
 
 .drawer-header {

@@ -15,3 +15,14 @@
   min-width: 0;
   width: 100%;
 }
+
+@media (max-width: 40em) {
+  .two-col {
+    flex-direction: column;
+  }
+
+  .two-col__sidebar {
+    flex: 0 0 auto;
+    min-width: 0;
+  }
+}
