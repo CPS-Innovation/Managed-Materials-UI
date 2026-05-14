@@ -66,6 +66,7 @@ export const ReviewAndRedactPage = () => {
   >({});
 
   const reloadSidebarTrigger = useTrigger();
+  const checkInDocumentTrigger = useTrigger();
   useSwitchContentArea();
 
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
@@ -92,18 +93,7 @@ export const ReviewAndRedactPage = () => {
   }, [documents]);
 
   useEffect(() => {
-    const onBeforeUnload = () => {
-      documentsRef.current?.forEach((document) => {
-        if (document && caseId && urn)
-          checkInDocumentFromAxiosInstance({
-            axiosInstance,
-            caseId,
-            urn,
-            documentId: document.documentId,
-            versionId: document.versionId
-          });
-      });
-    };
+    const onBeforeUnload = async () => checkInDocumentTrigger.fire();
 
     window.addEventListener('beforeunload', onBeforeUnload);
     return () => window.removeEventListener('beforeunload', onBeforeUnload);
@@ -166,6 +156,15 @@ export const ReviewAndRedactPage = () => {
       const ctx = prev[docId];
       if (!ctx) return prev;
       return { ...prev, [docId]: { ...ctx, focusedIndex: index } };
+    });
+  };
+
+  const clearSearchContextForDoc = (docId: string) => {
+    setSearchContextByDocId((prev) => {
+      if (!(docId in prev)) return prev;
+      const next = { ...prev };
+      delete next[docId];
+      return next;
     });
   };
 
@@ -236,6 +235,7 @@ export const ReviewAndRedactPage = () => {
             setFocusedSearchIndex(doc.documentId, index)
           }
           onBackToSearchResults={() => setSearchModalOpen(true)}
+          checkInDocumentTriggerData={checkInDocumentTrigger.data}
         />
       )
     }
@@ -259,6 +259,7 @@ export const ReviewAndRedactPage = () => {
       setActiveDocumentId(nextDocumentId);
     }
     setOpenDocumentIds((prev) => prev.filter((id) => id !== documentId));
+    if (documentId) clearSearchContextForDoc(documentId);
   };
 
   const handleCloseTab = (documentId: string | undefined) => {

@@ -22,6 +22,10 @@ import {
   TRotation
 } from '../PdfRedactor/utils/rotationUtils';
 import type { TSearchHighlight } from '../PdfRedactor/utils/searchHighlightUtils';
+import {
+  TTriggerData,
+  useTriggerListener
+} from '../PdfRedactor/utils/useTriggger';
 import { useWindowMouseListener } from '../PdfRedactor/utils/useWindowMouseListener';
 import { useDocumentCheckOutRequest } from './hooks/useDocumentCheckOutRequest';
 import {
@@ -83,6 +87,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
   onNumOfPagesDocumentChange: (x: number) => void;
   searchHighlights?: TSearchHighlight[];
   focusedSearchIndex?: number;
+  checkInDocumentTriggerData: TTriggerData;
 }) => {
   const [isDocumentCheckedOut, setIsDocumentCheckedOut] = useState(false);
   const [selectedRedactionTypes, setSelectedRedactionTypes] = useState<
@@ -93,6 +98,24 @@ export const CaseworkPdfRedactorWrapper = (p: {
     caseId: p.caseId,
     urn: p.urn
   });
+  const checkInDocument = async () => {
+    if (!isDocumentCheckedOut) return;
+    const resp = await documentCheckOutRequest.checkIn({
+      documentId: p.documentId,
+      versionId: p.versionId
+    });
+    if (resp.success) setIsDocumentCheckedOut(false);
+  };
+  useTriggerListener({
+    triggerData: p.checkInDocumentTriggerData,
+    fn: () => checkInDocument()
+  });
+
+  useEffect(() => {
+    return () => {
+      checkInDocument();
+    };
+  }, []);
 
   const [redactions, setRedactions] = useState<TRedaction[]>(p.initRedactions);
   const [indexedRotation, setIndexedRotation] = useState<TIndexedRotation>({});
@@ -121,10 +144,13 @@ export const CaseworkPdfRedactorWrapper = (p: {
   useEffect(() => cleanupDeletionDetails(), [indexedDeletion]);
   useEffect(() => p.onRedactionsChange(redactions), [redactions]);
 
-  const [redactionPopupProps, setRedactionPopupProps] = useState<Omit<
-    ComponentProps<typeof RedactionDetailsForm> & TCoord,
-    'onSaveSuccess' | 'onCancelClick'
-  > | null>(null);
+  const [redactionPopupProps, setRedactionPopupProps] = useState<
+    | (Omit<
+        ComponentProps<typeof RedactionDetailsForm> & TCoord,
+        'onSaveSuccess' | 'onCancelClick'
+      > & { highlightedText?: string })
+    | null
+  >(null);
 
   const [documentIsCheckedOutPopupProps, setDocumentIsCheckedOutPopupProps] =
     useState<{ action: string; message: string } | null>(null);
@@ -262,6 +288,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
                 documentId={redactionPopupProps.documentId}
                 urn={redactionPopupProps.urn}
                 caseId={redactionPopupProps.caseId}
+                highlightedText={redactionPopupProps.highlightedText}
                 onRedactionTypeChange={(type) => {
                   if (!type) return;
                   setSelectedRedactionTypes((prev) => {
@@ -320,7 +347,11 @@ export const CaseworkPdfRedactorWrapper = (p: {
             setSelectedRedactionTypes([]);
           }
         }}
-        onAddRedactions={async (add, triggerSource) => {
+        onAddRedactions={async ({
+          redactions: add,
+          triggerSource,
+          highlightedText
+        }) => {
           if (isUnredactableDocumentCategory || isDocumentDispatched) {
             removeRedactions(add.map((x) => x.id));
             const message = (() => {
@@ -372,7 +403,8 @@ export const CaseworkPdfRedactorWrapper = (p: {
             redactionIds: add.map((x) => x.id),
             documentId: 'This document does not exist',
             urn: 'This URN does not exist',
-            caseId: 'This case does not exist'
+            caseId: 'This case does not exist',
+            highlightedText
           }));
         }}
         onRemoveRedactions={() => {}}

@@ -6,27 +6,28 @@ import { mockPcdReviewInitialDataResponse } from '../mocks/pcd/mockPcdReviewInit
 
 test.describe('PCD Review', () => {
   test('T-001: page loads Initial Review and displays all main sections', async ({
-    page
+    page,
   }) => {
     await mockRoute(
       page,
       'cases/2167259/history',
-      mockPcdReviewHistoryDataResponse()
+      mockPcdReviewHistoryDataResponse(),
     );
     await mockRoute(
       page,
       'cases/2167259/history/4380514/initial-review',
-      mockPcdReviewInitialDataResponse()
+      mockPcdReviewInitialDataResponse(),
     );
     await mockRoute(
       page,
       'cases/2167259/history/4380522/pre-charge-decision',
-      mockPcdReviewReviewDataResponse()
+      mockPcdReviewReviewDataResponse(),
     );
 
     await page.goto('./pcd-review', { waitUntil: 'domcontentloaded' });
+    await page.waitForRequest('**/case-info/2167259');
     await expect(
-      page.getByRole('heading', { name: 'Loading case', includeHidden: true })
+      page.getByRole('heading', { name: 'Loading case', includeHidden: true }),
     ).toBeVisible();
     await page
       .getByRole('heading', { name: 'Loading case', includeHidden: true })
@@ -34,29 +35,29 @@ test.describe('PCD Review', () => {
 
     // Main headings
     await expect(
-      page.getByRole('heading', { name: 'Initial Review' })
+      page.getByRole('heading', { name: 'Initial Review' }),
     ).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: 'Case Headline ' })
+      page.getByRole('heading', { name: 'Case Headline ' }),
     ).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: 'Charging Decision & Advice' })
+      page.getByRole('heading', { name: 'Charging Decision & Advice' }),
     ).toBeVisible();
     await expect(
       page.getByRole('heading', {
-        name: 'Further action agreed for codes A, B, B2, H, I, J'
-      })
+        name: 'Further action agreed for codes A, B, B2, H, I, J',
+      }),
     ).toBeVisible();
 
     // Table headings
     await expect(
-      page.getByRole('columnheader', { name: 'Suspect' })
+      page.getByRole('columnheader', { name: 'Suspect' }),
     ).toBeVisible();
     await expect(
-      page.getByRole('columnheader', { name: 'Charging code' })
+      page.getByRole('columnheader', { name: 'Charging code' }),
     ).toBeVisible();
     await expect(
-      page.getByRole('columnheader', { name: 'Advice' })
+      page.getByRole('columnheader', { name: 'Advice' }),
     ).toBeVisible();
     // Definition list items
     await expect(page.getByText('Review type:')).toBeVisible();
@@ -68,39 +69,41 @@ test.describe('PCD Review', () => {
   });
 
   test('T-002: should show error message when server returns 401', async ({
-    page
+    page,
   }) => {
     mockServerError(page, 'cases/2167259/history');
     mockServerError(page, 'cases/2167259/history/initial-review');
     mockServerError(page, 'cases/2167259/history/2167259/pre-charge-decision');
 
     await page.goto('./pcd-review', { waitUntil: 'domcontentloaded' });
+    await page.waitForRequest('**/case-info/2167259');
     await expect(
-      page.getByRole('heading', { name: 'Loading case', includeHidden: true })
+      page.getByRole('heading', { name: 'Loading case', includeHidden: true }),
     ).toBeVisible();
     await page
       .getByRole('heading', { name: 'Loading case', includeHidden: true })
       .waitFor({ state: 'detached' });
     await expect(
-      page.getByRole('heading', { name: 'Authentication Error' })
+      page.getByRole('heading', { name: 'Authentication Error' }),
     ).toBeVisible();
   });
 
   test('T-003: Review has not been completed message shown if no data is returned', async ({
-    page
+    page,
   }) => {
     await mockRoute(page, 'cases/2167259/history', []);
     await mockRoute(page, 'cases/2167259/history/initial-review', {});
 
     await page.goto('./pcd-review', { waitUntil: 'domcontentloaded' });
+    await page.waitForRequest('**/case-info/2167259');
     await expect(
-      page.getByRole('heading', { name: 'Loading case', includeHidden: true })
+      page.getByRole('heading', { name: 'Loading case', includeHidden: true }),
     ).toBeVisible();
     await page
       .getByRole('heading', { name: 'Loading case', includeHidden: true })
       .waitFor({ state: 'detached' });
     await expect(
-      page.getByText('A Review has not yet been completed for this case.')
+      page.getByText('A Review has not yet been completed for this case.'),
     ).toBeVisible();
   });
 });

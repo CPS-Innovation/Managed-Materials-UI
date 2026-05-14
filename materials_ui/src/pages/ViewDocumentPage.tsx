@@ -18,14 +18,12 @@ const LoadAndViewPdf = (p: {
   const [numPages, setNumPages] = useState<number>();
 
   return (
-    <div>
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
       {pdfUrl === undefined && (
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <LoadingSpinner isLoading={true} textContent="Fetching document" />
-        </div>
+        <LoadingSpinner isLoading={true} textContent="Fetching document" />
       )}
       {pdfUrl === null && (
-        <div>
+        <>
           <br />
           <GovUkBanner
             variant="info"
@@ -33,12 +31,15 @@ const LoadAndViewPdf = (p: {
             contentHeading="Unable to fetch document"
             contentBody="This could be due to an error, the wrong url or you do not have access to this document"
           />
-        </div>
+        </>
       )}
       {!!pdfUrl && (
         <Document
           file={pdfUrl}
           onLoadSuccess={(pdf) => setNumPages(pdf.numPages)}
+          loading={
+            <LoadingSpinner isLoading={true} textContent="Fetching document" />
+          }
         >
           {[...Array(numPages)].map((_, j) => (
             <Page key={j} pageNumber={j + 1} />
@@ -50,8 +51,8 @@ const LoadAndViewPdf = (p: {
 };
 
 export const ViewDocumentPage = () => {
-  const { urn, caseId, documentId } = useParams();
-  const caseIdInt = caseId ? +caseId : 0;
+  const { urn, caseId: caseIdStr, documentId } = useParams();
+  const caseId = caseIdStr ? +caseIdStr : 0;
 
   useEffect(() => {
     window.document.body.classList.add('hide-header');
@@ -63,11 +64,16 @@ export const ViewDocumentPage = () => {
     };
   }, []);
 
-  if (!!urn && !!caseId && caseIdInt > 0 && !!documentId) {
-    return (
-      <div>
-        <LoadAndViewPdf urn={urn} caseId={caseIdInt} materialId={documentId} />
-      </div>
-    );
+  if (!!urn && !!caseIdStr && caseId > 0 && !!documentId) {
+    return <LoadAndViewPdf urn={urn} caseId={caseId} materialId={documentId} />;
   }
+
+  return (
+    <GovUkBanner
+      variant="info"
+      headerTitle="Error"
+      contentHeading="Incorrect values from url"
+      contentBody="It appears that the wrong values have been passed in the url"
+    />
+  );
 };

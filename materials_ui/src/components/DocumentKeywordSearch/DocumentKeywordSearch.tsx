@@ -243,7 +243,12 @@ export const DocumentKeywordSearch = ({
               filteredResults.slice(startIndex, endIndex + 1).map((doc) => {
                 const isExpanded = expandedDocuments[doc.documentId] ?? false;
                 const first = doc.matches[0];
-                const remainingCount = doc.matches.length - 1;
+                const firstLineMatchCount =
+                  first?.words.filter((word) =>
+                    word.matchType?.includes('Exact')
+                  ).length ?? 0;
+                const remainingCount =
+                  (doc.resultsPerDocumentCount ?? 0) - firstLineMatchCount;
 
                 return (
                   <div key={doc.documentId} style={{ marginBottom: 20 }}>
@@ -261,10 +266,14 @@ export const DocumentKeywordSearch = ({
                       </Link>
                     </h2>
 
-                    <p className="govuk-body-s">
-                      Uploaded: {formatDateLong(doc.cmsFileCreatedDate)} Type{' '}
-                      {doc.cmsDocType.documentType}
+                    <p className="govuk-body-s govuk-!-margin-bottom-0">
+                      Uploaded: {formatDateLong(doc.cmsFileCreatedDate)}
                     </p>
+                    {doc.cmsDocType.documentType && (
+                      <p className="govuk-body-s">
+                        Type: {doc.cmsDocType.documentType}
+                      </p>
+                    )}
 
                     <div className="govuk-inset-text">
                       <p>

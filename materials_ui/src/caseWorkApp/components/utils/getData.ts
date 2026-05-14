@@ -15,6 +15,7 @@ export const useAxiosInstances = () => {
       );
       config.headers.Authorization = `Bearer ${accessToken}`;
       config.headers['Correlation-Id'] = crypto.randomUUID();
+      config.headers.ClientName = 'ManageMaterials';
       return config;
     });
     return instance;
@@ -67,6 +68,18 @@ export const getPdfFiles = async (p: {
       console.error(`Error getting PDF file: ${error.message}`);
     }
     throw error;
+  }
+};
+
+export const getDocumentTypeMappings = async (p: {
+  axiosInstance: AxiosInstance;
+}) => {
+  try {
+    const response = await p.axiosInstance.get('/api/polarisMappings');
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError)
+      console.error(`Error getting document type mappings: ${error.message}`);
   }
 };
 

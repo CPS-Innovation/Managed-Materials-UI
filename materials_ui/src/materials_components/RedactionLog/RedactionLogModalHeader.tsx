@@ -29,10 +29,6 @@ export const RedactionLogModalHeader = ({
     formState: { errors }
   } = useFormContext<RedactionLogFormInputs>();
 
-  const documentTypes = (lookups?.documentTypes ?? [])
-    .filter((dt) => dt.cmsDocTypeId !== '')
-    .map((dt) => ({ id: dt.cmsDocTypeId.toString(), name: dt.name }));
-
   if (errors.areasAndDivisionsId) {
     errors.areasAndDivisionsId.message =
       'Please enter valid CPS Area or Central Casework Division';
@@ -194,7 +190,7 @@ export const RedactionLogModalHeader = ({
               label="Document Type: "
               id="document-type-select"
               name={field.name}
-              options={documentTypes}
+              options={lookups?.documentTypes ?? []}
               value={field.value}
               onChange={(e) => field.onChange(e.target.value)}
             />
