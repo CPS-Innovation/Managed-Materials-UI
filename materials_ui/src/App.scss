@@ -3,21 +3,24 @@ $govuk-font-family: 'NewTransport', 'Arial', sans-serif;
 
 @import 'node_modules/govuk-frontend/dist/govuk/index';
 @import 'node_modules/home-office-kit/sass/_loadingSpinner';
+@import './styles/accessibility';
 
 @font-face {
   font-family: 'NewTransport';
-  src: local('NewTransport-RegularWEB'),
-  url('./assets/fonts/NewTransport-RegularWEB.woff') format('woff'),
-  url('./assets/fonts/NewTransport-RegularWEB.woff2') format('woff2');
+  src:
+    local('NewTransport-RegularWEB'),
+    url('./assets/fonts/NewTransport-RegularWEB.woff') format('woff'),
+    url('./assets/fonts/NewTransport-RegularWEB.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'NewTransport';
-  src: local('NewTransport-BoldWEB'),
-  url('./assets/fonts/NewTransport-BoldWEB.woff') format('woff'),
-  url('./assets/fonts/NewTransport-BoldWEB.woff2') format('woff2');
+  src:
+    local('NewTransport-BoldWEB'),
+    url('./assets/fonts/NewTransport-BoldWEB.woff') format('woff'),
+    url('./assets/fonts/NewTransport-BoldWEB.woff2') format('woff2');
   font-weight: bold;
   font-style: normal;
 }
@@ -188,6 +191,10 @@ strong {
 .search-button {
   margin-bottom: 0;
   height: 40px;
+
+  @include at-a11y-zoom-breapoint {
+    width: auto;
+  }
 }
 
 .filter-toggle-button {
@@ -579,4 +586,3 @@ strong {
     opacity: 0.6;
   }
 }
-
