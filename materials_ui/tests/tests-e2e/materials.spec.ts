@@ -3,6 +3,12 @@ import { mockRoute } from '../helpers';
 import { mockCaseMaterials } from '../mocks/mockCaseMaterials';
 
 test.describe('Materials page', () => {
+  test.beforeEach(async ({ page }) => {
+    await mockRoute(page, '/case-materials', mockCaseMaterials());
+    await page.goto('./materials', { waitUntil: 'domcontentloaded' });
+    await page.waitForRequest('**/case-info/2167259');
+  });
+
   test('T-001: page loads list of materials', async ({ page }) => {
     mockRoute(
       page,
@@ -17,18 +23,15 @@ test.describe('Materials page', () => {
     console.log(
       `Route mocked successfully for endpoint data: ${JSON.stringify(mockCaseMaterials())}`
     );
-    await page.goto('./materials', { waitUntil: 'domcontentloaded' });
-    // await page.waitForFunction('() => !window.isCaseInfoLoading');
     await expect(
       page.getByText('MG11 Shelagh  Mc Love Undated', { exact: true })
-    ).toBeVisible({ timeout: 30000 });
+    ).toBeVisible();
   });
 
   test('T-002: page shows no materials text if no materials are displayed', async ({
     page
   }) => {
     mockRoute(page, '/case-materials', []);
-    await page.goto('./materials', { waitUntil: 'domcontentloaded' });
 
     // no materials
     await page.waitForSelector('tbody'); // Ensure table exists first
@@ -48,7 +51,6 @@ test.describe('Materials page', () => {
         status: 'Used'
       })
     );
-    await page.goto('./materials', { waitUntil: 'domcontentloaded' });
 
     //used status
     await page.getByTestId('status-Used').check();
@@ -69,7 +71,6 @@ test.describe('Materials page', () => {
         status: 'Unused'
       })
     );
-    await page.goto('./materials', { waitUntil: 'domcontentloaded' });
 
     //nused status
     await page.getByTestId('status-Unused').check();
@@ -112,7 +113,6 @@ test.describe('Materials page', () => {
         category: 'Statement'
       })
     );
-    await page.goto('./materials', { waitUntil: 'domcontentloaded' });
 
     // statement
     await page.getByTestId('category-Statement').check();
@@ -132,7 +132,6 @@ test.describe('Materials page', () => {
         category: 'Exhibit'
       })
     );
-    await page.goto('./materials', { waitUntil: 'domcontentloaded' });
     // exhibit
     await page.getByTestId('category-Exhibit').check();
     await page.getByTestId('applyFiltersButton').click();
@@ -151,8 +150,6 @@ test.describe('Materials page', () => {
         category: 'Other Material'
       })
     );
-    await page.goto('./materials', { waitUntil: 'domcontentloaded' });
-
     //other material
     await page.getByTestId('category-Other Material').check();
     await page.getByTestId('applyFiltersButton').click();
@@ -163,7 +160,6 @@ test.describe('Materials page', () => {
 
   test('T-009: user is able to hide filter', async ({ page }) => {
     mockRoute(page, '/case-materials', mockCaseMaterials());
-    await page.goto('./materials', { waitUntil: 'domcontentloaded' });
     await page.getByRole('button', { name: 'Hide filter' }).click();
     await expect(page.getByText('FiltersClear filtersSearch')).toBeHidden();
     await page.getByRole('button', { name: 'Show filter' }).click();
@@ -182,7 +178,6 @@ test.describe('Materials page', () => {
         status: 'None'
       })
     );
-    await page.goto('./materials', { waitUntil: 'domcontentloaded' });
     await page
       .getByRole('searchbox', { name: 'Search materials' })
       .fill('Case Action');
