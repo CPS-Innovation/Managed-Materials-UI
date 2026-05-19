@@ -8,6 +8,9 @@ const PcdReviewCoreTypeSchema = z.union([
   z.literal(PcdReviewCoreType.PreChargeDecisionAnalysis)
 ]);
 
+const nullableString = z.string().nullable();
+const nullableNumber = z.number().nullable();
+
 const CurrentEventSchema = z.object({
   id: z.number(),
   name: z.string(),
@@ -27,9 +30,9 @@ const NextEventLinkSchema = z.array(
 
 const MonitoringCodesSchema = z.array(
   z.object({
-    code: z.string(),
+    code: nullableString,
     description: z.string(),
-    type: z.number(),
+    type: nullableNumber,
     disabled: z.boolean(),
     isAssigned: z.boolean()
   })
@@ -37,46 +40,46 @@ const MonitoringCodesSchema = z.array(
 
 const DgAssessmentItemsSchema = z.array(
   z.object({
-    itemName: z.string(),
-    title: z.string(),
-    description: z.string(),
-    comment: z.string()
+    itemName: nullableString,
+    title: nullableString,
+    description: nullableString,
+    comment: nullableString
   })
 );
 
 const DgDetailsSchema = z.object({
-  assessmentApplicable: z.boolean(),
-  datePapersReceived: z.string(),
+  assessmentApplicable: z.boolean().nullable(),
+  datePapersReceived: nullableString,
   dgAssessmentItems: DgAssessmentItemsSchema,
-  policeResponse: z.string(),
-  principalOffenceCategory: z.string(),
-  stageAssessmentCompleted: z.string(),
-  submissionDgCompliant: z.string()
+  policeResponse: nullableString,
+  principalOffenceCategory: nullableString,
+  stageAssessmentCompleted: nullableString,
+  submissionDgCompliant: nullableString
 });
 
 const PCDInitialReviewSchema = z.object({
-  allocation: z.string(),
+  allocation: nullableString,
   caseId: z.number(),
   caseSummary: z.string(),
   consultationType: z.string(),
   currentEvent: CurrentEventSchema,
   dgDetails: DgDetailsSchema,
-  dgSummary: z.string(),
+  dgSummary: nullableString,
   disclosureActionsAndIssues: z.string(),
-  europeanCourtOfHumanRights: z.string(),
+  europeanCourtOfHumanRights: nullableString,
   eventDate: z.string(),
-  evidentialAssessment: z.string(),
+  evidentialAssessment: nullableString,
   historyEventType: z.number(),
   id: z.number(),
-  instructionsToOperationsDeliveryOrAdvocate: z.string(),
+  instructionsToOperationsDeliveryOrAdvocate: nullableString,
   isCompleted: z.boolean(),
   monitoringCodes: MonitoringCodesSchema,
   nextEventLink: NextEventLinkSchema,
   prosecutorDeclaration: z.string(),
-  publicInterestAssessment: z.string(),
-  reviewSummary: z.string(),
+  publicInterestAssessment: nullableString,
+  reviewSummary: nullableString,
   trialStrategy: z.string(),
-  witnessOrVictimInformationAndActions: z.string()
+  witnessOrVictimInformationAndActions: nullableString
 });
 
 const DefendantDecisionSchema = z.object({
@@ -84,15 +87,15 @@ const DefendantDecisionSchema = z.object({
   decisionDescription: z.string(),
   defendantName: z.string(),
   id: z.number(),
-  keyFactor: z.string(),
-  natureOfDecision: z.string(),
-  pcdPrincipalOffenceCategory: z.string(),
+  keyFactor: nullableString,
+  natureOfDecision: nullableString,
+  pcdPrincipalOffenceCategory: nullableString,
   proposedCharge: z.string(),
-  publicInterestCode: z.string(),
+  publicInterestCode: nullableString,
   reason: z.string(),
   reasonCode: z.string(),
-  returnBailDate: z.string(),
-  specifiedCharges: z.string()
+  returnBailDate: nullableString,
+  specifiedCharges: nullableString
 });
 
 const DefendantDecisionsSchema = z.array(DefendantDecisionSchema);
@@ -102,9 +105,9 @@ const PCDHistoryActionPlanSchema = z.array(
     actionDate: z.string(),
     actionPoint: z.string(),
     actionType: z.string(),
-    cpsCovidUrgency: z.string(),
+    cpsCovidUrgency: nullableString,
     entryDate: z.string(),
-    policeCovidUrgency: z.string(),
+    policeCovidUrgency: nullableString,
     status: z.string(),
     suspect: z.string()
   })
@@ -114,7 +117,7 @@ const PCDReviewSchema = z.object({
   actionPlan: z.boolean(),
   author: z.string(),
   caseId: z.number(),
-  cpsCovidUrgency: z.string(),
+  cpsCovidUrgency: nullableString,
   currentEvent: CurrentEventSchema,
   decisionMadeBy: z.string(),
   decisionMadeDateTime: z.string(),
@@ -125,17 +128,17 @@ const PCDReviewSchema = z.object({
   id: z.number(),
   investigationStage: z.string(),
   isCompleted: z.boolean(),
-  method: z.string(),
+  method: nullableString,
   nextEventLink: NextEventLinkSchema,
   pcdHistoryActionPlan: PCDHistoryActionPlanSchema,
-  policeCovidUrgency: z.string(),
-  urn: z.string()
+  policeCovidUrgency: nullableString,
+  urn: nullableString
 });
 
 export const PCDReviewCoreSchema = z.array(
   z.object({
     date: z.string(),
-    id: z.number(),
+    id: z.coerce.number(),
     type: PcdReviewCoreTypeSchema
   })
 );
@@ -146,21 +149,20 @@ const ChargeDetailSchema = z.object({
 });
 
 const PreChargeDefendantDecisionSchema = DefendantDecisionSchema.extend({
-  chargeDetails: z.array(ChargeDetailSchema),
+  chargeDetails: z.array(ChargeDetailSchema)
 });
 
 const LinkedCaseUrnSchema = z.object({
   urn: z.string(),
   asn: z.string(),
-  pncId: z.string(),
-  policeCC: z.string()
+  pncId: nullableString,
+  policeCC: nullableString
 });
 
-const PreChargeDecisionAnalysisOutcomeSchema =
-  PCDInitialReviewSchema.extend({
-    dppConsent: z.string(),
-    linkedCaseUrns: z.array(LinkedCaseUrnSchema)
-  });
+const PreChargeDecisionAnalysisOutcomeSchema = PCDInitialReviewSchema.extend({
+  dppConsent: nullableString,
+  linkedCaseUrns: z.array(LinkedCaseUrnSchema)
+});
 
 const PreChargeDecisionOutcomeDetailSchema = PCDReviewSchema.extend({
   defendantDecisions: z.array(PreChargeDefendantDecisionSchema)
@@ -177,4 +179,6 @@ export type PCDInitialReviewResponseType = z.infer<
 export type PCDReviewResponseType = z.infer<typeof PCDReviewSchema>;
 export type CaseHistoryResponseType = z.infer<typeof CurrentEventSchema>;
 export type PCDReviewCoreResponseType = z.infer<typeof PCDReviewCoreSchema>;
-export type PCDReviewDetailsResponseType = z.infer<typeof PCDReviewDetailsSchema>;
+export type PCDReviewDetailsResponseType = z.infer<
+  typeof PCDReviewDetailsSchema
+>;
