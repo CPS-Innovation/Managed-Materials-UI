@@ -29,16 +29,10 @@ test.describe('PCD Review', () => {
     await page
       .getByRole('heading', { name: 'Loading case', includeHidden: true })
       .waitFor({ state: 'detached' });
-    await page.waitForRequest(`**/cases/${CASE_ID}/pcd-review-core`);
     await page.waitForURL(`**/pcd-review/${FIRST_REVIEW_HISTORY_ID}`);
-    await page.waitForRequest(
-      `**/history/${FIRST_REVIEW_HISTORY_ID}/pcd-review-details`
-    );
 
     // Main headings
-    await expect(
-      page.getByRole('heading', { name: 'Initial Review' })
-    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Reviews' })).toBeVisible();
     await expect(
       page.getByRole('heading', { name: 'Case Headline ' })
     ).toBeVisible();

@@ -274,7 +274,7 @@ export const PcdReviewPage = () => {
 
     return (
       <>
-        <h1 className="govuk-heading-l">Initial Review</h1>
+        <h1 className="govuk-heading-l">Reviews</h1>
         <ReviewSummary analysis={analysis} decision={decision} />
         <SectionBreak size="xl" />
 
@@ -292,9 +292,7 @@ export const PcdReviewPage = () => {
 
   const renderBody = () => {
     if (shouldRedirectToFirstReview) {
-      return (
-        <Navigate to={`${firstPcdReviewCoreHistoryId}`} replace />
-      );
+      return <Navigate to={`${firstPcdReviewCoreHistoryId}`} replace />;
     }
 
     if (isLoadingPage) {
