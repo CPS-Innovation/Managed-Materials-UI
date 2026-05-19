@@ -9,35 +9,16 @@ import {
 export const categoriseDocument = (
   doc: z.infer<typeof documentSchema> | z.infer<typeof SearchTermResultSchema>
 ): TCategoryName | null => {
-  // this check needs to come before the others to ensure unused docs go
-  // in this category even if their ID exists in another below
-  if (
-    doc.isUnused ||
-    documentTypeIdsMap.unusedMaterial.includes(doc.cmsDocType.documentTypeId)
-  ) {
+  const id = doc.cmsDocType.documentTypeId;
+
+  if (doc.isUnused) {
     return 'unusedMaterial';
   }
 
-  if (documentTypeIdsMap.statement.includes(doc.cmsDocType.documentTypeId)) {
-    return 'statement';
-  }
-
-  if (documentTypeIdsMap.exhibit.includes(doc.cmsDocType.documentTypeId)) {
-    return 'exhibit';
-  }
-
-  if (documentTypeIdsMap.mgForm.includes(doc.cmsDocType.documentTypeId)) {
-    return 'mgForm';
-  }
-
-  if (
-    documentTypeIdsMap.otherDocument.includes(doc.cmsDocType.documentTypeId)
-  ) {
-    return 'otherDocument';
-  }
-
-  if (documentTypeIdsMap.defendant.includes(doc.cmsDocType.documentTypeId)) {
-    return 'defendant';
+  for (const category of Object.keys(documentTypeIdsMap) as TCategoryName[]) {
+    if (documentTypeIdsMap[category].includes(id)) {
+      return category;
+    }
   }
 
   return null;
