@@ -104,7 +104,7 @@ export const DocumentKeywordSearch = ({
 
         return (
           selectedCategories.length === 0 ||
-          selectedCategories.includes(category)
+          (category !== null && selectedCategories.includes(category))
         );
       })
       .map((item) => ({
