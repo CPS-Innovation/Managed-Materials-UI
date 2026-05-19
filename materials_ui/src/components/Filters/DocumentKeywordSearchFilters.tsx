@@ -50,6 +50,7 @@ export const DocumentKeywordSearchFilters = ({
 
   documents?.forEach((doc) => {
     const categoryName = categoriseDocument(doc);
+    if (!categoryName) return;
     docsOnDocCategoryNames[categoryName].push(doc);
   });
 

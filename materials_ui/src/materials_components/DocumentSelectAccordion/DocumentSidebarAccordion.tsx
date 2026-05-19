@@ -70,21 +70,15 @@ export const DocumentSidebarAccordion = (p: {
   const docsOnDocCategoryNames = initDocsOnDocCategoryNamesMap();
   p.documentList.forEach((doc) => {
     const categoryName = categoriseDocument(doc);
+    if (!categoryName) return;
     docsOnDocCategoryNames[categoryName].push(doc);
   });
-  const cleanDocData = categoryDetails
-    .map((x) => ({
-      key: x.label,
-      label: x.label,
-      categoryName: x.categoryName,
-      documents: docsOnDocCategoryNames[x.categoryName]
-    }))
-    .filter((x) => {
-      if (x.categoryName === 'communication') return false;
-      if (x.categoryName === 'uncategorised' && x.documents.length === 0)
-        return false;
-      return true;
-    });
+  const cleanDocData = categoryDetails.map((x) => ({
+    key: x.label,
+    label: x.label,
+    categoryName: x.categoryName,
+    documents: docsOnDocCategoryNames[x.categoryName]
+  }));
 
   const [isExpandedController, setIsExpandedController] = useState(false);
   const [isExpandedSectionsTracker, setIsExpandedSectionsTracker] = useState<
