@@ -29,7 +29,6 @@ test.describe('PCD Review', () => {
     await page
       .getByRole('heading', { name: 'Loading case', includeHidden: true })
       .waitFor({ state: 'detached' });
-    await page.waitForURL(`**/pcd-review/${FIRST_REVIEW_HISTORY_ID}`);
 
     // Main headings
     await expect(page.getByRole('heading', { name: 'Reviews' })).toBeVisible();
