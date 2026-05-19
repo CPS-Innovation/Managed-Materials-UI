@@ -3,63 +3,42 @@ import { SearchTermResultSchema } from '../../../schemas/documents';
 import { documentSchema } from '../getters/getDocumentList';
 import {
   documentTypeIdsMap,
-  TCategoryName,
-  unusedCommRegexes
+  TCategoryName
 } from './categoriseDocumentHelperUtils';
 
 export const categoriseDocument = (
   doc: z.infer<typeof documentSchema> | z.infer<typeof SearchTermResultSchema>
-): TCategoryName => {
+): TCategoryName | null => {
+  // this check needs to come before the others to ensure unused docs go
+  // in this category even if their ID exists in another below
   if (
-    doc.cmsDocType.documentType === 'PCD' ||
-    documentTypeIdsMap.review.includes(doc.cmsDocType.documentTypeId)
-  )
-    return 'review' as const;
-
-  if (documentTypeIdsMap.caseOverview.includes(doc.cmsDocType.documentTypeId))
-    return 'caseOverview' as const;
-
-  if (
-    !doc.isUnused &&
-    documentTypeIdsMap.statement.includes(doc.cmsDocType.documentTypeId)
-  )
-    return 'statement' as const;
-
-  if (
-    doc.cmsDocType.documentCategory === 'Exhibit' &&
-    documentTypeIdsMap.exhibit.includes(doc.cmsDocType.documentTypeId)
-  )
-    return 'exhibit' as const;
-
-  if (documentTypeIdsMap.forensic.includes(doc.cmsDocType.documentTypeId))
-    return 'forensic' as const;
-
-  if (
-    (!!doc.presentationTitle &&
-      doc.cmsDocType.documentTypeId === 1029 &&
-      !doc.presentationTitle.includes('UM/') &&
-      unusedCommRegexes.some((regex) => doc.presentationTitle.match(regex))) ||
     doc.isUnused ||
     documentTypeIdsMap.unusedMaterial.includes(doc.cmsDocType.documentTypeId)
-  )
-    return 'unusedMaterial' as const;
+  ) {
+    return 'unusedMaterial';
+  }
 
-  if (documentTypeIdsMap.defendant.includes(doc.cmsDocType.documentTypeId))
-    return 'defendant' as const;
+  if (documentTypeIdsMap.statement.includes(doc.cmsDocType.documentTypeId)) {
+    return 'statement';
+  }
+
+  if (documentTypeIdsMap.exhibit.includes(doc.cmsDocType.documentTypeId)) {
+    return 'exhibit';
+  }
+
+  if (documentTypeIdsMap.mgForm.includes(doc.cmsDocType.documentTypeId)) {
+    return 'mgForm';
+  }
 
   if (
-    documentTypeIdsMap.courtPreparation.includes(doc.cmsDocType.documentTypeId)
-  )
-    return 'courtPreparation' as const;
+    documentTypeIdsMap.otherDocument.includes(doc.cmsDocType.documentTypeId)
+  ) {
+    return 'otherDocument';
+  }
 
-  if (
-    doc.cmsOriginalFileName?.endsWith('.hte') ||
-    documentTypeIdsMap.communication.includes(doc.cmsDocType.documentTypeId)
-  )
-    return 'communication' as const;
+  if (documentTypeIdsMap.defendant.includes(doc.cmsDocType.documentTypeId)) {
+    return 'defendant';
+  }
 
-  if (documentTypeIdsMap.uncategorised.includes(doc.cmsDocType.documentTypeId))
-    return 'uncategorised' as const;
-
-  return 'uncategorised' as const;
+  return null;
 };
