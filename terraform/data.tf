@@ -48,3 +48,18 @@ resource "azuread_service_principal" "msgraph" {
 data "azuread_application" "fa_redaction_log_reporting" {
   display_name = "fa-${local.redaction_log_resource_name}-reporting"
 }
+
+# begin: app insights lookups
+data "azurerm_application_insights" "global_ai" {
+  name                = "ai-${var.resource_name_prefix}-${var.environment}"
+  resource_group_name = "rg-${var.resource_name_prefix}-analytics-${var.environment}"
+}
+
+data "azurerm_log_analytics_workspace" "global_la" {
+  name                = "la-${var.resource_name_prefix}-${var.environment}"
+  resource_group_name = "rg-${var.resource_name_prefix}-analytics-${var.environment}"
+}
+# end: app insights lookups
+
+
+

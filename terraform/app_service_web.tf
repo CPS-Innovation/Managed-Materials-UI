@@ -28,8 +28,19 @@ resource "azurerm_linux_web_app" "as_web_materials" {
   }
 
   app_settings = {
-    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.ai_materials.instrumentation_key
-    "HostType"                       = "Production"
+    "APPINSIGHTS_INSTRUMENTATIONKEY"                  = data.azurerm_application_insights.global_ai.instrumentation_key
+    "APPINSIGHTS_PROFILERFEATURE_VERSION"             = "1.0.0"
+    "APPINSIGHTS_SNAPSHOTFEATURE_VERSION"             = "1.0.0"
+    "APPLICATIONINSIGHTS_CONFIGURATION_CONTENT"       = ""
+    "APPLICATIONINSIGHTS_CONNECTION_STRING"           = data.azurerm_application_insights.global_ai.connection_string
+    "ApplicationInsightsAgent_EXTENSION_VERSION"      = "~3"
+    "DiagnosticServices_EXTENSION_VERSION"            = "~3"
+    "InstrumentationEngine_EXTENSION_VERSION"         = "disabled"
+    "SnapshotDebugger_EXTENSION_VERSION"              = "disabled"
+    "XDT_MicrosoftApplicationInsights_BaseExtensions" = "disabled"
+    "XDT_MicrosoftApplicationInsights_Mode"           = "recommended"
+    "XDT_MicrosoftApplicationInsights_PreemptSdk"     = "disabled"
+    "HostType"                                        = "Production"
   }
 
   sticky_settings {
@@ -79,6 +90,17 @@ resource "azurerm_linux_web_app" "as_web_materials" {
   lifecycle {
     ignore_changes = [
       app_settings["APPINSIGHTS_INSTRUMENTATIONKEY"],
+      app_settings["APPINSIGHTS_PROFILERFEATURE_VERSION"],
+      app_settings["APPINSIGHTS_SNAPSHOTFEATURE_VERSION"],
+      app_settings["APPLICATIONINSIGHTS_CONFIGURATION_CONTENT"],
+      app_settings["APPLICATIONINSIGHTS_CONNECTION_STRING"],
+      app_settings["ApplicationInsightsAgent_EXTENSION_VERSION"],
+      app_settings["DiagnosticServices_EXTENSION_VERSION"],
+      app_settings["InstrumentationEngine_EXTENSION_VERSION"],
+      app_settings["SnapshotDebugger_EXTENSION_VERSION"],
+      app_settings["XDT_MicrosoftApplicationInsights_BaseExtensions"],
+      app_settings["XDT_MicrosoftApplicationInsights_Mode"],
+      app_settings["XDT_MicrosoftApplicationInsights_PreemptSdk"],
       app_settings["HostType"],
       tags
     ]

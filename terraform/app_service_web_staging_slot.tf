@@ -21,10 +21,20 @@ resource "azurerm_linux_web_app_slot" "as_web_materials_staging1" {
   }
 
   app_settings = {
-    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.ai_materials.instrumentation_key
-    "HostType"                       = "Staging1"
+    "APPINSIGHTS_INSTRUMENTATIONKEY"                  = data.azurerm_application_insights.global_ai.instrumentation_key
+    "APPINSIGHTS_PROFILERFEATURE_VERSION"             = "1.0.0"
+    "APPINSIGHTS_SNAPSHOTFEATURE_VERSION"             = "1.0.0"
+    "APPLICATIONINSIGHTS_CONFIGURATION_CONTENT"       = ""
+    "APPLICATIONINSIGHTS_CONNECTION_STRING"           = data.azurerm_application_insights.global_ai.connection_string
+    "ApplicationInsightsAgent_EXTENSION_VERSION"      = "~3"
+    "DiagnosticServices_EXTENSION_VERSION"            = "~3"
+    "InstrumentationEngine_EXTENSION_VERSION"         = "disabled"
+    "SnapshotDebugger_EXTENSION_VERSION"              = "disabled"
+    "XDT_MicrosoftApplicationInsights_BaseExtensions" = "disabled"
+    "XDT_MicrosoftApplicationInsights_Mode"           = "recommended"
+    "XDT_MicrosoftApplicationInsights_PreemptSdk"     = "disabled"
+    "HostType"                                        = "Staging1"
   }
-
   /*
   auth_settings_v2 {
     auth_enabled           = true
