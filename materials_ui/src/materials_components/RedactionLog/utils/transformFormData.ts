@@ -133,9 +133,8 @@ export const transformFormDataToApiFormat = ({
 
   const documentType = lookups.documentTypes?.find(
     (dt) =>
-      normalizeToString(dt.cmsDocTypeId) &&
-      normalizeToString(dt.cmsDocTypeId) ===
-        normalizeToString(formData.documentTypeId)
+      normalizeToString(dt.id) &&
+      normalizeToString(dt.id) === normalizeToString(formData.documentTypeId)
   );
 
   const redactions =

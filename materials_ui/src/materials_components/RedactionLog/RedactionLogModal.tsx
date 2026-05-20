@@ -168,17 +168,11 @@ export const RedactionLogModal = ({
         listModeRedactionTypes: selectedRedactionTypes
       });
 
-      // TODO: ensure documentType values are taken from the dropdown selection
-      // and propagated into apiData.documentType and apiData.cmsValues.
-      // This is required to avoid API validation errors: DocumentType.Name is required.
-      console.log('Submitting redaction log:', apiData);
-
       await postRedactionLog({
         axiosInstance: redactionLogAxios,
         data: apiData
       });
 
-      console.log('Redaction log submitted successfully');
       onClose();
     } catch (error) {
       console.error('Failed to submit redaction log:', error);
