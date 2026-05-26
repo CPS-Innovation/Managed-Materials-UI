@@ -247,8 +247,7 @@ strong {
   margin-bottom: 0;
 }
 
-.reclassified-tag,
-.renamed-tag {
+.successful-tag {
   font-size: 14px;
   padding: 4px;
   line-height: 1;
@@ -390,45 +389,6 @@ strong {
   padding: 4px;
   line-height: 1;
   margin: 0px 8px 0px 0px;
-}
-
-.action-bar-container {
-  display: flex;
-  margin-bottom: 10px;
-  justify-content: flex-end;
-  padding: 10px 20px 10px 0;
-  gap: 12px;
-}
-
-.divider {
-  width: 1px;
-  background-color: #b1b4b6;
-  height: 20px;
-  margin: 0 12px;
-  align-self: center;
-}
-
-.new-tag {
-  font-size: 14px;
-  padding: 4px;
-  line-height: 1;
-  margin: 0 8px 0 0;
-}
-
-.action-bar-container {
-  display: flex;
-  margin-bottom: 10px;
-  justify-content: flex-end;
-  padding: 10px 20px 10px 0;
-  gap: 12px;
-}
-
-.divider {
-  width: 1px;
-  background-color: #b1b4b6;
-  height: 20px;
-  margin: 0 12px;
-  align-self: center;
 }
 
 .govuk-table--width-fluid {
