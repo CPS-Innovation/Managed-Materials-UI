@@ -133,9 +133,8 @@ export const transformFormDataToApiFormat = ({
 
   const documentType = lookups.documentTypes?.find(
     (dt) =>
-      normalizeToString(dt.cmsDocTypeId) &&
-      normalizeToString(dt.cmsDocTypeId) ===
-        normalizeToString(formData.documentTypeId)
+      normalizeToString(dt.id) &&
+      normalizeToString(dt.id) === normalizeToString(formData.documentTypeId)
   );
 
   const redactions =
@@ -151,7 +150,10 @@ export const transformFormDataToApiFormat = ({
   return {
     urn,
     unit: {
-      id: unit?.id || formData.businessUnitId,
+      id:
+        area && unit
+          ? `${area.id}-${unit.id}`
+          : `${formData.areasAndDivisionsId}-${formData.businessUnitId}`,
       type: 'Area',
       areaDivisionName: area?.name || '',
       name: unit?.name || ''

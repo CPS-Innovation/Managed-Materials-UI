@@ -51,15 +51,12 @@ data "azuread_application" "fa_redaction_log_reporting" {
 
 # begin: app insights lookups
 data "azurerm_application_insights" "global_ai" {
-  name                = "ai-${var.resource_name_prefix}-${var.environment}"
-  resource_group_name = "rg-${var.resource_name_prefix}-analytics-${var.environment}"
+  name                = local.polaris_monitor_ai_name
+  resource_group_name = local.polaris_monitor_rg_name
 }
 
 data "azurerm_log_analytics_workspace" "global_la" {
-  name                = "la-${var.resource_name_prefix}-${var.environment}"
-  resource_group_name = "rg-${var.resource_name_prefix}-analytics-${var.environment}"
+  name                = local.polaris_monitor_la_name
+  resource_group_name = local.polaris_monitor_rg_name
 }
 # end: app insights lookups
-
-
-
