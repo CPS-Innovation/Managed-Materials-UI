@@ -1,24 +1,6 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { useFocusTrap } from '../../../caseWorkApp/hooks/useFocusTrap';
 import { useLastFocus } from '../../../caseWorkApp/hooks/useLastFocus';
-
-export const useWindowMouseListener = () => {
-  const mousePosRef = useRef({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      mousePosRef.current = { x: e.clientX, y: e.clientY };
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-    };
-  }, []);
-
-  return mousePosRef;
-};
 
 export const PdfRedactorMiniModal = (p: {
   coordX: number;
@@ -27,29 +9,13 @@ export const PdfRedactorMiniModal = (p: {
   onBackgroundClick: () => void;
   onEscPress: () => void;
   ariaLabel: string;
+  dimBackground?: boolean;
+  placement?: 'auto' | 'above';
 }) => {
-  const popupRef = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState({ x: p.coordX, y: p.coordY });
+  const dimBackground = p.dimBackground ?? true;
 
   useFocusTrap('#pdf-redactor-mini-modal');
   useLastFocus();
-
-  useEffect(() => {
-    if (!popupRef.current) return;
-
-    const popup = popupRef.current;
-    const rect = popup.getBoundingClientRect();
-    const screenWidth = window.innerWidth;
-    const screenHeight = window.innerHeight;
-
-    const isRightHalf = p.coordX > screenWidth / 2;
-    const x = isRightHalf ? p.coordX - rect.width : p.coordX;
-
-    const isBottomHalf = p.coordY > screenHeight / 2;
-    const y = isBottomHalf ? p.coordY - rect.height : p.coordY;
-
-    setPosition({ x, y });
-  }, [p.coordX, p.coordY]);
 
   useEffect(() => {
     const fn = (e: KeyboardEvent) => {
@@ -66,6 +32,11 @@ export const PdfRedactorMiniModal = (p: {
     };
   }, []);
 
+  const transform =
+    p.placement === 'above'
+      ? 'translate(-50%, -100%)'
+      : `translate(${p.coordX > window.innerWidth / 2 ? '-100%' : '0'}, ${p.coordY > window.innerHeight / 2 ? '-100%' : '0'})`;
+
   return (
     <>
       <div
@@ -75,22 +46,22 @@ export const PdfRedactorMiniModal = (p: {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: '#00000080',
+          backgroundColor: dimBackground ? '#00000080' : undefined,
           zIndex: 999,
           pointerEvents: 'auto'
         }}
         onClick={p.onBackgroundClick}
       />
       <div
-        ref={popupRef}
         id="pdf-redactor-mini-modal"
         role="dialog"
         aria-modal="true"
         aria-label={p.ariaLabel}
         style={{
           position: 'fixed',
-          left: `${position.x}px`,
-          top: `${position.y}px`,
+          left: `${p.coordX}px`,
+          top: `${p.coordY}px`,
+          transform,
           backgroundColor: '#fff',
           border: '1px solid #ddd',
           borderRadius: '8px',

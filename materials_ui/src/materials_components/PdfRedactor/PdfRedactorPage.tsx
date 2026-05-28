@@ -3,6 +3,7 @@ import { Page } from 'react-pdf';
 import { DocumentIcon } from './icons/DocumentIcon';
 import { RotateIcon } from './icons/RotateIcon';
 import {
+  PdfTextHighlightOverlay,
   PositionedRedactionBox,
   PositionPdfOverlayBox,
   RedactionBox
@@ -10,6 +11,7 @@ import {
 
 import './PdfRedactorPage.scss';
 
+import { useScrollToFocusedHighlight } from './hooks/useScrollToFocusedHighlight';
 import { DeleteIcon } from './icons/DeleteIcon';
 import { GovUkButton } from './templates/GovUkButton';
 import {
@@ -331,6 +333,8 @@ export const PdfRedactorPage = (p: {
   pageDeleteButtonDisabled: boolean;
   searchHighlights?: TSearchHighlight[];
   focusedSearchHighlightId?: string;
+  bulkRedactionCandidates?: TSearchHighlight[];
+  focusedBulkRedactionCandidateId?: string;
 }) => {
   const { pageNumber, scale, redactions } = p;
   const [pageDimensions, setPageDimensions] = useState<{
@@ -388,22 +392,18 @@ export const PdfRedactorPage = (p: {
   const pdfPageWrapperElmRef = useRef<HTMLDivElement | null>(null);
   const requestAnimationFrameRef = useRef<number | null>(null);
 
-  // handles scrolling to focused search term
-  useEffect(() => {
-    if (!pageDimensions || !p.focusedSearchHighlightId) return;
-    const focusedIsOnThisPage = p.searchHighlights?.some(
-      (hl) => hl.id === p.focusedSearchHighlightId
-    );
-    if (!focusedIsOnThisPage) return;
-    const elm = pdfPageWrapperElmRef.current?.querySelector(
-      `[data-search-highlight-id="${p.focusedSearchHighlightId}"]`
-    );
-    elm?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-      inline: 'center'
-    });
-  }, [p.focusedSearchHighlightId, pageDimensions, p.searchHighlights]);
+  useScrollToFocusedHighlight(
+    p.searchHighlights,
+    p.focusedSearchHighlightId,
+    pageDimensions,
+    pdfPageWrapperElmRef
+  );
+  useScrollToFocusedHighlight(
+    p.bulkRedactionCandidates,
+    p.focusedBulkRedactionCandidateId,
+    pageDimensions,
+    pdfPageWrapperElmRef
+  );
   useEffect(() => {
     return () => {
       if (requestAnimationFrameRef.current)
@@ -533,6 +533,13 @@ export const PdfRedactorPage = (p: {
               const { xLeft, yBottom, width, height } =
                 convertCoordPairToXywh(box);
 
+              const widthScale = pageDimensions
+                ? pageDimensions.width / box.pageWidth
+                : 1;
+              const heightScale = pageDimensions
+                ? pageDimensions.height / box.pageHeight
+                : 1;
+
               const handleRemoveRedaction = (fnProps: { boxId: string }) => {
                 p.onRemoveRedactions([fnProps.boxId]);
                 p.onPageRedactionsChange(
@@ -543,10 +550,10 @@ export const PdfRedactorPage = (p: {
               return (
                 <PositionedRedactionBox
                   key={i}
-                  xLeft={xLeft}
-                  yBottom={yBottom}
-                  width={width}
-                  height={height}
+                  xLeft={xLeft * widthScale}
+                  yBottom={yBottom * heightScale}
+                  width={width * widthScale}
+                  height={height * heightScale}
                   scale={p.scale}
                   onRedactionBoxEnterPress={() =>
                     handleRemoveRedaction({ boxId: box.id })
@@ -559,44 +566,23 @@ export const PdfRedactorPage = (p: {
               );
             })}
 
-            {pageDimensions &&
-              p.searchHighlights?.map((hl) => {
-                // convert from api units to redactor units
-                const widthScale = pageDimensions.width / hl.pageWidth;
-                const heightScale = pageDimensions.height / hl.pageHeight;
-                const xLeft = hl.xLeft * widthScale;
-                const width = (hl.xRight - hl.xLeft) * widthScale;
-                const height = (hl.yBottom - hl.yTop) * heightScale;
-                const yBottom =
-                  pageDimensions.height - hl.yBottom * heightScale;
-                const isFocused = hl.id === p.focusedSearchHighlightId;
-                return (
-                  <PositionPdfOverlayBox
-                    key={hl.id}
-                    xLeft={xLeft}
-                    yBottom={yBottom}
-                    width={width}
-                    height={height}
-                    scale={p.scale}
-                  >
-                    <div
-                      data-search-highlight-id={hl.id}
-                      style={{
-                        height: '100%',
-                        width: '100%',
-                        background: isFocused
-                          ? 'rgba(255, 221, 0, 0.4)'
-                          : 'rgba(255, 0, 0, 0.3)',
-                        border: isFocused
-                          ? '3px dashed rgba(255, 221, 0, 0.4)'
-                          : '3px dashed #ff4141',
-                        boxSizing: 'border-box',
-                        pointerEvents: 'none'
-                      }}
-                    />
-                  </PositionPdfOverlayBox>
-                );
-              })}
+            {pageDimensions && (
+              <PdfTextHighlightOverlay
+                highlights={p.searchHighlights ?? []}
+                focusedId={p.focusedSearchHighlightId}
+                pageDimensions={pageDimensions}
+                scale={p.scale}
+              />
+            )}
+
+            {pageDimensions && (
+              <PdfTextHighlightOverlay
+                highlights={p.bulkRedactionCandidates ?? []}
+                focusedId={p.focusedBulkRedactionCandidateId}
+                pageDimensions={pageDimensions}
+                scale={p.scale}
+              />
+            )}
           </div>
         </span>
       </span>

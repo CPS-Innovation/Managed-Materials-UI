@@ -215,7 +215,6 @@ export const PdfRedactor = (p: {
   onRedactionsChange: (redactions: TRedaction[]) => void;
   onAddRedactions: (p: {
     redactions: TRedaction[];
-    triggerSource?: 'mouse' | 'keyboard';
     highlightedText: string | undefined;
   }) => void;
   onRemoveRedactions: (redactionIds: string[]) => void;
@@ -235,6 +234,8 @@ export const PdfRedactor = (p: {
   onNumOfDocPagesChanged: (x: number) => void;
   searchHighlights?: TSearchHighlight[];
   focusedSearchIndex?: number;
+  bulkRedactionCandidates?: TSearchHighlight[];
+  focusedBulkRedactionIndex?: number;
 }) => {
   const { previousModeRef } = usePreviousModeRef(p.mode);
 
@@ -274,6 +275,21 @@ export const PdfRedactor = (p: {
       ? p.searchHighlights[p.focusedSearchIndex]
       : undefined;
   const focusedHighlightId = focusedHighlight?.id;
+
+  const indexedBulkRedactionCandidates = useMemo(() => {
+    const map: { [pageNumber: number]: TSearchHighlight[] } = {};
+    (p.bulkRedactionCandidates ?? []).forEach((highlight) => {
+      if (!map[highlight.pageNumber]) map[highlight.pageNumber] = [];
+      map[highlight.pageNumber]!.push(highlight);
+    });
+    return map;
+  }, [p.bulkRedactionCandidates]);
+
+  const focusedBulkRedactionCandidate =
+    p.bulkRedactionCandidates && p.focusedBulkRedactionIndex !== undefined
+      ? p.bulkRedactionCandidates[p.focusedBulkRedactionIndex]
+      : undefined;
+  const focusedBulkRedactionCandidateId = focusedBulkRedactionCandidate?.id;
 
   const rotations = useMemo(() => {
     return Object.values(p.indexedRotation);
@@ -331,10 +347,8 @@ export const PdfRedactor = (p: {
   };
 
   const redactHighlightedTextTrigger = useTrigger();
-  const triggerSourceRef = useRef<'mouse' | 'keyboard'>('mouse');
   const redactHighlightedIfTextRedactionMode = () => {
     if (modeRef.current !== 'textRedact') return;
-    triggerSourceRef.current = 'mouse';
     redactHighlightedTextTrigger.fire();
   };
 
@@ -351,10 +365,7 @@ export const PdfRedactor = (p: {
   useShiftReleaseRedactTrigger({
     modeRef,
     containerRef: pdfRedactorWrapperElmRef,
-    fire: () => {
-      triggerSourceRef.current = 'keyboard';
-      redactHighlightedTextTrigger.fire();
-    }
+    fire: redactHighlightedTextTrigger.fire
   });
 
   const pageDeleteButtonDisabled = (numPages ?? 0) - deletions.length <= 1;
@@ -501,7 +512,6 @@ export const PdfRedactor = (p: {
                   p.onRedactionsChange([...p.redactions, ...x]);
                   p.onAddRedactions({
                     redactions: x,
-                    triggerSource: triggerSourceRef.current,
                     highlightedText: window.getSelection()?.toString()
                   });
                 }}
@@ -528,6 +538,12 @@ export const PdfRedactor = (p: {
                 }}
                 searchHighlights={indexedSearchHighlights[j + 1] ?? []}
                 focusedSearchHighlightId={focusedHighlightId}
+                bulkRedactionCandidates={
+                  indexedBulkRedactionCandidates[j + 1] ?? []
+                }
+                focusedBulkRedactionCandidateId={
+                  focusedBulkRedactionCandidateId
+                }
                 pageIsDelete={!!p.indexedDeletion[j + 1]?.isDeleted}
                 onPageIsDeleteChange={(isDeleted) => {
                   const deletion = {
