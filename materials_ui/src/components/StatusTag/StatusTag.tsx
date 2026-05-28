@@ -18,10 +18,9 @@ export const StatusTag = ({ status }: Props) => {
       className += ' govuk-tag--grey';
       break;
     case 'Reclassified':
-      className += ' govuk-tag--purple reclassified-tag';
-      break;
     case 'Renamed':
-      className += ' govuk-tag--green renamed-tag';
+    case 'Updated':
+      className += ' govuk-tag--green successful-tag';
       break;
     case 'New':
       className += ' govuk-tag--blue new-tag';
