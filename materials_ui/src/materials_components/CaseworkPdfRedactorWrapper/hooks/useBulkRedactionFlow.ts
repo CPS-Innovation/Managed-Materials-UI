@@ -31,6 +31,7 @@ export const useBulkRedactionFlow = (p: {
     documentId: p.documentId
   });
 
+  // drop the user's selection once the bulk search returns, search results take over
   useEffect(() => {
     if (bulkSearch.state.status !== 'done') return;
     if (bulkSearch.candidates.length < 1) return;
@@ -41,6 +42,7 @@ export const useBulkRedactionFlow = (p: {
     p.setPopupProps((prev) => (prev ? { ...prev, redactionIds: [] } : prev));
   }, [bulkSearch.state.status, bulkSearch.candidates.length, p.popupProps]);
 
+  // pin the popover above whichever match is currently focused
   useEffect(() => {
     const focusedId = bulkSearch.focusedCandidate?.id;
     if (!focusedId) return;
@@ -59,10 +61,14 @@ export const useBulkRedactionFlow = (p: {
 
   const trimmedSearchText = p.popupProps?.highlightedText?.trim() ?? '';
 
-  const onClose = () => {
-    if (p.popupProps) p.removeRedactions(p.popupProps.redactionIds);
+  const closePopover = () => {
     p.setPopupProps(null);
     bulkSearch.clear();
+  };
+
+  const onClose = () => {
+    if (p.popupProps) p.removeRedactions(p.popupProps.redactionIds);
+    closePopover();
   };
 
   const onSaveSingle = (currentType: TRedactionType) => {
@@ -70,8 +76,7 @@ export const useBulkRedactionFlow = (p: {
       ...prev,
       { id: currentType.id, name: currentType.name }
     ]);
-    p.setPopupProps(null);
-    bulkSearch.clear();
+    closePopover();
   };
 
   const bulkProps: TBulkProps | undefined = trimmedSearchText
@@ -93,7 +98,7 @@ export const useBulkRedactionFlow = (p: {
           ]);
           const willBeEmpty = bulkSearch.candidates.length === 1;
           bulkSearch.removeFocused();
-          if (willBeEmpty) p.setPopupProps(null);
+          if (willBeEmpty) closePopover();
         },
         onRedactAll: (currentType) => {
           if (bulkSearch.candidates.length === 0) return;
@@ -105,8 +110,7 @@ export const useBulkRedactionFlow = (p: {
               name: currentType.name
             })
           ]);
-          p.setPopupProps(null);
-          bulkSearch.clear();
+          closePopover();
         }
       }
     : undefined;
