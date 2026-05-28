@@ -49,9 +49,6 @@ export const API_ENDPOINTS = {
   WITNESS_STATEMENTS: '/witnesses/{witnessId}/statements',
   RECLASSIFY: '/material/{materialId}/reclassify-complete',
   EXHIBIT_PRODUCERS: '/exhibit-producers',
-  PCD_REVIEW: 'cases/{caseId}/history/{historyId}/pre-charge-decision',
-  PCD_REVIEW_INITIAL_REVIEW: 'cases/{caseId}/history/initial-review',
-  PCD_REVIEW_CASE_HISTORY: 'cases/{caseId}/history',
   CREATE_WITNESS: '/case-witnesses',
   CREATE_ACTION_PLAN: '/action-plan'
 };

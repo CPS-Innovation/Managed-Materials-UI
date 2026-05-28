@@ -1,3 +1,17 @@
 .moj-side-navigation {
   padding-top: 0 !important;
 }
+
+.cps-side-navigation .moj-side-navigation__item a {
+  display: block;
+  font-weight: bold;
+}
+
+.nav-list-section__heading {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.nav-list-section__heading:first-child {
+  margin-top: 0;
+}

@@ -18,7 +18,7 @@ export { CPSLink } from './Link/Link';
 export { LoadingSpinner } from './LoadingSpinner/LoadingSpinner';
 export { Modal } from './Modal/Modal';
 export { NavList } from './NavList/NavList';
-export type { NavListItem } from './NavList/NavList';
+export type { NavListItem, NavListSection } from './NavList/NavList';
 export { Pagination } from './Pagination/Pagination';
 export { Radios } from './Radios/Radios';
 export type { RadioOption } from './Radios/Radios';

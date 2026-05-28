@@ -72,7 +72,7 @@ export const Routes = () => {
           element={<PcdRequestPage />}
         />
         <Route
-          path={`${getRoute('PCD_REVIEW', false)}`}
+          path={`${getRoute('PCD_REVIEW', false)}/:reviewHistoryId?`}
           element={<PcdReviewPage />}
         />
         <Route

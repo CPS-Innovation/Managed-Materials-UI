@@ -1,63 +1,58 @@
 import { expect, test } from '@playwright/test';
 import { mockRoute, mockServerError } from '../helpers';
-import { mockPcdReviewReviewDataResponse } from '../mocks/pcd/mockPcdReviewData';
-import { mockPcdReviewHistoryDataResponse } from '../mocks/pcd/mockPcdReviewHistory';
-import { mockPcdReviewInitialDataResponse } from '../mocks/pcd/mockPcdReviewInitial';
+import { mockPcdReviewCoreDataResponse } from '../mocks/pcd/mockPcdReviewCore';
+import { mockPcdReviewDetailsResponse } from '../mocks/pcd/mockPcdReviewDetails';
+
+const CASE_ID = '2167259';
+const FIRST_REVIEW_HISTORY_ID = 4380514;
 
 test.describe('PCD Review', () => {
   test('T-001: page loads Initial Review and displays all main sections', async ({
-    page,
+    page
   }) => {
     await mockRoute(
       page,
-      'cases/2167259/history',
-      mockPcdReviewHistoryDataResponse(),
+      `cases/${CASE_ID}/pcd-review-core`,
+      mockPcdReviewCoreDataResponse()
     );
     await mockRoute(
       page,
-      'cases/2167259/history/4380514/initial-review',
-      mockPcdReviewInitialDataResponse(),
-    );
-    await mockRoute(
-      page,
-      'cases/2167259/history/4380522/pre-charge-decision',
-      mockPcdReviewReviewDataResponse(),
+      `cases/${CASE_ID}/history/${FIRST_REVIEW_HISTORY_ID}/pcd-review-details`,
+      mockPcdReviewDetailsResponse()
     );
 
     await page.goto('./pcd-review', { waitUntil: 'domcontentloaded' });
     await page.waitForRequest('**/case-info/2167259');
     await expect(
-      page.getByRole('heading', { name: 'Loading case', includeHidden: true }),
+      page.getByRole('heading', { name: 'Loading case', includeHidden: true })
     ).toBeVisible();
     await page
       .getByRole('heading', { name: 'Loading case', includeHidden: true })
       .waitFor({ state: 'detached' });
 
     // Main headings
+    await expect(page.getByRole('heading', { name: 'Reviews' })).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: 'Initial Review' }),
+      page.getByRole('heading', { name: 'Case Headline ' })
     ).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: 'Case Headline ' }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole('heading', { name: 'Charging Decision & Advice' }),
+      page.getByRole('heading', { name: 'Charging Decision & Advice' })
     ).toBeVisible();
     await expect(
       page.getByRole('heading', {
-        name: 'Further action agreed for codes A, B, B2, H, I, J',
-      }),
+        name: 'Further action agreed for codes A, B, B2, H, I, J'
+      })
     ).toBeVisible();
 
     // Table headings
     await expect(
-      page.getByRole('columnheader', { name: 'Suspect' }),
+      page.getByRole('columnheader', { name: 'Suspect' })
     ).toBeVisible();
     await expect(
-      page.getByRole('columnheader', { name: 'Charging code' }),
+      page.getByRole('columnheader', { name: 'Charging code' })
     ).toBeVisible();
     await expect(
-      page.getByRole('columnheader', { name: 'Advice' }),
+      page.getByRole('columnheader', { name: 'Advice' })
     ).toBeVisible();
     // Definition list items
     await expect(page.getByText('Review type:')).toBeVisible();
@@ -69,41 +64,38 @@ test.describe('PCD Review', () => {
   });
 
   test('T-002: should show error message when server returns 401', async ({
-    page,
+    page
   }) => {
-    mockServerError(page, 'cases/2167259/history');
-    mockServerError(page, 'cases/2167259/history/initial-review');
-    mockServerError(page, 'cases/2167259/history/2167259/pre-charge-decision');
+    mockServerError(page, `cases/${CASE_ID}/pcd-review-core`);
 
     await page.goto('./pcd-review', { waitUntil: 'domcontentloaded' });
     await page.waitForRequest('**/case-info/2167259');
     await expect(
-      page.getByRole('heading', { name: 'Loading case', includeHidden: true }),
+      page.getByRole('heading', { name: 'Loading case', includeHidden: true })
     ).toBeVisible();
     await page
       .getByRole('heading', { name: 'Loading case', includeHidden: true })
       .waitFor({ state: 'detached' });
     await expect(
-      page.getByRole('heading', { name: 'Authentication Error' }),
+      page.getByRole('heading', { name: 'Authentication Error' })
     ).toBeVisible();
   });
 
   test('T-003: Review has not been completed message shown if no data is returned', async ({
-    page,
+    page
   }) => {
-    await mockRoute(page, 'cases/2167259/history', []);
-    await mockRoute(page, 'cases/2167259/history/initial-review', {});
+    await mockRoute(page, `cases/${CASE_ID}/pcd-review-core`, []);
 
     await page.goto('./pcd-review', { waitUntil: 'domcontentloaded' });
     await page.waitForRequest('**/case-info/2167259');
     await expect(
-      page.getByRole('heading', { name: 'Loading case', includeHidden: true }),
+      page.getByRole('heading', { name: 'Loading case', includeHidden: true })
     ).toBeVisible();
     await page
       .getByRole('heading', { name: 'Loading case', includeHidden: true })
       .waitFor({ state: 'detached' });
     await expect(
-      page.getByText('A Review has not yet been completed for this case.'),
+      page.getByText('A Review has not yet been completed for this case.')
     ).toBeVisible();
   });
 });
