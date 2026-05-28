@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
-import { useExhibitProducers } from '../../../hooks/index.ts';
+import { useCaseWitnesses } from '../../../hooks/index.ts';
 import {
   EditExhibitSchema,
   EditExhibitType
@@ -27,10 +27,7 @@ export const EditExhibitForm = ({
   material,
   onSuccess
 }: Props) => {
-  const {
-    selectOptions: exhibitProducers,
-    loading: isExhibitProducersLoading
-  } = useExhibitProducers();
+  const { selectOptions, loading: isWitnessesLoading } = useCaseWitnesses();
 
   const {
     control,
@@ -119,17 +116,22 @@ export const EditExhibitForm = ({
           render={({ field }) => (
             <SelectList
               {...field}
+              onChange={(value) => {
+                field.onChange(value === '' ? undefined : +value);
+              }}
               id={field.name}
               label="Exhibit producer or witness (optional)"
               error={errors?.existingproducerOrWitnessId?.message as string}
-              disabled={isExhibitProducersLoading || !!fieldValues?.producedBy}
+              disabled={isWitnessesLoading}
               options={[
-                ...(isExhibitProducersLoading
-                  ? [{ label: 'Loading...', value: '', id: '' }]
-                  : [
-                      { label: 'Select producer or witness', value: '', id: '' }
-                    ]),
-                ...exhibitProducers
+                {
+                  label: isWitnessesLoading
+                    ? 'Loading...'
+                    : 'Select producer or witness',
+                  value: '',
+                  id: ''
+                },
+                ...selectOptions
               ]}
             />
           )}
@@ -144,6 +146,7 @@ export const EditExhibitForm = ({
               id={field.name}
               label="Produced by (optional)"
               error={errors?.producedBy?.message as string}
+              defaultValue={field.value}
               disabled={!!fieldValues.existingproducerOrWitnessId}
             />
           )}
