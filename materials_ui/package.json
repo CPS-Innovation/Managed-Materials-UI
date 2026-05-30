@@ -36,7 +36,7 @@
     "@ministryofjustice/frontend": "^5.1.5",
     "axios": "1.13.5",
     "dayjs": "^1.11.13",
-    "dompurify": "^3.3.1",
+    "dompurify": "^3.4.0",
     "govuk-frontend": "^5.11.2",
     "home-office-kit": "^1.2.0",
     "react": "^18.0.0",
