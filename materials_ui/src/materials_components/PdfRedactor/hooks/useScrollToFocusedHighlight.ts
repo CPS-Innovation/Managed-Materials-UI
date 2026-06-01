@@ -1,17 +1,15 @@
-import { RefObject, useEffect } from 'react';
+import { useEffect } from 'react';
 import type { TSearchHighlight } from '../utils/searchHighlightUtils';
 
 export const useScrollToFocusedHighlight = (
-  highlights: TSearchHighlight[] | undefined,
-  focusedId: string | undefined,
-  pageDimensions: { width: number; height: number } | null,
-  containerRef: RefObject<HTMLDivElement | null>
+  highlights: TSearchHighlight[],
+  focusedId: string | undefined
 ) => {
   useEffect(() => {
-    if (!pageDimensions || !focusedId) return;
-    const focusedIsOnThisPage = highlights?.some((hl) => hl.id === focusedId);
-    if (!focusedIsOnThisPage) return;
-    const elm = containerRef.current?.querySelector(
+    if (!focusedId) return;
+    const focusedIsInThisLayer = highlights.some((hl) => hl.id === focusedId);
+    if (!focusedIsInThisLayer) return;
+    const elm = document.querySelector(
       `[data-text-highlight-id="${focusedId}"]`
     );
     elm?.scrollIntoView({
@@ -19,5 +17,5 @@ export const useScrollToFocusedHighlight = (
       block: 'center',
       inline: 'center'
     });
-  }, [focusedId, pageDimensions, highlights]);
+  }, [focusedId, highlights]);
 };

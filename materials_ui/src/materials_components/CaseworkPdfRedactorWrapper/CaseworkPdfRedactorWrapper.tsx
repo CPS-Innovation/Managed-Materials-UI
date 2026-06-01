@@ -18,7 +18,10 @@ import {
   TIndexedRotation,
   TRotation
 } from '../PdfRedactor/utils/rotationUtils';
-import type { TSearchHighlight } from '../PdfRedactor/utils/searchHighlightUtils';
+import type {
+  THighlightLayer,
+  TSearchHighlight
+} from '../PdfRedactor/utils/searchHighlightUtils';
 import {
   TTriggerData,
   useTriggerListener
@@ -26,7 +29,7 @@ import {
 import { useWindowMouseListener } from '../PdfRedactor/utils/useWindowMouseListener';
 import { useBulkRedactionFlow } from './hooks/useBulkRedactionFlow';
 import { useDocumentCheckOutRequest } from './hooks/useDocumentCheckOutRequest';
-import { RedactionPopover, TRedactionPopupProps } from './RedactionPopover';
+import { RedactionPopover } from './RedactionPopover';
 import {
   combineDeletionsWithDeletionDetails,
   TDeletionDetail
@@ -67,8 +70,6 @@ const createCheckoutMessageFromCheckoutResponse = (p: {
   p.message
     ? `It is not possible to ${p.action} as ${p.message}. Please try again later.`
     : 'Something has gone wrong, please try again later';
-
-const POPOVER_GAP_PX = 10;
 
 export const CaseworkPdfRedactorWrapper = (p: {
   fileUrl: string;
@@ -148,9 +149,6 @@ export const CaseworkPdfRedactorWrapper = (p: {
   useEffect(() => cleanupDeletionDetails(), [indexedDeletion]);
   useEffect(() => p.onRedactionsChange(redactions), [redactions]);
 
-  const [redactionPopupProps, setRedactionPopupProps] =
-    useState<TRedactionPopupProps | null>(null);
-
   const axiosInstance = useAxiosInstance();
 
   const removeRedactions = (redactionIds: string[]) => {
@@ -163,12 +161,17 @@ export const CaseworkPdfRedactorWrapper = (p: {
     caseId: p.caseId,
     versionId: p.versionId,
     documentId: p.documentId,
-    popupProps: redactionPopupProps,
-    setPopupProps: setRedactionPopupProps,
-    removeRedactions,
     setRedactions,
     setSelectedRedactionTypes
   });
+
+  const searchLayer: THighlightLayer = {
+    highlights: p.searchHighlights ?? [],
+    focusedId:
+      p.focusedSearchIndex !== undefined
+        ? p.searchHighlights?.[p.focusedSearchIndex]?.id
+        : undefined
+  };
 
   const [documentIsCheckedOutPopupProps, setDocumentIsCheckedOutPopupProps] =
     useState<{ action: string; message: string } | null>(null);
@@ -284,9 +287,9 @@ export const CaseworkPdfRedactorWrapper = (p: {
             </PdfRedactorCenteredModal>
           );
         })()}
-      {redactionPopupProps && (
+      {bulkFlow.popupProps && (
         <RedactionPopover
-          popupProps={redactionPopupProps}
+          popupProps={bulkFlow.popupProps}
           {...bulkFlow.popoverProps}
         />
       )}
@@ -350,10 +353,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
                 ?.getRangeAt(0)
                 ?.getBoundingClientRect();
               if (rect && rect.width > 0) {
-                return {
-                  x: (rect.left + rect.right) / 2,
-                  y: rect.top - POPOVER_GAP_PX
-                };
+                return { x: (rect.left + rect.right) / 2, y: rect.top };
               }
             }
             return { x: mousePos.current.x, y: mousePos.current.y };
@@ -381,15 +381,12 @@ export const CaseworkPdfRedactorWrapper = (p: {
             return;
           }
 
-          setRedactionPopupProps(() => ({
+          bulkFlow.openPopover({
             x: popoverAnchor.x,
             y: popoverAnchor.y,
             redactionIds: add.map((x) => x.id),
-            documentId: p.documentId,
-            urn: p.urn,
-            caseId: `${p.caseId}`,
             highlightedText
-          }));
+          });
         }}
         onRemoveRedactions={() => {}}
         onSaveRedactions={async () => {
@@ -519,10 +516,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
         }}
         initRedactions={p.initRedactions}
         onNumOfDocPagesChanged={p.onNumOfPagesDocumentChange}
-        searchHighlights={p.searchHighlights}
-        focusedSearchIndex={p.focusedSearchIndex}
-        bulkRedactionCandidates={bulkFlow.bulkRedactionCandidates}
-        focusedBulkRedactionIndex={bulkFlow.focusedBulkRedactionIndex}
+        highlightLayers={[searchLayer, bulkFlow.highlightLayer]}
       />
     </div>
   );

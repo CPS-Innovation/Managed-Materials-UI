@@ -5,18 +5,21 @@ import {
   TRedactionType
 } from '../PdfRedactor/PdfRedactionTypeForm';
 
+// Position and the manual selection (if any) that opened the popover. The
+// document/urn/case identifiers are supplied separately by useBulkRedactionFlow,
+// which already holds them.
 export type TRedactionPopupProps = {
   x: number;
   y: number;
   redactionIds: string[];
-  documentId: string;
-  urn: string;
-  caseId: string;
   highlightedText?: string;
 };
 
 export const RedactionPopover = (p: {
   popupProps: TRedactionPopupProps;
+  documentId: string;
+  urn: string;
+  caseId: string;
   onClose: () => void;
   onSaveSingle: (currentType: TRedactionType) => void;
   bulkProps?: TBulkProps;
@@ -35,9 +38,9 @@ export const RedactionPopover = (p: {
     >
       <RedactionDetailsForm
         redactionIds={p.popupProps.redactionIds}
-        documentId={p.popupProps.documentId}
-        urn={p.popupProps.urn}
-        caseId={p.popupProps.caseId}
+        documentId={p.documentId}
+        urn={p.urn}
+        caseId={p.caseId}
         highlightedText={p.popupProps.highlightedText}
         bulkProps={p.bulkProps}
         onCancelClick={p.onClose}

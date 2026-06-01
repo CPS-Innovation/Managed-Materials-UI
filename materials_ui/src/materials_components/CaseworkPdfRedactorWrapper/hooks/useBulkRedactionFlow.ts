@@ -1,28 +1,35 @@
 import { AxiosInstance } from 'axios';
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import type {
   TBulkProps,
   TRedactionType
 } from '../../PdfRedactor/PdfRedactionTypeForm';
 import { convertCandidatesToSearchHighlights } from '../../PdfRedactor/utils/bulkRedactionUtils';
 import type { TRedaction } from '../../PdfRedactor/utils/coordUtils';
-import type { TRedactionPopupProps } from '../RedactionPopover';
+import type { THighlightLayer } from '../../PdfRedactor/utils/searchHighlightUtils';
+import { TRedactionPopupProps } from '../RedactionPopover';
 import { useBulkSearch } from './useBulkSearch';
 
-const POPOVER_GAP_PX = 10;
-
+// Owns the redaction popover and the bulk-search-from-selection flow. The
+// wrapper calls openPopover() after a redaction is drawn and renders the
+// returned popoverProps; everything else (search, navigation, committing
+// candidates as redactions) lives here.
 export const useBulkRedactionFlow = (p: {
   axiosInstance: AxiosInstance;
   urn: string;
   caseId: number;
   versionId: number;
   documentId: string;
-  popupProps: TRedactionPopupProps | null;
-  setPopupProps: Dispatch<SetStateAction<TRedactionPopupProps | null>>;
-  removeRedactions: (ids: string[]) => void;
   setRedactions: Dispatch<SetStateAction<TRedaction[]>>;
   setSelectedRedactionTypes: Dispatch<SetStateAction<TRedactionType[]>>;
 }) => {
+  const [popupProps, setPopupProps] = useState<TRedactionPopupProps | null>(
+    null
+  );
+
+  const removeRedactions = (ids: string[]) =>
+    p.setRedactions((prev) => prev.filter((r) => !ids.includes(r.id)));
+
   const bulkSearch = useBulkSearch({
     axiosInstance: p.axiosInstance,
     urn: p.urn,
@@ -31,16 +38,17 @@ export const useBulkRedactionFlow = (p: {
     documentId: p.documentId
   });
 
-  // drop the user's selection once the bulk search returns, search results take over
+  // drop the user's manual selection once the bulk search returns with matches;
+  // the candidates (which include it) take over the highlight display
   useEffect(() => {
     if (bulkSearch.state.status !== 'done') return;
     if (bulkSearch.candidates.length < 1) return;
-    if (!p.popupProps || p.popupProps.redactionIds.length === 0) return;
+    if (!popupProps || popupProps.redactionIds.length === 0) return;
 
-    const idsToRemove = p.popupProps.redactionIds;
+    const idsToRemove = popupProps.redactionIds;
     p.setRedactions((prev) => prev.filter((r) => !idsToRemove.includes(r.id)));
-    p.setPopupProps((prev) => (prev ? { ...prev, redactionIds: [] } : prev));
-  }, [bulkSearch.state.status, bulkSearch.candidates.length, p.popupProps]);
+    setPopupProps((prev) => (prev ? { ...prev, redactionIds: [] } : prev));
+  }, [bulkSearch.state.status, bulkSearch.candidates.length, popupProps]);
 
   // pin the popover above whichever match is currently focused
   useEffect(() => {
@@ -52,22 +60,20 @@ export const useBulkRedactionFlow = (p: {
     );
     if (!elm) return;
     const matchTop = elm.getBoundingClientRect().top;
-    p.setPopupProps((prev) =>
-      prev
-        ? { ...prev, x: window.innerWidth / 2, y: matchTop - POPOVER_GAP_PX }
-        : prev
+    setPopupProps((prev) =>
+      prev ? { ...prev, x: window.innerWidth / 2, y: matchTop } : prev
     );
   }, [bulkSearch.focusedCandidate?.id]);
 
-  const trimmedSearchText = p.popupProps?.highlightedText?.trim() ?? '';
+  const trimmedSearchText = popupProps?.highlightedText?.trim() ?? '';
 
   const closePopover = () => {
-    p.setPopupProps(null);
+    setPopupProps(null);
     bulkSearch.clear();
   };
 
   const onClose = () => {
-    if (p.popupProps) p.removeRedactions(p.popupProps.redactionIds);
+    if (popupProps) removeRedactions(popupProps.redactionIds);
     closePopover();
   };
 
@@ -115,11 +121,22 @@ export const useBulkRedactionFlow = (p: {
       }
     : undefined;
 
+  const highlightLayer: THighlightLayer = {
+    highlights: convertCandidatesToSearchHighlights(bulkSearch.candidates),
+    focusedId: bulkSearch.focusedCandidate?.id
+  };
+
   return {
-    bulkRedactionCandidates: convertCandidatesToSearchHighlights(
-      bulkSearch.candidates
-    ),
-    focusedBulkRedactionIndex: bulkSearch.focusedIndex,
-    popoverProps: { onClose, onSaveSingle, bulkProps }
+    highlightLayer,
+    popupProps,
+    openPopover: (props: TRedactionPopupProps) => setPopupProps(props),
+    popoverProps: {
+      documentId: p.documentId,
+      urn: p.urn,
+      caseId: `${p.caseId}`,
+      onClose,
+      onSaveSingle,
+      bulkProps
+    }
   };
 };

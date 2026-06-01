@@ -11,7 +11,6 @@ import {
 
 import './PdfRedactorPage.scss';
 
-import { useScrollToFocusedHighlight } from './hooks/useScrollToFocusedHighlight';
 import { DeleteIcon } from './icons/DeleteIcon';
 import { GovUkButton } from './templates/GovUkButton';
 import {
@@ -24,7 +23,7 @@ import {
 import { createId } from './utils/generalUtils';
 import { getPdfCoordPairsOfHighlightedText } from './utils/highlightedTextUtils';
 import type { TMode } from './utils/modeUtils';
-import type { TSearchHighlight } from './utils/searchHighlightUtils';
+import type { THighlightLayer } from './utils/searchHighlightUtils';
 import { useTriggerListener, type TTriggerData } from './utils/useTriggger';
 
 export const PdfRedactorRotationOverlay = (p: {
@@ -331,10 +330,7 @@ export const PdfRedactorPage = (p: {
   pageIsDelete: boolean;
   onPageIsDeleteChange: (x: boolean) => void;
   pageDeleteButtonDisabled: boolean;
-  searchHighlights?: TSearchHighlight[];
-  focusedSearchHighlightId?: string;
-  bulkRedactionCandidates?: TSearchHighlight[];
-  focusedBulkRedactionCandidateId?: string;
+  highlightLayers?: THighlightLayer[];
 }) => {
   const { pageNumber, scale, redactions } = p;
   const [pageDimensions, setPageDimensions] = useState<{
@@ -391,19 +387,6 @@ export const PdfRedactorPage = (p: {
 
   const pdfPageWrapperElmRef = useRef<HTMLDivElement | null>(null);
   const requestAnimationFrameRef = useRef<number | null>(null);
-
-  useScrollToFocusedHighlight(
-    p.searchHighlights,
-    p.focusedSearchHighlightId,
-    pageDimensions,
-    pdfPageWrapperElmRef
-  );
-  useScrollToFocusedHighlight(
-    p.bulkRedactionCandidates,
-    p.focusedBulkRedactionCandidateId,
-    pageDimensions,
-    pdfPageWrapperElmRef
-  );
   useEffect(() => {
     return () => {
       if (requestAnimationFrameRef.current)
@@ -566,23 +549,16 @@ export const PdfRedactorPage = (p: {
               );
             })}
 
-            {pageDimensions && (
-              <PdfTextHighlightOverlay
-                highlights={p.searchHighlights ?? []}
-                focusedId={p.focusedSearchHighlightId}
-                pageDimensions={pageDimensions}
-                scale={p.scale}
-              />
-            )}
-
-            {pageDimensions && (
-              <PdfTextHighlightOverlay
-                highlights={p.bulkRedactionCandidates ?? []}
-                focusedId={p.focusedBulkRedactionCandidateId}
-                pageDimensions={pageDimensions}
-                scale={p.scale}
-              />
-            )}
+            {pageDimensions &&
+              p.highlightLayers?.map((layer, i) => (
+                <PdfTextHighlightOverlay
+                  key={i}
+                  highlights={layer.highlights}
+                  focusedId={layer.focusedId}
+                  pageDimensions={pageDimensions}
+                  scale={p.scale}
+                />
+              ))}
           </div>
         </span>
       </span>

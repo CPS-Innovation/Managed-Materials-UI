@@ -13,6 +13,11 @@ export type TSearchHighlight = {
   yBottom: number;
 };
 
+export type THighlightLayer = {
+  highlights: TSearchHighlight[];
+  focusedId?: string;
+};
+
 export const convertMatchesToSearchHighlights = (
   matches: SearchTermResultType['matches']
 ): TSearchHighlight[] =>

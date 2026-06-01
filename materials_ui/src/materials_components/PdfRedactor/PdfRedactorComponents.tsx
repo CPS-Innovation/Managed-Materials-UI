@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { useScrollToFocusedHighlight } from './hooks/useScrollToFocusedHighlight';
 import type { TXywhPair } from './utils/coordUtils';
 import type { TSearchHighlight } from './utils/searchHighlightUtils';
 
@@ -60,45 +61,49 @@ export const PdfTextHighlightOverlay = (p: {
   focusedId?: string;
   pageDimensions: { width: number; height: number };
   scale: number;
-}) => (
-  <>
-    {p.highlights.map((hl) => {
-      const widthScale = p.pageDimensions.width / hl.pageWidth;
-      const heightScale = p.pageDimensions.height / hl.pageHeight;
-      const xLeft = hl.xLeft * widthScale;
-      const width = (hl.xRight - hl.xLeft) * widthScale;
-      const height = (hl.yBottom - hl.yTop) * heightScale;
-      const yBottom = p.pageDimensions.height - hl.yBottom * heightScale;
-      const isFocused = hl.id === p.focusedId;
-      return (
-        <PositionPdfOverlayBox
-          key={hl.id}
-          xLeft={xLeft}
-          yBottom={yBottom}
-          width={width}
-          height={height}
-          scale={p.scale}
-        >
-          <div
-            data-text-highlight-id={hl.id}
-            style={{
-              height: '100%',
-              width: '100%',
-              background: isFocused
-                ? 'rgba(255, 221, 0, 0.4)'
-                : 'rgba(255, 0, 0, 0.3)',
-              border: isFocused
-                ? '3px dashed rgba(255, 221, 0, 0.4)'
-                : '3px dashed #ff4141',
-              boxSizing: 'border-box',
-              pointerEvents: 'none'
-            }}
-          />
-        </PositionPdfOverlayBox>
-      );
-    })}
-  </>
-);
+}) => {
+  useScrollToFocusedHighlight(p.highlights, p.focusedId);
+
+  return (
+    <>
+      {p.highlights.map((hl) => {
+        const widthScale = p.pageDimensions.width / hl.pageWidth;
+        const heightScale = p.pageDimensions.height / hl.pageHeight;
+        const xLeft = hl.xLeft * widthScale;
+        const width = (hl.xRight - hl.xLeft) * widthScale;
+        const height = (hl.yBottom - hl.yTop) * heightScale;
+        const yBottom = p.pageDimensions.height - hl.yBottom * heightScale;
+        const isFocused = hl.id === p.focusedId;
+        return (
+          <PositionPdfOverlayBox
+            key={hl.id}
+            xLeft={xLeft}
+            yBottom={yBottom}
+            width={width}
+            height={height}
+            scale={p.scale}
+          >
+            <div
+              data-text-highlight-id={hl.id}
+              style={{
+                height: '100%',
+                width: '100%',
+                background: isFocused
+                  ? 'rgba(255, 221, 0, 0.4)'
+                  : 'rgba(255, 0, 0, 0.3)',
+                border: isFocused
+                  ? '3px dashed rgba(255, 221, 0, 0.4)'
+                  : '3px dashed #ff4141',
+                boxSizing: 'border-box',
+                pointerEvents: 'none'
+              }}
+            />
+          </PositionPdfOverlayBox>
+        );
+      })}
+    </>
+  );
+};
 
 export const PositionPdfOverlayBox = (
   p: TXywhPair & { scale: number; children: React.ReactNode }
