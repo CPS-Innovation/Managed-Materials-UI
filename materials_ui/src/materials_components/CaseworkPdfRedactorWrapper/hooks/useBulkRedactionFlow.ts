@@ -10,10 +10,6 @@ import type { THighlightLayer } from '../../PdfRedactor/utils/searchHighlightUti
 import { TRedactionPopupProps } from '../RedactionPopover';
 import { useBulkSearch } from './useBulkSearch';
 
-// Owns the redaction popover and the bulk-search-from-selection flow. The
-// wrapper calls openPopover() after a redaction is drawn and renders the
-// returned popoverProps; everything else (search, navigation, committing
-// candidates as redactions) lives here.
 export const useBulkRedactionFlow = (p: {
   axiosInstance: AxiosInstance;
   urn: string;

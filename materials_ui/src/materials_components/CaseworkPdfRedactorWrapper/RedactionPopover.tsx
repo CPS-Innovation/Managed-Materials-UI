@@ -5,9 +5,6 @@ import {
   TRedactionType
 } from '../PdfRedactor/PdfRedactionTypeForm';
 
-// Position and the manual selection (if any) that opened the popover. The
-// document/urn/case identifiers are supplied separately by useBulkRedactionFlow,
-// which already holds them.
 export type TRedactionPopupProps = {
   x: number;
   y: number;
