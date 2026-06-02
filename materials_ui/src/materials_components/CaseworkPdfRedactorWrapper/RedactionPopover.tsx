@@ -1,9 +1,7 @@
+import { ManualRedactionForm } from '../PdfRedactor/ManualRedactionForm';
 import { PdfRedactorMiniModal } from '../PdfRedactor/modals/PdfRedactorMiniModal';
-import {
-  RedactionDetailsForm,
-  TBulkProps,
-  TRedactionType
-} from '../PdfRedactor/PdfRedactionTypeForm';
+import { TRedactionType } from '../PdfRedactor/RedactionTypeSelect';
+import { BulkRedactionForm, TBulkProps } from './BulkRedactionForm';
 
 export type TRedactionPopupProps = {
   x: number;
@@ -14,15 +12,10 @@ export type TRedactionPopupProps = {
 
 export const RedactionPopover = (p: {
   popupProps: TRedactionPopupProps;
-  documentId: string;
-  urn: string;
-  caseId: string;
   onClose: () => void;
   onSaveSingle: (currentType: TRedactionType) => void;
   bulkProps?: TBulkProps;
 }) => {
-  const hasHighlightedText = !!p.popupProps.highlightedText?.trim();
-
   return (
     <PdfRedactorMiniModal
       coordX={p.popupProps.x}
@@ -31,18 +24,13 @@ export const RedactionPopover = (p: {
       onEscPress={p.onClose}
       ariaLabel="Redaction details"
       dimBackground={false}
-      placement={hasHighlightedText ? 'above' : 'auto'}
+      placement={p.bulkProps ? 'above' : 'auto'}
     >
-      <RedactionDetailsForm
-        redactionIds={p.popupProps.redactionIds}
-        documentId={p.documentId}
-        urn={p.urn}
-        caseId={p.caseId}
-        highlightedText={p.popupProps.highlightedText}
-        bulkProps={p.bulkProps}
-        onCancelClick={p.onClose}
-        onSaveSuccess={p.onSaveSingle}
-      />
+      {p.bulkProps ? (
+        <BulkRedactionForm bulkProps={p.bulkProps} onRedact={p.onSaveSingle} />
+      ) : (
+        <ManualRedactionForm onCancel={p.onClose} onRedact={p.onSaveSingle} />
+      )}
     </PdfRedactorMiniModal>
   );
 };

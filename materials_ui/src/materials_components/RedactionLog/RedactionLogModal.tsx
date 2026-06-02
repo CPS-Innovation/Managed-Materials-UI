@@ -9,7 +9,7 @@ import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
 import { ChargeStatusCode } from '../../constants/chargeStatus';
 import { useCaseDetails } from '../../hooks/search/useCaseSearch';
 import { TDocument } from '../DocumentSelectAccordion/getters/getDocumentList';
-import { TRedactionType } from '../PdfRedactor/PdfRedactionTypeForm';
+import { TRedactionType } from '../PdfRedactor/RedactionTypeSelect';
 import { TRedaction } from '../PdfRedactor/utils/coordUtils';
 import { Modal } from './Modal';
 import styles from './RedactionLogModal.module.scss';

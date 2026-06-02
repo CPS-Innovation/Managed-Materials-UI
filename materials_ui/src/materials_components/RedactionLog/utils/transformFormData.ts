@@ -1,7 +1,7 @@
 import { TLookupsResponse } from '../../../caseWorkApp/types/redaction';
 import { RedactionLogData } from '../../../caseWorkApp/types/redactionLog';
 import { TDocument } from '../../DocumentSelectAccordion/getters/getDocumentList';
-import { TRedactionType } from '../../PdfRedactor/PdfRedactionTypeForm';
+import { TRedactionType } from '../../PdfRedactor/RedactionTypeSelect';
 import { RedactionLogFormInputs } from '../RedactionLogModal';
 
 const normalizeToString = (

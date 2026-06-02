@@ -1,12 +1,10 @@
 import { AxiosInstance } from 'axios';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import type {
-  TBulkProps,
-  TRedactionType
-} from '../../PdfRedactor/PdfRedactionTypeForm';
+import type { TRedactionType } from '../../PdfRedactor/RedactionTypeSelect';
 import { convertCandidatesToSearchHighlights } from '../../PdfRedactor/utils/bulkRedactionUtils';
 import type { TRedaction } from '../../PdfRedactor/utils/coordUtils';
 import type { THighlightLayer } from '../../PdfRedactor/utils/searchHighlightUtils';
+import type { TBulkProps } from '../BulkRedactionForm';
 import { TRedactionPopupProps } from '../RedactionPopover';
 import { useBulkSearch } from './useBulkSearch';
 
@@ -123,13 +121,6 @@ export const useBulkRedactionFlow = (p: {
     highlightLayer,
     popupProps,
     openPopover: (props: TRedactionPopupProps) => setPopupProps(props),
-    popoverProps: {
-      documentId: p.documentId,
-      urn: p.urn,
-      caseId: `${p.caseId}`,
-      onClose,
-      onSaveSingle,
-      bulkProps
-    }
+    popoverProps: { onClose, onSaveSingle, bulkProps }
   };
 };

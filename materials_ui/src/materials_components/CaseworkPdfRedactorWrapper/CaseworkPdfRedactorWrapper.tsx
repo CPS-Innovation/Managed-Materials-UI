@@ -7,9 +7,9 @@ import { categoriseDocument } from '../DocumentSelectAccordion/utils/categoriseD
 import { PdfRedactorCenteredModal } from '../PdfRedactor/modals/PdfRedactorCenteredModal';
 import { PdfRedactorMiniModal } from '../PdfRedactor/modals/PdfRedactorMiniModal';
 import { DeletionReasonForm } from '../PdfRedactor/PdfDeletionReasonForm';
-import { TRedactionType } from '../PdfRedactor/PdfRedactionTypeForm';
 import { PdfRedactor } from '../PdfRedactor/PdfRedactor';
 import { CloseIcon } from '../PdfRedactor/PdfRedactorComponents';
+import { TRedactionType } from '../PdfRedactor/RedactionTypeSelect';
 import { GovUkButton } from '../PdfRedactor/templates/GovUkButton';
 import { TCoord, TRedaction } from '../PdfRedactor/utils/coordUtils';
 import { TIndexedDeletion } from '../PdfRedactor/utils/deletionUtils';

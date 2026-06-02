@@ -11,7 +11,7 @@ import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
 import { CaseworkPdfRedactorWrapper } from '../CaseworkPdfRedactorWrapper/CaseworkPdfRedactorWrapper';
 import { TDocument } from '../DocumentSelectAccordion/getters/getDocumentList';
 import { DocumentViewportArea } from '../documenViewportArea';
-import { TRedactionType } from '../PdfRedactor/PdfRedactionTypeForm';
+import { TRedactionType } from '../PdfRedactor/RedactionTypeSelect';
 import { TRedaction } from '../PdfRedactor/utils/coordUtils';
 import { TMode } from '../PdfRedactor/utils/modeUtils';
 import type { TSearchHighlight } from '../PdfRedactor/utils/searchHighlightUtils';
