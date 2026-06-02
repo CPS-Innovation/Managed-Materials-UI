@@ -34,18 +34,6 @@ export const useBulkRedactionFlow = (p: {
     documentId: p.documentId
   });
 
-  // drop the user's manual selection once the bulk search returns with matches;
-  // the candidates (which include it) take over the highlight display
-  useEffect(() => {
-    if (bulkSearch.state.status !== 'done') return;
-    if (bulkSearch.candidates.length < 1) return;
-    if (!popupProps || popupProps.redactionIds.length === 0) return;
-
-    const idsToRemove = popupProps.redactionIds;
-    p.setRedactions((prev) => prev.filter((r) => !idsToRemove.includes(r.id)));
-    setPopupProps((prev) => (prev ? { ...prev, redactionIds: [] } : prev));
-  }, [bulkSearch.state.status, bulkSearch.candidates.length, popupProps]);
-
   // pin the popover above whichever match is currently focused
   useEffect(() => {
     const focusedId = bulkSearch.focusedCandidate?.id;
@@ -87,7 +75,16 @@ export const useBulkRedactionFlow = (p: {
           bulkSearch.state.status === 'done'
             ? { status: 'done', count: bulkSearch.candidates.length }
             : bulkSearch.state,
-        onFindMatchingText: () => void bulkSearch.run(trimmedSearchText),
+        onFindMatchingText: async () => {
+          const manualSelectionIds = popupProps?.redactionIds ?? [];
+          const candidates = await bulkSearch.run(trimmedSearchText);
+          if (candidates?.length && manualSelectionIds.length) {
+            removeRedactions(manualSelectionIds);
+            setPopupProps((prev) =>
+              prev ? { ...prev, redactionIds: [] } : prev
+            );
+          }
+        },
         onViewPrevious: bulkSearch.goPrev,
         onViewNext: bulkSearch.goNext,
         onRedactFocused: (currentType) => {

@@ -29,7 +29,7 @@ export const useBulkSearch = (p: {
   }, []);
 
   const run = useCallback(
-    async (searchText: string) => {
+    async (searchText: string): Promise<TRedaction[] | undefined> => {
       abortRef.current?.abort();
       const controller = new AbortController();
       abortRef.current = controller;
@@ -44,16 +44,18 @@ export const useBulkSearch = (p: {
           searchText,
           signal: controller.signal
         });
-        if (controller.signal.aborted) return;
+        if (controller.signal.aborted) return undefined;
         if (resp.isNotFound || resp.failedReason) {
           setState({ status: 'error' });
-          return;
+          return undefined;
         }
         const candidates = convertSearchResponseToRedactions(resp);
         setState({ status: 'done', candidates, focusedIndex: 0 });
+        return candidates;
       } catch (err) {
-        if (axios.isCancel(err)) return;
+        if (axios.isCancel(err)) return undefined;
         setState({ status: 'error' });
+        return undefined;
       }
     },
     [p.axiosInstance, p.urn, p.caseId, p.versionId, p.documentId]
