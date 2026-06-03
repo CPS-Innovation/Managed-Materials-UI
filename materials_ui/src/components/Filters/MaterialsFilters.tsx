@@ -34,7 +34,7 @@ export const MaterialsFilters = () => {
   };
 
   const categories = materialsCategoryList;
-  const statusList = ['Used', 'Unused', 'None'];
+  const statusList = ['Used', 'Unused'];
 
   return (
     <FilterForm
