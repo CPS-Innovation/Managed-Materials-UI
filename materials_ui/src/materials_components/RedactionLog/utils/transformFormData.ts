@@ -171,8 +171,8 @@ export const transformFormDataToApiFormat = ({
     chargeStatus: formData.chargeStatus,
     cmsValues: {
       originalFileName: activeDocument?.cmsOriginalFileName || '',
-      documentId: activeDocument?.documentId
-        ? activeDocument.documentId.replace(/^CMS-/, '')
+      documentId: activeDocument?.parentId
+        ? activeDocument.parentId.replace(/^CMS-/, '')
         : 0,
       documentType: activeDocument?.cmsDocType.documentType || '',
       fileCreatedDate:

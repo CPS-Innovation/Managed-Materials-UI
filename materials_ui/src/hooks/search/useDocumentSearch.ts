@@ -43,9 +43,7 @@ export const useDocumentSearchResults = (
   const combinedSearchResults: SearchTermResultType[] = [];
 
   for (const doc of documents) {
-    const matches = searchResults.filter(
-      (sr) => sr.documentId === doc.documentId
-    );
+    const matches = searchResults.filter((sr) => sr.parentId === doc.parentId);
 
     const resultsPerDocumentCount = matches.reduce((acc, curr) => {
       const count = curr.words.filter((w) =>
@@ -57,7 +55,7 @@ export const useDocumentSearchResults = (
 
     if (matches.length > 0) {
       combinedSearchResults.push({
-        documentId: doc.documentId,
+        parentId: doc.parentId,
         documentTitle: doc.presentationTitle ?? '',
         cmsFileCreatedDate: doc.cmsFileCreatedDate,
         cmsDocType: doc.cmsDocType,

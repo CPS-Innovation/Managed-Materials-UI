@@ -28,7 +28,7 @@ export const UnsavedRedactionsModal = ({
   );
 
   const documentsWithRedactions = documents.filter((doc) =>
-    documentIdsWithRedactions.includes(doc.documentId)
+    documentIdsWithRedactions.includes(doc.parentId)
   );
 
   return (
@@ -46,8 +46,8 @@ export const UnsavedRedactionsModal = ({
               {documentsWithRedactions.map((doc) => (
                 <a
                   className="govuk-link"
-                  key={doc.documentId}
-                  onClick={() => onDocumentClick(doc.documentId)}
+                  key={doc.parentId}
+                  onClick={() => onDocumentClick(doc.parentId)}
                 >
                   {doc.presentationTitle}
                 </a>

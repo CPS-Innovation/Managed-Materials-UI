@@ -76,7 +76,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
   urn: string;
   caseId: number;
   childId: number;
-  documentId: string;
+  parentId: string;
   onModification: (x: TDocument) => void;
   document: null | undefined | TDocument;
   onRedactionsChange: (x: TRedaction[]) => void;
@@ -104,7 +104,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
   const checkInDocument = async () => {
     if (!isDocumentCheckedOut) return;
     const resp = await documentCheckOutRequest.checkIn({
-      documentId: p.documentId,
+      parentId: p.parentId,
       childId: p.childId
     });
     if (resp.success) setIsDocumentCheckedOut(false);
@@ -195,7 +195,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
   const checkCheckoutStatus = async () => {
     if (isDocumentCheckedOut) return { success: true } as const;
     const checkoutResponse = await documentCheckOutRequest.checkOut({
-      documentId: p.documentId,
+      parentId: p.parentId,
       childId: p.childId
     });
     setIsDocumentCheckedOut(checkoutResponse.success);
@@ -421,14 +421,14 @@ export const CaseworkPdfRedactorWrapper = (p: {
               urn: p.urn,
               caseId: p.caseId,
               childId: p.childId,
-              documentId: p.documentId,
+              parentId: p.parentId,
               redactions
             });
             setRedactions([]);
             p.onRedactionSaveStatusChange('saved');
             if (p.document) p.onModification(p.document);
             await documentCheckOutRequest.checkIn({
-              documentId: p.documentId,
+              parentId: p.parentId,
               childId: p.childId
             });
           } catch (error) {
@@ -503,12 +503,12 @@ export const CaseworkPdfRedactorWrapper = (p: {
             urn: p.urn,
             caseId: p.caseId,
             childId: p.childId,
-            documentId: p.documentId,
+            parentId: p.parentId,
             deletions: Object.values(indexedDeletion)
           });
           if (p.document) p.onModification(p.document);
           await documentCheckOutRequest.checkIn({
-            documentId: p.documentId,
+            parentId: p.parentId,
             childId: p.childId
           });
         }}
@@ -529,12 +529,12 @@ export const CaseworkPdfRedactorWrapper = (p: {
             urn: p.urn,
             caseId: p.caseId,
             childId: p.childId,
-            documentId: p.documentId,
+            parentId: p.parentId,
             rotations: Object.values(indexedRotation)
           });
           if (p.document) p.onModification(p.document);
           await documentCheckOutRequest.checkIn({
-            documentId: p.documentId,
+            parentId: p.parentId,
             childId: p.childId
           });
         }}

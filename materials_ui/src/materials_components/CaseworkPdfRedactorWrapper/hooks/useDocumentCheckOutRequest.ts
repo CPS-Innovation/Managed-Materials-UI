@@ -22,12 +22,12 @@ const checkOutDocumentFromAxiosInstance = async (p: {
   axiosInstance: AxiosInstance;
   caseId: number;
   urn: string;
-  documentId: string;
+  parentId: string;
   childId: number | string;
 }) => {
   try {
     const response = await p.axiosInstance.post(
-      `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.childId}/checkout`
+      `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.parentId}/versions/${p.childId}/checkout`
     );
 
     return { success: true, data: { response } } as const;
@@ -53,12 +53,12 @@ export const checkInDocumentFromAxiosInstance = async (p: {
   axiosInstance: AxiosInstance;
   caseId: number;
   urn: string;
-  documentId: string;
+  parentId: string;
   childId: number | string;
 }) => {
   try {
     await p.axiosInstance.delete(
-      `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.childId}/checkout`,
+      `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.parentId}/versions/${p.childId}/checkout`,
       { fetchOptions: { keepalive: true } }
     );
 
@@ -79,7 +79,7 @@ export const useDocumentCheckOutRequest = ({
   const axiosInstance = useAxiosInstance();
 
   const checkOut = async (fnProps: {
-    documentId: string;
+    parentId: string;
     childId: number | string;
   }) => {
     if (!urn) return { success: false, message: 'no urn provided' } as const;
@@ -91,7 +91,7 @@ export const useDocumentCheckOutRequest = ({
       axiosInstance,
       urn,
       caseId,
-      documentId: fnProps.documentId,
+      parentId: fnProps.parentId,
       childId: fnProps.childId
     });
     setIsLoading(false);
@@ -99,7 +99,7 @@ export const useDocumentCheckOutRequest = ({
     return resp;
   };
 
-  const checkIn = async (fnProps: { documentId: string; childId: number }) => {
+  const checkIn = async (fnProps: { parentId: string; childId: number }) => {
     if (!urn) return { success: false, message: 'no urn provided' } as const;
     if (!caseId)
       return { success: false, message: 'no caseId provided' } as const;
@@ -109,7 +109,7 @@ export const useDocumentCheckOutRequest = ({
       axiosInstance,
       urn,
       caseId,
-      documentId: fnProps.documentId,
+      parentId: fnProps.parentId,
       childId: fnProps.childId
     });
     setIsLoading(false);

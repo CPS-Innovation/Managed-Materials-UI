@@ -123,24 +123,24 @@ export const DocumentSidebarAccordion = (p: {
               ) : (
                 item.documents.map((document) => (
                   <DocumentSidebarAccordionDocument
-                    key={`${item.key}-${document.documentId}`}
+                    key={`${item.key}-${document.parentId}`}
                     document={document}
                     activeDocumentId={p.activeDocumentId}
                     newVersionDocumentId={p.newVersionDocumentId}
                     openDocumentIds={openDocumentIds}
                     readDocumentIds={readDocumentIds}
                     onDocumentClick={() => {
-                      p.onDocumentClick?.(document.documentId);
+                      p.onDocumentClick?.(document.parentId);
                       setReadDocumentIds((docIds) => [
-                        ...new Set([...docIds, document.documentId])
+                        ...new Set([...docIds, document.parentId])
                       ]);
                       const docSet = new Set([
                         ...openDocumentIds,
-                        document.documentId
+                        document.parentId
                       ]);
                       setOpenDocumentIds([...docSet]);
                     }}
-                    onNotesClick={() => p.onNotesClick(document.documentId)}
+                    onNotesClick={() => p.onNotesClick(document.parentId)}
                     ActionComponent={
                       p.ActionComponent ? (
                         <p.ActionComponent document={document} />

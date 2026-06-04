@@ -4,7 +4,7 @@ import z from 'zod';
 import { useAxiosInstance } from './getAxiosInstance';
 
 export const documentSchema = z.object({
-  documentId: z.string(),
+  parentId: z.string(),
   status: z.string(),
   cmsDocType: z.object({
     documentTypeId: z.number(),

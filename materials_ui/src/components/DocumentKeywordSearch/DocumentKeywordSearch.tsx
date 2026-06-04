@@ -229,7 +229,7 @@ export const DocumentKeywordSearch = ({
                 header="Technical problems stopped us from searching these documents:"
                 content={failedToConvert.map((doc: SearchTermResultType) => (
                   <p
-                    key={doc.documentId}
+                    key={doc.parentId}
                     style={{ fontStyle: 'italic', color: '#505a5f' }}
                   >
                     {doc.presentationTitle}
@@ -241,7 +241,7 @@ export const DocumentKeywordSearch = ({
             {!loading &&
               filteredResults &&
               filteredResults.slice(startIndex, endIndex + 1).map((doc) => {
-                const isExpanded = expandedDocuments[doc.documentId] ?? false;
+                const isExpanded = expandedDocuments[doc.parentId] ?? false;
                 const first = doc.matches[0];
                 const firstLineMatchCount =
                   first?.words.filter((word) =>
@@ -251,12 +251,12 @@ export const DocumentKeywordSearch = ({
                   (doc.resultsPerDocumentCount ?? 0) - firstLineMatchCount;
 
                 return (
-                  <div key={doc.documentId} style={{ marginBottom: 20 }}>
+                  <div key={doc.parentId} style={{ marginBottom: 20 }}>
                     <h2 className="govuk-heading-m govuk-!-margin-bottom-1">
                       <Link
                         to={getRoute('REVIEW_REDACT')}
                         state={{
-                          materialId: doc.documentId,
+                          materialId: doc.parentId,
                           searchTerm,
                           searchMatches: doc.matches
                         }}
@@ -301,7 +301,7 @@ export const DocumentKeywordSearch = ({
                             display: 'inline-block',
                             marginTop: 8
                           }}
-                          onClick={() => toggleDocumentExpand(doc.documentId)}
+                          onClick={() => toggleDocumentExpand(doc.parentId)}
                         >
                           {isExpanded
                             ? 'Hide additional results'
