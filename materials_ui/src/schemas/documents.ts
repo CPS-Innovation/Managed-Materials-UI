@@ -9,7 +9,7 @@ export const cmsDocTypeSchema = z.object({
 export const DocumentSchema = z.object({
   documentId: z.string(),
   status: z.string(),
-  versionId: z.number(),
+  childId: z.number(),
   cmsDocType: cmsDocTypeSchema,
   cmsOriginalFileName: z.string(),
   presentationTitle: z.string(),
@@ -39,7 +39,6 @@ export const DocumentSchema = z.object({
 export const SearchResultSchema = z.object({
   id: z.string(),
   documentId: z.string(),
-  versionId: z.number(),
   fileName: z.string(),
   pageIndex: z.number(),
   lineIndex: z.number(),

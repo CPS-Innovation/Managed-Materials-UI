@@ -55,11 +55,11 @@ export const getPdfFiles = async (p: {
   urn: string;
   caseId: number | string;
   documentId: number | string;
-  versionId?: number | string;
+  childId?: number | string;
 }): Promise<Blob> => {
   try {
     const response = await p.axiosInstance.get(
-      `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.versionId}/pdf`,
+      `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.childId}/pdf`,
       { responseType: 'blob' }
     );
     return response.data;

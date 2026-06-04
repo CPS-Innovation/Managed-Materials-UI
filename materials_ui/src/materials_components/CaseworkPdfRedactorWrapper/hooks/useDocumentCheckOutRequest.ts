@@ -18,17 +18,16 @@ const extractReadableMessageFromError = (error: unknown) => {
   return errorMessage.charAt(0).toLowerCase() + errorMessage.slice(1);
 };
 
-
 const checkOutDocumentFromAxiosInstance = async (p: {
   axiosInstance: AxiosInstance;
   caseId: number;
   urn: string;
   documentId: string;
-  versionId: number | string;
+  childId: number | string;
 }) => {
   try {
     const response = await p.axiosInstance.post(
-      `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.versionId}/checkout`
+      `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.childId}/checkout`
     );
 
     return { success: true, data: { response } } as const;
@@ -43,7 +42,10 @@ const checkOutDocumentFromAxiosInstance = async (p: {
     }
 
     return {
-      success: false, status: 'generic error',message: defaultMessage } as const;
+      success: false,
+      status: 'generic error',
+      message: defaultMessage
+    } as const;
   }
 };
 
@@ -52,11 +54,11 @@ export const checkInDocumentFromAxiosInstance = async (p: {
   caseId: number;
   urn: string;
   documentId: string;
-  versionId: number | string;
+  childId: number | string;
 }) => {
   try {
     await p.axiosInstance.delete(
-      `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.versionId}/checkout`,
+      `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.childId}/checkout`,
       { fetchOptions: { keepalive: true } }
     );
 
@@ -78,7 +80,7 @@ export const useDocumentCheckOutRequest = ({
 
   const checkOut = async (fnProps: {
     documentId: string;
-    versionId: number | string;
+    childId: number | string;
   }) => {
     if (!urn) return { success: false, message: 'no urn provided' } as const;
     if (!caseId)
@@ -89,17 +91,15 @@ export const useDocumentCheckOutRequest = ({
       axiosInstance,
       urn,
       caseId,
-      ...fnProps
+      documentId: fnProps.documentId,
+      childId: fnProps.childId
     });
     setIsLoading(false);
 
     return resp;
   };
 
-  const checkIn = async (fnProps: {
-    documentId: string;
-    versionId: number;
-  }) => {
+  const checkIn = async (fnProps: { documentId: string; childId: number }) => {
     if (!urn) return { success: false, message: 'no urn provided' } as const;
     if (!caseId)
       return { success: false, message: 'no caseId provided' } as const;
@@ -109,7 +109,8 @@ export const useDocumentCheckOutRequest = ({
       axiosInstance,
       urn,
       caseId,
-      ...fnProps
+      documentId: fnProps.documentId,
+      childId: fnProps.childId
     });
     setIsLoading(false);
 

@@ -5,7 +5,7 @@ export const saveRotations = async (p: {
   axiosInstance: AxiosInstance;
   urn: string;
   caseId: number;
-  versionId: number;
+  childId: number;
   documentId: string;
   rotations: TRotation[];
 }) => {
@@ -18,7 +18,7 @@ export const saveRotations = async (p: {
   };
 
   const response = await p.axiosInstance.post(
-    `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.versionId}/modify`,
+    `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.childId}/modify`,
     payload
   );
 

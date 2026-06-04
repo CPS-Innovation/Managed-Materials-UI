@@ -5,7 +5,7 @@ export const saveRedactions = async (p: {
   axiosInstance: AxiosInstance;
   urn: string;
   caseId: number;
-  versionId: number;
+  childId: number;
   documentId: string;
   redactions: TRedaction[];
 }) => {
@@ -31,7 +31,7 @@ export const saveRedactions = async (p: {
     })
   };
   const response = await p.axiosInstance.put(
-    `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.versionId}/redact`,
+    `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.childId}/redact`,
     payload
   );
 

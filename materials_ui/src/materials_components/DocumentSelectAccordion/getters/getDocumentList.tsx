@@ -16,7 +16,7 @@ export const documentSchema = z.object({
   cmsFileCreatedDate: z.string(),
   isUnused: z.boolean(),
   hasNotes: z.boolean(),
-  versionId: z.number(),
+  childId: z.number(),
   presentationFlags: z
     .object({ write: z.union([z.string(), z.boolean()]).nullish() })
     .nullish()
