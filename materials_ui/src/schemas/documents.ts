@@ -39,6 +39,7 @@ export const DocumentSchema = z.object({
 export const SearchResultSchema = z.object({
   id: z.string(),
   documentId: z.string(),
+  childId: z.string(),
   fileName: z.string(),
   pageIndex: z.number(),
   lineIndex: z.number(),
