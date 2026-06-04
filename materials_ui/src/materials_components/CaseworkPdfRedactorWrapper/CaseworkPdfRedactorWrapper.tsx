@@ -7,12 +7,9 @@ import { categoriseDocument } from '../DocumentSelectAccordion/utils/categoriseD
 import { PdfRedactorCenteredModal } from '../PdfRedactor/modals/PdfRedactorCenteredModal';
 import { PdfRedactorMiniModal } from '../PdfRedactor/modals/PdfRedactorMiniModal';
 import { DeletionReasonForm } from '../PdfRedactor/PdfDeletionReasonForm';
-import {
-  RedactionDetailsForm,
-  TRedactionType
-} from '../PdfRedactor/PdfRedactionTypeForm';
 import { PdfRedactor } from '../PdfRedactor/PdfRedactor';
 import { CloseIcon } from '../PdfRedactor/PdfRedactorComponents';
+import { TRedactionType } from '../PdfRedactor/RedactionTypeSelect';
 import { GovUkButton } from '../PdfRedactor/templates/GovUkButton';
 import { TCoord, TRedaction } from '../PdfRedactor/utils/coordUtils';
 import { TIndexedDeletion } from '../PdfRedactor/utils/deletionUtils';
@@ -21,13 +18,18 @@ import {
   TIndexedRotation,
   TRotation
 } from '../PdfRedactor/utils/rotationUtils';
-import type { TSearchHighlight } from '../PdfRedactor/utils/searchHighlightUtils';
+import type {
+  THighlightLayer,
+  TSearchHighlight
+} from '../PdfRedactor/utils/searchHighlightUtils';
 import {
   TTriggerData,
   useTriggerListener
 } from '../PdfRedactor/utils/useTriggger';
 import { useWindowMouseListener } from '../PdfRedactor/utils/useWindowMouseListener';
+import { useBulkRedactionFlow } from './hooks/useBulkRedactionFlow';
 import { useDocumentCheckOutRequest } from './hooks/useDocumentCheckOutRequest';
+import { RedactionPopover } from './RedactionPopover';
 import {
   combineDeletionsWithDeletionDetails,
   TDeletionDetail
@@ -147,13 +149,29 @@ export const CaseworkPdfRedactorWrapper = (p: {
   useEffect(() => cleanupDeletionDetails(), [indexedDeletion]);
   useEffect(() => p.onRedactionsChange(redactions), [redactions]);
 
-  const [redactionPopupProps, setRedactionPopupProps] = useState<
-    | (Omit<
-        ComponentProps<typeof RedactionDetailsForm> & TCoord,
-        'onSaveSuccess' | 'onCancelClick'
-      > & { highlightedText?: string })
-    | null
-  >(null);
+  const axiosInstance = useAxiosInstance();
+
+  const removeRedactions = (redactionIds: string[]) => {
+    setRedactions((prev) => prev.filter((x) => !redactionIds.includes(x.id)));
+  };
+
+  const bulkFlow = useBulkRedactionFlow({
+    axiosInstance,
+    urn: p.urn,
+    caseId: p.caseId,
+    versionId: p.versionId,
+    documentId: p.documentId,
+    setRedactions,
+    setSelectedRedactionTypes
+  });
+
+  const searchLayer: THighlightLayer = {
+    highlights: p.searchHighlights ?? [],
+    focusedId:
+      p.focusedSearchIndex !== undefined
+        ? p.searchHighlights?.[p.focusedSearchIndex]?.id
+        : undefined
+  };
 
   const [documentIsCheckedOutPopupProps, setDocumentIsCheckedOutPopupProps] =
     useState<{ action: string; message: string } | null>(null);
@@ -170,11 +188,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
   > | null>(null);
 
   const mousePos = useWindowMouseListener();
-  const axiosInstance = useAxiosInstance();
 
-  const removeRedactions = (redactionIds: string[]) => {
-    setRedactions((prev) => prev.filter((x) => !redactionIds.includes(x.id)));
-  };
   const undeletePage = (pageNumber: number) => {
     setIndexedDeletion((prev) => {
       const { [pageNumber]: _deleted, ...rest } = prev;
@@ -273,43 +287,12 @@ export const CaseworkPdfRedactorWrapper = (p: {
             </PdfRedactorCenteredModal>
           );
         })()}
-      {redactionPopupProps &&
-        (() => {
-          const handleCloseModal = () => {
-            removeRedactions(redactionPopupProps.redactionIds);
-            setRedactionPopupProps(null);
-          };
-
-          return (
-            <PdfRedactorMiniModal
-              coordX={redactionPopupProps.x}
-              coordY={redactionPopupProps.y}
-              onBackgroundClick={handleCloseModal}
-              onEscPress={handleCloseModal}
-              ariaLabel="Redaction details"
-            >
-              <RedactionDetailsForm
-                redactionIds={redactionPopupProps.redactionIds}
-                documentId={redactionPopupProps.documentId}
-                urn={redactionPopupProps.urn}
-                caseId={redactionPopupProps.caseId}
-                highlightedText={redactionPopupProps.highlightedText}
-                onRedactionTypeChange={(type) => {
-                  if (!type) return;
-                  setSelectedRedactionTypes((prev) => {
-                    const next = [...prev, { id: type.id, name: type.name }];
-                    return next;
-                  });
-                }}
-                onCancelClick={() => {
-                  removeRedactions(redactionPopupProps.redactionIds);
-                  setRedactionPopupProps(null);
-                }}
-                onSaveSuccess={() => setRedactionPopupProps(null)}
-              />
-            </PdfRedactorMiniModal>
-          );
-        })()}
+      {bulkFlow.popupProps && (
+        <RedactionPopover
+          popupProps={bulkFlow.popupProps}
+          {...bulkFlow.popoverProps}
+        />
+      )}
       {deleteReasonPopupProps &&
         (() => {
           const handleCloseModal = () => {
@@ -352,11 +335,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
             setSelectedRedactionTypes([]);
           }
         }}
-        onAddRedactions={async ({
-          redactions: add,
-          triggerSource,
-          highlightedText
-        }) => {
+        onAddRedactions={async ({ redactions: add, highlightedText }) => {
           if (isUnredactableDocumentCategory || isDocumentDispatched) {
             removeRedactions(add.map((x) => x.id));
             const message = (() => {
@@ -368,16 +347,16 @@ export const CaseworkPdfRedactorWrapper = (p: {
           }
 
           const popoverAnchor = (() => {
-            if (triggerSource !== 'keyboard') {
-              return { x: mousePos.current.x, y: mousePos.current.y };
+            if (highlightedText) {
+              const rect = window
+                .getSelection()
+                ?.getRangeAt(0)
+                ?.getBoundingClientRect();
+              if (rect && rect.width > 0) {
+                return { x: (rect.left + rect.right) / 2, y: rect.top };
+              }
             }
-            const rect = window
-              .getSelection()
-              ?.getRangeAt(0)
-              ?.getBoundingClientRect();
-            return rect && rect.width > 0
-              ? { x: rect.right, y: rect.bottom }
-              : { x: mousePos.current.x, y: mousePos.current.y };
+            return { x: mousePos.current.x, y: mousePos.current.y };
           })();
 
           const checkoutResponsePromise = checkCheckoutStatus();
@@ -402,15 +381,12 @@ export const CaseworkPdfRedactorWrapper = (p: {
             return;
           }
 
-          setRedactionPopupProps(() => ({
+          bulkFlow.openPopover({
             x: popoverAnchor.x,
             y: popoverAnchor.y,
             redactionIds: add.map((x) => x.id),
-            documentId: 'This document does not exist',
-            urn: 'This URN does not exist',
-            caseId: 'This case does not exist',
             highlightedText
-          }));
+          });
         }}
         onRemoveRedactions={() => {}}
         onSaveRedactions={async () => {
@@ -540,8 +516,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
         }}
         initRedactions={p.initRedactions}
         onNumOfDocPagesChanged={p.onNumOfPagesDocumentChange}
-        searchHighlights={p.searchHighlights}
-        focusedSearchIndex={p.focusedSearchIndex}
+        highlightLayers={[searchLayer, bulkFlow.highlightLayer]}
       />
     </div>
   );

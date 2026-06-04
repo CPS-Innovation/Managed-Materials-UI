@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
 import { TDocument } from '../DocumentSelectAccordion/getters/getDocumentList';
-import { TRedactionType } from '../PdfRedactor/PdfRedactionTypeForm';
+import { TRedactionType } from '../PdfRedactor/RedactionTypeSelect';
 import { TRedaction } from '../PdfRedactor/utils/coordUtils';
 import { Popover } from './Popover';
 import styles from './RedactionLogModal.module.scss';

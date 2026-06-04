@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { GovUkButton } from './templates/GovUkButton';
 
 const redactionTypeData = [
   { id: '1', name: 'Named individual' },
@@ -21,9 +20,10 @@ const redactionTypeData = [
 
 export type TRedactionType = (typeof redactionTypeData)[number];
 
-const RedactionTypeSelect = (p: {
+export const RedactionTypeSelect = (p: {
   onRedactionTypeChange: (x: TRedactionType | undefined) => void;
   initFocus: boolean;
+  fullWidth?: boolean;
 }) => {
   const [redactionTypeId, setRedactionTypeId] = useState('');
   const selectElmRef = useRef<HTMLSelectElement>(null);
@@ -35,6 +35,7 @@ const RedactionTypeSelect = (p: {
     <select
       ref={selectElmRef}
       className="govuk-select"
+      style={p.fullWidth ? { width: '100%' } : undefined}
       value={redactionTypeId}
       onChange={(e) => {
         const newRedactionType = redactionTypeData.find(
@@ -52,50 +53,5 @@ const RedactionTypeSelect = (p: {
         </option>
       ))}
     </select>
-  );
-};
-
-export const RedactionDetailsForm = (p: {
-  redactionIds: string[];
-  documentId: string;
-  urn: string;
-  caseId: string;
-  highlightedText: string | undefined;
-  onRedactionTypeChange?: (x: TRedactionType | undefined) => void;
-  onCancelClick: () => void;
-  onSaveSuccess: () => void;
-}) => {
-  const [redactionType, setRedactionType] = useState<TRedactionType>();
-
-  return (
-    <div>
-      <div className="govuk-label">Redaction Details</div>
-      <div style={{ display: 'flex', alignItems: 'start', gap: '8px' }}>
-        <RedactionTypeSelect
-          initFocus
-          onRedactionTypeChange={(type) => {
-            setRedactionType(type);
-            p.onRedactionTypeChange?.(type);
-          }}
-        />
-        <GovUkButton variant="secondary" onClick={p.onCancelClick}>
-          Cancel
-        </GovUkButton>
-        <GovUkButton
-          className="govuk-button"
-          disabled={!redactionType}
-          onClick={p.onSaveSuccess}
-        >
-          Redact
-        </GovUkButton>
-        {/* {p.highlightedText && (
-          <GovUkButton
-            onClick={() => navigator.clipboard.writeText(p.highlightedText!)}
-          >
-            Copy
-          </GovUkButton>
-        )} */}
-      </div>
-    </div>
   );
 };

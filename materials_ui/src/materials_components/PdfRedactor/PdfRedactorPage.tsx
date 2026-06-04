@@ -3,6 +3,7 @@ import { Page } from 'react-pdf';
 import { DocumentIcon } from './icons/DocumentIcon';
 import { RotateIcon } from './icons/RotateIcon';
 import {
+  PdfTextHighlightOverlay,
   PositionedRedactionBox,
   PositionPdfOverlayBox,
   RedactionBox
@@ -22,7 +23,7 @@ import {
 import { createId } from './utils/generalUtils';
 import { getPdfCoordPairsOfHighlightedText } from './utils/highlightedTextUtils';
 import type { TMode } from './utils/modeUtils';
-import type { TSearchHighlight } from './utils/searchHighlightUtils';
+import type { THighlightLayer } from './utils/searchHighlightUtils';
 import { useTriggerListener, type TTriggerData } from './utils/useTriggger';
 
 export const PdfRedactorRotationOverlay = (p: {
@@ -329,8 +330,7 @@ export const PdfRedactorPage = (p: {
   pageIsDelete: boolean;
   onPageIsDeleteChange: (x: boolean) => void;
   pageDeleteButtonDisabled: boolean;
-  searchHighlights?: TSearchHighlight[];
-  focusedSearchHighlightId?: string;
+  highlightLayers?: THighlightLayer[];
 }) => {
   const { pageNumber, scale, redactions } = p;
   const [pageDimensions, setPageDimensions] = useState<{
@@ -387,23 +387,6 @@ export const PdfRedactorPage = (p: {
 
   const pdfPageWrapperElmRef = useRef<HTMLDivElement | null>(null);
   const requestAnimationFrameRef = useRef<number | null>(null);
-
-  // handles scrolling to focused search term
-  useEffect(() => {
-    if (!pageDimensions || !p.focusedSearchHighlightId) return;
-    const focusedIsOnThisPage = p.searchHighlights?.some(
-      (hl) => hl.id === p.focusedSearchHighlightId
-    );
-    if (!focusedIsOnThisPage) return;
-    const elm = pdfPageWrapperElmRef.current?.querySelector(
-      `[data-search-highlight-id="${p.focusedSearchHighlightId}"]`
-    );
-    elm?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-      inline: 'center'
-    });
-  }, [p.focusedSearchHighlightId, pageDimensions, p.searchHighlights]);
   useEffect(() => {
     return () => {
       if (requestAnimationFrameRef.current)
@@ -533,6 +516,13 @@ export const PdfRedactorPage = (p: {
               const { xLeft, yBottom, width, height } =
                 convertCoordPairToXywh(box);
 
+              const widthScale = pageDimensions
+                ? pageDimensions.width / box.pageWidth
+                : 1;
+              const heightScale = pageDimensions
+                ? pageDimensions.height / box.pageHeight
+                : 1;
+
               const handleRemoveRedaction = (fnProps: { boxId: string }) => {
                 p.onRemoveRedactions([fnProps.boxId]);
                 p.onPageRedactionsChange(
@@ -543,10 +533,10 @@ export const PdfRedactorPage = (p: {
               return (
                 <PositionedRedactionBox
                   key={i}
-                  xLeft={xLeft}
-                  yBottom={yBottom}
-                  width={width}
-                  height={height}
+                  xLeft={xLeft * widthScale}
+                  yBottom={yBottom * heightScale}
+                  width={width * widthScale}
+                  height={height * heightScale}
                   scale={p.scale}
                   onRedactionBoxEnterPress={() =>
                     handleRemoveRedaction({ boxId: box.id })
@@ -560,43 +550,15 @@ export const PdfRedactorPage = (p: {
             })}
 
             {pageDimensions &&
-              p.searchHighlights?.map((hl) => {
-                // convert from api units to redactor units
-                const widthScale = pageDimensions.width / hl.pageWidth;
-                const heightScale = pageDimensions.height / hl.pageHeight;
-                const xLeft = hl.xLeft * widthScale;
-                const width = (hl.xRight - hl.xLeft) * widthScale;
-                const height = (hl.yBottom - hl.yTop) * heightScale;
-                const yBottom =
-                  pageDimensions.height - hl.yBottom * heightScale;
-                const isFocused = hl.id === p.focusedSearchHighlightId;
-                return (
-                  <PositionPdfOverlayBox
-                    key={hl.id}
-                    xLeft={xLeft}
-                    yBottom={yBottom}
-                    width={width}
-                    height={height}
-                    scale={p.scale}
-                  >
-                    <div
-                      data-search-highlight-id={hl.id}
-                      style={{
-                        height: '100%',
-                        width: '100%',
-                        background: isFocused
-                          ? 'rgba(255, 221, 0, 0.4)'
-                          : 'rgba(255, 0, 0, 0.3)',
-                        border: isFocused
-                          ? '3px dashed rgba(255, 221, 0, 0.4)'
-                          : '3px dashed #ff4141',
-                        boxSizing: 'border-box',
-                        pointerEvents: 'none'
-                      }}
-                    />
-                  </PositionPdfOverlayBox>
-                );
-              })}
+              p.highlightLayers?.map((layer, i) => (
+                <PdfTextHighlightOverlay
+                  key={i}
+                  highlights={layer.highlights}
+                  focusedId={layer.focusedId}
+                  pageDimensions={pageDimensions}
+                  scale={p.scale}
+                />
+              ))}
           </div>
         </span>
       </span>

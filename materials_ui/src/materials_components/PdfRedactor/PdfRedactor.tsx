@@ -16,7 +16,10 @@ import { TDeletion, TIndexedDeletion } from './utils/deletionUtils';
 import { type TMode } from './utils/modeUtils';
 import styles from './utils/PdfRedactor.module.css';
 import { TIndexedRotation, TRotation } from './utils/rotationUtils';
-import type { TSearchHighlight } from './utils/searchHighlightUtils';
+import type {
+  THighlightLayer,
+  TSearchHighlight
+} from './utils/searchHighlightUtils';
 import { useTrigger } from './utils/useTriggger';
 import '/node_modules/react-pdf/dist/cjs/Page/AnnotationLayer.css';
 import '/node_modules/react-pdf/dist/cjs/Page/TextLayer.css';
@@ -215,7 +218,6 @@ export const PdfRedactor = (p: {
   onRedactionsChange: (redactions: TRedaction[]) => void;
   onAddRedactions: (p: {
     redactions: TRedaction[];
-    triggerSource?: 'mouse' | 'keyboard';
     highlightedText: string | undefined;
   }) => void;
   onRemoveRedactions: (redactionIds: string[]) => void;
@@ -233,8 +235,7 @@ export const PdfRedactor = (p: {
   initRedactions: TRedaction[];
   onShowRedactionLogModal?: (redactions: TRedaction[]) => void;
   onNumOfDocPagesChanged: (x: number) => void;
-  searchHighlights?: TSearchHighlight[];
-  focusedSearchIndex?: number;
+  highlightLayers?: THighlightLayer[];
 }) => {
   const { previousModeRef } = usePreviousModeRef(p.mode);
 
@@ -260,20 +261,20 @@ export const PdfRedactor = (p: {
     return indexRedactionsOnPageNumber(p.redactions);
   }, [p.redactions]);
 
-  const indexedSearchHighlights = useMemo(() => {
-    const map: { [pageNumber: number]: TSearchHighlight[] } = {};
-    (p.searchHighlights ?? []).forEach((highlight) => {
-      if (!map[highlight.pageNumber]) map[highlight.pageNumber] = [];
-      map[highlight.pageNumber]!.push(highlight);
-    });
-    return map;
-  }, [p.searchHighlights]);
-
-  const focusedHighlight =
-    p.searchHighlights && p.focusedSearchIndex !== undefined
-      ? p.searchHighlights[p.focusedSearchIndex]
-      : undefined;
-  const focusedHighlightId = focusedHighlight?.id;
+  // group each highlight layer's matches by page number so every page can be
+  // handed just its own slice of each layer
+  const indexedHighlightLayers = useMemo(
+    () =>
+      (p.highlightLayers ?? []).map((layer) => {
+        const byPage: { [pageNumber: number]: TSearchHighlight[] } = {};
+        layer.highlights.forEach((highlight) => {
+          if (!byPage[highlight.pageNumber]) byPage[highlight.pageNumber] = [];
+          byPage[highlight.pageNumber]!.push(highlight);
+        });
+        return { byPage, focusedId: layer.focusedId };
+      }),
+    [p.highlightLayers]
+  );
 
   const rotations = useMemo(() => {
     return Object.values(p.indexedRotation);
@@ -331,10 +332,8 @@ export const PdfRedactor = (p: {
   };
 
   const redactHighlightedTextTrigger = useTrigger();
-  const triggerSourceRef = useRef<'mouse' | 'keyboard'>('mouse');
   const redactHighlightedIfTextRedactionMode = () => {
     if (modeRef.current !== 'textRedact') return;
-    triggerSourceRef.current = 'mouse';
     redactHighlightedTextTrigger.fire();
   };
 
@@ -351,10 +350,7 @@ export const PdfRedactor = (p: {
   useShiftReleaseRedactTrigger({
     modeRef,
     containerRef: pdfRedactorWrapperElmRef,
-    fire: () => {
-      triggerSourceRef.current = 'keyboard';
-      redactHighlightedTextTrigger.fire();
-    }
+    fire: redactHighlightedTextTrigger.fire
   });
 
   const pageDeleteButtonDisabled = (numPages ?? 0) - deletions.length <= 1;
@@ -501,7 +497,6 @@ export const PdfRedactor = (p: {
                   p.onRedactionsChange([...p.redactions, ...x]);
                   p.onAddRedactions({
                     redactions: x,
-                    triggerSource: triggerSourceRef.current,
                     highlightedText: window.getSelection()?.toString()
                   });
                 }}
@@ -526,8 +521,10 @@ export const PdfRedactor = (p: {
                     }
                   });
                 }}
-                searchHighlights={indexedSearchHighlights[j + 1] ?? []}
-                focusedSearchHighlightId={focusedHighlightId}
+                highlightLayers={indexedHighlightLayers.map((layer) => ({
+                  highlights: layer.byPage[j + 1] ?? [],
+                  focusedId: layer.focusedId
+                }))}
                 pageIsDelete={!!p.indexedDeletion[j + 1]?.isDeleted}
                 onPageIsDeleteChange={(isDeleted) => {
                   const deletion = {
