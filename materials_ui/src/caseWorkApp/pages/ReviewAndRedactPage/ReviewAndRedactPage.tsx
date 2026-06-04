@@ -57,9 +57,8 @@ export const ReviewAndRedactPage = () => {
     (TDocument & { materialId?: number }) | null
   >(null);
 
-  const [redactionsIndexedOnDocId, setRedactionsIndexedOnDocId] = useState<{
-    [k: string]: TRedaction[];
-  }>({});
+  const [redactionsIndexedOnParentId, setRedactionsIndexedOnParentId] =
+    useState<{ [k: string]: TRedaction[] }>({});
 
   const [searchContextByDocId, setSearchContextByDocId] = useState<
     Record<string, DocSearchContext>
@@ -177,8 +176,8 @@ export const ReviewAndRedactPage = () => {
       );
 
       if (filteredDocs.length) {
-        const newActiveDocId = filteredDocs[0]?.parentId;
-        if (newActiveDocId) setActiveParentId(newActiveDocId);
+        const newActiveParentId = filteredDocs[0]?.parentId;
+        if (newActiveParentId) setActiveParentId(newActiveParentId);
         setOpenParentIds((prev) => [
           ...prev,
           ...filteredDocs.map((doc) => doc.parentId)
@@ -190,7 +189,7 @@ export const ReviewAndRedactPage = () => {
   const openDocuments =
     urn && caseId
       ? openParentIds
-          .map((docId) => documents?.find((d) => d.parentId === docId))
+          .map((parentId) => documents?.find((d) => d.parentId === parentId))
           .filter((doc): doc is TDocument => doc !== undefined)
       : [];
 
@@ -198,7 +197,7 @@ export const ReviewAndRedactPage = () => {
     id: doc.parentId,
     label: doc.presentationTitle,
     childId: doc.childId,
-    isDirty: (redactionsIndexedOnDocId[doc.parentId]?.length ?? 0) > 0,
+    isDirty: (redactionsIndexedOnParentId[doc.parentId]?.length ?? 0) > 0,
     panel: {
       children: (
         <DocumentTabPanel
@@ -211,7 +210,7 @@ export const ReviewAndRedactPage = () => {
           mode={mode}
           onModeChange={setMode}
           onRedactionsChange={(redactions) => {
-            setRedactionsIndexedOnDocId((prev) => ({
+            setRedactionsIndexedOnParentId((prev) => ({
               ...prev,
               [doc.parentId]: redactions
             }));
@@ -220,7 +219,7 @@ export const ReviewAndRedactPage = () => {
             setNewVersionParentId(document.parentId);
             reloadSidebarTrigger.fire();
           }}
-          initRedactions={redactionsIndexedOnDocId[doc.parentId]}
+          initRedactions={redactionsIndexedOnParentId[doc.parentId]}
           onViewInNewWindowClick={() => {
             if (!urn || !caseId) return;
             navigateToViewDocumentPageInNewTab({
@@ -263,7 +262,10 @@ export const ReviewAndRedactPage = () => {
   };
 
   const handleCloseTab = (documentId: string | undefined) => {
-    if (documentId && (redactionsIndexedOnDocId[documentId]?.length ?? 0) > 0) {
+    if (
+      documentId &&
+      (redactionsIndexedOnParentId[documentId]?.length ?? 0) > 0
+    ) {
       setPendingCloseParentId(documentId);
       return;
     }
@@ -288,7 +290,7 @@ export const ReviewAndRedactPage = () => {
     <Layout
       title="Review and Redact"
       shouldBlockNavigationCheck={(tab) => {
-        const shouldBlock = Object.values(redactionsIndexedOnDocId).some(
+        const shouldBlock = Object.values(redactionsIndexedOnParentId).some(
           (redacts) => redacts.length > 0
         );
         if (!shouldBlock) return false;
@@ -305,7 +307,7 @@ export const ReviewAndRedactPage = () => {
       {documents === null && <div>Error...</div>}
       {showBlockNavigationModal && (
         <UnsavedRedactionsModal
-          redactionsIndexedOnDocumentId={redactionsIndexedOnDocId}
+          redactionsIndexedOnDocumentId={redactionsIndexedOnParentId}
           onIgnoreClick={() => {
             if (attemptedNavigationHref) navigate(attemptedNavigationHref);
           }}
