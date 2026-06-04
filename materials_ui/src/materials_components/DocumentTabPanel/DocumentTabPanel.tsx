@@ -34,7 +34,7 @@ type RedactionLogModalData = {
 
 export type DocumentTabPanelProps = {
   documentId: string;
-  versionId: number;
+  childId: number;
   document: TDocument;
   urn: string;
   caseId: number;
@@ -53,7 +53,7 @@ export type DocumentTabPanelProps = {
 
 export const DocumentTabPanel = ({
   documentId,
-  versionId,
+  childId,
   document,
   urn,
   caseId,
@@ -94,7 +94,7 @@ export const DocumentTabPanel = ({
           urn,
           caseId,
           documentId,
-          versionId
+          childId: childId
         });
 
         if (blob instanceof Blob) {
@@ -120,7 +120,7 @@ export const DocumentTabPanel = ({
         URL.revokeObjectURL(blobUrlRef.current);
       }
     };
-  }, [documentId, versionId, urn, caseId]);
+  }, [documentId, childId, urn, caseId]);
   const [numOfDocumentPages, setNumOfDocumentPages] = useState(0);
 
   useEffect(() => {
@@ -210,7 +210,7 @@ export const DocumentTabPanel = ({
             onModification={onModification}
             urn={urn}
             caseId={caseId}
-            versionId={versionId}
+            childId={childId}
             documentId={documentId}
             document={document}
             onRedactionsChange={onRedactionsChange}

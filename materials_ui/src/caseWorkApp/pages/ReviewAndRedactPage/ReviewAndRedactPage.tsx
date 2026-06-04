@@ -197,14 +197,14 @@ export const ReviewAndRedactPage = () => {
   const tabItems = openDocuments.map((doc) => ({
     id: doc.documentId,
     label: doc.presentationTitle,
-    versionId: doc.versionId,
+    childId: doc.childId,
     isDirty: (redactionsIndexedOnDocId[doc.documentId]?.length ?? 0) > 0,
     panel: {
       children: (
         <DocumentTabPanel
           key={doc.documentId}
           documentId={doc.documentId}
-          versionId={doc.versionId}
+          childId={doc.childId}
           document={doc}
           urn={urn!}
           caseId={caseId!}
@@ -249,7 +249,7 @@ export const ReviewAndRedactPage = () => {
         caseId,
         urn,
         documentId: document.documentId,
-        versionId: document.versionId
+        childId: document.childId
       });
     }
     if (documentId && documentId === activeDocumentId) {

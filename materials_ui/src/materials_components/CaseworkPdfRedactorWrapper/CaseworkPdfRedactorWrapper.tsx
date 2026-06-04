@@ -61,7 +61,10 @@ const getDocumentRedactionDisabledMessage = (
   return value ? value : null;
 };
 
-const createCheckoutMessageFromCheckoutResponse = (p: { action? : string, message?: string }) =>
+const createCheckoutMessageFromCheckoutResponse = (p: {
+  action?: string;
+  message?: string;
+}) =>
   p.message
     ? `It is not possible to ${p.action} as ${p.message}. Please try again later.`
     : 'Something has gone wrong, please try again later';
@@ -72,7 +75,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
   onModeChange: (x: TMode) => void;
   urn: string;
   caseId: number;
-  versionId: number;
+  childId: number;
   documentId: string;
   onModification: (x: TDocument) => void;
   document: null | undefined | TDocument;
@@ -102,7 +105,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
     if (!isDocumentCheckedOut) return;
     const resp = await documentCheckOutRequest.checkIn({
       documentId: p.documentId,
-      versionId: p.versionId
+      childId: p.childId
     });
     if (resp.success) setIsDocumentCheckedOut(false);
   };
@@ -193,7 +196,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
     if (isDocumentCheckedOut) return { success: true } as const;
     const checkoutResponse = await documentCheckOutRequest.checkOut({
       documentId: p.documentId,
-      versionId: p.versionId
+      childId: p.childId
     });
     setIsDocumentCheckedOut(checkoutResponse.success);
     return checkoutResponse;
@@ -236,7 +239,9 @@ export const CaseworkPdfRedactorWrapper = (p: {
               ariaLabel="Failed to redact document"
             >
               <div style={{ background: 'white', padding: '20px' }}>
-                <h1 className="govuk-heading-m">Failed to {documentIsCheckedOutPopupProps.action} document</h1>
+                <h1 className="govuk-heading-m">
+                  Failed to {documentIsCheckedOutPopupProps.action} document
+                </h1>
                 <div>{documentIsCheckedOutPopupProps.message}</div>
                 <br />
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -415,7 +420,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
               axiosInstance,
               urn: p.urn,
               caseId: p.caseId,
-              versionId: p.versionId,
+              childId: p.childId,
               documentId: p.documentId,
               redactions
             });
@@ -424,7 +429,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
             if (p.document) p.onModification(p.document);
             await documentCheckOutRequest.checkIn({
               documentId: p.documentId,
-              versionId: p.versionId
+              childId: p.childId
             });
           } catch (error) {
             console.error('Failed to save redactions:', error);
@@ -497,14 +502,14 @@ export const CaseworkPdfRedactorWrapper = (p: {
             axiosInstance,
             urn: p.urn,
             caseId: p.caseId,
-            versionId: p.versionId,
+            childId: p.childId,
             documentId: p.documentId,
             deletions: Object.values(indexedDeletion)
           });
           if (p.document) p.onModification(p.document);
           await documentCheckOutRequest.checkIn({
             documentId: p.documentId,
-            versionId: p.versionId
+            childId: p.childId
           });
         }}
         onSaveRotations={async () => {
@@ -512,28 +517,25 @@ export const CaseworkPdfRedactorWrapper = (p: {
 
           if (!checkoutResponse.success) {
             const message = createCheckoutMessageFromCheckoutResponse({
-            action: 'rotate',
-            message: checkoutResponse.message
-            });
-            
-            setDocumentIsCheckedOutPopupProps({
               action: 'rotate',
-              message
+              message: checkoutResponse.message
             });
+
+            setDocumentIsCheckedOutPopupProps({ action: 'rotate', message });
           }
 
           await saveRotations({
             axiosInstance,
             urn: p.urn,
             caseId: p.caseId,
-            versionId: p.versionId,
+            childId: p.childId,
             documentId: p.documentId,
             rotations: Object.values(indexedRotation)
           });
           if (p.document) p.onModification(p.document);
           await documentCheckOutRequest.checkIn({
             documentId: p.documentId,
-            versionId: p.versionId
+            childId: p.childId
           });
         }}
         initRedactions={p.initRedactions}
