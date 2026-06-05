@@ -60,7 +60,7 @@ export const ReviewAndRedactPage = () => {
   const [redactionsIndexedOnParentId, setRedactionsIndexedOnParentId] =
     useState<{ [k: string]: TRedaction[] }>({});
 
-  const [searchContextByDocId, setSearchContextByDocId] = useState<
+  const [searchContextByParentId, setSearchContextByParentId] = useState<
     Record<string, DocSearchContext>
   >({});
 
@@ -128,15 +128,15 @@ export const ReviewAndRedactPage = () => {
   useEffect(() => {
     if (materialIdParam) {
       setActiveParentId(materialIdParam);
-      setOpenParentIds((openedDocumentIds) =>
-        openedDocumentIds.includes(`${materialIdParam}`)
-          ? openedDocumentIds
-          : [...openedDocumentIds, `${materialIdParam}`]
+      setOpenParentIds((openParentIds) =>
+        openParentIds.includes(`${materialIdParam}`)
+          ? openParentIds
+          : [...openParentIds, `${materialIdParam}`]
       );
 
       if (searchTermParam && searchMatchesParam) {
         const highlights = convertMatchesToSearchHighlights(searchMatchesParam);
-        setSearchContextByDocId((prev) => ({
+        setSearchContextByParentId((prev) => ({
           ...prev,
           [materialIdParam]: {
             searchTerm: searchTermParam,
@@ -150,19 +150,19 @@ export const ReviewAndRedactPage = () => {
     }
   }, [materialIdParam, searchTermParam, searchMatchesParam]);
 
-  const setFocusedSearchIndex = (docId: string, index: number) => {
-    setSearchContextByDocId((prev) => {
-      const ctx = prev[docId];
+  const setFocusedSearchIndex = (parentId: string, index: number) => {
+    setSearchContextByParentId((prev) => {
+      const ctx = prev[parentId];
       if (!ctx) return prev;
-      return { ...prev, [docId]: { ...ctx, focusedIndex: index } };
+      return { ...prev, [parentId]: { ...ctx, focusedIndex: index } };
     });
   };
 
-  const clearSearchContextForDoc = (docId: string) => {
-    setSearchContextByDocId((prev) => {
-      if (!(docId in prev)) return prev;
+  const clearSearchContextForDoc = (parentId: string) => {
+    setSearchContextByParentId((prev) => {
+      if (!(parentId in prev)) return prev;
       const next = { ...prev };
-      delete next[docId];
+      delete next[parentId];
       return next;
     });
   };
@@ -229,7 +229,7 @@ export const ReviewAndRedactPage = () => {
             });
           }}
           onRedactionLogClick={() => setShowRedactionLogModal(true)}
-          searchContext={searchContextByDocId[doc.parentId]}
+          searchContext={searchContextByParentId[doc.parentId]}
           onFocusedSearchIndexChange={(index) =>
             setFocusedSearchIndex(doc.parentId, index)
           }
