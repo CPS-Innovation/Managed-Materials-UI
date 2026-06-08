@@ -2,8 +2,8 @@ import { z } from 'zod';
 import { safeJsonParse } from './generalUtils';
 
 const openTabsSchema = z.object({
-  openDocumentIds: z.array(z.string()),
-  activeDocumentId: z.string()
+  openParentIds: z.array(z.string()),
+  activeParentId: z.string()
 });
 
 type OpenTabsState = z.infer<typeof openTabsSchema>;
@@ -22,15 +22,15 @@ export const safeGetOpenDocumentTabsFromLocalStorage = (
 
 export const safeSetOpenDocumentTabsFromLocalStorage = (p: {
   caseId: number;
-  openDocumentIds: string[];
-  activeDocumentId: string;
+  openParentIds: string[];
+  activeParentId: string;
 }) => {
   const key = createOpenDocumentTabsKey(p.caseId);
   window.localStorage.setItem(
     key,
     JSON.stringify({
-      openDocumentIds: p.openDocumentIds,
-      activeDocumentId: p.activeDocumentId
+      openParentIds: p.openParentIds,
+      activeParentId: p.activeParentId
     })
   );
 };

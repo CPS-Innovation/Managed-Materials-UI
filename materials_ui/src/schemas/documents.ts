@@ -7,7 +7,7 @@ export const cmsDocTypeSchema = z.object({
 });
 
 export const DocumentSchema = z.object({
-  documentId: z.string(),
+  parentId: z.string(),
   status: z.string(),
   childId: z.number(),
   cmsDocType: cmsDocTypeSchema,
@@ -38,7 +38,7 @@ export const DocumentSchema = z.object({
 
 export const SearchResultSchema = z.object({
   id: z.string(),
-  documentId: z.string(),
+  parentId: z.string(),
   childId: z.string(),
   fileName: z.string(),
   pageIndex: z.number(),
@@ -56,7 +56,7 @@ export const SearchResultSchema = z.object({
 });
 
 export const SearchTermResultSchema = z.object({
-  documentId: z.string(),
+  parentId: z.string(),
   documentTitle: z.string(),
   cmsFileCreatedDate: z.string(),
   cmsDocType: cmsDocTypeSchema,

@@ -71,7 +71,7 @@ export const DocumentSidebarAccordionDocument = (p: {
   const documentNotes = useGetDocumentNotes({
     urn: p.urn,
     caseId: p.caseId,
-    documentId: p.document.documentId,
+    documentId: p.document.parentId,
     revalidateOnMount: false
   });
 
@@ -91,13 +91,13 @@ export const DocumentSidebarAccordionDocument = (p: {
     <DocumentSidebarAccordionDocumentTemplate
       documentName={p.document.presentationTitle}
       documentDate={formatShortDate(p.document.cmsFileCreatedDate)}
-      ActiveDocumentTag={p.activeDocumentId === p.document.documentId}
-      NewTag={!p.readDocumentIds.includes(p.document.documentId)}
-      NewVersionTag={p.newVersionDocumentId === p.document.documentId}
-      showLeftBorder={p.activeDocumentId === p.document.documentId}
-      showRightBorder={p.openDocumentIds.includes(p.document.documentId)}
+      ActiveDocumentTag={p.activeDocumentId === p.document.parentId}
+      NewTag={!p.readDocumentIds.includes(p.document.parentId)}
+      NewVersionTag={p.newVersionDocumentId === p.document.parentId}
+      showLeftBorder={p.activeDocumentId === p.document.parentId}
+      showRightBorder={p.openDocumentIds.includes(p.document.parentId)}
       backgroundColor={
-        p.readDocumentIds.includes(p.document.documentId) ? 'white' : 'blue'
+        p.readDocumentIds.includes(p.document.parentId) ? 'white' : 'blue'
       }
       // backgroundColor="blue"
       notesStatus={(() => {

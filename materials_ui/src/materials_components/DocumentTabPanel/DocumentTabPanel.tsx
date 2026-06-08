@@ -33,7 +33,7 @@ type RedactionLogModalData = {
 };
 
 export type DocumentTabPanelProps = {
-  documentId: string;
+  parentId: string;
   childId: number;
   document: TDocument;
   urn: string;
@@ -52,7 +52,7 @@ export type DocumentTabPanelProps = {
 };
 
 export const DocumentTabPanel = ({
-  documentId,
+  parentId,
   childId,
   document,
   urn,
@@ -93,7 +93,7 @@ export const DocumentTabPanel = ({
           axiosInstance,
           urn,
           caseId,
-          documentId,
+          parentId: parentId,
           childId: childId
         });
 
@@ -120,7 +120,7 @@ export const DocumentTabPanel = ({
         URL.revokeObjectURL(blobUrlRef.current);
       }
     };
-  }, [documentId, childId, urn, caseId]);
+  }, [parentId, childId, urn, caseId]);
   const [numOfDocumentPages, setNumOfDocumentPages] = useState(0);
 
   useEffect(() => {
@@ -211,7 +211,7 @@ export const DocumentTabPanel = ({
             urn={urn}
             caseId={caseId}
             childId={childId}
-            documentId={documentId}
+            parentId={parentId}
             document={document}
             onRedactionsChange={onRedactionsChange}
             initRedactions={initRedactions ?? []}
