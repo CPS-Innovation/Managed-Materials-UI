@@ -12,8 +12,8 @@ export const useBulkRedactionFlow = (p: {
   axiosInstance: AxiosInstance;
   urn: string;
   caseId: number;
-  versionId: number;
-  documentId: string;
+  parentId: string;
+  childId: number;
   setRedactions: Dispatch<SetStateAction<TRedaction[]>>;
   setSelectedRedactionTypes: Dispatch<SetStateAction<TRedactionType[]>>;
 }) => {
@@ -28,8 +28,8 @@ export const useBulkRedactionFlow = (p: {
     axiosInstance: p.axiosInstance,
     urn: p.urn,
     caseId: p.caseId,
-    versionId: p.versionId,
-    documentId: p.documentId
+    versionId: p.childId,
+    documentId: p.parentId
   });
 
   // pin the popover above whichever match is currently focused
