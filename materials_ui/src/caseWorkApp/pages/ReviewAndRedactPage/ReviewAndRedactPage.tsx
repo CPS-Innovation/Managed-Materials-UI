@@ -321,6 +321,7 @@ export const ReviewAndRedactPage = () => {
       )}
       {pendingCloseParentId && (
         <CloseTabUnsavedRedactionsModal
+          redactions={redactionsIndexedOnParentId[activeTabId]}
           onReturnClick={() => setPendingCloseParentId(undefined)}
           onIgnoreClick={() => {
             performCloseTab(pendingCloseParentId);
