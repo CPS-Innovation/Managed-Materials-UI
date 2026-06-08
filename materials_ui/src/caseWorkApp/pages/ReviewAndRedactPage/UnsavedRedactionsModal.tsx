@@ -31,13 +31,14 @@ export const UnsavedRedactionsModal = ({
     documentIdsWithRedactions.includes(doc.parentId)
   );
 
+  const isPluralDocuments = documentsWithRedactions.length !== 1;
+
   return (
     <Modal onBackgroundClick={onIgnoreClick} onEscPress={onIgnoreClick}>
       <GovUkBanner
         variant="error"
         headerTitle="Error"
-        contentHeading={`You have ${documentsWithRedactions.length} document${documentsWithRedactions.length === 1 ? '' : 's'} with unsaved
-        redactions`}
+        contentHeading={`You have ${documentsWithRedactions.length} document${isPluralDocuments ? 's' : ''} with unsaved redactions `}
         contentBody={
           <>
             <div
@@ -55,8 +56,9 @@ export const UnsavedRedactionsModal = ({
             </div>
             <br />
             <div>
-              If you do not save the redactions the file will not be changed.
+              Return to the case to save your redactions in these documents
             </div>
+            <div>If you select Ignore your redactions will not be applied.</div>
             <br />
             <div style={{ display: 'flex', gap: '16px' }}>
               <Button variant="primary" onClick={onReturnClick}>
