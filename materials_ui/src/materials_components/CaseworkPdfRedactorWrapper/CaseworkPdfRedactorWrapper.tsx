@@ -159,8 +159,8 @@ export const CaseworkPdfRedactorWrapper = (p: {
     axiosInstance,
     urn: p.urn,
     caseId: p.caseId,
-    versionId: p.versionId,
-    documentId: p.documentId,
+    childId: p.childId,
+    parentId: p.parentId,
     setRedactions,
     setSelectedRedactionTypes
   });
