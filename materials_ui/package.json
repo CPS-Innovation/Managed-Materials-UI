@@ -86,7 +86,7 @@
     "vite": "^7.1.5",
     "vite-bundle-visualizer": "^1.2.1",
     "vite-plugin-compression": "^0.5.1",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.6"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
