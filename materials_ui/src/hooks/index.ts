@@ -44,3 +44,4 @@ export { usePager } from './ui/usePager';
 export { useRequest } from './ui/useRequest';
 export { useStoreLogger } from './ui/useStoreLogger';
 export { useTableActions } from './ui/useTableActions';
+export { useUserGroupsFeatureFlag } from './ui/useUserGroupsFeatureFlag';
