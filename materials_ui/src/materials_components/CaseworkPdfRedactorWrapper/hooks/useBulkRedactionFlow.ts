@@ -70,6 +70,41 @@ export const useBulkRedactionFlow = (p: {
     closePopover();
   };
 
+  const runBulkSearch = async () => {
+    const manualSelectionIds = popupProps?.redactionIds ?? [];
+    const candidates = await bulkSearch.run(trimmedSearchText);
+    if (candidates?.length && manualSelectionIds.length) {
+      removeRedactions(manualSelectionIds);
+      setPopupProps((prev) => (prev ? { ...prev, redactionIds: [] } : prev));
+    }
+  };
+
+  const acceptFocusedMatch = (currentType: TRedactionType) => {
+    const focused = bulkSearch.focusedCandidate;
+    if (!focused) return;
+    p.setRedactions((prev) => [...prev, focused]);
+    p.setSelectedRedactionTypes((prev) => [
+      ...prev,
+      { id: currentType.id, name: currentType.name }
+    ]);
+    const willBeEmpty = bulkSearch.candidates.length === 1;
+    bulkSearch.removeFocused();
+    if (willBeEmpty) closePopover();
+  };
+
+  const acceptAllMatches = (currentType: TRedactionType) => {
+    if (bulkSearch.candidates.length === 0) return;
+    p.setRedactions((prev) => [...prev, ...bulkSearch.candidates]);
+    p.setSelectedRedactionTypes((prev) => [
+      ...prev,
+      ...Array(bulkSearch.candidates.length).fill({
+        id: currentType.id,
+        name: currentType.name
+      })
+    ]);
+    closePopover();
+  };
+
   const bulkProps: TBulkProps | undefined =
     trimmedSearchText && featureFlags.bulkRedaction
       ? {
@@ -77,42 +112,11 @@ export const useBulkRedactionFlow = (p: {
             bulkSearch.state.status === 'done'
               ? { status: 'done', count: bulkSearch.candidates.length }
               : bulkSearch.state,
-          onFindMatchingText: async () => {
-            const manualSelectionIds = popupProps?.redactionIds ?? [];
-            const candidates = await bulkSearch.run(trimmedSearchText);
-            if (candidates?.length && manualSelectionIds.length) {
-              removeRedactions(manualSelectionIds);
-              setPopupProps((prev) =>
-                prev ? { ...prev, redactionIds: [] } : prev
-              );
-            }
-          },
+          onFindMatchingText: runBulkSearch,
           onViewPrevious: bulkSearch.goPrev,
           onViewNext: bulkSearch.goNext,
-          onRedactFocused: (currentType) => {
-            const focused = bulkSearch.focusedCandidate;
-            if (!focused) return;
-            p.setRedactions((prev) => [...prev, focused]);
-            p.setSelectedRedactionTypes((prev) => [
-              ...prev,
-              { id: currentType.id, name: currentType.name }
-            ]);
-            const willBeEmpty = bulkSearch.candidates.length === 1;
-            bulkSearch.removeFocused();
-            if (willBeEmpty) closePopover();
-          },
-          onRedactAll: (currentType) => {
-            if (bulkSearch.candidates.length === 0) return;
-            p.setRedactions((prev) => [...prev, ...bulkSearch.candidates]);
-            p.setSelectedRedactionTypes((prev) => [
-              ...prev,
-              ...Array(bulkSearch.candidates.length).fill({
-                id: currentType.id,
-                name: currentType.name
-              })
-            ]);
-            closePopover();
-          }
+          onRedactFocused: acceptFocusedMatch,
+          onRedactAll: acceptAllMatches
         }
       : undefined;
 
