@@ -64,8 +64,8 @@
     "@types/node": "^24.3.1",
     "@types/react": "^19.1.12",
     "@types/react-dom": "^19.1.9",
-    "@vitejs/plugin-basic-ssl": "^2.1.0",
-    "@vitejs/plugin-react": "^5.0.2",
+    "@vitejs/plugin-basic-ssl": "^2.3.0",
+    "@vitejs/plugin-react": "^5.2.0",
     "dotenv": "^17.2.2",
     "eslint": "^9.35.0",
     "eslint-plugin-react-hooks": "^5.2.0",
@@ -83,10 +83,10 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.43.0",
-    "vite": "^7.1.5",
+    "vite": "^8.0.16",
     "vite-bundle-visualizer": "^1.2.1",
     "vite-plugin-compression": "^0.5.1",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.8"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
