@@ -64,7 +64,7 @@ export const CaseInfo = ({ caseInfo }: Props) => {
               <div className="caseInfo__actions">
                 <AutoReclassifyButton />
 
-                <a
+                {/* <a
                   href={`${import.meta.env.VITE_CASE_REVIEW_REDIRECT_URL}?CMSCaseId=${caseInfo.id}`}
                   target="_blank"
                   role="button"
@@ -73,7 +73,7 @@ export const CaseInfo = ({ caseInfo }: Props) => {
                   draggable="false"
                 >
                   Case review
-                </a>
+                </a> */}
               </div>
             </div>
           </div>
