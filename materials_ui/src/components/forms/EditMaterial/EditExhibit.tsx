@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
-import { useCaseWitnesses } from '../../../hooks/index.ts';
+import { useExhibitProducers } from '../../../hooks/index.ts';
 import {
   EditExhibitSchema,
   EditExhibitType
@@ -27,7 +27,10 @@ export const EditExhibitForm = ({
   material,
   onSuccess
 }: Props) => {
-  const { selectOptions, loading: isWitnessesLoading } = useCaseWitnesses();
+  const {
+    selectOptions: exhibitProducers,
+    loading: isExhibitProducersLoading
+  } = useExhibitProducers();
 
   const {
     control,
@@ -116,22 +119,17 @@ export const EditExhibitForm = ({
           render={({ field }) => (
             <SelectList
               {...field}
-              onChange={(value) => {
-                field.onChange(value === '' ? undefined : +value);
-              }}
               id={field.name}
               label="Exhibit producer or witness (optional)"
               error={errors?.existingproducerOrWitnessId?.message as string}
-              disabled={isWitnessesLoading}
+              disabled={isExhibitProducersLoading}
               options={[
-                {
-                  label: isWitnessesLoading
-                    ? 'Loading...'
-                    : 'Select producer or witness',
-                  value: '',
-                  id: ''
-                },
-                ...selectOptions
+                ...(isExhibitProducersLoading
+                  ? [{ label: 'Loading...', value: '', id: '' }]
+                  : [
+                      { label: 'Select producer or witness', value: '', id: '' }
+                    ]),
+                ...exhibitProducers
               ]}
             />
           )}
