@@ -517,6 +517,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
         initRedactions={p.initRedactions}
         onNumOfDocPagesChanged={p.onNumOfPagesDocumentChange}
         highlightLayers={[searchLayer, bulkFlow.highlightLayer]}
+        autosaveKeyPrefix={`${p.parentId}-${p.childId}`}
       />
     </div>
   );

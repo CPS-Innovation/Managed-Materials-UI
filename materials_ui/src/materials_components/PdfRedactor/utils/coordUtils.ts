@@ -1,3 +1,5 @@
+import z from 'zod';
+
 export type TCoord = { x: number; y: number };
 export type TCoordPair = { x1: number; y1: number; x2: number; y2: number };
 export type TRect = {
@@ -20,6 +22,17 @@ export type TRedaction = TCoordPair & {
   pageHeight: number;
   pageWidth: number;
 };
+export const redactionSchema = z.object({
+  id: z.string(),
+  pageNumber: z.number(),
+  pageHeight: z.number(),
+  pageWidth: z.number(),
+  x1: z.number(),
+  y1: z.number(),
+  x2: z.number(),
+  y2: z.number()
+});
+export const redactionsSchema = z.array(redactionSchema);
 
 export const convertCoordPairToXywh = (p: TCoordPair): TXywhPair => {
   const xLeft = Math.min(p.x1, p.x2);

@@ -2,6 +2,7 @@ import type { PDFDocumentProxy } from 'pdfjs-dist';
 import pdfWorker from 'pdfjs-dist/build/pdf.worker?url';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Document, pdfjs } from 'react-pdf';
+import { safeJsonParse } from '../DocumentSelectAccordion/utils/generalUtils';
 import { useDocumentFocus } from './hooks/useDocumentFocus';
 import { useShiftReleaseRedactTrigger } from './hooks/useShiftReleaseRedactTrigger';
 import { AreaIcon } from './icons/AreaIcon';
@@ -11,7 +12,7 @@ import { PdfRedactorCenteredModal } from './modals/PdfRedactorCenteredModal';
 import { SaveToProceedToRedactionsModal } from './modals/SaveToProceedToRedactionsModal';
 import { SaveToProceedToRotationsModal } from './modals/SaveToProceedToRotationsModal';
 import { PdfRedactorPage } from './PdfRedactorPage';
-import type { TRedaction } from './utils/coordUtils';
+import { redactionsSchema, type TRedaction } from './utils/coordUtils';
 import { TDeletion, TIndexedDeletion } from './utils/deletionUtils';
 import { type TMode } from './utils/modeUtils';
 import styles from './utils/PdfRedactor.module.css';
@@ -209,6 +210,22 @@ const usePreviousModeRef = (value: TMode) => {
   return { previousModeRef };
 };
 
+const writeRedactionsToCache = (p: {
+  key: string;
+  redactions: TRedaction[];
+}) => {
+  localStorage.setItem(p.key, JSON.stringify(p.redactions));
+};
+
+const getRedactionsFromCache = (key: string) => {
+  const redactionsStr = localStorage.getItem(key);
+  const jsonParsedRedactions = safeJsonParse(redactionsStr);
+  if (!jsonParsedRedactions.success)
+    return { success: false, data: undefined } as const;
+
+  return redactionsSchema.safeParse(jsonParsedRedactions.data);
+};
+
 export const PdfRedactor = (p: {
   fileUrl: string;
   redactions: TRedaction[];
@@ -236,7 +253,11 @@ export const PdfRedactor = (p: {
   onShowRedactionLogModal?: (redactions: TRedaction[]) => void;
   onNumOfDocPagesChanged: (x: number) => void;
   highlightLayers?: THighlightLayer[];
+  autosaveKeyPrefix: string;
 }) => {
+  const isFirstLoadRef = useRef(true);
+  const getKeyForAutosaveRedactions = () => `${p.autosaveKeyPrefix}-redactions`;
+
   const { previousModeRef } = usePreviousModeRef(p.mode);
 
   // ref required for eventlistener
@@ -259,6 +280,13 @@ export const PdfRedactor = (p: {
 
   const indexedRedactions = useMemo(() => {
     return indexRedactionsOnPageNumber(p.redactions);
+  }, [p.redactions]);
+  useEffect(() => {
+    if (isFirstLoadRef.current) return;
+    writeRedactionsToCache({
+      key: getKeyForAutosaveRedactions(),
+      redactions: p.redactions
+    });
   }, [p.redactions]);
 
   // group each highlight layer's matches by page number so every page can be
@@ -354,6 +382,10 @@ export const PdfRedactor = (p: {
   });
 
   const pageDeleteButtonDisabled = (numPages ?? 0) - deletions.length <= 1;
+
+  useEffect(() => {
+    isFirstLoadRef.current = false;
+  }, []);
 
   return (
     <div
@@ -474,7 +506,15 @@ export const PdfRedactor = (p: {
           <Document
             file={p.fileUrl}
             onLoadSuccess={async (pdf) => {
-              p.onRedactionsChange(p.initRedactions ?? []);
+              const cachedRedactionsResp = getRedactionsFromCache(
+                getKeyForAutosaveRedactions()
+              );
+              const cachedRedactions = cachedRedactionsResp.data;
+              const initOrCachedRedactions = (() => {
+                if (p.initRedactions.length > 0) return p.initRedactions;
+                return cachedRedactions ?? [];
+              })();
+              p.onRedactionsChange(initOrCachedRedactions);
               setNumPages(pdf.numPages);
               p.onNumOfDocPagesChanged(pdf.numPages);
               await autoScale(pdf);
