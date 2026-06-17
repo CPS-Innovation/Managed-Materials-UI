@@ -4,10 +4,38 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import { useParams } from 'react-router-dom';
 import { LoadingSpinner } from '../components';
 import { useDocumentPdfUrl } from '../hooks/documents/useDocumentPdfUrl';
+import { useAxiosInstance } from '../materials_components/DocumentSelectAccordion/getters/getAxiosInstance';
+import {
+  safeGetDocumentListFromAxiosInstance,
+  TDocumentList
+} from '../materials_components/DocumentSelectAccordion/getters/getDocumentList';
 import { GovUkBanner } from '../materials_components/DocumentSelectAccordion/templates/GovUkBanner';
 import './ViewDocumentPage.scss';
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
+
+const useDocumentListFromAxiosInstance = (p: {
+  urn: string;
+  caseId: number;
+}) => {
+  const axiosInstance = useAxiosInstance();
+  const [data, setDocumentList] = useState<TDocumentList | null | undefined>(
+    undefined
+  );
+
+  useEffect(() => {
+    (async () => {
+      const documentListResp = await safeGetDocumentListFromAxiosInstance({
+        axiosInstance,
+        urn: p.urn,
+        caseId: p.caseId
+      });
+      setDocumentList(documentListResp.success ? documentListResp.data : null);
+    })();
+  }, []);
+
+  return { data };
+};
 
 const LoadAndViewPdf = (p: {
   urn: string;
@@ -15,7 +43,20 @@ const LoadAndViewPdf = (p: {
   materialId: string;
 }) => {
   const { data: pdfUrl } = useDocumentPdfUrl(p);
+  const { data: documentList } = useDocumentListFromAxiosInstance(p);
   const [numPages, setNumPages] = useState<number>();
+  useEffect(() => {
+    const documentPresentationTitle = documentList?.find(
+      (x) => x.parentId === p.materialId
+    )?.presentationTitle;
+    document.title = (() => {
+      if (documentPresentationTitle === undefined)
+        return `Document Loading - Managed Materials`;
+      if (documentPresentationTitle === null)
+        return `Document Data Not Found - Managed Materials`;
+      return `${documentPresentationTitle} - Managed Materials`;
+    })();
+  }, [documentList]);
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center' }}>
