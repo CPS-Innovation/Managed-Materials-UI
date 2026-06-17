@@ -214,13 +214,11 @@ const writeRedactionsToCache = (p: {
   key: string;
   redactions: TRedaction[];
 }) => {
-  console.log('writing');
   localStorage.setItem(p.key, JSON.stringify(p.redactions));
 };
 
 const getRedactionsFromCache = (key: string) => {
   const redactionsStr = localStorage.getItem(key);
-  console.log({ key, redactionsStr });
   const jsonParsedRedactions = safeJsonParse(redactionsStr);
   if (!jsonParsedRedactions.success)
     return { success: false, data: undefined } as const;
@@ -513,10 +511,6 @@ export const PdfRedactor = (p: {
                 getKeyForAutosaveRedactions()
               );
               const cachedRedactions = cachedRedactionsResp.data;
-              console.log({
-                cachedRedactions,
-                initRedactions: p.initRedactions
-              });
               const initOrCachedRedactions = (() => {
                 if (p.initRedactions.length > 0) return p.initRedactions;
                 return cachedRedactions ?? [];
