@@ -253,7 +253,6 @@ export const PdfRedactor = (p: {
   onShowRedactionLogModal?: (redactions: TRedaction[]) => void;
   onNumOfDocPagesChanged: (x: number) => void;
   highlightLayers?: THighlightLayer[];
-  autosave: true;
   autosaveKeyPrefix: string;
 }) => {
   const isFirstLoadRef = useRef(true);
