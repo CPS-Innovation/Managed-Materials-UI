@@ -19,9 +19,9 @@ const useDocumentListFromAxiosInstance = (p: {
   caseId: number;
 }) => {
   const axiosInstance = useAxiosInstance();
-  const [data, setDocumentList] = useState<TDocumentList | null | undefined>(
-    undefined
-  );
+  const [documentList, setDocumentList] = useState<
+    TDocumentList | null | undefined
+  >(undefined);
 
   useEffect(() => {
     (async () => {
@@ -34,7 +34,7 @@ const useDocumentListFromAxiosInstance = (p: {
     })();
   }, []);
 
-  return { data };
+  return { data: documentList };
 };
 
 const LoadAndViewPdf = (p: {
