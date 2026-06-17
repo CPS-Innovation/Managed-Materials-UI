@@ -122,7 +122,7 @@ export const EditExhibitForm = ({
               id={field.name}
               label="Exhibit producer or witness (optional)"
               error={errors?.existingproducerOrWitnessId?.message as string}
-              disabled={isExhibitProducersLoading || !!fieldValues?.producedBy}
+              disabled={isExhibitProducersLoading}
               options={[
                 ...(isExhibitProducersLoading
                   ? [{ label: 'Loading...', value: '', id: '' }]
@@ -144,6 +144,7 @@ export const EditExhibitForm = ({
               id={field.name}
               label="Produced by (optional)"
               error={errors?.producedBy?.message as string}
+              defaultValue={field.value}
               disabled={!!fieldValues.existingproducerOrWitnessId}
             />
           )}
