@@ -49,13 +49,13 @@ const LoadAndViewPdf = (p: {
     const documentPresentationTitle = documentList?.find(
       (x) => x.parentId === p.materialId
     )?.presentationTitle;
-    document.title = (() => {
-      if (documentPresentationTitle === undefined)
-        return `Document Loading - Managed Materials`;
-      if (documentPresentationTitle === null)
-        return `Document Data Not Found - Managed Materials`;
-      return `${documentPresentationTitle} - Managed Materials`;
+    const documentTitleSuffix = ' - Managed Materials';
+    const documentTitlePrefix = (() => {
+      if (documentPresentationTitle === undefined) return `Document Loading`;
+      if (documentPresentationTitle === null) return `Document Data Not Found`;
+      return `${documentPresentationTitle}`;
     })();
+    document.title = `${documentTitlePrefix}${documentTitleSuffix}`;
   }, [documentList]);
 
   return (
