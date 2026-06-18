@@ -48,9 +48,9 @@ const LoadAndViewPdf = (p: {
   const [numPages, setNumPages] = useState<number>();
 
   useEffect(() => {
-    const cmsStrippedmaterialId = stripCmsPrefix(p.materialId);
+    const cmsStrippedMaterialId = stripCmsPrefix(p.materialId);
     const documentPresentationTitle = documentList?.find(
-      (x) => stripCmsPrefix(x.parentId) === cmsStrippedmaterialId
+      (x) => stripCmsPrefix(x.parentId) === cmsStrippedMaterialId
     )?.presentationTitle;
     const documentTitleSuffix = ' - Managed Materials';
     const documentTitlePrefix = (() => {
