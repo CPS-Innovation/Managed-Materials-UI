@@ -53,10 +53,12 @@ export const CaseInfo = ({ caseInfo }: Props) => {
                   {caseInfoName}
                 </h2>
                 <p className="govuk-body caseInfo__urn">{caseInfo?.urn}</p>
-                {caseInfo.numberOfDefendants > 1 && (
+                {caseInfo.numberOfDefendants > 0 && (
                   <p style={{ marginTop: 0 }}>
                     <a href="#" onClick={handleCaseDefendantsLinkClick}>
-                      View {caseInfo.numberOfDefendants} defendants and charges
+                      {caseInfo.numberOfDefendants === 1
+                        ? 'View defendant and charges'
+                        : `View ${caseInfo.numberOfDefendants} defendants and charges`}
                     </a>
                   </p>
                 )}
