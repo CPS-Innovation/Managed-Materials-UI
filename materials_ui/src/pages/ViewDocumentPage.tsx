@@ -10,6 +10,7 @@ import {
   TDocumentList
 } from '../materials_components/DocumentSelectAccordion/getters/getDocumentList';
 import { GovUkBanner } from '../materials_components/DocumentSelectAccordion/templates/GovUkBanner';
+import { stripCmsPrefix } from '../utils/cmsStringTransform';
 import './ViewDocumentPage.scss';
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
@@ -45,15 +46,17 @@ const LoadAndViewPdf = (p: {
   const { data: pdfUrl } = useDocumentPdfUrl(p);
   const { data: documentList } = useDocumentListFromAxiosInstance(p);
   const [numPages, setNumPages] = useState<number>();
+
   useEffect(() => {
+    const cmsStrippedmaterialId = stripCmsPrefix(p.materialId);
     const documentPresentationTitle = documentList?.find(
-      (x) => x.parentId === p.materialId
+      (x) => stripCmsPrefix(x.parentId) === cmsStrippedmaterialId
     )?.presentationTitle;
     const documentTitleSuffix = ' - Managed Materials';
     const documentTitlePrefix = (() => {
-      if (documentPresentationTitle === undefined) return `Document Loading`;
-      if (documentPresentationTitle === null) return `Document Data Not Found`;
-      return `${documentPresentationTitle}`;
+      if (documentPresentationTitle) return `${documentPresentationTitle}`;
+      if (documentList) return `Document Data Not Found`;
+      if (!documentList) return `Document Loading`;
     })();
     document.title = `${documentTitlePrefix}${documentTitleSuffix}`;
   }, [documentList]);
