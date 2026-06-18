@@ -51,9 +51,9 @@ const LoadAndViewPdf = (p: {
     )?.presentationTitle;
     const documentTitleSuffix = ' - Managed Materials';
     const documentTitlePrefix = (() => {
-      if (documentPresentationTitle === undefined) return `Document Loading`;
-      if (documentPresentationTitle === null) return `Document Data Not Found`;
-      return `${documentPresentationTitle}`;
+      if (documentPresentationTitle) return `${documentPresentationTitle}`;
+      if (documentList) return `Document Data Not Found`;
+      if (!documentList) return `Document Loading`;
     })();
     document.title = `${documentTitlePrefix}${documentTitleSuffix}`;
   }, [documentList]);
@@ -64,15 +64,15 @@ const LoadAndViewPdf = (p: {
         <LoadingSpinner isLoading={true} textContent="Fetching document" />
       )}
       {pdfUrl === null && (
-        <>
+        <div>
           <br />
           <GovUkBanner
-            variant="info"
+            variant="error"
             headerTitle="Error"
-            contentHeading="Unable to fetch document"
-            contentBody="This could be due to an error, the wrong url or you do not have access to this document"
+            contentHeading="This document could not be shown"
+            contentBody="Try opening it again. If you still cannot access it, use CMS or contact the product team."
           />
-        </>
+        </div>
       )}
       {!!pdfUrl && (
         <Document
