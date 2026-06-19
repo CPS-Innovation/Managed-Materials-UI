@@ -4,7 +4,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Document, pdfjs } from 'react-pdf';
 import { useDocumentFocus } from './hooks/useDocumentFocus';
 import { useShiftReleaseRedactTrigger } from './hooks/useShiftReleaseRedactTrigger';
-import { AreaIcon } from './icons/AreaIcon';
 import { EditIcon } from './icons/EditIcon';
 import { TickCircleIcon } from './icons/TickCircleIcon';
 import { PdfRedactorCenteredModal } from './modals/PdfRedactorCenteredModal';
@@ -13,7 +12,7 @@ import { SaveToProceedToRotationsModal } from './modals/SaveToProceedToRotations
 import { PdfRedactorPage } from './PdfRedactorPage';
 import type { TRedaction } from './utils/coordUtils';
 import { TDeletion, TIndexedDeletion } from './utils/deletionUtils';
-import { type TMode } from './utils/modeUtils';
+import { isRedactionEnabledMode, type TMode } from './utils/modeUtils';
 import styles from './utils/PdfRedactor.module.css';
 import { TIndexedRotation, TRotation } from './utils/rotationUtils';
 import type {
@@ -27,10 +26,10 @@ import '/node_modules/react-pdf/dist/cjs/Page/TextLayer.css';
 pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 const modeClassMap: { [x in TMode]: string | undefined } = {
-  areaRedact: styles.areaRedact,
-  textRedact: styles.textRedact,
+  redact: styles.redact,
   rotation: styles.rotation,
-  deletion: styles.deletion
+  deletion: styles.deletion,
+  disabled: undefined
 };
 
 const useScaleHelper = (p?: { initScale?: number }) => {
@@ -299,7 +298,7 @@ export const PdfRedactor = (p: {
       setDisplayToProceedModal(previousModeRef.current);
     }
     if (
-      (p.mode === 'textRedact' || p.mode === 'areaRedact') &&
+      isRedactionEnabledMode(p.mode) &&
       (filteredRotations.length > 0 || filteredDeletions.length > 0)
     ) {
       p.onModeChange(previousModeRef.current);
@@ -333,7 +332,7 @@ export const PdfRedactor = (p: {
 
   const redactHighlightedTextTrigger = useTrigger();
   const redactHighlightedIfTextRedactionMode = () => {
-    if (modeRef.current !== 'textRedact') return;
+    if (!isRedactionEnabledMode(modeRef.current)) return;
     redactHighlightedTextTrigger.fire();
   };
 
@@ -367,7 +366,7 @@ export const PdfRedactor = (p: {
           onEscPress={() => setDisplayToProceedModal(undefined)}
           ariaLabel="Save changes before proceeding"
         >
-          {['areaRedact', 'textRedact'].includes(displayToProceedModal) && (
+          {isRedactionEnabledMode(displayToProceedModal) && (
             <SaveToProceedToRedactionsModal
               onClose={() => setDisplayToProceedModal(undefined)}
             />
@@ -397,29 +396,21 @@ export const PdfRedactor = (p: {
           }}
         >
           <span style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-            <span>
-              <button
-                className={`govuk-button ${
-                  p.mode === 'areaRedact' ? '' : 'govuk-button--secondary'
-                }`}
-                onClick={() => p.onModeChange('areaRedact')}
-                aria-label="Area redaction mode"
-                aria-pressed={p.mode === 'areaRedact'}
-              >
-                <AreaIcon width={20} height={20} />
-              </button>
-              <button
-                className={`govuk-button ${
-                  p.mode === 'textRedact' ? '' : 'govuk-button--secondary'
-                }`}
-                onClick={() => p.onModeChange('textRedact')}
-                aria-label="Text redaction mode"
-                aria-pressed={p.mode === 'textRedact'}
-              >
-                <EditIcon width={20} height={20} />
-              </button>
-            </span>
-            {p.mode === 'textRedact' && (
+            <button
+              className={`govuk-button ${
+                isRedactionEnabledMode(p.mode) ? '' : 'govuk-button--secondary'
+              }`}
+              onClick={() =>
+                p.onModeChange(
+                  isRedactionEnabledMode(p.mode) ? 'disabled' : 'redact'
+                )
+              }
+              aria-label="Redaction mode"
+              aria-pressed={isRedactionEnabledMode(p.mode)}
+            >
+              <EditIcon width={20} height={20} />
+            </button>
+            {isRedactionEnabledMode(p.mode) && (
               <button
                 className="govuk-button govuk-button--secondary"
                 onClick={() => redactHighlightedTextTrigger.fire()}

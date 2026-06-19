@@ -21,6 +21,8 @@ export type TRedaction = TCoordPair & {
   pageWidth: number;
 };
 
+export const MIN_REDACTION_SIZE_PX = 3;
+
 export const convertCoordPairToXywh = (p: TCoordPair): TXywhPair => {
   const xLeft = Math.min(p.x1, p.x2);
   const xRight = Math.max(p.x1, p.x2);

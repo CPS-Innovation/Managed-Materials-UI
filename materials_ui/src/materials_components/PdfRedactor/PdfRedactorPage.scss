@@ -6,3 +6,9 @@
   background-color: #fbe796;
   color: transparent;
 }
+
+.react-pdf-page-wrapper.area-dragging .textLayer span,
+.react-pdf-page-wrapper.area-dragging .annotationLayer a {
+  user-select: none;
+  pointer-events: none;
+}
