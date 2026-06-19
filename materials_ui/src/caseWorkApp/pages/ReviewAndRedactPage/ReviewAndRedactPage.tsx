@@ -37,9 +37,6 @@ import { TLookupsResponse } from '../../types/redaction';
 import { CloseTabUnsavedRedactionsModal } from './CloseTabUnsavedRedactionsModal';
 import { UnsavedRedactionsModal } from './UnsavedRedactionsModal';
 
-// An action that moves focus away from in-progress redaction work and so is
-// held behind the unsaved-redactions warning until the user confirms.
-// `parentId` is the document whose unsaved redactions the warning is about.
 type PendingUnsavedAction =
   | { kind: 'closeTab'; parentId: string }
   | { kind: 'switchTab'; parentId: string; nextParentId: string }
