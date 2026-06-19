@@ -155,6 +155,7 @@ stages:
     jobs:
       - job: Build_and_Test
         displayName: 'Build & Test App'
+        timeoutInMinutes: '180'
         condition: |
           or(
             eq(${{ parameters.RunUIBuild }}, true),
@@ -180,8 +181,17 @@ stages:
             inputs:
               command: "custom"
               workingDir: '$(workingDir)'
-              customCommand: "run format"
-            displayName: "npm prettier"
+              customCommand: "exec prettier --check ."
+            displayName: "Prettier check"
+
+          - task: Cache@2
+            displayName: 'Cache Playwright browsers'
+            inputs:
+              key: 'playwright | "$(Agent.OS)" | $(workingDir)/package-lock.json'
+              restoreKeys: |
+                playwright | "$(Agent.OS)"
+              path: '$(Pipeline.Workspace)/.playwright'
+              cacheHitVar: PLAYWRIGHT_CACHE_RESTORED
 
           - script: |
               npx eslint .
@@ -212,6 +222,7 @@ stages:
           - script: |
               npx playwright install
             displayName: 'Install Playwright browsers'
+            condition: ne(variables['PLAYWRIGHT_CACHE_RESTORED'], 'true')
             workingDirectory: '$(workingDir)'
             env:
               PLAYWRIGHT_BROWSERS_PATH: '$(Pipeline.Workspace)/.playwright'
@@ -219,6 +230,7 @@ stages:
           - script: |
               npx playwright install-deps
             displayName: 'Install Playwright OS dependencies'
+            condition: and(eq(variables['Agent.OS'], 'Linux'), ne(variables['PLAYWRIGHT_CACHE_RESTORED'], 'true'))
             workingDirectory: '$(workingDir)'
             env:
               PLAYWRIGHT_BROWSERS_PATH: '$(Pipeline.Workspace)/.playwright'
@@ -233,7 +245,7 @@ stages:
             displayName: 'Run E2E Tests with Coverage'
             inputs:
               command: 'custom'
-              customCommand: 'run e2e'
+              customCommand: 'run e2e -- --workers=2'
               workingDir: '$(workingDir)'
             env:
               PLAYWRIGHT_BROWSERS_PATH: '$(Pipeline.Workspace)/.playwright'
