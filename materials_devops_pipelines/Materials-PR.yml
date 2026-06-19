@@ -210,11 +210,18 @@ stages:
 # ---------- E2E TESTS (Playwright) ----------
 
           - script: |
-              npx playwright install chromium msedge
-            displayName: 'Install Chromium and Edge browsers'
+              npx playwright install
+            displayName: 'Install Playwright browsers'
+            workingDirectory: '$(workingDir)'
+            env:
+              PLAYWRIGHT_BROWSERS_PATH: '$(Pipeline.Workspace)/.playwright'
+
           - script: |
               npx playwright install-deps
-            displayName: 'Install Playwright OS dependencies (Linux)'
+            displayName: 'Install Playwright OS dependencies'
+            workingDirectory: '$(workingDir)'
+            env:
+              PLAYWRIGHT_BROWSERS_PATH: '$(Pipeline.Workspace)/.playwright'
           # - task: Npm@1
           #   displayName: 'Install Playwright (Chromium + Edge)'
           #   inputs:
@@ -229,6 +236,7 @@ stages:
               customCommand: 'run e2e'
               workingDir: '$(workingDir)'
             env:
+              PLAYWRIGHT_BROWSERS_PATH: '$(Pipeline.Workspace)/.playwright'
               E2E_TEST_MS_USERNAME: $(e2e_username)
               E2E_TEST_MS_PASSWORD: $(e2e_password) 
               E2E_CIN3_USERNAME: $(e2e_cin3_username) 
