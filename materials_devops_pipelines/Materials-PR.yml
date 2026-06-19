@@ -155,7 +155,6 @@ stages:
     jobs:
       - job: Build_and_Test
         displayName: 'Build & Test App'
-        timeoutInMinutes: '180'
         condition: |
           or(
             eq(${{ parameters.RunUIBuild }}, true),
@@ -177,21 +176,14 @@ stages:
               workingDir: '$(workingDir)'
             displayName: 'Install Dependencies'
 
+        # Running prettier check. Read-only validation. Exits non-zero if files are not formatted. 
+        # Local developers should have pre-commit hook to run prettier before committing code. This is a safeguard to ensure that code is formatted correctly. 
           - task: Npm@1
             inputs:
               command: "custom"
               workingDir: '$(workingDir)'
               customCommand: "exec prettier --check ."
             displayName: "Prettier check"
-
-          - task: Cache@2
-            displayName: 'Cache Playwright browsers'
-            inputs:
-              key: 'playwright | "$(Agent.OS)" | $(workingDir)/package-lock.json'
-              restoreKeys: |
-                playwright | "$(Agent.OS)"
-              path: '$(Pipeline.Workspace)/.playwright'
-              cacheHitVar: PLAYWRIGHT_CACHE_RESTORED
 
           - script: |
               npx eslint .
@@ -218,37 +210,17 @@ stages:
               VITE_REDACTION_LOG_SCOPE: $(VITE_REDACTION_LOG_SCOPE)
 
 # ---------- E2E TESTS (Playwright) ----------
-
           - script: |
-              npx playwright install
-            displayName: 'Install Playwright browsers'
-            condition: ne(variables['PLAYWRIGHT_CACHE_RESTORED'], 'true')
-            workingDirectory: '$(workingDir)'
-            env:
-              PLAYWRIGHT_BROWSERS_PATH: '$(Pipeline.Workspace)/.playwright'
-
-          - script: |
-              npx playwright install-deps
-            displayName: 'Install Playwright OS dependencies'
-            condition: and(eq(variables['Agent.OS'], 'Linux'), ne(variables['PLAYWRIGHT_CACHE_RESTORED'], 'true'))
-            workingDirectory: '$(workingDir)'
-            env:
-              PLAYWRIGHT_BROWSERS_PATH: '$(Pipeline.Workspace)/.playwright'
-          # - task: Npm@1
-          #   displayName: 'Install Playwright (Chromium + Edge)'
-          #   inputs:
-          #     command: 'custom'
-          #     customCommand: 'exec playwright install chromium msedge'
-          #     workingDir: '$(workingDir)'
+              npx playwright install chromium msedge
+            displayName: 'Install Chromium and Edge browsers'
 
           - task: Npm@1
             displayName: 'Run E2E Tests with Coverage'
             inputs:
               command: 'custom'
-              customCommand: 'run e2e -- --workers=2'
+              customCommand: 'run e2e'
               workingDir: '$(workingDir)'
             env:
-              PLAYWRIGHT_BROWSERS_PATH: '$(Pipeline.Workspace)/.playwright'
               E2E_TEST_MS_USERNAME: $(e2e_username)
               E2E_TEST_MS_PASSWORD: $(e2e_password) 
               E2E_CIN3_USERNAME: $(e2e_cin3_username) 
