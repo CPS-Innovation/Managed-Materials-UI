@@ -212,7 +212,9 @@ stages:
           - script: |
               npx playwright install chromium msedge
             displayName: 'Install Chromium and Edge browsers'
-
+          - script: |
+              npx playwright install-deps
+            displayName: 'Install Playwright OS dependencies (Linux)'
           # - task: Npm@1
           #   displayName: 'Install Playwright (Chromium + Edge)'
           #   inputs:
