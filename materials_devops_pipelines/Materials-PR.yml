@@ -208,12 +208,17 @@ stages:
               VITE_REDACTION_LOG_SCOPE: $(VITE_REDACTION_LOG_SCOPE)
 
 # ---------- E2E TESTS (Playwright) ----------
-          - task: Npm@1
-            displayName: 'Install Playwright (Chromium + Edge)'
-            inputs:
-              command: 'custom'
-              customCommand: 'exec playwright install chromium msedge'
-              workingDir: '$(workingDir)'
+
+          - script: |
+              npx playwright install chromium msedge
+            displayName: 'Install Chromium and Edge browsers'
+
+          # - task: Npm@1
+          #   displayName: 'Install Playwright (Chromium + Edge)'
+          #   inputs:
+          #     command: 'custom'
+          #     customCommand: 'exec playwright install chromium msedge'
+          #     workingDir: '$(workingDir)'
 
           - task: Npm@1
             displayName: 'Run E2E Tests with Coverage'
