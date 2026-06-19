@@ -243,6 +243,7 @@ stages:
               customCommand: 'run e2e'
               workingDir: '$(workingDir)'
             env:
+              PLAYWRIGHT_BROWSERS_PATH: '$(Pipeline.Workspace)/.playwright'
               E2E_TEST_MS_USERNAME: $(e2e_username)
               E2E_TEST_MS_PASSWORD: $(e2e_password) 
               E2E_CIN3_USERNAME: $(e2e_cin3_username) 
