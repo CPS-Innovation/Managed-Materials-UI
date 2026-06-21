@@ -190,15 +190,6 @@ stages:
             displayName: "ESLint – fail on errors only"
             workingDirectory: '$(workingDir)'
           
-          - task: Cache@2
-            displayName: 'Cache Playwright browsers'
-            inputs:
-              key: 'playwright | "$(Agent.OS)" | $(workingDir)/package-lock.json'
-              restoreKeys: |
-                playwright | "$(Agent.OS)"
-              path: '$(Pipeline.Workspace)/.playwright'
-              cacheHitVar: PLAYWRIGHT_CACHE_RESTORED
-
           #Build the application
           - task: Npm@1
             displayName: "Build UI Package"
