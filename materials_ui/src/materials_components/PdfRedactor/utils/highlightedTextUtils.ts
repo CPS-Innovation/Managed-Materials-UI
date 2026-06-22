@@ -1,5 +1,6 @@
 import {
   getPdfCoords,
+  MIN_REDACTION_SIZE_PX,
   safeGetRangeAt,
   TRect,
   type TCoordPair
@@ -57,7 +58,11 @@ export const getPdfCoordPairsOfHighlightedText = (p: {
   const rects = range.getClientRects();
   const mergedRects = mergeDomRects([...rects]);
   const coordPairs = mergedRects.map((rect) => {
-    if (rect.width < 3 || rect.height < 3) return;
+    if (
+      rect.width < MIN_REDACTION_SIZE_PX ||
+      rect.height < MIN_REDACTION_SIZE_PX
+    )
+      return;
 
     const coord1 = getPdfCoords({
       screenX: rect.left,

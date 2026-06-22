@@ -1,12 +1,9 @@
 import { CSSProperties, useState } from 'react';
-import { Button } from '../../caseWorkApp/components/button';
 import {
   DropdownButton2,
   DropdownListItem
 } from '../../caseWorkApp/components/dropDownButton/DropdownButton';
-import Tooltip from '../../caseWorkApp/components/tooltip';
-import { AreaIcon } from '../PdfRedactor/icons/AreaIcon';
-import { TMode } from '../PdfRedactor/utils/modeUtils';
+import { isRedactionEnabledMode, TMode } from '../PdfRedactor/utils/modeUtils';
 
 const DROPDOWN_ACTIONS = {
   LOG_REDACTION: 'log-redaction',
@@ -149,28 +146,19 @@ export const DocumentViewportArea = ({
               )}
             </div>
           )}
-          <Tooltip
-            text={
-              mode === 'areaRedact' ? 'Redact area mode' : 'Redact text mode'
+          <button
+            type="button"
+            id="btn-toggle-redaction"
+            aria-pressed={isRedactionEnabledMode(mode)}
+            onClick={() =>
+              onModeChange(isRedactionEnabledMode(mode) ? 'disabled' : 'redact')
             }
+            style={linkButtonStyle}
           >
-            <Button
-              variant="inverse"
-              id="btn-area-tool"
-              aria-label={
-                mode === 'areaRedact'
-                  ? 'enable text redaction mode'
-                  : 'enable area redaction mode'
-              }
-              onClick={() =>
-                onModeChange(
-                  mode === 'areaRedact' ? 'textRedact' : 'areaRedact'
-                )
-              }
-            >
-              <AreaIcon height={20} width={20} />
-            </Button>
-          </Tooltip>
+            {isRedactionEnabledMode(mode)
+              ? 'Stop redacting'
+              : 'Start redacting'}
+          </button>
           <DropdownButton2
             ariaLabel="document actions dropdown"
             ButtonContent={<span>Document Actions</span>}
@@ -192,7 +180,7 @@ export const DocumentViewportArea = ({
                 id={DROPDOWN_ACTIONS.ROTATE}
                 borderBottom
                 onClick={() => {
-                  onModeChange(mode === 'rotation' ? 'textRedact' : 'rotation');
+                  onModeChange(mode === 'rotation' ? 'disabled' : 'rotation');
                   setIsDropdownOpen(false);
                 }}
               >
@@ -205,9 +193,7 @@ export const DocumentViewportArea = ({
                   id={DROPDOWN_ACTIONS.DELETE}
                   borderBottom
                   onClick={() => {
-                    onModeChange(
-                      mode === 'deletion' ? 'textRedact' : 'deletion'
-                    );
+                    onModeChange(mode === 'deletion' ? 'disabled' : 'deletion');
                     setIsDropdownOpen(false);
                   }}
                 >

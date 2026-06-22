@@ -1,5 +1,5 @@
 import { RefObject, useEffect, useRef } from 'react';
-import { TMode } from '../utils/modeUtils';
+import { isRedactionEnabledMode, TMode } from '../utils/modeUtils';
 
 const ARROW_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown']);
 
@@ -23,7 +23,7 @@ export const useShiftReleaseRedactTrigger = (p: {
         !e.ctrlKey &&
         !e.altKey &&
         ARROW_KEYS.has(e.key) &&
-        p.modeRef.current === 'textRedact' &&
+        isRedactionEnabledMode(p.modeRef.current) &&
         isContainerVisible()
       ) {
         shiftExtendedRef.current = true;
@@ -35,7 +35,7 @@ export const useShiftReleaseRedactTrigger = (p: {
       if (!shiftExtendedRef.current) return;
       shiftExtendedRef.current = false;
 
-      if (p.modeRef.current !== 'textRedact') return;
+      if (!isRedactionEnabledMode(p.modeRef.current)) return;
       if (!isContainerVisible()) return;
       const selection = window.getSelection();
       if (!selection || selection.isCollapsed) return;

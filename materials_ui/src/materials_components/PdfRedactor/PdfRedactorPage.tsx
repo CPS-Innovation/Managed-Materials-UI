@@ -1,4 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type MouseEvent as ReactMouseEvent
+} from 'react';
 import { Page } from 'react-pdf';
 import { DocumentIcon } from './icons/DocumentIcon';
 import { RotateIcon } from './icons/RotateIcon';
@@ -17,14 +22,38 @@ import {
   convertCoordPairToXywh,
   createRedaction,
   getPdfCoords,
+  MIN_REDACTION_SIZE_PX,
   type TCoord,
   type TRedaction
 } from './utils/coordUtils';
 import { createId } from './utils/generalUtils';
 import { getPdfCoordPairsOfHighlightedText } from './utils/highlightedTextUtils';
-import type { TMode } from './utils/modeUtils';
+import { isRedactionEnabledMode, type TMode } from './utils/modeUtils';
 import type { THighlightLayer } from './utils/searchHighlightUtils';
 import { useTriggerListener, type TTriggerData } from './utils/useTriggger';
+
+const isSelectableTextTarget = (target: EventTarget | null) => {
+  const el = target as HTMLElement | null;
+  if (!el) return false;
+  return el.tagName === 'SPAN' && !!el.closest('.react-pdf__Page__textContent');
+};
+
+const isAreaLargeEnoughToRedact = (
+  corner1: TCoord,
+  corner2: TCoord,
+  scale: number
+) => {
+  const { width, height } = convertCoordPairToXywh({
+    x1: corner1.x,
+    y1: corner1.y,
+    x2: corner2.x,
+    y2: corner2.y
+  });
+  return (
+    width * scale >= MIN_REDACTION_SIZE_PX &&
+    height * scale >= MIN_REDACTION_SIZE_PX
+  );
+};
 
 export const PdfRedactorRotationOverlay = (p: {
   pageRotation: number;
@@ -339,17 +368,22 @@ export const PdfRedactorPage = (p: {
   } | null>(null);
 
   const [firstCorner, setFirstCorner] = useState<TCoord | null>(null);
+  const [isAreaDragging, setIsAreaDragging] = useState(false);
   const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(
     null
   );
+  const cancelAreaDrag = () => {
+    setFirstCorner(null);
+    setIsAreaDragging(false);
+  };
   useEffect(() => {
     const fn = (e: KeyboardEvent) => {
-      if (e.code === 'Escape') setFirstCorner(null);
+      if (e.code === 'Escape') cancelAreaDrag();
     };
     window.addEventListener('keydown', fn);
     return () => window.removeEventListener('keydown', fn);
   }, []);
-  useEffect(() => setFirstCorner(null), [p.mode]);
+  useEffect(() => cancelAreaDrag(), [p.mode]);
   useEffect(() => p.onMouseMove(mousePos), [mousePos]);
 
   useTriggerListener({
@@ -394,6 +428,53 @@ export const PdfRedactorPage = (p: {
     };
   }, []);
 
+  const finishAreaRedactionDrag = () => {
+    if (!isAreaDragging) return;
+    setIsAreaDragging(false);
+
+    const pdfPageWrapperElm = pdfPageWrapperElmRef.current;
+    if (
+      firstCorner &&
+      mousePos &&
+      pdfPageWrapperElm &&
+      isAreaLargeEnoughToRedact(firstCorner, mousePos, scale)
+    ) {
+      const newRedaction = createRedaction({
+        coord1: firstCorner,
+        coord2: mousePos,
+        pageNumber: p.pageNumber,
+        pageRect: pdfPageWrapperElm.getBoundingClientRect(),
+        scale
+      });
+      p.onAddRedactions([newRedaction]);
+      p.onPageRedactionsChange([
+        ...(redactions ? redactions : []),
+        newRedaction
+      ]);
+    }
+
+    setFirstCorner(null);
+    window.getSelection()?.removeAllRanges();
+  };
+
+  const startAreaRedactionDrag = (e: ReactMouseEvent<HTMLDivElement>) => {
+    if (!isRedactionEnabledMode(p.mode)) return;
+    if (isSelectableTextTarget(e.target)) return;
+
+    const start = getPdfCoords({
+      screenX: e.clientX,
+      screenY: e.clientY,
+      scale: p.scale,
+      pdfPageRect: e.currentTarget.getBoundingClientRect()
+    });
+    if (!start) return;
+
+    window.getSelection()?.removeAllRanges();
+    setFirstCorner(start);
+    setMousePos(start);
+    setIsAreaDragging(true);
+  };
+
   return (
     <div>
       <span
@@ -425,7 +506,10 @@ export const PdfRedactorPage = (p: {
           <div
             ref={pdfPageWrapperElmRef}
             style={{ position: 'relative' }}
-            className="react-pdf-page-wrapper"
+            className={`react-pdf-page-wrapper${
+              isAreaDragging ? ' area-dragging' : ''
+            }`}
+            onMouseUp={finishAreaRedactionDrag}
           >
             <Page
               pageNumber={p.pageNumber}
@@ -440,29 +524,7 @@ export const PdfRedactorPage = (p: {
                   height: rect.height / p.scale
                 });
               }}
-              onMouseDown={() => {
-                if (p.mode !== 'areaRedact') return;
-                const pdfPageWrapperElm = pdfPageWrapperElmRef.current;
-
-                if (!pdfPageWrapperElm) return;
-                const pdfPageRect = pdfPageWrapperElm.getBoundingClientRect();
-
-                if (firstCorner && mousePos) {
-                  const newRedaction = createRedaction({
-                    coord1: firstCorner,
-                    coord2: mousePos,
-                    pageNumber: p.pageNumber,
-                    pageRect: pdfPageRect,
-                    scale
-                  });
-                  p.onAddRedactions([newRedaction]);
-                  p.onPageRedactionsChange([
-                    ...(redactions ? redactions : []),
-                    newRedaction
-                  ]);
-                }
-                setFirstCorner(firstCorner ? null : mousePos);
-              }}
+              onMouseDown={startAreaRedactionDrag}
               scale={p.scale}
               onMouseMove={(e) => {
                 if (requestAnimationFrameRef.current) return;

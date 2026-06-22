@@ -1,11 +1,9 @@
-.areaRedact :global(.react-pdf__Page__annotations a),
-.areaRedact :global(.react-pdf__Page__textContent span) {
-  pointer-events: none !important;
+.redact :global(.react-pdf-page-wrapper) {
+  cursor: crosshair;
 }
 
-.areaRedact :global(.react-pdf__Page__annotations),
-.areaRedact :global(.react-pdf__Page__textContent) {
-  cursor: crosshair;
+.redact :global(.react-pdf__Page__textContent span) {
+  cursor: text;
 }
 
 .deletion :global(.react-pdf__Page__annotations a),

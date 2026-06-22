@@ -22,7 +22,10 @@ import {
   DocumentTabPanel
 } from '../../../materials_components/DocumentTabPanel/DocumentTabPanel';
 import { TRedaction } from '../../../materials_components/PdfRedactor/utils/coordUtils';
-import { TMode } from '../../../materials_components/PdfRedactor/utils/modeUtils';
+import {
+  isRedactionEnabledMode,
+  TMode
+} from '../../../materials_components/PdfRedactor/utils/modeUtils';
 import { convertMatchesToSearchHighlights } from '../../../materials_components/PdfRedactor/utils/searchHighlightUtils';
 import { useTrigger } from '../../../materials_components/PdfRedactor/utils/useTriggger';
 import { RedactionLogModal } from '../../../materials_components/RedactionLog/RedactionLogModal';
@@ -33,6 +36,11 @@ import { useSwitchContentArea } from '../../hooks/useSwitchContentArea';
 import { TLookupsResponse } from '../../types/redaction';
 import { CloseTabUnsavedRedactionsModal } from './CloseTabUnsavedRedactionsModal';
 import { UnsavedRedactionsModal } from './UnsavedRedactionsModal';
+
+type PendingUnsavedAction =
+  | { kind: 'closeTab'; parentId: string }
+  | { kind: 'switchTab'; parentId: string; nextParentId: string }
+  | { kind: 'stopRedacting'; parentId: string };
 
 export const ReviewAndRedactPage = () => {
   const { state: locationState } = useLocation();
@@ -73,7 +81,10 @@ export const ReviewAndRedactPage = () => {
 
   const [activeParentId, setActiveParentId] = useState('');
   const [newVersionParentId, setNewVersionParentId] = useState('');
-  const [mode, setMode] = useState<TMode>('textRedact');
+
+  const [modeByParentId, setModeByParentId] = useState<Record<string, TMode>>(
+    {}
+  );
 
   const [searchModalOpen, setSearchModalOpen] = useState(false);
 
@@ -81,9 +92,8 @@ export const ReviewAndRedactPage = () => {
     useState(false);
   const [attemptedNavigationHref, setAttemptedNavigationHref] =
     useState<string>();
-  const [pendingCloseParentId, setPendingCloseParentId] = useState<
-    string | undefined
-  >();
+  const [pendingUnsavedAction, setPendingUnsavedAction] =
+    useState<PendingUnsavedAction>();
   const [documents, setDocuments] = useState<TDocument[] | null | undefined>();
   const documentsRef = useRef<TDocument[] | null | undefined>(undefined);
 
@@ -207,8 +217,8 @@ export const ReviewAndRedactPage = () => {
           document={doc}
           urn={urn!}
           caseId={caseId!}
-          mode={mode}
-          onModeChange={setMode}
+          mode={modeByParentId[doc.parentId] ?? 'disabled'}
+          onModeChange={(newMode) => handleModeChange(doc.parentId, newMode)}
           onRedactionsChange={(redactions) => {
             setRedactionsIndexedOnParentId((prev) => ({
               ...prev,
@@ -261,15 +271,61 @@ export const ReviewAndRedactPage = () => {
     if (documentId) clearSearchContextForDoc(documentId);
   };
 
+  const hasUnsavedRedactions = (parentId: string) =>
+    (redactionsIndexedOnParentId[parentId]?.length ?? 0) > 0;
+
   const handleCloseTab = (documentId: string | undefined) => {
-    if (
-      documentId &&
-      (redactionsIndexedOnParentId[documentId]?.length ?? 0) > 0
-    ) {
-      setPendingCloseParentId(documentId);
+    if (documentId && hasUnsavedRedactions(documentId)) {
+      setPendingUnsavedAction({ kind: 'closeTab', parentId: documentId });
       return;
     }
     performCloseTab(documentId);
+  };
+
+  const requestActiveTabChange = (nextParentId: string) => {
+    if (
+      nextParentId !== activeParentId &&
+      hasUnsavedRedactions(activeParentId)
+    ) {
+      setPendingUnsavedAction({
+        kind: 'switchTab',
+        parentId: activeParentId,
+        nextParentId
+      });
+      return;
+    }
+    setActiveParentId(nextParentId);
+  };
+
+  const handleModeChange = (parentId: string, newMode: TMode) => {
+    const isStoppingRedaction =
+      isRedactionEnabledMode(modeByParentId[parentId] ?? 'disabled') &&
+      newMode === 'disabled';
+    if (isStoppingRedaction && hasUnsavedRedactions(parentId)) {
+      setPendingUnsavedAction({ kind: 'stopRedacting', parentId });
+      return;
+    }
+    setModeByParentId((prev) => ({ ...prev, [parentId]: newMode }));
+  };
+
+  const proceedWithPendingAction = () => {
+    if (!pendingUnsavedAction) return;
+    const action = pendingUnsavedAction;
+    setPendingUnsavedAction(undefined);
+    switch (action.kind) {
+      case 'closeTab':
+        performCloseTab(action.parentId);
+        break;
+      case 'switchTab':
+        setActiveParentId(action.nextParentId);
+        break;
+      case 'stopRedacting':
+        setModeByParentId((prev) => ({
+          ...prev,
+          [action.parentId]: 'disabled'
+        }));
+        break;
+    }
   };
 
   const activeTabId = activeParentId || openParentIds[0] || '';
@@ -319,14 +375,13 @@ export const ReviewAndRedactPage = () => {
           }}
         />
       )}
-      {pendingCloseParentId && (
+      {pendingUnsavedAction && (
         <CloseTabUnsavedRedactionsModal
-          redactions={redactionsIndexedOnParentId[activeTabId]}
-          onReturnClick={() => setPendingCloseParentId(undefined)}
-          onIgnoreClick={() => {
-            performCloseTab(pendingCloseParentId);
-            setPendingCloseParentId(undefined);
-          }}
+          redactions={
+            redactionsIndexedOnParentId[pendingUnsavedAction.parentId]
+          }
+          onReturnClick={() => setPendingUnsavedAction(undefined)}
+          onIgnoreClick={proceedWithPendingAction}
         />
       )}
       <div className="govuk-main-wrapper">
@@ -370,7 +425,7 @@ export const ReviewAndRedactPage = () => {
                   newVersionDocumentId={newVersionParentId}
                   openDocumentIds={openParentIds}
                   onSetDocumentOpenIds={setOpenParentIds}
-                  onDocumentClick={setActiveParentId}
+                  onDocumentClick={requestActiveTabChange}
                   reloadTriggerData={reloadSidebarTrigger.data}
                   onDocumentsChange={setDocuments}
                 />
@@ -382,7 +437,7 @@ export const ReviewAndRedactPage = () => {
             <Tabs
               items={tabItems}
               activeTabId={activeParentId}
-              handleTabSelection={setActiveParentId}
+              handleTabSelection={requestActiveTabChange}
               handleCloseTab={handleCloseTab}
               noMargin
               onShowHideCategoriesClick={() => setIsSidebarVisible((v) => !v)}
