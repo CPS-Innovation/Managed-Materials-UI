@@ -11,6 +11,7 @@ export type TabsProps = CommonTabsProps & {
   noMargin?: boolean;
   onShowHideCategoriesClick: () => void;
   isShowCategories: boolean;
+  onCloseAllClick?: () => void;
 };
 
 export const Tabs: React.FC<TabsProps> = ({
@@ -21,9 +22,10 @@ export const Tabs: React.FC<TabsProps> = ({
   noMargin,
   onShowHideCategoriesClick,
   isShowCategories,
+  onCloseAllClick,
   ...attributes
 }) => {
-  useLastFocus('#case-details-search');
+  useLastFocus('#search-within-case');
 
   const activeTabArrayPos = items.findIndex((item) => item.id === activeTabId);
   const activeTabIndex = activeTabArrayPos === -1 ? 0 : activeTabArrayPos;
@@ -50,6 +52,18 @@ export const Tabs: React.FC<TabsProps> = ({
 
   return (
     <>
+      {items.length >= 2 && onCloseAllClick && (
+        <div style={{ marginBottom: '24px' }}>
+          <button
+            type="button"
+            className="govuk-link button-as-link"
+            data-testid="btn-close-all-tabs"
+            onClick={onCloseAllClick}
+          >
+            Close all documents
+          </button>
+        </div>
+      )}
       <div
         id="document-tabs"
         role="region"

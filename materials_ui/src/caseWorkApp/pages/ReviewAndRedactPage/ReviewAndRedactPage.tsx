@@ -42,6 +42,8 @@ type PendingUnsavedAction =
   | { kind: 'switchTab'; parentId: string; nextParentId: string }
   | { kind: 'stopRedacting'; parentId: string };
 
+type UnsavedModal = { kind: 'blockNav'; href?: string } | { kind: 'closeAll' };
+
 export const ReviewAndRedactPage = () => {
   const { state: locationState } = useLocation();
   const {
@@ -88,10 +90,7 @@ export const ReviewAndRedactPage = () => {
 
   const [searchModalOpen, setSearchModalOpen] = useState(false);
 
-  const [showBlockNavigationModal, setShowBlockNavigationModal] =
-    useState(false);
-  const [attemptedNavigationHref, setAttemptedNavigationHref] =
-    useState<string>();
+  const [unsavedModal, setUnsavedModal] = useState<UnsavedModal | null>(null);
   const [pendingUnsavedAction, setPendingUnsavedAction] =
     useState<PendingUnsavedAction>();
   const [documents, setDocuments] = useState<TDocument[] | null | undefined>();
@@ -274,6 +273,40 @@ export const ReviewAndRedactPage = () => {
   const hasUnsavedRedactions = (parentId: string) =>
     (redactionsIndexedOnParentId[parentId]?.length ?? 0) > 0;
 
+  const closeAllTabs = () => {
+    if (caseId && urn) {
+      openDocuments.forEach((document) => {
+        checkInDocumentFromAxiosInstance({
+          axiosInstance,
+          caseId,
+          urn,
+          parentId: document.parentId,
+          childId: document.childId
+        });
+      });
+    }
+
+    setActiveParentId('');
+    setOpenParentIds([]);
+    setSearchContextByParentId({});
+    setRedactionsIndexedOnParentId({});
+
+    const sidebarFocusTarget =
+      document.querySelector<HTMLElement>(
+        '#side-panel .govuk-accordion__section-button'
+      ) ?? document.querySelector<HTMLElement>('#side-panel');
+    sidebarFocusTarget?.focus();
+  };
+
+  const handleCloseAll = () => {
+    const hasAnyUnsaved = openParentIds.some(hasUnsavedRedactions);
+    if (hasAnyUnsaved) {
+      setUnsavedModal({ kind: 'closeAll' });
+      return;
+    }
+    closeAllTabs();
+  };
+
   const handleCloseTab = (documentId: string | undefined) => {
     if (documentId && hasUnsavedRedactions(documentId)) {
       setPendingUnsavedAction({ kind: 'closeTab', parentId: documentId });
@@ -334,6 +367,16 @@ export const ReviewAndRedactPage = () => {
     (doc) => doc.parentId === activeTabId
   );
 
+  const openUnsavedRedactions: { [k: string]: TRedaction[] } =
+    Object.fromEntries(
+      openParentIds
+        .filter(hasUnsavedRedactions)
+        .map((parentId) => [
+          parentId,
+          redactionsIndexedOnParentId[parentId] ?? []
+        ])
+    );
+
   useEffect(() => {
     if (showRedactionLogModal) {
       getLookups({ axiosInstance: redactionLogAxios }).then((data) => {
@@ -351,8 +394,7 @@ export const ReviewAndRedactPage = () => {
         );
         if (!shouldBlock) return false;
 
-        setShowBlockNavigationModal(true);
-        setAttemptedNavigationHref(tab.href);
+        setUnsavedModal({ kind: 'blockNav', href: tab.href });
         return true;
       }}
     >
@@ -361,17 +403,23 @@ export const ReviewAndRedactPage = () => {
         textContent="Loading documents"
       />
       {documents === null && <div>Error...</div>}
-      {showBlockNavigationModal && (
+      {unsavedModal && (
         <UnsavedRedactionsModal
-          redactionsIndexedOnDocumentId={redactionsIndexedOnParentId}
-          onIgnoreClick={() => {
-            if (attemptedNavigationHref) navigate(attemptedNavigationHref);
-          }}
-          onReturnClick={() => setShowBlockNavigationModal(false)}
           documents={documents ?? []}
+          redactionsIndexedOnDocumentId={
+            unsavedModal.kind === 'closeAll'
+              ? openUnsavedRedactions
+              : redactionsIndexedOnParentId
+          }
+          onReturnClick={() => setUnsavedModal(null)}
+          onIgnoreClick={() => {
+            if (unsavedModal.kind === 'closeAll') closeAllTabs();
+            else if (unsavedModal.href) navigate(unsavedModal.href);
+            setUnsavedModal(null);
+          }}
           onDocumentClick={(documentId) => {
             setActiveParentId(documentId);
-            setShowBlockNavigationModal(false);
+            setUnsavedModal(null);
           }}
         />
       )}
@@ -439,6 +487,7 @@ export const ReviewAndRedactPage = () => {
               activeTabId={activeParentId}
               handleTabSelection={requestActiveTabChange}
               handleCloseTab={handleCloseTab}
+              onCloseAllClick={handleCloseAll}
               noMargin
               onShowHideCategoriesClick={() => setIsSidebarVisible((v) => !v)}
               isShowCategories={isSidebarVisible}
