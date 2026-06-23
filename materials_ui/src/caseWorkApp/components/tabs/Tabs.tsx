@@ -11,7 +11,7 @@ export type TabsProps = CommonTabsProps & {
   noMargin?: boolean;
   onShowHideCategoriesClick: () => void;
   isShowCategories: boolean;
-  onCloseAllClick?: () => void;
+  onCloseAllClick: () => void;
 };
 
 export const Tabs: React.FC<TabsProps> = ({
@@ -52,7 +52,7 @@ export const Tabs: React.FC<TabsProps> = ({
 
   return (
     <>
-      {items.length >= 2 && onCloseAllClick && (
+      {items.length !== 1 && (
         <div style={{ marginBottom: '24px' }}>
           <button
             type="button"
