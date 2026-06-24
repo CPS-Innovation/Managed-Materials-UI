@@ -1,5 +1,4 @@
 import { useLastFocus } from '../../hooks/useLastFocus';
-import { Button } from '../button';
 import TabButtons from './TabButtons';
 import classes from './Tabs.module.scss';
 import { CommonTabsProps } from './types';
@@ -12,6 +11,7 @@ export type TabsProps = CommonTabsProps & {
   onShowHideCategoriesClick: () => void;
   isShowCategories: boolean;
   onCloseAllClick: () => void;
+  documentActions?: React.ReactNode;
 };
 
 export const Tabs: React.FC<TabsProps> = ({
@@ -23,6 +23,7 @@ export const Tabs: React.FC<TabsProps> = ({
   onShowHideCategoriesClick,
   isShowCategories,
   onCloseAllClick,
+  documentActions,
   ...attributes
 }) => {
   useLastFocus('#search-within-case');
@@ -52,18 +53,39 @@ export const Tabs: React.FC<TabsProps> = ({
 
   return (
     <>
-      {items.length !== 1 && (
-        <div style={{ marginBottom: '24px' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '24px'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {items.length !== 1 && (
+            <>
+              <button
+                type="button"
+                className="govuk-link button-as-link"
+                data-testid="btn-close-all-tabs"
+                onClick={onCloseAllClick}
+              >
+                Close all documents
+              </button>
+              <span aria-hidden="true">|</span>
+            </>
+          )}
           <button
             type="button"
             className="govuk-link button-as-link"
-            data-testid="btn-close-all-tabs"
-            onClick={onCloseAllClick}
+            data-testid="btn-view-full-width"
+            onClick={onShowHideCategoriesClick}
           >
-            Close all documents
+            {isShowCategories ? 'View document full width' : 'Exit full width'}
           </button>
         </div>
-      )}
+        {documentActions}
+      </div>
       <div
         id="document-tabs"
         role="region"
@@ -77,12 +99,6 @@ export const Tabs: React.FC<TabsProps> = ({
           alignItems: 'start'
         }}
       >
-        <div style={{ flexShrink: 0, display: 'flex' }}>
-          <Button size="s" onClick={() => onShowHideCategoriesClick()}>
-            {isShowCategories ? 'Hide categories' : 'Show categories'}
-          </Button>
-        </div>
-
         <div style={{ flex: 1, minWidth: 0 }}>
           <TabButtons
             items={items.map((item) => ({

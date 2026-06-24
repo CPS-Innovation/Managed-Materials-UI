@@ -42,9 +42,8 @@ export type DocumentTabPanelProps = {
   onModeChange: (mode: TMode) => void;
   onRedactionsChange: (redactions: TRedaction[]) => void;
   onModification: (x: TDocument) => void;
-  onViewInNewWindowClick: () => void;
   initRedactions?: TRedaction[];
-  onRedactionLogClick: () => void;
+  onNumOfPagesChange: (numOfPages: number) => void;
   searchContext?: DocSearchContext;
   onFocusedSearchIndexChange?: (index: number) => void;
   onBackToSearchResults?: () => void;
@@ -62,8 +61,7 @@ export const DocumentTabPanel = ({
   onRedactionsChange,
   onModification,
   initRedactions,
-  onViewInNewWindowClick,
-  onRedactionLogClick,
+  onNumOfPagesChange,
   searchContext,
   onFocusedSearchIndexChange,
   onBackToSearchResults,
@@ -121,7 +119,6 @@ export const DocumentTabPanel = ({
       }
     };
   }, [parentId, childId, urn, caseId]);
-  const [numOfDocumentPages, setNumOfDocumentPages] = useState(0);
 
   useEffect(() => {
     const loadLookups = async () => {
@@ -178,9 +175,6 @@ export const DocumentTabPanel = ({
             documentName={document.presentationTitle}
             mode={mode}
             onModeChange={onModeChange}
-            onViewInNewWindowButtonClick={onViewInNewWindowClick}
-            onRedactionLogClick={onRedactionLogClick}
-            numOfDocumentPages={numOfDocumentPages}
             searchMode={
               searchContext
                 ? {
@@ -220,7 +214,7 @@ export const DocumentTabPanel = ({
               setShowRedactionLogModal(true);
             }}
             onRedactionSaveStatusChange={setRedactionSaveStatus}
-            onNumOfPagesDocumentChange={(x) => setNumOfDocumentPages(x)}
+            onNumOfPagesDocumentChange={onNumOfPagesChange}
             searchHighlights={searchContext?.highlights}
             focusedSearchIndex={searchContext?.focusedIndex}
             checkInDocumentTriggerData={checkInDocumentTriggerData}

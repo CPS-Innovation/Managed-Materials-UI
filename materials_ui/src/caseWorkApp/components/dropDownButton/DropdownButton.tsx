@@ -84,7 +84,6 @@ export const DropdownButton2 = (p: {
       <Button
         aria-label={p.ariaLabel}
         ref={dropDownBtnRef}
-        variant="inverse"
         onClick={() => p.setIsOpen(!p.isOpen)}
       >
         <div style={{ display: 'flex', gap: '4px' }}>

@@ -21,6 +21,7 @@ import {
   DocSearchContext,
   DocumentTabPanel
 } from '../../../materials_components/DocumentTabPanel/DocumentTabPanel';
+import { DocumentActionsDropdown } from '../../../materials_components/documenViewportArea/DocumentActionsDropdown';
 import { TRedaction } from '../../../materials_components/PdfRedactor/utils/coordUtils';
 import {
   isRedactionEnabledMode,
@@ -87,6 +88,9 @@ export const ReviewAndRedactPage = () => {
   const [modeByParentId, setModeByParentId] = useState<Record<string, TMode>>(
     {}
   );
+  const [numOfPagesByParentId, setNumOfPagesByParentId] = useState<
+    Record<string, number>
+  >({});
 
   const [searchModalOpen, setSearchModalOpen] = useState(false);
 
@@ -229,15 +233,12 @@ export const ReviewAndRedactPage = () => {
             reloadSidebarTrigger.fire();
           }}
           initRedactions={redactionsIndexedOnParentId[doc.parentId]}
-          onViewInNewWindowClick={() => {
-            if (!urn || !caseId) return;
-            navigateToViewDocumentPageInNewTab({
-              urn,
-              caseId,
-              materialId: doc.parentId
-            });
-          }}
-          onRedactionLogClick={() => setShowRedactionLogModal(true)}
+          onNumOfPagesChange={(numOfPages) =>
+            setNumOfPagesByParentId((prev) => ({
+              ...prev,
+              [doc.parentId]: numOfPages
+            }))
+          }
           searchContext={searchContextByParentId[doc.parentId]}
           onFocusedSearchIndexChange={(index) =>
             setFocusedSearchIndex(doc.parentId, index)
@@ -290,6 +291,7 @@ export const ReviewAndRedactPage = () => {
     setOpenParentIds([]);
     setSearchContextByParentId({});
     setRedactionsIndexedOnParentId({});
+    setNumOfPagesByParentId({});
 
     const sidebarFocusTarget =
       document.querySelector<HTMLElement>(
@@ -491,6 +493,24 @@ export const ReviewAndRedactPage = () => {
               noMargin
               onShowHideCategoriesClick={() => setIsSidebarVisible((v) => !v)}
               isShowCategories={isSidebarVisible}
+              documentActions={
+                <DocumentActionsDropdown
+                  mode={modeByParentId[activeTabId] ?? 'disabled'}
+                  onModeChange={(newMode) =>
+                    handleModeChange(activeTabId, newMode)
+                  }
+                  onRedactionLogClick={() => setShowRedactionLogModal(true)}
+                  onViewInNewWindowClick={() => {
+                    if (!urn || !caseId) return;
+                    navigateToViewDocumentPageInNewTab({
+                      urn,
+                      caseId,
+                      materialId: activeTabId
+                    });
+                  }}
+                  numOfDocumentPages={numOfPagesByParentId[activeTabId] ?? 0}
+                />
+              }
             />
           )}
         </TwoCol>
