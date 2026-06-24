@@ -477,7 +477,9 @@ export const ReviewAndRedactPage = () => {
                   onSetDocumentOpenIds={setOpenParentIds}
                   onDocumentClick={requestActiveTabChange}
                   reloadTriggerData={reloadSidebarTrigger.data}
-                  onDocumentsChange={setDocuments}
+                  onDocumentsChange={(docs) => {
+                    if (docs !== undefined) setDocuments(docs);
+                  }}
                 />
               </>
             ) : undefined
