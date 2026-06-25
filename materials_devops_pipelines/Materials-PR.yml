@@ -7,7 +7,6 @@ pr:
   branches:
     include:
       - development
-      - main
 
   paths:
     include:
