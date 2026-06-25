@@ -138,11 +138,11 @@ export const MaterialsPage = () => {
       onClick: () =>
         handleEditClick(row as CaseMaterialsType, getRoute('MATERIALS')),
       hide: (() => {
-        const itemCommsCategory = selectedItems.communications[0]?.category;
-        if (!itemCommsCategory) return;
+        const itemMaterialsCategory = selectedItems.materials[0]?.category;
+        if (!itemMaterialsCategory) return;
         return (
-          selectedItems.communications.length > 1 ||
-          !['Exhibit', 'Statement'].includes(itemCommsCategory)
+          selectedItems.materials.length > 1 ||
+          !['Exhibit', 'Statement'].includes(itemMaterialsCategory)
         );
       })()
     },
