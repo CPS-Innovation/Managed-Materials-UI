@@ -6,7 +6,8 @@ trigger: none
 pr:
   branches:
     include:
-      - main
+      - development
+
   paths:
     include:
       - terraform/*
@@ -59,13 +60,34 @@ stages:
         pool:
           name: $(dev-build-agent)
         steps:
+          - checkout: self
+            fetchDepth: 0
+
           - task: PowerShell@2
             inputs:
               targetType: 'inline'
               script: |
-                git fetch origin main
-                $files = $(git diff --name-only origin/main)
-                $temp=$files -split ' '
+                $targetBranch = $env:SYSTEM_PULLREQUEST_TARGETBRANCH
+                $targetBranchOverride = $env:TARGETBRANCHOVERRIDE
+
+                # Optional override to support manual runs.
+                if ([string]::IsNullOrWhiteSpace($targetBranch) -and -not [string]::IsNullOrWhiteSpace($targetBranchOverride))
+                {
+                  $targetBranch = $targetBranchOverride
+                }
+
+                if ([string]::IsNullOrWhiteSpace($targetBranch))
+                {
+                  # Default for non-PR runs when no override is provided.
+                  $targetBranch = "refs/heads/development"
+                }
+
+                $targetBranchName = $targetBranch -replace '^refs/heads/', ''
+                echo "Comparing changes against origin/$targetBranchName"
+
+                git fetch origin "+refs/heads/${targetBranchName}:refs/remotes/origin/${targetBranchName}" --depth=200
+
+                $temp = @(git diff --name-only "origin/$targetBranchName...HEAD" | ForEach-Object { $_.Trim() } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
                 $count=$temp.Length
                 echo "Total changed $count files"
 
