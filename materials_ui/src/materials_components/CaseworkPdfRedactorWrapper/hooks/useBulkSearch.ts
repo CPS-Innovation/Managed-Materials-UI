@@ -10,6 +10,22 @@ export type TBulkSearchInternalState =
   | { status: 'done'; candidates: TRedaction[]; focusedIndex: number }
   | { status: 'error' };
 
+const POLL_INTERVAL_MS = 3000;
+const MAX_SEARCH_ATTEMPTS = 5;
+
+const wait = (ms: number, signal: AbortSignal) =>
+  new Promise<void>((resolve) => {
+    const timeoutId = setTimeout(resolve, ms);
+    signal.addEventListener(
+      'abort',
+      () => {
+        clearTimeout(timeoutId);
+        resolve();
+      },
+      { once: true }
+    );
+  });
+
 export const useBulkSearch = (p: {
   axiosInstance: AxiosInstance;
   urn: string;
@@ -34,24 +50,44 @@ export const useBulkSearch = (p: {
       const controller = new AbortController();
       abortRef.current = controller;
       setState({ status: 'loading' });
+
       try {
-        const resp = await bulkSearchDocument({
-          axiosInstance: p.axiosInstance,
-          urn: p.urn,
-          caseId: p.caseId,
-          versionId: p.versionId,
-          documentId: p.documentId,
-          searchText,
-          signal: controller.signal
-        });
-        if (controller.signal.aborted) return undefined;
-        if (resp.isNotFound || resp.failedReason) {
-          setState({ status: 'error' });
-          return undefined;
+        for (let attempt = 1; attempt <= MAX_SEARCH_ATTEMPTS; attempt++) {
+          const { status, data } = await bulkSearchDocument({
+            axiosInstance: p.axiosInstance,
+            urn: p.urn,
+            caseId: p.caseId,
+            versionId: p.versionId,
+            documentId: p.documentId,
+            searchText,
+            signal: controller.signal
+          });
+          if (controller.signal.aborted) return undefined;
+
+          if (status === 200) {
+            if (!data || data.isNotFound || data.failedReason) {
+              setState({ status: 'error' });
+              return undefined;
+            }
+            const candidates = convertSearchResponseToRedactions(data);
+            setState({ status: 'done', candidates, focusedIndex: 0 });
+            return candidates;
+          }
+
+          const stillProcessing = status === 202 || status === 423;
+          if (!stillProcessing) {
+            setState({ status: 'error' });
+            return undefined;
+          }
+
+          if (attempt < MAX_SEARCH_ATTEMPTS) {
+            await wait(POLL_INTERVAL_MS, controller.signal);
+            if (controller.signal.aborted) return undefined;
+          }
         }
-        const candidates = convertSearchResponseToRedactions(resp);
-        setState({ status: 'done', candidates, focusedIndex: 0 });
-        return candidates;
+
+        setState({ status: 'error' });
+        return undefined;
       } catch (err) {
         if (axios.isCancel(err)) return undefined;
         setState({ status: 'error' });
