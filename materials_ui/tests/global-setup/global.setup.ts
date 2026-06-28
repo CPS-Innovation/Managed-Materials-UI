@@ -31,13 +31,11 @@ setup('setup cookie', async ({ browser }) => {
     log('Cms-Auth-Value cookie not found');
   }
 
-    //MSAL will redirect to Microsoft login page.
-  await page.goto('/', { timeout: 30000 });
+  //MSAL will redirect to Microsoft login page.
+  await page.goto('/materials-ui', { timeout: 30000 });
   const signHeader = page.getByRole('heading', { name: 'Sign in' });
   await signHeader.waitFor({ timeout: 10000 });
-  await page
-    .locator('#i0116')
-    .fill(mslUsername);
+  await page.locator('#i0116').fill(mslUsername);
   await page.getByRole('button', { name: 'Next' }).click();
   await page.locator('#i0118').fill(mslPassword);
   await page.getByRole('button', { name: 'Sign in' }).click();
