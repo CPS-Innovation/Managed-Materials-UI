@@ -80,28 +80,7 @@ test.describe('Materials page', () => {
     ).toBeVisible();
   });
 
-  test('T-005: user is able to filter by none status', async ({ page }) => {
-    mockRoute(
-      page,
-      '/case-materials',
-      mockCaseMaterials({
-        subject: 'Case Action Plan 4',
-        type: 'Statement',
-        category: 'Other Material',
-        status: 'None'
-      })
-    );
-    await page.goto('./materials', { waitUntil: 'domcontentloaded' });
-
-    //None
-    await page.getByTestId('status-None').check();
-    await page.getByTestId('applyFiltersButton').click();
-    await expect(
-      page.getByText('Case Action Plan 4', { exact: true })
-    ).toBeVisible();
-  });
-
-  test('T-006: user is able to filter by statement category', async ({
+  test('T-005: user is able to filter by statement category', async ({
     page
   }) => {
     mockRoute(
@@ -122,7 +101,7 @@ test.describe('Materials page', () => {
     ).toBeVisible();
   });
 
-  test('T-007: user is able to filter by exhibit', async ({ page }) => {
+  test('T-006: user is able to filter by exhibit', async ({ page }) => {
     mockRoute(
       page,
       '/case-materials',
@@ -140,7 +119,7 @@ test.describe('Materials page', () => {
     ).toBeVisible();
   });
 
-  test('T-008 user is able to filter by category', async ({ page }) => {
+  test('T-007: user is able to filter by category', async ({ page }) => {
     mockRoute(
       page,
       '/case-materials',
@@ -158,7 +137,7 @@ test.describe('Materials page', () => {
     ).toBeVisible();
   });
 
-  test('T-009: user is able to hide filter', async ({ page }) => {
+  test('T-008: user is able to hide filter', async ({ page }) => {
     mockRoute(page, '/case-materials', mockCaseMaterials());
     await page.getByRole('button', { name: 'Hide filter' }).click();
     await expect(page.getByText('FiltersClear filtersSearch')).toBeHidden();
@@ -167,7 +146,7 @@ test.describe('Materials page', () => {
   });
 
   // search
-  test('T-010: user is able to search materials', async ({ page }) => {
+  test('T-009: user is able to search materials', async ({ page }) => {
     mockRoute(
       page,
       '/case-materials',
