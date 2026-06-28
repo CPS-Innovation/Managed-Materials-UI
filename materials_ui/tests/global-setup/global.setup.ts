@@ -2,6 +2,7 @@ import { test as setup } from '@playwright/test';
 import { log } from 'console';
 import * as dotenv from 'dotenv';
 setup('setup cookie', async ({ browser }) => {
+  setup.setTimeout(120_000);
   dotenv.config();
 
   const username = process.env.E2E_CIN3_USERNAME || '';
@@ -11,6 +12,7 @@ setup('setup cookie', async ({ browser }) => {
   const mslPassword = process.env.E2E_TEST_MS_PASSWORD || '';
 
   const context = await browser.newContext();
+  context.setDefaultNavigationTimeout(120_000);
   const page = await context.newPage();
 
   //sign in to get cookie
