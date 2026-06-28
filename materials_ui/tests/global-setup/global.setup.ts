@@ -7,8 +7,7 @@ setup('setup cookie', async ({ browser }) => {
 
   const username = process.env.E2E_CIN3_USERNAME || '';
   const password = process.env.E2E_CIN3_PASSWORD || '';
-  const cmsUrl =
-    'https://polaris-qa-notprod.cps.gov.uk/api/dev-login-full-cookie/';
+  const cmsUrl = process.env.E2E_CMS_COOKIE_URL || '';
   const mslUsername = process.env.E2E_TEST_MS_USERNAME || '';
   const mslPassword = process.env.E2E_TEST_MS_PASSWORD || '';
 
@@ -22,6 +21,7 @@ setup('setup cookie', async ({ browser }) => {
   await page.getByRole('textbox', { name: 'User name' }).fill(username);
   await page.getByRole('textbox', { name: 'Password' }).fill(password);
   await page.getByRole('button', { name: 'Log in' }).click();
+  await page.screenshot();
 
   const allCookies = await context.cookies();
   const authCookie = allCookies.find(
@@ -35,7 +35,7 @@ setup('setup cookie', async ({ browser }) => {
   }
 
   //MSAL will redirect to Microsoft login page.
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.goto('/', { waitUntil: 'load' });
   await page.waitForURL(/login\.microsoftonline\.com|login\.live\.com/);
 
   const signHeader = page.getByRole('heading', { name: 'Sign in' });
