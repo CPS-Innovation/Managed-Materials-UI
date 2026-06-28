@@ -7,7 +7,8 @@ setup('setup cookie', async ({ browser }) => {
 
   const username = process.env.E2E_CIN3_USERNAME || '';
   const password = process.env.E2E_CIN3_PASSWORD || '';
-  const cmsUrl = process.env.E2E_CMS_COOKIE_URL || '';
+  const cmsUrl =
+    'https://polaris-qa-notprod.cps.gov.uk/api/dev-login-full-cookie/';
   const mslUsername = process.env.E2E_TEST_MS_USERNAME || '';
   const mslPassword = process.env.E2E_TEST_MS_PASSWORD || '';
 
