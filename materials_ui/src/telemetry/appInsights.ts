@@ -5,14 +5,15 @@ import {
 
 const connectionString = import.meta.env
   .VITE_APPLICATIONINSIGHTS_CONNECTION_STRING;
+const cloudRole = import.meta.env.VITE_APPLICATIONINSIGHTS_CLOUD_ROLE;
+const samplingPercentage =
+  Number(import.meta.env.VITE_APPLICATIONINSIGHTS_SAMPLING_PERCENTAGE) || 20;
 
 let appInsights: ApplicationInsights | undefined;
 
 const normaliseError = (error: unknown): Error =>
   error instanceof Error ? error : new Error(String(error));
 
-// Initialise once per app load. No-op if already initialised or no connection
-// string is configured (e.g. local dev / tests).
 export const initTelemetry = () => {
   if (appInsights || !connectionString) return;
 
@@ -24,6 +25,22 @@ export const initTelemetry = () => {
     }
   });
   appInsights.loadAppInsights();
+
+  // Sample non-exceptions ourselves so we never drop exceptions. One roll per
+  // load keeps a page's telemetry together.
+  const retainNonException = Math.random() * 100 < samplingPercentage;
+
+  appInsights.addTelemetryInitializer((item) => {
+    if (cloudRole) {
+      (item.tags ??= {})['ai.cloud.role'] = cloudRole;
+    }
+
+    if (item.baseType === 'ExceptionData') {
+      return true;
+    }
+
+    return retainNonException;
+  });
 };
 
 export const trackPageView = (pathname: string) => {
