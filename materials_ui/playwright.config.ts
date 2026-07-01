@@ -1,5 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const e2eUrn = process.env.E2E_URN;
+const e2eCase = process.env.E2E_CASE;
+const e2eRoute = e2eUrn && e2eCase ? `${e2eUrn}/${e2eCase}/` : '';
+
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -29,7 +33,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
-    baseURL: `http://localhost:3000/materials-ui/${process.env.E2E_URN}/${process.env.E2E_CASE}/`,
+    baseURL: `http://localhost:3000/materials-ui/${e2eRoute}`,
     video: 'retain-on-failure',
     screenshot: 'only-on-failure',
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
