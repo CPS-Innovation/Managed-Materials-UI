@@ -75,7 +75,7 @@ export default defineConfig({
       name: 'Microsoft Edge',
       use: {
         ...devices['Desktop Edge'],
-        ...(process.env.CI ? {} : { channel: 'msedge' }),
+        channel: 'msedge',
         storageState: 'tests/.auth/globalSetup.json'
       },
       dependencies: ['setup']
