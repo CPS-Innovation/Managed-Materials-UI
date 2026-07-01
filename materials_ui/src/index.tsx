@@ -11,6 +11,9 @@ import './App.scss';
 import { AppContextProvider } from './context/AppContext';
 import { FilterProvider } from './context/FiltersContext';
 import { msalConfig } from './msalInstance';
+import { initTelemetry } from './telemetry/appInsights';
+
+initTelemetry();
 
 if (import.meta.env.DEV && !import.meta.env.VITE_E2E) {
   const { worker } = await import('./mocks/browser');
