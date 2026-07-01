@@ -32,7 +32,8 @@ export const initTelemetry = () => {
 
   appInsights.addTelemetryInitializer((item) => {
     if (cloudRole) {
-      (item.tags ??= {})['ai.cloud.role'] = cloudRole;
+      item.tags ??= {};
+      item.tags['ai.cloud.role'] = cloudRole;
     }
 
     if (item.baseType === 'ExceptionData') {
