@@ -231,6 +231,7 @@ stages:
               VITE_REDACTION_LOG_SCOPE: $(VITE_REDACTION_LOG_SCOPE)
 
 # ---------- E2E TESTS (Playwright) ----------
+
           - script: |
               npx playwright install
             displayName: 'Install Playwright browsers'
@@ -243,6 +244,14 @@ stages:
               npx playwright install-deps
             displayName: 'Install Playwright OS dependencies'
             condition: and(eq(variables['Agent.OS'], 'Linux'), ne(variables['PLAYWRIGHT_CACHE_RESTORED'], 'true'))
+            workingDirectory: '$(workingDir)'
+            env:
+              PLAYWRIGHT_BROWSERS_PATH: '$(Pipeline.Workspace)/.playwright'
+
+          - script: |
+              npx playwright install msedge
+            displayName: 'Install Microsoft Edge (Playwright channel browser)'
+            condition: eq(variables['Agent.OS'], 'Linux')
             workingDirectory: '$(workingDir)'
             env:
               PLAYWRIGHT_BROWSERS_PATH: '$(Pipeline.Workspace)/.playwright'

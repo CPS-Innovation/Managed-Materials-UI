@@ -35,7 +35,8 @@ setup('setup cookie', async ({ browser }) => {
   }
 
   //MSAL will redirect to Microsoft login page.
-  await page.goto('/', { waitUntil: 'load' });
+  // Use a relative URL so Playwright keeps the configured baseURL path.
+  await page.goto('', { waitUntil: 'domcontentloaded' });
   await page.waitForURL(/login\.microsoftonline\.com|login\.live\.com/);
 
   const signHeader = page.getByRole('heading', { name: 'Sign in' });
