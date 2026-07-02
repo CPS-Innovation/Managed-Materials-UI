@@ -19,6 +19,11 @@ export type TBulkSearchResponse = {
   isNotFound: boolean;
 };
 
+export type TBulkSearchResult = {
+  status: number;
+  data: TBulkSearchResponse | null;
+};
+
 export const bulkSearchDocument = async (p: {
   axiosInstance: AxiosInstance;
   urn: string;
@@ -27,10 +32,14 @@ export const bulkSearchDocument = async (p: {
   documentId: string;
   searchText: string;
   signal?: AbortSignal;
-}): Promise<TBulkSearchResponse> => {
-  const response = await p.axiosInstance.get(
+}): Promise<TBulkSearchResult> => {
+  const response = await p.axiosInstance.get<TBulkSearchResponse>(
     `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.versionId}/search`,
-    { params: { SearchText: p.searchText }, signal: p.signal }
+    {
+      params: { SearchText: p.searchText },
+      signal: p.signal,
+      validateStatus: () => true
+    }
   );
-  return response.data;
+  return { status: response.status, data: response.data ?? null };
 };
