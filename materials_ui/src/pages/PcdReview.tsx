@@ -22,6 +22,31 @@ import type {
   PCDReviewDetailsResponseType
 } from '../schemas/pcdReview';
 
+/**
+ * compactWhitespace
+ * - One or more spaces or tabs become a single space.
+ * - A single line break is preserved.
+ * - Two or more consecutive line breaks become exactly two line breaks.
+ * - If a run of whitespace contains both line breaks and spaces/tabs,
+ *   a single trailing space is preserved after the normalized line break(s).
+ */
+const compactWhitespace = (text: string) => {
+  return text.replace(/[ \t\r\n]+/g, (match) => {
+    const newlineCount = (match.match(/\n/g) ?? []).length;
+    const hasSpaces = /[ \t]/.test(match);
+
+    const lineBreaks = (() => {
+      if (newlineCount >= 2) return '\n\n';
+      if (newlineCount === 1) return '\n';
+      return '';
+    })();
+
+    const spaces = hasSpaces ? ' ' : '';
+
+    return lineBreaks + spaces;
+  });
+};
+
 dayjs.extend(customParseFormat);
 
 const PCD_REVIEW_CORE_NAV_TYPE_ORDER: PcdReviewCoreType[] = [
@@ -121,11 +146,21 @@ const CaseHeadlineCodeTest = ({ analysis }: { analysis: AnalysisOutcome }) => {
   return (
     <>
       <h1 className="govuk-heading-l">Case Headline / Code Test</h1>
-      <p className="govuk-body">{analysis.caseSummary}</p>
+      <div
+        className="govuk-body"
+        dangerouslySetInnerHTML={{
+          __html: compactWhitespace(analysis.caseSummary)
+        }}
+      />
       {items.map((c) => (
         <div key={c.header}>
           <h3 className="govuk-heading-m">{c.header}</h3>
-          <p className="govuk-body">{c.body}</p>
+          {c.body && (
+            <div
+              className="govuk-body"
+              dangerouslySetInnerHTML={{ __html: compactWhitespace(c.body) }}
+            />
+          )}
         </div>
       ))}
     </>
