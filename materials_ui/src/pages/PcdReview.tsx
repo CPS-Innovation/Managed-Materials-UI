@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import DomPurify from 'dompurify';
 import { Navigate, useParams } from 'react-router-dom';
 
 import {
@@ -149,7 +150,7 @@ const CaseHeadlineCodeTest = ({ analysis }: { analysis: AnalysisOutcome }) => {
       <div
         className="govuk-body"
         dangerouslySetInnerHTML={{
-          __html: compactWhitespace(analysis.caseSummary)
+          __html: DomPurify.sanitize(compactWhitespace(analysis.caseSummary))
         }}
       />
       {items.map((c) => (
@@ -158,7 +159,9 @@ const CaseHeadlineCodeTest = ({ analysis }: { analysis: AnalysisOutcome }) => {
           {c.body && (
             <div
               className="govuk-body"
-              dangerouslySetInnerHTML={{ __html: compactWhitespace(c.body) }}
+              dangerouslySetInnerHTML={{
+                __html: DomPurify.sanitize(compactWhitespace(c.body))
+              }}
             />
           )}
         </div>
