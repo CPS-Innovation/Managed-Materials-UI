@@ -35,10 +35,15 @@ const compactWhitespace = (text: string) => {
     const newlineCount = (match.match(/\n/g) ?? []).length;
     const hasSpaces = /[ \t]/.test(match);
 
-    return (
-      (newlineCount >= 2 ? '\n\n' : newlineCount === 1 ? '\n' : '') +
-      (hasSpaces ? ' ' : '')
-    );
+    const lineBreaks = (() => {
+      if (newlineCount >= 2) return '\n\n';
+      if (newlineCount === 1) return '\n';
+      return '';
+    })();
+
+    const spaces = hasSpaces ? ' ' : '';
+
+    return lineBreaks + spaces;
   });
 };
 
