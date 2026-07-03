@@ -4,6 +4,7 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import { useParams } from 'react-router-dom';
 import { LoadingSpinner } from '../components';
 import { useDocumentPdfUrl } from '../hooks/documents/useDocumentPdfUrl';
+import { usePageColors } from '../hooks/ui/usePageColors';
 import { useAxiosInstance } from '../materials_components/DocumentSelectAccordion/getters/getAxiosInstance';
 import {
   safeGetDocumentListFromAxiosInstance,
@@ -46,6 +47,7 @@ const LoadAndViewPdf = (p: {
   const { data: pdfUrl } = useDocumentPdfUrl(p);
   const { data: documentList } = useDocumentListFromAxiosInstance(p);
   const [numPages, setNumPages] = useState<number>();
+  const pageColors = usePageColors();
 
   useEffect(() => {
     const cmsStrippedMaterialId = stripCmsPrefix(p.materialId);
@@ -86,7 +88,7 @@ const LoadAndViewPdf = (p: {
           }
         >
           {[...Array(numPages)].map((_, j) => (
-            <Page key={j} pageNumber={j + 1} />
+            <Page key={j} pageNumber={j + 1} pageColors={pageColors} />
           ))}
         </Document>
       )}

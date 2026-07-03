@@ -5,6 +5,7 @@ import {
   type MouseEvent as ReactMouseEvent
 } from 'react';
 import { Page } from 'react-pdf';
+import { usePageColors } from '../../hooks/ui/usePageColors';
 import { DocumentIcon } from './icons/DocumentIcon';
 import { RotateIcon } from './icons/RotateIcon';
 import {
@@ -362,6 +363,7 @@ export const PdfRedactorPage = (p: {
   highlightLayers?: THighlightLayer[];
 }) => {
   const { pageNumber, scale, redactions } = p;
+  const pageColors = usePageColors();
   const [pageDimensions, setPageDimensions] = useState<{
     width: number;
     height: number;
@@ -513,6 +515,7 @@ export const PdfRedactorPage = (p: {
           >
             <Page
               pageNumber={p.pageNumber}
+              pageColors={pageColors}
               onRenderSuccess={() => {
                 const canvas = pdfPageWrapperElmRef.current?.querySelector(
                   '.react-pdf__Page__canvas'
