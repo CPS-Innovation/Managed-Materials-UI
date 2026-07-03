@@ -4,7 +4,7 @@ export const materialsCategoryList = [
   'MG Form',
   'Other Material',
   'Unused Material',
-  'Defendant Pre Conns'
+  'Defendant Pre Cons'
 ];
 
 export const communicationsCategoryList = [
