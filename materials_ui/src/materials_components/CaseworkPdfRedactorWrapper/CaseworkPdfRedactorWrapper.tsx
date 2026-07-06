@@ -4,6 +4,7 @@ import { useAxiosInstance } from '../DocumentSelectAccordion/getters/getAxiosIns
 import { TDocument } from '../DocumentSelectAccordion/getters/getDocumentList';
 import { GovUkBanner } from '../DocumentSelectAccordion/templates/GovUkBanner';
 import { categoriseDocument } from '../DocumentSelectAccordion/utils/categoriseDocument';
+import { TCategoryName } from '../DocumentSelectAccordion/utils/categoriseDocumentHelperUtils';
 import { PdfRedactorCenteredModal } from '../PdfRedactor/modals/PdfRedactorCenteredModal';
 import { PdfRedactorMiniModal } from '../PdfRedactor/modals/PdfRedactorMiniModal';
 import { DeletionReasonForm } from '../PdfRedactor/PdfDeletionReasonForm';
@@ -131,9 +132,12 @@ export const CaseworkPdfRedactorWrapper = (p: {
   const documentCategory = p.document
     ? categoriseDocument(p.document)
     : undefined;
-  const isUnredactableDocumentCategory = ['review', 'defendant'].includes(
-    documentCategory ?? ''
-  );
+
+  const isUnredactableDocumentCategory =
+    documentCategory &&
+    (['review', 'defendantPreCons'] as TCategoryName[]).includes(
+      documentCategory
+    );
   const isDocumentDispatched =
     p.document?.presentationFlags?.write === 'IsDispatched';
 
