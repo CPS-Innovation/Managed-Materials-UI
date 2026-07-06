@@ -5,7 +5,7 @@ export const categoryDetails = [
   { label: 'Exhibits', categoryName: 'exhibit' },
   { label: 'MG forms', categoryName: 'mgForm' },
   { label: 'Other documents', categoryName: 'otherDocument' },
-  { label: 'Defendant pre cons', categoryName: 'defendant' },
+  { label: 'Defendant pre-cons', categoryName: 'defendant' },
   { label: 'Unused material', categoryName: 'unusedMaterial' }
 ] as const;
 
