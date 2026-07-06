@@ -60,18 +60,6 @@ export const DocumentKeywordSearchFilters = ({
     documents: docsOnDocCategoryNames[category.categoryName]
   }));
 
-  //   const docsByDocType = (() => {
-  //     const map: Record<string, number> = {};
-
-  //     documents?.forEach((doc) => {
-  //       const type = doc.cmsDocType.documentType;
-  //       if (!type) return; // skip nulls
-  //       map[type] = (map[type] ?? 0) + 1;
-  //     });
-
-  //     return map;
-  //   })();
-
   return (
     <FilterForm
       onSubmit={handleFiltersSubmit}
