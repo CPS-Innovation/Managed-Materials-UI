@@ -18,10 +18,16 @@ parameters:
   displayName: Run terraform plan checks
   type: string
   default: 'false'
+  values:
+    - 'false'
+    - 'true'
 - name: RunUIBuild
   displayName: Run UI build checks
   type: string
   default: 'false'
+  values:
+    - 'false'
+    - 'true'
 
 variables:
   - name: buildConfiguration
@@ -132,7 +138,7 @@ stages:
             parameters:
               azureSubscription: $(dev-azure-service-connection)
 
-          - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@1
+          - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@2
             displayName: Terraform > Install
             inputs:
               terraformVersion: $(terraform-version)
