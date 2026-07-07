@@ -16,18 +16,12 @@ pr:
 parameters:
 - name: RunTerraformPlan
   displayName: Run terraform plan checks
-  type: string
-  default: 'false'
-  values:
-    - 'false'
-    - 'true'
+  type: boolean
+  default: false
 - name: RunUIBuild
   displayName: Run UI build checks
-  type: string
-  default: 'false'
-  values:
-    - 'false'
-    - 'true'
+  type: boolean
+  default: false
 
 variables:
   - name: buildConfiguration
@@ -125,7 +119,7 @@ stages:
       - job: Validate_Main_Terraform
         condition: |
           or(
-            eq('${{ parameters.RunTerraformPlan }}', 'true'),
+            eq(${{ parameters.RunTerraformPlan }}, true),
             eq(variables['runTerraform'], 'true')
           )
         displayName: Validate Main Terraform
@@ -185,7 +179,7 @@ stages:
         displayName: 'Build & Test App'
         condition: |
           or(
-            eq('${{ parameters.RunUIBuild }}', 'true'),
+            eq(${{ parameters.RunUIBuild }}, true),
             eq(variables['runUI'], 'true')
           )
         pool:
