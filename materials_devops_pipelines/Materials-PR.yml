@@ -44,7 +44,7 @@ stages:
   - stage: Wait_For_Running_PRs
     displayName: Wait for running PRs
     jobs:
-      - job:
+      - job: Query_Status
         pool:
           name: $(dev-build-agent)
         steps:
@@ -61,7 +61,7 @@ stages:
           name: $(dev-build-agent)
         steps:
           - checkout: self
-            fetchDepth: 0
+            fetchDepth: '0'
 
           - task: PowerShell@2
             inputs:
@@ -187,10 +187,10 @@ stages:
         steps:
         
           # Setup Node.js
-          - task: UseNode@1
+          - task: NodeTool@0
             displayName: "Use Node.js"
             inputs:
-              version: "$(nodeVersion)"
+              versionSpec: "$(nodeVersion)"
             
           - task: Npm@1
             inputs:
@@ -234,19 +234,19 @@ stages:
 
           - script: |
               npx playwright install
-             displayName: 'Install Playwright browsers'
-             condition: ne(variables['PLAYWRIGHT_CACHE_RESTORED'], 'true')
-             workingDirectory: '$(workingDir)'
-             env:
-               PLAYWRIGHT_BROWSERS_PATH: '$(Pipeline.Workspace)/.playwright'
+            displayName: 'Install Playwright browsers'
+            condition: ne(variables['PLAYWRIGHT_CACHE_RESTORED'], 'true')
+            workingDirectory: '$(workingDir)'
+            env:
+              PLAYWRIGHT_BROWSERS_PATH: '$(Pipeline.Workspace)/.playwright'
 
-           - script: |
-               npx playwright install-deps
-             displayName: 'Install Playwright OS dependencies'
-             condition: and(eq(variables['Agent.OS'], 'Linux'), ne(variables['PLAYWRIGHT_CACHE_RESTORED'], 'true'))
-             workingDirectory: '$(workingDir)'
-             env:
-               PLAYWRIGHT_BROWSERS_PATH: '$(Pipeline.Workspace)/.playwright'
+          - script: |
+              npx playwright install-deps
+            displayName: 'Install Playwright OS dependencies'
+            condition: and(eq(variables['Agent.OS'], 'Linux'), ne(variables['PLAYWRIGHT_CACHE_RESTORED'], 'true'))
+            workingDirectory: '$(workingDir)'
+            env:
+              PLAYWRIGHT_BROWSERS_PATH: '$(Pipeline.Workspace)/.playwright'
 
           - script: |
               npx playwright install msedge
@@ -279,19 +279,19 @@ stages:
               VITE_GLOBAL_SCRIPT_URL: $(GLOBAL_SCRIPT_URL)
               VITE_E2E: True
 
-           - task: PublishPipelineArtifact@1
-             displayName: 'Publish E2E Artifact'
-             inputs:
-               targetPath: '$(workingDir)/tests/playwright-report'
-               artifact: 'playwright-report'
-               publishLocation: 'pipeline'
-             condition: succeededOrFailed() 
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish E2E Artifact'
+            inputs:
+              targetPath: '$(workingDir)/tests/playwright-report'
+              artifact: 'playwright-report'
+              publishLocation: 'pipeline'
+            condition: succeededOrFailed() 
 
-           - task: PublishTestResults@2
-             displayName: 'Publish E2E Test Results (JUnit)'
-             inputs:
-               testResultsFormat: 'JUnit'
-               testResultsFiles: '$(workingDir)/tests/e2e-test-results.xml'
-               testRunTitle: 'E2E Tests'
-               publishRunAttachments: false
-             condition: always()
+          - task: PublishTestResults@2
+            displayName: 'Publish E2E Test Results (JUnit)'
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: '$(workingDir)/tests/e2e-test-results.xml'
+              testRunTitle: 'E2E Tests'
+              publishRunAttachments: false
+            condition: always()
