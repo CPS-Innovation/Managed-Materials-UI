@@ -64,7 +64,6 @@ export const CommsFilters = () => {
       searchLabel="Search communications"
       defaultSearchValue={filters?.search || ''}
     >
-
       {hasAccess([1, 2, 3, 4, 5]) && (
         <div className="govuk-form-group">
           <div className="govuk-form-group">
