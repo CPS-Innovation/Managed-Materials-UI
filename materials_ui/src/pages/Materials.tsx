@@ -28,6 +28,7 @@ import { useNavigate } from 'react-router-dom';
 import { URL } from '../constants/url';
 import { navigateToViewDocumentPageInNewTab } from '../hooks/ui/navigateToViewDocumentPageInNewTab';
 import { CaseMaterialsType } from '../schemas';
+import { trackAction } from '../telemetry/appInsights';
 
 export const MaterialsPage = () => {
   const { getRoute } = useAppRoute();
@@ -110,6 +111,7 @@ export const MaterialsPage = () => {
       const urn = caseInfo?.urn;
       const caseId = caseInfo?.id;
       if (!urn || !caseId) return;
+      trackAction('OpenedInNewWindow', { materialId, category: item.category });
       navigateToViewDocumentPageInNewTab({ urn, caseId, materialId });
     }
   };

@@ -2,6 +2,7 @@ import { ChangeEvent, FormEvent, useState } from 'react';
 import { useRename } from '../../hooks';
 import { TDocument } from '../../materials_components/DocumentSelectAccordion/getters/getDocumentList';
 import { CaseMaterialsType } from '../../schemas';
+import { trackAction } from '../../telemetry/appInsights';
 import { LoadingSpinner } from '../LoadingSpinner/LoadingSpinner';
 import Drawer from './Drawer';
 
@@ -13,7 +14,17 @@ type Props = {
 
 export const RenameDrawer = ({ material, onCancel, onSuccess }: Props) => {
   const { isMutating, trigger: renameMaterial } = useRename(material, {
-    onSuccess
+    onSuccess: () => {
+      trackAction('Renamed', {
+        materialId:
+          material && 'materialId' in material
+            ? material.materialId
+            : undefined,
+        category:
+          material && 'category' in material ? material.category : undefined
+      });
+      onSuccess();
+    }
   });
   const [error, setError] = useState<string>('');
 

@@ -25,6 +25,7 @@ import {
   useMaterialTags,
   useSelectedItemsStore
 } from '../stores';
+import { trackAction } from '../telemetry/appInsights';
 
 export const CommunicationsPage = () => {
   const [selectedMaterial, setSelectedMaterial] =
@@ -95,6 +96,10 @@ export const CommunicationsPage = () => {
     const caseId = caseInfo?.id;
     if (!materialId || !urn || !caseId) return;
 
+    trackAction('OpenedInNewWindow', {
+      materialId: row?.materialId,
+      category: row?.category
+    });
     navigateToViewDocumentPageInNewTab({ urn, caseId, materialId });
   };
 

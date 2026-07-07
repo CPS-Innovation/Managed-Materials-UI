@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { RouteChangeListener } from './components';
 import { loginRequest } from './msalInstance';
 import { Routes } from './routes';
+import { setTelemetryUserRole } from './telemetry/appInsights';
 
 export const App = () => {
   const { instance, accounts } = useMsal();
@@ -14,6 +15,13 @@ export const App = () => {
   }, [instance, accounts]);
 
   const account = instance.getActiveAccount() || accounts[0];
+  const role = (account?.idTokenClaims?.roles as string[] | undefined)?.join(
+    ','
+  );
+
+  useEffect(() => {
+    if (role) setTelemetryUserRole(role);
+  }, [role]);
 
   if (!account) {
     return <p>Redirecting to login...</p>;

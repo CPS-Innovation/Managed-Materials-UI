@@ -32,6 +32,7 @@ import {
   Reclassify_WitnessAndActionPlanType
 } from '../schemas/forms/reclassify';
 import { useMaterialTags } from '../stores';
+import { trackAction } from '../telemetry/appInsights';
 import { formatDate } from '../utils/date';
 import { getBannerData } from '../utils/reclassify';
 
@@ -84,6 +85,10 @@ export const ReclassificationPage = () => {
       });
 
       if (response.data.status !== 'Failed') {
+        trackAction('Reclassified', {
+          materialId: material.materialId,
+          category: material.category
+        });
         const documentType = getDocumentTypeById(fieldValues.documentType);
         const materialReclassifiedId =
           response?.data?.reclassificationResult?.resultData
