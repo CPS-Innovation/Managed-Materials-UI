@@ -98,7 +98,7 @@ export const DiscardMaterialPage = () => {
 
           <div className="govuk-main-wrapper">
             <h2 className="govuk-caption-l hmrc-caption-l">
-              <span className="govuk-visually-hidden">This section is </span>
+              <span className="govuk-visually-hidden">This section is</span>{' '}
               Discard material
             </h2>
             <h1 className="govuk-heading-l">Reason for discarding material</h1>
