@@ -12,3 +12,26 @@
   user-select: none;
   pointer-events: none;
 }
+
+// keep the redaction boxes and highlights visible when the OS is in high-contrast mode.
+@media (forced-colors: active) {
+  .react-pdf-page-wrapper .textLayer {
+    mix-blend-mode: normal;
+  }
+
+  .react-pdf-page-wrapper::selection,
+  .react-pdf-page-wrapper ::selection {
+    background-color: Highlight;
+    color: HighlightText;
+  }
+
+  .react-pdf-page-wrapper .redaction-box {
+    background: transparent !important;
+    border: 2px solid CanvasText !important;
+  }
+
+  .react-pdf-page-wrapper [data-text-highlight-id] {
+    background: transparent !important;
+    border-color: Highlight !important;
+  }
+}

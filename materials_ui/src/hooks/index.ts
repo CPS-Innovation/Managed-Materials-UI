@@ -37,6 +37,7 @@ export { useDebounce } from './ui/useDebounce';
 export { useFeatureFlag } from './ui/useFeatureFlag';
 export { useFilters } from './ui/useFilters';
 export { useLogger } from './ui/useLogger';
+export { usePageColors } from './ui/usePageColors';
 export { usePager } from './ui/usePager';
 export { useRequest } from './ui/useRequest';
 export { useStoreLogger } from './ui/useStoreLogger';

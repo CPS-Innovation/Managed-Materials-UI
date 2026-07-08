@@ -4,6 +4,7 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import { usePagination } from 'react-use-pagination';
+import { usePageColors } from '../../hooks/ui/usePageColors';
 import { LoadingSpinner } from '../LoadingSpinner/LoadingSpinner.tsx';
 import { Pagination } from '../Pagination/Pagination.tsx';
 import './PdfViewer.css';
@@ -18,6 +19,7 @@ export const PdfViewer = ({ file, fileName }: Props) => {
   const [isLoading, setIsLoading] = useState(true);
   const { currentPage, setNextPage, setPreviousPage, setPage, totalPages } =
     usePagination({ initialPageSize: 1, totalItems: numItems });
+  const pageColors = usePageColors();
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumItems(numPages);
@@ -39,9 +41,7 @@ export const PdfViewer = ({ file, fileName }: Props) => {
         className="pdf-page-container"
         file={file}
         onLoadSuccess={onDocumentLoadSuccess}
-        loading={
-          <LoadingSpinner isLoading textContent="Loading preview..." />
-        }
+        loading={<LoadingSpinner isLoading textContent="Loading preview..." />}
         aria-label={
           isLoading
             ? `The document preview for ${fileName} is loading. Please wait.`
@@ -61,6 +61,7 @@ export const PdfViewer = ({ file, fileName }: Props) => {
           pageNumber={currentPage + 1}
           renderTextLayer={true}
           renderAnnotationLayer={true}
+          pageColors={pageColors}
         />
         <div className="pagination-wrapper">
           <Pagination
