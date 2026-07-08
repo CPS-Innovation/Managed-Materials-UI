@@ -42,7 +42,7 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-hook-form": "^7.56.1",
-    "react-pdf": "^9.1.0",
+    "react-pdf": "^10.4.1",
     "react-router-dom": "^6.25.1",
     "react-use": "^17.6.0",
     "react-use-pagination": "^2.0.1",

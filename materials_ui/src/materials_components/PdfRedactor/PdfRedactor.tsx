@@ -2,6 +2,8 @@ import type { PDFDocumentProxy } from 'pdfjs-dist';
 import pdfWorker from 'pdfjs-dist/build/pdf.worker?url';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Document, pdfjs } from 'react-pdf';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
 import { safeJsonParse } from '../DocumentSelectAccordion/utils/generalUtils';
 import { useDocumentFocus } from './hooks/useDocumentFocus';
 import { useShiftReleaseRedactTrigger } from './hooks/useShiftReleaseRedactTrigger';
@@ -21,8 +23,6 @@ import type {
   TSearchHighlight
 } from './utils/searchHighlightUtils';
 import { useTrigger } from './utils/useTriggger';
-import '/node_modules/react-pdf/dist/cjs/Page/AnnotationLayer.css';
-import '/node_modules/react-pdf/dist/cjs/Page/TextLayer.css';
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
 
