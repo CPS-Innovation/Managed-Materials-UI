@@ -26,7 +26,7 @@ export const DiscardMaterialPage = () => {
   const { isLoading: isDiscarding, trigger } = useDiscard(material, {
     onSuccess: async () => {
       trackAction('Discarded', {
-        materialId: material?.materialId,
+        materialId: material?.materialId?.toString(),
         category: material?.category
       });
       setError('');

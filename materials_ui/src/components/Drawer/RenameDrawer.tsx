@@ -18,7 +18,7 @@ export const RenameDrawer = ({ material, onCancel, onSuccess }: Props) => {
       trackAction('Renamed', {
         materialId:
           material && 'materialId' in material
-            ? material.materialId
+            ? material.materialId?.toString()
             : undefined,
         category:
           material && 'category' in material ? material.category : undefined

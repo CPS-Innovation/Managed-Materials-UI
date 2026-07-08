@@ -97,7 +97,7 @@ export const CommunicationsPage = () => {
     if (!materialId || !urn || !caseId) return;
 
     trackAction('OpenedInNewWindow', {
-      materialId: row?.materialId,
+      materialId: row?.materialId?.toString(),
       category: row?.category
     });
     navigateToViewDocumentPageInNewTab({ urn, caseId, materialId });

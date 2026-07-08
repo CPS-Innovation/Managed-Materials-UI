@@ -111,7 +111,10 @@ export const MaterialsPage = () => {
       const urn = caseInfo?.urn;
       const caseId = caseInfo?.id;
       if (!urn || !caseId) return;
-      trackAction('OpenedInNewWindow', { materialId, category: item.category });
+      trackAction('OpenedInNewWindow', {
+        materialId: materialId.toString(),
+        category: item.category
+      });
       navigateToViewDocumentPageInNewTab({ urn, caseId, materialId });
     }
   };

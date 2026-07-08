@@ -86,7 +86,7 @@ export const ReclassificationPage = () => {
 
       if (response.data.status !== 'Failed') {
         trackAction('Reclassified', {
-          materialId: material.materialId,
+          materialId: material.materialId?.toString(),
           category: material.category
         });
         const documentType = getDocumentTypeById(fieldValues.documentType);

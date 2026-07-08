@@ -48,7 +48,7 @@ export const EditMaterialPage = () => {
     },
     onSuccess: (response) => {
       trackAction('Updated', {
-        materialId: row?.materialId,
+        materialId: row?.materialId?.toString(),
         category: row?.category
       });
       setTags([{ materialId: response?.materialId, tagName: 'Updated' }]);
