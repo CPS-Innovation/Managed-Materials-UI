@@ -1,5 +1,6 @@
 import { ComponentProps, useEffect, useState } from 'react';
 import { Button } from '../../caseWorkApp/components/button';
+import { trackAction } from '../../telemetry/appInsights';
 import { useAxiosInstance } from '../DocumentSelectAccordion/getters/getAxiosInstance';
 import { TDocument } from '../DocumentSelectAccordion/getters/getDocumentList';
 import { GovUkBanner } from '../DocumentSelectAccordion/templates/GovUkBanner';
@@ -404,6 +405,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
               redactions
             });
             setRedactions([]);
+            trackAction('Redacted', { materialId: p.parentId });
             p.onRedactionSaveStatusChange('saved');
             if (p.document) p.onModification(p.document);
             await documentCheckOutRequest.checkIn({

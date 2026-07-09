@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { useAutoReclassify, useBanner, useCaseMaterials } from '../../hooks';
 import { useMaterialTags } from '../../stores';
+import { trackAction } from '../../telemetry/appInsights';
 
 export const AutoReclassifyButton = () => {
   const [errorCount, setErrorCount] = useState(0);
@@ -45,6 +46,7 @@ export const AutoReclassifyButton = () => {
     },
     onSuccess: async (data) => {
       const totalMaterialsProcessed = data.reclassifiedMaterials.length || 1;
+      trackAction('UpdatedAutomatically', { count: totalMaterialsProcessed });
 
       setTags(
         data?.reclassifiedMaterials?.map((material) => ({

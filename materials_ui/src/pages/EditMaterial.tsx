@@ -19,6 +19,7 @@ import {
   EditStatementType
 } from '../schemas/forms/editStatement';
 import { useMaterialTags } from '../stores';
+import { trackAction } from '../telemetry/appInsights';
 
 type EditMaterialLocationState = { returnTo: string; row: CaseMaterialsType };
 type FormStep = 'form' | 'summary';
@@ -46,6 +47,10 @@ export const EditMaterialPage = () => {
       });
     },
     onSuccess: (response) => {
+      trackAction('Updated', {
+        materialId: row?.materialId?.toString(),
+        category: row?.category
+      });
       setTags([{ materialId: response?.materialId, tagName: 'Updated' }]);
       setBanner(
         {

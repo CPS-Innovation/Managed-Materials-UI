@@ -31,6 +31,7 @@ import { convertMatchesToSearchHighlights } from '../../../materials_components/
 import { useTrigger } from '../../../materials_components/PdfRedactor/utils/useTriggger';
 import { RedactionLogModal } from '../../../materials_components/RedactionLog/RedactionLogModal';
 import type { SearchTermResultType } from '../../../schemas/documents';
+import { trackAction, trackMetric } from '../../../telemetry/appInsights';
 import { Tabs } from '../../components/tabs';
 import { getLookups, useAxiosInstances } from '../../components/utils/getData';
 import { useSwitchContentArea } from '../../hooks/useSwitchContentArea';
@@ -365,6 +366,12 @@ export const ReviewAndRedactPage = () => {
 
   const activeTabId = activeParentId || openParentIds[0] || '';
 
+  useEffect(() => {
+    if (!activeTabId) return;
+    const start = Date.now();
+    return () => trackMetric('TabViewTime', Date.now() - start);
+  }, [activeTabId]);
+
   const activeDocument = openDocuments.find(
     (doc) => doc.parentId === activeTabId
   );
@@ -504,6 +511,9 @@ export const ReviewAndRedactPage = () => {
                   onRedactionLogClick={() => setShowRedactionLogModal(true)}
                   onViewInNewWindowClick={() => {
                     if (!urn || !caseId) return;
+                    trackAction('OpenedInNewWindow', {
+                      materialId: activeTabId
+                    });
                     navigateToViewDocumentPageInNewTab({
                       urn,
                       caseId,
