@@ -15,11 +15,17 @@ let userRole: string | undefined;
 const normaliseError = (error: unknown): Error =>
   error instanceof Error ? error : new Error(String(error));
 
-// Routes are /:urn/:caseId/... so the raw path carries the case reference and
-// id. Swap those (and any numeric id) for placeholders so we never send case
-// identifiers and page views group by route instead of per case.
-const normalisePath = (path: string): string =>
-  path.replace(/^\/[^/]+\/[^/]+/, '/:urn/:caseId').replace(/\/\d+/g, '/:id');
+// A route looks like /<urn>/<caseId>/<page>, sometimes with deeper numeric
+// ids (e.g. /materials/8923052). Those identify a specific case/document, so
+// we replace them with placeholders before sending telemetry: page views then
+// group by route (e.g. /:urn/:caseId/materials) instead of leaking case data.
+const CASE_URN_AND_ID = /^\/[^/]+\/[^/]+/; // leading /<urn>/<caseId>
+const NUMERIC_ID_SEGMENT = /\/\d+/g; // any /<number> segment
+
+const stripCaseIdsFromRoute = (path: string): string =>
+  path
+    .replace(CASE_URN_AND_ID, '/:urn/:caseId')
+    .replace(NUMERIC_ID_SEGMENT, '/:id');
 
 export const initTelemetry = () => {
   if (appInsights || !connectionString) return;
@@ -63,7 +69,7 @@ export const setTelemetryUserRole = (role: string) => {
 
 export const trackPageView = (pathname: string) => {
   if (!appInsights) return;
-  const name = normalisePath(pathname);
+  const name = stripCaseIdsFromRoute(pathname);
   // Manual SPA tracking doesn't refresh operation name; it stays on the first
   // page unless we set it ourselves, so telemetry groups under the wrong route.
   appInsights.context.telemetryTrace.name = name;
