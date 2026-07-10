@@ -90,6 +90,10 @@ export const RedactionLogModalBody = ({
     formState: { errors }
   } = useFormContext<RedactionLogFormValues>();
 
+  const isSelectedRedactionOfOtherType = selectedRedactionTypes?.some(
+    (x) => x.name === 'Other'
+  );
+
   const [showPopover, setShowPopover] = useState(false);
 
   const underRedactionSelected = watch('underRedactionSelected');
@@ -358,7 +362,8 @@ export const RedactionLogModalBody = ({
           }}
         >
           <label className="govuk-label" htmlFor="supportingNotes">
-            Supporting notes (optional)
+            Supporting notes{' '}
+            {isSelectedRedactionOfOtherType ? '' : '(optional)'}
           </label>
           {errors.supportingNotes && (
             <p className="govuk-error-message">
@@ -386,7 +391,6 @@ export const RedactionLogModalBody = ({
                     </li>
                     <li>Avoid recording full names</li>
                     <li>Do not record sensitive personal data</li>
-                    <li>Supporting notes optional - 400 characters maximum</li>
                   </ul>
                 );
               }}
@@ -394,13 +398,24 @@ export const RedactionLogModalBody = ({
           )}
         </div>
 
+        {errors.supportingNotes && (
+          <p className="govuk-error-message">
+            {errors.supportingNotes.message}
+          </p>
+        )}
+
         <textarea
           className="govuk-textarea"
           id="supportingNotes"
           rows={5}
-          style={{ width: '50%' }}
+          style={{ width: '550px' }}
           maxLength={400}
           {...register('supportingNotes', {
+            validate: (value) => {
+              if (isSelectedRedactionOfOtherType && value.trim().length === 0)
+                return 'Please enter required Supporting notes';
+              return true;
+            },
             maxLength: {
               value: 400,
               message: 'Supporting notes cannot exceed 400 characters'
