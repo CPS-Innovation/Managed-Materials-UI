@@ -112,9 +112,9 @@ test.describe('Communications page', () => {
   // hide filter
   test('T-007: user is able to hide filter', async ({ page }) => {
     await page.getByRole('button', { name: 'Hide filters' }).click();
-    await expect(page.getByText('Search communications')).toBeHidden();
+    await expect(page.getByLabel('Subject')).toBeHidden();
     await page.getByRole('button', { name: 'Show filter' }).click();
-    await expect(page.getByText('Search communications')).toBeVisible();
+    await expect(page.getByLabel('Subject')).toBeVisible();
   });
 
   // search
@@ -129,9 +129,7 @@ test.describe('Communications page', () => {
         method: 'Police'
       })
     );
-    await page
-      .getByRole('searchbox', { name: 'Search communications' })
-      .fill('test 1');
+    await page.getByRole('searchbox', { name: 'Subject' }).fill('test 1');
     await page.getByTestId('applyFiltersButton').click();
     await expect(page.getByText('test 1', { exact: true })).toBeVisible();
   });

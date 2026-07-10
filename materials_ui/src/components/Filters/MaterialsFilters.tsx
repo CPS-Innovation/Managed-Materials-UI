@@ -41,7 +41,7 @@ export const MaterialsFilters = () => {
       onSubmit={handleFiltersSubmit}
       onReset={resetFilters}
       onSearchChange={handleSearchChange}
-      searchLabel="Search materials"
+      searchLabel="Material name"
       defaultSearchValue={filters?.search || ''}
     >
       {hasAccess([2, 3, 4, 5]) && (

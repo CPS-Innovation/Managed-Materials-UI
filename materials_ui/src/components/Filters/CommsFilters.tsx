@@ -61,10 +61,9 @@ export const CommsFilters = () => {
       onSubmit={handleFiltersSubmit}
       onReset={resetFilters}
       onSearchChange={handleSearchChange}
-      searchLabel="Search communications"
+      searchLabel="Subject"
       defaultSearchValue={filters?.search || ''}
     >
-
       {hasAccess([1, 2, 3, 4, 5]) && (
         <div className="govuk-form-group">
           <div className="govuk-form-group">
