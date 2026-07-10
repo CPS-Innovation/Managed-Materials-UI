@@ -129,9 +129,7 @@ test.describe('Communications page', () => {
         method: 'Police'
       })
     );
-    await page
-      .getByRole('searchbox', { name: 'Search communications' })
-      .fill('test 1');
+    await page.getByRole('searchbox', { name: 'Subject' }).fill('test 1');
     await page.getByTestId('applyFiltersButton').click();
     await expect(page.getByText('test 1', { exact: true })).toBeVisible();
   });

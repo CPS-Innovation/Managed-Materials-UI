@@ -158,7 +158,7 @@ test.describe('Materials page', () => {
       })
     );
     await page
-      .getByRole('searchbox', { name: 'Search materials' })
+      .getByRole('searchbox', { name: 'Material name' })
       .fill('Case Action');
     await page.getByTestId('applyFiltersButton').click();
     await expect(
