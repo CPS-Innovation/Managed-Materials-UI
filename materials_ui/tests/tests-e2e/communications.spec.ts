@@ -111,10 +111,10 @@ test.describe('Communications page', () => {
 
   // hide filter
   test('T-007: user is able to hide filter', async ({ page }) => {
-    await page.getByRole('button', { name: 'Hide filter' }).click();
-    await expect(page.getByText('FiltersClear filtersSearch')).toBeHidden();
+    await page.getByRole('button', { name: 'Hide filters' }).click();
+    await expect(page.getByText('Search communications')).toBeHidden();
     await page.getByRole('button', { name: 'Show filter' }).click();
-    await expect(page.getByText('FiltersClear filtersSearch')).toBeVisible();
+    await expect(page.getByText('Search communications')).toBeVisible();
   });
 
   // search
