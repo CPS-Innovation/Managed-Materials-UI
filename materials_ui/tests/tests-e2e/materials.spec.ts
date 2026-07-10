@@ -140,9 +140,9 @@ test.describe('Materials page', () => {
   test('T-008: user is able to hide filter', async ({ page }) => {
     mockRoute(page, '/case-materials', mockCaseMaterials());
     await page.getByRole('button', { name: 'Hide filters' }).click();
-    await expect(page.getByText('Material name')).toBeHidden();
+    await expect(page.getByLabel('Material name')).toBeHidden();
     await page.getByRole('button', { name: 'Show filters' }).click();
-    await expect(page.getByText('Material name')).toBeVisible();
+    await expect(page.getByLabel('Material name')).toBeVisible();
   });
 
   // search
