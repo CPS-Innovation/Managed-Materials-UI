@@ -4,13 +4,7 @@ import { useSWRConfig } from 'swr';
 
 import { Layout, StatusTag } from '../components';
 import { QUERY_KEYS } from '../constants/query';
-import {
-  useAppRoute,
-  useBanner,
-  useBulkSetUnused,
-  useFilters,
-  useLogger
-} from '../hooks';
+import { useAppRoute, useBanner, useBulkSetUnused, useFilters, useLogger } from '../hooks';
 import { CaseMaterialsType } from '../schemas';
 import { useMaterialTags } from '../stores';
 
@@ -37,7 +31,7 @@ export const ReclassifyToUnusedPage = () => {
       setBanner({
         type: 'error',
         header: 'Reclassification unsuccessful',
-        content: 'There was a problem marking the material as unread.'
+        content: 'There was a problem marking the material as unread.',
       });
     },
     onSuccess: async (response) => {
@@ -46,27 +40,24 @@ export const ReclassifyToUnusedPage = () => {
       setTags(
         updatedMaterials.map((material) => ({
           materialId: material?.materialId,
-          tagName: 'Reclassified'
-        }))
+          tagName: 'Reclassified',
+        })),
       );
 
       setBanner({
         type: 'success',
         header: 'Reclassify to Unused success',
-        content: `${updatedMaterials?.length} Unused Material${updatedMaterials?.length === 1 ? '' : 's'} reclassified successfully`
+        content: `${updatedMaterials?.length} Unused Material${updatedMaterials?.length === 1 ? '' : 's'} reclassified successfully`,
       });
 
-      log({
-        logLevel: 0,
-        message: `HK-UI-FE: Materials have been updated: ${updatedMaterials}`
-      });
+      log({ logLevel: 0, message: `HK-UI-FE: Materials have been updated: ${updatedMaterials}` });
 
       resetFilters();
 
       await mutate(QUERY_KEYS.CASE_MATERIAL);
 
       navigate(returnToMaterialsUrl, { state: { persistBanner: true } });
-    }
+    },
   });
 
   const handleSaveChanges = async () => {
@@ -74,13 +65,11 @@ export const ReclassifyToUnusedPage = () => {
   };
 
   const handleRemoveItem = (material: CaseMaterialsType) => {
-    setCaseMaterials(
-      caseMaterials.filter((item) => item.materialId !== material.materialId)
-    );
+    setCaseMaterials(caseMaterials.filter((item) => item.materialId !== material.materialId));
 
     log({
       logLevel: 1,
-      message: `HK-UI-FE: Removed ${material.materialId} from selected materials.`
+      message: `HK-UI-FE: Removed ${material.materialId} from selected materials.`,
     });
   };
 
@@ -117,10 +106,7 @@ export const ReclassifyToUnusedPage = () => {
             </caption>
             <thead className="govuk-table__head">
               <tr className="govuk-table__row">
-                <th
-                  scope="col"
-                  className="govuk-table__header govuk-!-width-one-half"
-                >
+                <th scope="col" className="govuk-table__header govuk-!-width-one-half">
                   Material
                 </th>
                 <th scope="col" className="govuk-table__header">
@@ -177,10 +163,7 @@ export const ReclassifyToUnusedPage = () => {
           >
             Save and return to list view
           </button>
-          <Link
-            to={returnToMaterialsUrl}
-            className="govuk-link cancel-status-change"
-          >
+          <Link to={returnToMaterialsUrl} className="govuk-link cancel-status-change">
             Cancel
           </Link>
         </div>

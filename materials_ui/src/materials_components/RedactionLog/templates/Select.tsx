@@ -19,11 +19,9 @@ export const SelectDropdown = ({
   options,
   value,
   onChange,
-  error
+  error,
 }: SelectDropdownProps) => (
-  <div
-    className={styles.selectWrapper + (error ? ` govuk-form-group--error` : '')}
-  >
+  <div className={styles.selectWrapper + (error ? ` govuk-form-group--error` : '')}>
     <label className="govuk-label" htmlFor={id}>
       {label}
     </label>

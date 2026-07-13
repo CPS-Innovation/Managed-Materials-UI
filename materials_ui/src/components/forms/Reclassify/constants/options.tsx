@@ -9,7 +9,7 @@ export const categoryOptions = (
   control: Control,
   data: Record<string, unknown>,
   errors: FieldErrors,
-  caseMaterial: CaseMaterialsType
+  caseMaterial: CaseMaterialsType,
 ): RadioOption[] => [
   {
     label: 'Statement (MG11)',
@@ -18,49 +18,32 @@ export const categoryOptions = (
     // prevent user trying to reclassify a statement to a statement
     disabled: caseMaterial.category === 'Statement',
     conditionalField: (
-      <Statement
-        control={control}
-        errors={errors}
-        data={data as ReclassifyFormData}
-      />
-    )
+      <Statement control={control} errors={errors} data={data as ReclassifyFormData} />
+    ),
   },
   {
     label: 'Exhibit',
     value: 'EXHIBIT',
     id: 'exhibit',
     conditionalField: (
-      <Exhibit
-        control={control}
-        data={data}
-        errors={errors}
-        currentMaterial={caseMaterial}
-      />
-    )
+      <Exhibit control={control} data={data} errors={errors} currentMaterial={caseMaterial} />
+    ),
   },
   {
     label: 'MG Forms',
     value: 'MG Form',
     id: 'mgForm',
-    conditionalField: (
-      <MGForms
-        control={control}
-        errors={errors}
-        currentMaterial={caseMaterial}
-      />
-    )
+    conditionalField: <MGForms control={control} errors={errors} currentMaterial={caseMaterial} />,
   },
   {
     label: 'Other',
     value: 'OTHER',
     id: 'other',
-    conditionalField: (
-      <Other control={control} errors={errors} currentMaterial={caseMaterial} />
-    )
-  }
+    conditionalField: <Other control={control} errors={errors} currentMaterial={caseMaterial} />,
+  },
 ];
 
 export const usedOptions: RadioOption[] = [
   { label: 'Used', value: 'true', id: 'used' },
-  { label: 'Unused', value: 'false', id: 'unused' }
+  { label: 'Unused', value: 'false', id: 'unused' },
 ];

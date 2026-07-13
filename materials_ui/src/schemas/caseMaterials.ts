@@ -24,7 +24,7 @@ export const CaseMaterialsSchema = z.object({
   reference: z.string(),
   item: z.string(),
   existingproducerOrWitnessId: z.number(),
-  isReclassifiable: z.boolean()
+  isReclassifiable: z.boolean(),
 });
 
 export const CaseMaterialDataSchema = z.enum(['materials', 'communications']);
@@ -33,51 +33,38 @@ export type CaseMaterialDataType = z.infer<typeof CaseMaterialDataSchema>;
 export const CaseMaterialsRequestSchema = z.array(CaseMaterialsSchema);
 export const CaseMaterialsResponseSchema = z.array(CaseMaterialsSchema);
 
-export const CaseMaterialRenameSchema = z.object({
-  materialId: z.number(),
-  subject: z.string()
-});
+export const CaseMaterialRenameSchema = z.object({ materialId: z.number(), subject: z.string() });
 
 export const CaseMaterialRenameRequestSchema = CaseMaterialRenameSchema;
 export const CaseMaterialRenameResponseSchema = z.object({
-  updateCommunication: z.object({ id: z.coerce.string() })
+  updateCommunication: z.object({ id: z.coerce.string() }),
 });
 
 export type CaseMaterialsType = z.infer<typeof CaseMaterialsSchema>;
-export type CaseMaterialsRequestType = z.infer<
-  typeof CaseMaterialsRequestSchema
->;
-export type CaseMaterialsResponseType = z.infer<
-  typeof CaseMaterialsResponseSchema
->;
+export type CaseMaterialsRequestType = z.infer<typeof CaseMaterialsRequestSchema>;
+export type CaseMaterialsResponseType = z.infer<typeof CaseMaterialsResponseSchema>;
 export type CaseMaterialRenameType = z.infer<typeof CaseMaterialRenameSchema>;
-export type CaseMaterialRenameRequestType = z.infer<
-  typeof CaseMaterialRenameRequestSchema
->;
-export type CaseMaterialRenameResponseType = z.infer<
-  typeof CaseMaterialRenameResponseSchema
->;
+export type CaseMaterialRenameRequestType = z.infer<typeof CaseMaterialRenameRequestSchema>;
+export type CaseMaterialRenameResponseType = z.infer<typeof CaseMaterialRenameResponseSchema>;
 
 export const CaseMaterialReadStatusRequestSchema = z.object({
   materialId: z.number(),
   state: z.string(),
-  correspondenceId: z.string().uuid()
+  correspondenceId: z.string().uuid(),
 });
 
 export const CaseMaterialReadStatusResponseSchema = z.object({
-  completeCommunicationData: z.object({ id: z.number() })
+  completeCommunicationData: z.object({ id: z.number() }),
 });
 
-export type CaseMaterialReadStatusRequestType = z.infer<
-  typeof CaseMaterialReadStatusRequestSchema
->;
+export type CaseMaterialReadStatusRequestType = z.infer<typeof CaseMaterialReadStatusRequestSchema>;
 
 export type CaseMaterialReadStatusResponseType = z.infer<
   typeof CaseMaterialReadStatusResponseSchema
 >;
 
 export const CaseMaterialDocumentPreviewSchema = z.object({
-  Blob: z.object({ size: z.number(), type: z.string() })
+  Blob: z.object({ size: z.number(), type: z.string() }),
 });
 
 export type CaseMaterialDocumentPreviewResponseType = z.infer<
@@ -87,16 +74,12 @@ export type CaseMaterialDocumentPreviewResponseType = z.infer<
 export const CaseMaterialDiscardRequestSchema = z.object({
   materialId: z.number(),
   discardReason: z.string(),
-  discardReasonDescription: z.string()
+  discardReasonDescription: z.string(),
 });
 
 export const CaseMaterialDiscardResponseSchema = z.object({
-  discardMaterialData: z.object({ id: z.number() })
+  discardMaterialData: z.object({ id: z.number() }),
 });
 
-export type CaseMaterialDiscardRequestType = z.infer<
-  typeof CaseMaterialDiscardRequestSchema
->;
-export type CaseMaterialDiscardResponseType = z.infer<
-  typeof CaseMaterialDiscardResponseSchema
->;
+export type CaseMaterialDiscardRequestType = z.infer<typeof CaseMaterialDiscardRequestSchema>;
+export type CaseMaterialDiscardResponseType = z.infer<typeof CaseMaterialDiscardResponseSchema>;

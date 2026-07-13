@@ -1,10 +1,6 @@
-import {
-  ApplicationInsights,
-  ICustomProperties
-} from '@microsoft/applicationinsights-web';
+import { ApplicationInsights, ICustomProperties } from '@microsoft/applicationinsights-web';
 
-const connectionString = import.meta.env
-  .VITE_APPLICATIONINSIGHTS_CONNECTION_STRING;
+const connectionString = import.meta.env.VITE_APPLICATIONINSIGHTS_CONNECTION_STRING;
 const cloudRole = import.meta.env.VITE_APPLICATIONINSIGHTS_CLOUD_ROLE;
 const samplingPercentage =
   Number(import.meta.env.VITE_APPLICATIONINSIGHTS_SAMPLING_PERCENTAGE) || 20;
@@ -23,9 +19,7 @@ const CASE_URN_AND_ID = /^\/[^/]+\/[^/]+/; // leading /<urn>/<caseId>
 const NUMERIC_ID_SEGMENT = /\/\d+/g; // any /<number> segment
 
 const stripCaseIdsFromRoute = (path: string): string =>
-  path
-    .replace(CASE_URN_AND_ID, '/:urn/:caseId')
-    .replace(NUMERIC_ID_SEGMENT, '/:id');
+  path.replace(CASE_URN_AND_ID, '/:urn/:caseId').replace(NUMERIC_ID_SEGMENT, '/:id');
 
 export const initTelemetry = () => {
   if (appInsights || !connectionString) return;
@@ -35,8 +29,8 @@ export const initTelemetry = () => {
       connectionString,
       enableAutoRouteTracking: false,
       enableUnhandledPromiseRejectionTracking: true,
-      autoTrackPageVisitTime: true
-    }
+      autoTrackPageVisitTime: true,
+    },
   });
   appInsights.loadAppInsights();
 
@@ -82,14 +76,8 @@ export const trackAction = (action: string, properties?: ICustomProperties) =>
 export const trackEvent = (name: string, properties?: ICustomProperties) =>
   appInsights?.trackEvent({ name }, properties);
 
-export const trackException = (
-  error: unknown,
-  properties?: ICustomProperties
-) =>
+export const trackException = (error: unknown, properties?: ICustomProperties) =>
   appInsights?.trackException({ exception: normaliseError(error) }, properties);
 
-export const trackMetric = (
-  name: string,
-  average: number,
-  properties?: ICustomProperties
-) => appInsights?.trackMetric({ name, average }, properties);
+export const trackMetric = (name: string, average: number, properties?: ICustomProperties) =>
+  appInsights?.trackMetric({ name, average }, properties);

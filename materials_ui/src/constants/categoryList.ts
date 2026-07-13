@@ -4,7 +4,7 @@ export const materialsCategoryList = [
   'MG Form',
   'Other Material',
   'Unused Material',
-  'Defendant Pre Cons'
+  'Defendant Pre Cons',
 ];
 
 export const communicationsCategoryList = [
@@ -13,7 +13,7 @@ export const communicationsCategoryList = [
   'Email',
   'Item',
   'Meeting',
-  'Telephone call'
+  'Telephone call',
 ];
 
 export const communicationsWithList = [
@@ -23,7 +23,7 @@ export const communicationsWithList = [
   'Defence',
   'Police',
   'WCU',
-  'Other'
+  'Other',
 ];
 
 export const typeList = [
@@ -36,5 +36,5 @@ export const typeList = [
   'Forwarded Internal Email',
   'Correspondence',
   'Other Communication',
-  'Service of ABE'
+  'Service of ABE',
 ];

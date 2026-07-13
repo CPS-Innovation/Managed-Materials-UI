@@ -14,13 +14,13 @@ export const useDocumentPreview = ({ materialId }: Props) => {
     await request
       .get<CaseMaterialDocumentPreviewResponseType>(
         `/urns/${caseInfo?.urn}/cases/${caseInfo?.id}/materials/${materialId}/document`,
-        { responseType: 'blob' }
+        { responseType: 'blob' },
       )
       .then((response) => response.data);
 
   const { data, error, isLoading } = useSWR(
     caseInfo ? `${QUERY_KEYS.CASE_MATERIAL_FULL_DOCUMENT}/${materialId}` : null,
-    getDocumentPreview
+    getDocumentPreview,
   );
 
   return { data, loading: isLoading, error };

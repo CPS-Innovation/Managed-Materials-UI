@@ -1,13 +1,10 @@
 import z from 'zod';
 import { SearchTermResultSchema } from '../../../schemas/documents';
 import { documentSchema } from '../getters/getDocumentList';
-import {
-  documentTypeIdsMap,
-  TCategoryName
-} from './categoriseDocumentHelperUtils';
+import { documentTypeIdsMap, TCategoryName } from './categoriseDocumentHelperUtils';
 
 export const categoriseDocument = (
-  doc: z.infer<typeof documentSchema> | z.infer<typeof SearchTermResultSchema>
+  doc: z.infer<typeof documentSchema> | z.infer<typeof SearchTermResultSchema>,
 ): TCategoryName | null => {
   const id = doc.cmsDocType.documentTypeId;
 

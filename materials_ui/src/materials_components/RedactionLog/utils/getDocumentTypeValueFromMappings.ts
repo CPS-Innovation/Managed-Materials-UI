@@ -1,10 +1,7 @@
 export type RedactionLogMappingData = {
   businessUnits: { ou: string; areaId: string | null; unitId: string | null }[];
   documentTypes: { cmsDocTypeId: string; docTypeId: string }[];
-  investigatingAgencies: {
-    ouCode: string;
-    investigatingAgencyId: string | null;
-  }[];
+  investigatingAgencies: { ouCode: string; investigatingAgencyId: string | null }[];
 };
 
 const MANUALLY_SELECT_DOCUMENT_TYPE_IDS = new Set([-1, 1029, 1200]);
@@ -13,13 +10,12 @@ const PNC_PRINT_DOCUMENT_TYPE_ID = '34';
 
 export function getDocumentTypeValueFromMappings(
   documentTypeId: number,
-  documentTypeMappings: RedactionLogMappingData | null
+  documentTypeMappings: RedactionLogMappingData | null,
 ): string | undefined {
-  const documentIsManuallySelected =
-    MANUALLY_SELECT_DOCUMENT_TYPE_IDS.has(documentTypeId);
+  const documentIsManuallySelected = MANUALLY_SELECT_DOCUMENT_TYPE_IDS.has(documentTypeId);
 
   const currentDocumentType = documentTypeMappings?.documentTypes.find(
-    ({ cmsDocTypeId }) => cmsDocTypeId === `${documentTypeId}`
+    ({ cmsDocTypeId }) => cmsDocTypeId === `${documentTypeId}`,
   );
 
   if (documentIsManuallySelected || !currentDocumentType?.docTypeId) {

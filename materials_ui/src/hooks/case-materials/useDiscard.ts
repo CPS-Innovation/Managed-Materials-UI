@@ -7,29 +7,23 @@ import { SwrPayload } from '../../schemas';
 import {
   CaseMaterialDiscardRequestType,
   CaseMaterialDiscardResponseType,
-  CaseMaterialsType
+  CaseMaterialsType,
 } from '../../schemas/caseMaterials';
 
-export type UseDiscardOptions = {
-  onError?: () => void;
-  onSuccess?: () => void;
-};
+export type UseDiscardOptions = { onError?: () => void; onSuccess?: () => void };
 
-export const useDiscard = (
-  material?: CaseMaterialsType,
-  options?: UseDiscardOptions
-) => {
+export const useDiscard = (material?: CaseMaterialsType, options?: UseDiscardOptions) => {
   const request = useRequest();
   const { caseInfo } = useCaseInfoStore();
   const { log } = useLogger();
 
   const discardMaterialRequest = async (
     _url: string,
-    { arg: data }: SwrPayload<CaseMaterialDiscardRequestType>
+    { arg: data }: SwrPayload<CaseMaterialDiscardRequestType>,
   ) => {
     return await request.patch<CaseMaterialDiscardResponseType>(
       `urns/${caseInfo?.urn}/cases/${caseInfo?.id}/materials/${material?.materialId}/discard`,
-      data
+      data,
     );
   };
 
@@ -46,7 +40,7 @@ export const useDiscard = (
         log({
           logLevel: 1,
           message: `HK-UI-FE: caseId ${caseInfo?.id} - Material [${material?.materialId}] discarded`,
-          errorMessage: ''
+          errorMessage: '',
         });
       },
       onError: (error: AxiosError) => {
@@ -58,10 +52,10 @@ export const useDiscard = (
         log({
           logLevel: 3,
           message: `HK-UI-FE: Error discarding material ${material?.materialId}`,
-          errorMessage: `HK-UI-FE: Error discarding material ${material?.materialId}`
+          errorMessage: `HK-UI-FE: Error discarding material ${material?.materialId}`,
         });
-      }
-    }
+      },
+    },
   );
 
   return { isLoading: isMutating, trigger, error };

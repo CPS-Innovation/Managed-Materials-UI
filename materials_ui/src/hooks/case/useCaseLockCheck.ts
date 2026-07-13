@@ -17,7 +17,7 @@ export const useCaseLockCheck = (): UseCaseLockStatus => {
 
   const getCaseLockStatus = async () => {
     const response = await request.get<CaseLockStatusResponseType>(
-      `/urns/${caseInfo?.urn}/cases/${caseInfo?.id}/case-lock-info`
+      `/urns/${caseInfo?.urn}/cases/${caseInfo?.id}/case-lock-info`,
     );
 
     return response.data;
@@ -25,12 +25,12 @@ export const useCaseLockCheck = (): UseCaseLockStatus => {
 
   const { data, mutate: refreshCaseLockStatus } = useSWR(
     caseInfo ? QUERY_KEYS.CASE_LOCK_STATUS : null,
-    getCaseLockStatus
+    getCaseLockStatus,
   );
 
   return {
     isLocked: data?.isLocked || false,
     name: data?.lockedByUser || null,
-    refreshCaseLockStatus
+    refreshCaseLockStatus,
   };
 };

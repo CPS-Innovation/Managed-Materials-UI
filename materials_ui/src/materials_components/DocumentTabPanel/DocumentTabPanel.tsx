@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   getLookups,
   getPdfFiles,
-  useAxiosInstances
+  useAxiosInstances,
 } from '../../caseWorkApp/components/utils/getData';
 import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
 import { Banner } from '../../components';
@@ -65,7 +65,7 @@ export const DocumentTabPanel = ({
   searchContext,
   onFocusedSearchIndexChange,
   onBackToSearchResults,
-  checkInDocumentTriggerData
+  checkInDocumentTriggerData,
 }: DocumentTabPanelProps) => {
   const { redactionLogAxios, axiosInstance } = useAxiosInstances();
 
@@ -75,11 +75,8 @@ export const DocumentTabPanel = ({
   const blobUrlRef = useRef<string | null>(null);
 
   const [showRedactionLogModal, setShowRedactionLogModal] = useState(false);
-  const [redactionSaveStatus, setRedactionSaveStatus] = useState<
-    'saving' | 'saved'
-  >();
-  const [redactionLogModalData, setRedactionLogModalData] =
-    useState<RedactionLogModalData>();
+  const [redactionSaveStatus, setRedactionSaveStatus] = useState<'saving' | 'saved'>();
+  const [redactionLogModalData, setRedactionLogModalData] = useState<RedactionLogModalData>();
   const [lookups, setLookups] = useState<TLookupsResponse>();
 
   useEffect(() => {
@@ -92,7 +89,7 @@ export const DocumentTabPanel = ({
           urn,
           caseId,
           parentId: parentId,
-          childId: childId
+          childId: childId,
         });
 
         if (blob instanceof Blob) {
@@ -104,9 +101,7 @@ export const DocumentTabPanel = ({
           setStatus('error');
         }
       } catch (e) {
-        setStatusCode(
-          axios.isAxiosError(e) ? (e.response?.status ?? null) : null
-        );
+        setStatusCode(axios.isAxiosError(e) ? (e.response?.status ?? null) : null);
         setStatus('error');
       }
     };
@@ -150,22 +145,15 @@ export const DocumentTabPanel = ({
         />
       )}
 
-      <LoadingSpinner
-        isLoading={status === 'loading'}
-        textContent="Loading document..."
-      />
+      <LoadingSpinner isLoading={status === 'loading'} textContent="Loading document..." />
 
-      {status === 'error' && (
-        <div className="govuk-error-message">Failed to load Document</div>
-      )}
+      {status === 'error' && <div className="govuk-error-message">Failed to load Document</div>}
 
       {status === 'error' && statusCode === 403 && (
         <Banner
           type="error"
           header="This document is password protected"
-          content={
-            'Ask the agency who supplied it to remove the password and resend the document.'
-          }
+          content={'Ask the agency who supplied it to remove the password and resend the document.'}
         />
       )}
 
@@ -182,17 +170,15 @@ export const DocumentTabPanel = ({
                     totalMatches: searchContext.highlights.length,
                     focusedIndex: searchContext.focusedIndex,
                     onPrev: () =>
-                      onFocusedSearchIndexChange?.(
-                        Math.max(0, searchContext.focusedIndex - 1)
-                      ),
+                      onFocusedSearchIndexChange?.(Math.max(0, searchContext.focusedIndex - 1)),
                     onNext: () =>
                       onFocusedSearchIndexChange?.(
                         Math.min(
                           searchContext.highlights.length - 1,
-                          searchContext.focusedIndex + 1
-                        )
+                          searchContext.focusedIndex + 1,
+                        ),
                       ),
-                    onBackToSearchResults: () => onBackToSearchResults?.()
+                    onBackToSearchResults: () => onBackToSearchResults?.(),
                   }
                 : undefined
             }

@@ -7,18 +7,10 @@ import {
   useDocumentSearchResults,
   useFilters,
   usePager,
-  useSearchTracker
+  useSearchTracker,
 } from '../../hooks';
 
-import {
-  Banner,
-  LoadingSpinner,
-  Modal,
-  Pagination,
-  SearchInput,
-  SectionBreak,
-  TwoCol
-} from '..';
+import { Banner, LoadingSpinner, Modal, Pagination, SearchInput, SectionBreak, TwoCol } from '..';
 
 import { categoriseDocument } from '../../materials_components/DocumentSelectAccordion/utils/categoriseDocument';
 import { SearchTermResultType } from '../../schemas/documents';
@@ -29,36 +21,21 @@ import { DocumentKeywordSearchFilters } from '../Filters/DocumentKeywordSearchFi
 import { DEFAULT_RESULTS_PER_PAGE } from '../../constants/query';
 import './DocumentKeywordSearch.scss';
 
-type DocumentKeywordSearchProps = {
-  modalOpen: boolean;
-  setModalOpen: (open: boolean) => void;
-};
+type DocumentKeywordSearchProps = { modalOpen: boolean; setModalOpen: (open: boolean) => void };
 
-export const DocumentKeywordSearch = ({
-  modalOpen,
-  setModalOpen
-}: DocumentKeywordSearchProps) => {
+export const DocumentKeywordSearch = ({ modalOpen, setModalOpen }: DocumentKeywordSearchProps) => {
   const { getRoute } = useAppRoute();
   const [searchTerm, setSearchTerm] = useState<string | null>(null);
-  const [expandedDocuments, setExpandedDocuments] = useState<
-    Record<string, boolean>
-  >({});
+  const [expandedDocuments, setExpandedDocuments] = useState<Record<string, boolean>>({});
   const [selectedSort, setSelectedSort] = useState('date');
 
-  const { isComplete: trackerComplete, failedToConvert } =
-    useSearchTracker(searchTerm);
+  const { isComplete: trackerComplete, failedToConvert } = useSearchTracker(searchTerm);
 
-  const { searchResults, loading } = useDocumentSearch(
-    searchTerm,
-    trackerComplete
-  );
+  const { searchResults, loading } = useDocumentSearch(searchTerm, trackerComplete);
 
   const { documents } = useDocuments();
 
-  const combinedSearchResults = useDocumentSearchResults(
-    documents ?? [],
-    searchResults ?? []
-  );
+  const combinedSearchResults = useDocumentSearchResults(documents ?? [], searchResults ?? []);
 
   const { filters, resetFilters } = useFilters('documents');
 
@@ -84,14 +61,11 @@ export const DocumentKeywordSearch = ({
 
     const newStatus = selectedStatus.includes('New');
 
-    const sortColumn =
-      selectedSort === 'date'
-        ? 'cmsFileCreatedDate'
-        : 'resultsPerDocumentCount';
+    const sortColumn = selectedSort === 'date' ? 'cmsFileCreatedDate' : 'resultsPerDocumentCount';
 
     const sortFn = defaultSortFn<SearchTermResultType>({
       column: sortColumn,
-      direction: 'descending'
+      direction: 'descending',
     });
 
     return combinedSearchResults
@@ -107,31 +81,19 @@ export const DocumentKeywordSearch = ({
           (category !== null && selectedCategories.includes(category))
         );
       })
-      .map((item) => ({
-        ...item,
-        [sortColumn]: String(item[sortColumn] ?? '')
-      }))
+      .map((item) => ({ ...item, [sortColumn]: String(item[sortColumn] ?? '') }))
       .sort(sortFn);
-  }, [
-    combinedSearchResults,
-    filters?.filters?.category,
-    filters?.filters?.status,
-    selectedSort
-  ]);
+  }, [combinedSearchResults, filters?.filters?.category, filters?.filters?.status, selectedSort]);
 
   const highlightExactMatches = (
     text: string,
-    words: { boundingBox: number[] | null; text: string; matchType: string[] }[]
+    words: { boundingBox: number[] | null; text: string; matchType: string[] }[],
   ) => {
-    const exactWords = words
-      .filter((w) => w.matchType.includes('Exact'))
-      .map((w) => w.text);
+    const exactWords = words.filter((w) => w.matchType.includes('Exact')).map((w) => w.text);
 
     if (!text || exactWords.length === 0) return text;
 
-    const escaped = exactWords.map((w) =>
-      w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    );
+    const escaped = exactWords.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
 
     const regex = new RegExp(`(${escaped.join('|')})`, 'gi');
 
@@ -142,23 +104,16 @@ export const DocumentKeywordSearch = ({
         <strong key={i}>{part}</strong>
       ) : (
         <span key={i}>{part}</span>
-      )
+      ),
     );
   };
 
-  const {
-    currentPage,
-    totalPages,
-    startIndex,
-    endIndex,
-    setNextPage,
-    setPage,
-    setPreviousPage
-  } = usePager({
-    totalItems: filteredResults ? filteredResults.length : 0,
-    initialPageSize: DEFAULT_RESULTS_PER_PAGE,
-    initialPage: 0
-  });
+  const { currentPage, totalPages, startIndex, endIndex, setNextPage, setPage, setPreviousPage } =
+    usePager({
+      totalItems: filteredResults ? filteredResults.length : 0,
+      initialPageSize: DEFAULT_RESULTS_PER_PAGE,
+      initialPage: 0,
+    });
 
   return (
     <div style={{ marginBottom: '20px' }}>
@@ -171,16 +126,11 @@ export const DocumentKeywordSearch = ({
       />
 
       <Modal open={modalOpen} onClose={handleModalClose}>
-        <LoadingSpinner
-          isLoading={!trackerComplete}
-          textContent="Loading search results"
-        />
+        <LoadingSpinner isLoading={!trackerComplete} textContent="Loading search results" />
         {trackerComplete && (
           <TwoCol
             sidebar={
-              <DocumentKeywordSearchFilters
-                onSearchSubmit={(term) => setSearchTerm(term)}
-              />
+              <DocumentKeywordSearchFilters onSearchSubmit={(term) => setSearchTerm(term)} />
             }
           >
             {loading && <p>Searching…</p>}
@@ -193,16 +143,12 @@ export const DocumentKeywordSearch = ({
                     <strong>{documents?.length}</strong> documents in this case
                   </p>
                   <p className="govuk-body">
-                    Search may not have found all instances of "{searchTerm}" in
-                    this case
+                    Search may not have found all instances of "{searchTerm}" in this case
                   </p>
                 </div>
 
                 <div className="govuk-form-group">
-                  <label
-                    className="govuk-label govuk-visually-hidden"
-                    htmlFor="sort"
-                  >
+                  <label className="govuk-label govuk-visually-hidden" htmlFor="sort">
                     Sort by
                   </label>
                   <select
@@ -215,9 +161,7 @@ export const DocumentKeywordSearch = ({
                     <option value="date" defaultValue="date">
                       Date added
                     </option>
-                    <option value="resultsPerDocument">
-                      Results per document
-                    </option>
+                    <option value="resultsPerDocument">Results per document</option>
                   </select>
                 </div>
               </div>
@@ -228,10 +172,7 @@ export const DocumentKeywordSearch = ({
                 type="important"
                 header="Technical problems stopped us from searching these documents:"
                 content={failedToConvert.map((doc: SearchTermResultType) => (
-                  <p
-                    key={doc.parentId}
-                    style={{ fontStyle: 'italic', color: '#505a5f' }}
-                  >
+                  <p key={doc.parentId} style={{ fontStyle: 'italic', color: '#505a5f' }}>
                     {doc.presentationTitle}
                   </p>
                 ))}
@@ -244,22 +185,15 @@ export const DocumentKeywordSearch = ({
                 const isExpanded = expandedDocuments[doc.parentId] ?? false;
                 const first = doc.matches[0];
                 const firstLineMatchCount =
-                  first?.words.filter((word) =>
-                    word.matchType?.includes('Exact')
-                  ).length ?? 0;
-                const remainingCount =
-                  (doc.resultsPerDocumentCount ?? 0) - firstLineMatchCount;
+                  first?.words.filter((word) => word.matchType?.includes('Exact')).length ?? 0;
+                const remainingCount = (doc.resultsPerDocumentCount ?? 0) - firstLineMatchCount;
 
                 return (
                   <div key={doc.parentId} style={{ marginBottom: 20 }}>
                     <h2 className="govuk-heading-m govuk-!-margin-bottom-1">
                       <Link
                         to={getRoute('REVIEW_REDACT')}
-                        state={{
-                          materialId: doc.parentId,
-                          searchTerm,
-                          searchMatches: doc.matches
-                        }}
+                        state={{ materialId: doc.parentId, searchTerm, searchMatches: doc.matches }}
                         onClick={handleModalClose}
                       >
                         {doc.documentTitle}
@@ -270,24 +204,17 @@ export const DocumentKeywordSearch = ({
                       Uploaded: {formatDateLong(doc.cmsFileCreatedDate)}
                     </p>
                     {doc.cmsDocType.documentType && (
-                      <p className="govuk-body-s">
-                        Type: {doc.cmsDocType.documentType}
-                      </p>
+                      <p className="govuk-body-s">Type: {doc.cmsDocType.documentType}</p>
                     )}
 
                     <div className="govuk-inset-text">
-                      <p>
-                        {first &&
-                          highlightExactMatches(first.text, first.words)}
-                      </p>
+                      <p>{first && highlightExactMatches(first.text, first.words)}</p>
 
                       {isExpanded && remainingCount > 0 && (
                         <>
                           {doc.matches.slice(1).map((match, index) => (
                             <div key={index} style={{ marginTop: '1rem' }}>
-                              <p>
-                                {highlightExactMatches(match.text, match.words)}
-                              </p>
+                              <p>{highlightExactMatches(match.text, match.words)}</p>
                             </div>
                           ))}
                         </>
@@ -299,13 +226,11 @@ export const DocumentKeywordSearch = ({
                             cursor: 'pointer',
                             textDecoration: 'underline',
                             display: 'inline-block',
-                            marginTop: 8
+                            marginTop: 8,
                           }}
                           onClick={() => toggleDocumentExpand(doc.parentId)}
                         >
-                          {isExpanded
-                            ? 'Hide additional results'
-                            : `View ${remainingCount} more`}
+                          {isExpanded ? 'Hide additional results' : `View ${remainingCount} more`}
                         </span>
                       )}
                     </div>

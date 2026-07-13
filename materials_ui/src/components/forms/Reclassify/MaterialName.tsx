@@ -6,24 +6,21 @@ import { ErrorSummary } from '../..';
 import { URL } from '../../../constants/url';
 import {
   Reclassify_MaterialNameFormSchema,
-  Reclassify_MaterialNameFormType
+  Reclassify_MaterialNameFormType,
 } from '../../../schemas/forms/reclassify';
 import type { ErrorSummaryItem } from '../../ErrorSummary/ErrorSummary';
 import { SubjectField } from './common/SubjectField';
 
-type Props = {
-  data: Record<string, unknown>;
-  onSave: (data: Record<string, unknown>) => void;
-};
+type Props = { data: Record<string, unknown>; onSave: (data: Record<string, unknown>) => void };
 
 export const MaterialName = ({ data, onSave }: Props) => {
   const {
     control,
     formState: { errors },
-    handleSubmit
+    handleSubmit,
   } = useForm<Reclassify_MaterialNameFormType>({
     defaultValues: data,
-    resolver: zodResolver(Reclassify_MaterialNameFormSchema)
+    resolver: zodResolver(Reclassify_MaterialNameFormSchema),
   });
 
   // format react-hook-form error object into array to be rendered by ErrorSummary
@@ -52,11 +49,7 @@ export const MaterialName = ({ data, onSave }: Props) => {
         <SubjectField control={control} errors={errors} />
 
         <div className="govuk-button-group">
-          <button
-            type="submit"
-            className="govuk-button"
-            data-module="govuk-button"
-          >
+          <button type="submit" className="govuk-button" data-module="govuk-button">
             Continue
           </button>
           <Link to={URL.MATERIALS} className="govuk-link cancel-status-change">

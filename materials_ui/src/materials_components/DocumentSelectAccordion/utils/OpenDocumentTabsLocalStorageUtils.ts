@@ -1,19 +1,13 @@
 import { z } from 'zod';
 import { safeJsonParse } from './generalUtils';
 
-const openTabsSchema = z.object({
-  openParentIds: z.array(z.string()),
-  activeParentId: z.string()
-});
+const openTabsSchema = z.object({ openParentIds: z.array(z.string()), activeParentId: z.string() });
 
 type OpenTabsState = z.infer<typeof openTabsSchema>;
 
-export const createOpenDocumentTabsKey = (caseId: number) =>
-  `openDocumentTabs-${caseId}`;
+export const createOpenDocumentTabsKey = (caseId: number) => `openDocumentTabs-${caseId}`;
 
-export const safeGetOpenDocumentTabsFromLocalStorage = (
-  caseId: number
-): OpenTabsState | null => {
+export const safeGetOpenDocumentTabsFromLocalStorage = (caseId: number): OpenTabsState | null => {
   const key = createOpenDocumentTabsKey(caseId);
   const parsed = safeJsonParse(window.localStorage.getItem(key));
   const validated = openTabsSchema.safeParse(parsed.data);
@@ -28,10 +22,7 @@ export const safeSetOpenDocumentTabsFromLocalStorage = (p: {
   const key = createOpenDocumentTabsKey(p.caseId);
   window.localStorage.setItem(
     key,
-    JSON.stringify({
-      openParentIds: p.openParentIds,
-      activeParentId: p.activeParentId
-    })
+    JSON.stringify({ openParentIds: p.openParentIds, activeParentId: p.activeParentId }),
   );
 };
 

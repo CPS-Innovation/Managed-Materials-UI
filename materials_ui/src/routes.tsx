@@ -15,7 +15,7 @@ import {
   PcdReviewPage,
   ReclassificationPage,
   ReclassifyToUnusedPage,
-  ServerErrorPage
+  ServerErrorPage,
 } from './pages';
 import { CaseSearchPage } from './pages/CaseSearch';
 import { ViewDocumentPage } from './pages/ViewDocumentPage';
@@ -40,65 +40,29 @@ export const Routes = () => {
 
   return (
     <Router>
-      <Route
-        path="/"
-        element={<Navigate to={getRoute('CASE_SEARCH', false)} replace />}
-      />
+      <Route path="/" element={<Navigate to={getRoute('CASE_SEARCH', false)} replace />} />
 
-      <Route
-        path={getRoute('UNAUTHORISED', false)}
-        element={<NotAuthorisedPage />}
-      />
-      <Route
-        path={getRoute('SERVER_ERROR', false)}
-        element={<ServerErrorPage />}
-      />
-      <Route
-        path={getRoute('CASE_SEARCH', false)}
-        element={<CaseSearchPage />}
-      />
-      <Route
-        path={'/:urn/:caseId/view-document/:documentId'}
-        element={<ViewDocumentPage />}
-      />
+      <Route path={getRoute('UNAUTHORISED', false)} element={<NotAuthorisedPage />} />
+      <Route path={getRoute('SERVER_ERROR', false)} element={<ServerErrorPage />} />
+      <Route path={getRoute('CASE_SEARCH', false)} element={<CaseSearchPage />} />
+      <Route path={'/:urn/:caseId/view-document/:documentId'} element={<ViewDocumentPage />} />
 
       <Route path={`:urn/:caseId`}>
-        <Route
-          path={getRoute('DISCARD', false)}
-          element={<DiscardMaterialPage />}
-        />
-        <Route
-          path={`${getRoute('PCD_REQUEST', false)}/:pcdId?`}
-          element={<PcdRequestPage />}
-        />
+        <Route path={getRoute('DISCARD', false)} element={<DiscardMaterialPage />} />
+        <Route path={`${getRoute('PCD_REQUEST', false)}/:pcdId?`} element={<PcdRequestPage />} />
         <Route
           path={`${getRoute('PCD_REVIEW', false)}/:reviewHistoryId?`}
           element={<PcdReviewPage />}
         />
-        <Route
-          path={getRoute('MATERIALS', false)}
-          element={<MaterialsPage />}
-        />
-        <Route
-          path={getRoute('COMMUNICATIONS', false)}
-          element={<CommunicationsPage />}
-        />
-        <Route
-          path={getRoute('REVIEW_REDACT', false)}
-          element={<ReviewAndRedactPage />}
-        />
+        <Route path={getRoute('MATERIALS', false)} element={<MaterialsPage />} />
+        <Route path={getRoute('COMMUNICATIONS', false)} element={<CommunicationsPage />} />
+        <Route path={getRoute('REVIEW_REDACT', false)} element={<ReviewAndRedactPage />} />
         <Route
           path={getRoute('RECLASSIFY_TO_UNUSED', false)}
           element={<ReclassifyToUnusedPage />}
         />
-        <Route
-          path={getRoute('RECLASSIFICATION', false)}
-          element={<ReclassificationPage />}
-        />
-        <Route
-          path={getRoute('UPDATE_MATERIAL', false)}
-          element={<EditMaterialPage />}
-        />
+        <Route path={getRoute('RECLASSIFICATION', false)} element={<ReclassificationPage />} />
+        <Route path={getRoute('UPDATE_MATERIAL', false)} element={<EditMaterialPage />} />
       </Route>
 
       <Route path="*" element={<NotFoundPage />} />

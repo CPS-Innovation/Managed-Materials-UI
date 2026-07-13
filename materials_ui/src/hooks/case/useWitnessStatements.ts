@@ -3,10 +3,7 @@ import useSWR from 'swr';
 
 import { useRequest } from '..';
 import { QUERY_KEYS } from '../../constants/query';
-import type {
-  WitnessStatementResponseType,
-  WitnessStatementType
-} from '../../schemas/witness';
+import type { WitnessStatementResponseType, WitnessStatementType } from '../../schemas/witness';
 import { useCaseInfoStore } from '../../stores';
 
 export const useWitnessStatements = () => {
@@ -17,38 +14,28 @@ export const useWitnessStatements = () => {
   const getWitnessStatements = async () =>
     await request
       .get<WitnessStatementResponseType>(
-        `/urns/${caseInfo?.urn}/cases/${caseInfo?.id}/witnesses/${witnessId}/witness-statements`
+        `/urns/${caseInfo?.urn}/cases/${caseInfo?.id}/witnesses/${witnessId}/witness-statements`,
       )
       .then((response) => response.data);
 
   const { data, isLoading } = useSWR(
     witnessId && caseInfo ? [QUERY_KEYS.WITNESS_STATEMENTS, witnessId] : null,
-    getWitnessStatements
+    getWitnessStatements,
   );
 
   const setWitnessId = (id: number | null) => {
     setWitness(id);
   };
 
-  const [witnessStatements, lastStatementId] = useMemo((): [
-    WitnessStatementType[],
-    number
-  ] => {
-    const statements = (data?.statementsForWitness || []).sort(
-      (a, b) => a.title - b.title
-    );
+  const [witnessStatements, lastStatementId] = useMemo((): [WitnessStatementType[], number] => {
+    const statements = (data?.statementsForWitness || []).sort((a, b) => a.title - b.title);
 
     const statementIds: number = Math.max(
-      ...(statements || []).map((item: WitnessStatementType) => item.title)
+      ...(statements || []).map((item: WitnessStatementType) => item.title),
     );
 
     return [statements, statementIds];
   }, [data]);
 
-  return {
-    data: witnessStatements,
-    loading: isLoading,
-    setWitnessId,
-    lastStatementId
-  };
+  return { data: witnessStatements, loading: isLoading, setWitnessId, lastStatementId };
 };

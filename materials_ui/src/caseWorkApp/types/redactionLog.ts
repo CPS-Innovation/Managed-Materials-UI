@@ -1,9 +1,4 @@
-export type Unit = {
-  id: string;
-  type: string;
-  areaDivisionName: string;
-  name: string;
-};
+export type Unit = { id: string; type: string; areaDivisionName: string; name: string };
 
 export type InvestigatingAgency = { id: string; name: string };
 

@@ -3,7 +3,7 @@ import type { Reclassify_Orchestrated_Request_Type } from '../../../../schemas/f
 
 export const mapReclassifyExhibit = (
   data: ReclassifyFormData,
-  urn: string
+  urn: string,
 ): Reclassify_Orchestrated_Request_Type => {
   if (data.classification !== 'EXHIBIT') {
     throw new Error('Not a valid classification');
@@ -19,13 +19,9 @@ export const mapReclassifyExhibit = (
       exhibit: {
         item: data?.item,
         reference: data?.referenceNumber,
-        ...(data?.producerId
-          ? { existingproducerOrWitnessId: data?.producerId as number }
-          : {}),
-        ...(data?.producedBy
-          ? { Producer: data?.producedBy, newProducer: data?.producedBy }
-          : {})
-      }
-    }
+        ...(data?.producerId ? { existingproducerOrWitnessId: data?.producerId as number } : {}),
+        ...(data?.producedBy ? { Producer: data?.producedBy, newProducer: data?.producedBy } : {}),
+      },
+    },
   };
 };

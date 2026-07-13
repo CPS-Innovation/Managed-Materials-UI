@@ -16,28 +16,20 @@ const TabButtons: React.FC<TabButtonProps> = ({
   items,
   activeTabIndex,
   handleTabSelection,
-  handleCloseTab
+  handleCloseTab,
 }) => {
   const activeTabRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     activeTabRef.current?.focus();
-    activeTabRef.current?.parentElement?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest'
-    });
+    activeTabRef.current?.parentElement?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, [activeTabIndex, items.length]);
 
   type ArrowKeyCodes = 'ArrowLeft' | 'ArrowRight';
 
-  const ARROW_KEY_SHIFTS: Record<ArrowKeyCodes, number> = {
-    ArrowLeft: -1,
-    ArrowRight: 1
-  };
+  const ARROW_KEY_SHIFTS: Record<ArrowKeyCodes, number> = { ArrowLeft: -1, ArrowRight: 1 };
 
-  const handleKeyPressOnTab: React.KeyboardEventHandler<HTMLButtonElement> = (
-    ev
-  ) => {
+  const handleKeyPressOnTab: React.KeyboardEventHandler<HTMLButtonElement> = (ev) => {
     if (ev.code in ARROW_KEY_SHIFTS) {
       const thisShift = ARROW_KEY_SHIFTS[ev.code as ArrowKeyCodes]; // -1, 1, or undefined
       moveToNextOrPreviousTab(thisShift);
@@ -50,7 +42,7 @@ const TabButtons: React.FC<TabButtonProps> = ({
       document.getElementById('tabs-dropdown')?.click();
       setTimeout(() => {
         const firstItem = document.querySelector<HTMLElement>(
-          '#dropdown-panel button:not(:disabled)'
+          '#dropdown-panel button:not(:disabled)',
         );
         firstItem?.focus();
       }, 0);
@@ -76,10 +68,7 @@ const TabButtons: React.FC<TabButtonProps> = ({
   };
 
   const tabDropdownItems = useMemo(() => {
-    return items.map((item) => ({
-      ...item,
-      disabled: item.id === items[activeTabIndex]?.id
-    }));
+    return items.map((item) => ({ ...item, disabled: item.id === items[activeTabIndex]?.id }));
   }, [items, activeTabIndex]);
 
   if (!items.length) {
@@ -116,9 +105,7 @@ const TabButtons: React.FC<TabButtonProps> = ({
         </div>
       </div>
 
-      <div
-        style={{ flex: 1, minWidth: 0, overflowX: 'auto', overflowY: 'hidden' }}
-      >
+      <div style={{ flex: 1, minWidth: 0, overflowX: 'auto', overflowY: 'hidden' }}>
         <ul className={`${classes.tabsList}`} role="tablist">
           {items.map((item, index) => {
             const { id, label, ariaLabel } = item;
@@ -126,9 +113,7 @@ const TabButtons: React.FC<TabButtonProps> = ({
             return (
               <li
                 className={`${
-                  activeTabIndex === index
-                    ? classes.activeTab
-                    : classes.inactiveTab
+                  activeTabIndex === index ? classes.activeTab : classes.inactiveTab
                 } ${classes.tabListItem}`}
                 key={id}
                 data-testid={`tab-${index}`}
@@ -136,17 +121,11 @@ const TabButtons: React.FC<TabButtonProps> = ({
               >
                 <button
                   id={`tab_${index}`}
-                  aria-controls={
-                    index === activeTabIndex
-                      ? 'active-tab-panel'
-                      : `panel-${index}`
-                  }
+                  aria-controls={index === activeTabIndex ? 'active-tab-panel' : `panel-${index}`}
                   aria-label={ariaLabel}
                   role="tab"
                   className={`${classes.tabButton} ${index === activeTabIndex ? 'tabButtonFocused' : ''}`}
-                  data-testid={
-                    index === activeTabIndex ? 'tab-active' : `btn-tab-${index}`
-                  }
+                  data-testid={index === activeTabIndex ? 'tab-active' : `btn-tab-${index}`}
                   onClick={() => {
                     if (id !== items[activeTabIndex]?.id) {
                       handleTabSelection(id);

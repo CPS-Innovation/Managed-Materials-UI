@@ -1,6 +1,6 @@
-import { useEffect, useCallback } from "react";
+import { useCallback, useEffect } from 'react';
 
-export const useFocusTrap = (id = "#modal") => {
+export const useFocusTrap = (id = '#modal') => {
   const getTabbableElements = useCallback(() => {
     if (!document.querySelector(id)) {
       return;
@@ -8,7 +8,7 @@ export const useFocusTrap = (id = "#modal") => {
     const tabbableElements = document
       .querySelector(id)
       ?.querySelectorAll(
-        'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex="0"], summary:not([disabled])'
+        'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex="0"], summary:not([disabled])',
       );
 
     return tabbableElements;
@@ -18,26 +18,23 @@ export const useFocusTrap = (id = "#modal") => {
     (e: KeyboardEvent) => {
       const tabbableElements = getTabbableElements();
 
-      if ((e.code === "Tab" || e.key === "Tab") && tabbableElements) {
+      if ((e.code === 'Tab' || e.key === 'Tab') && tabbableElements) {
         if (e.shiftKey) {
           if (document.activeElement === tabbableElements[0]) {
-            (
-              tabbableElements[tabbableElements.length - 1] as HTMLElement
-            ).focus();
+            (tabbableElements[tabbableElements.length - 1] as HTMLElement).focus();
             e.preventDefault();
           }
         }
         if (
           !e.shiftKey &&
-          document.activeElement ===
-            tabbableElements[tabbableElements.length - 1]
+          document.activeElement === tabbableElements[tabbableElements.length - 1]
         ) {
           (tabbableElements[0] as HTMLElement).focus();
           e.preventDefault();
         }
       }
     },
-    [getTabbableElements]
+    [getTabbableElements],
   );
 
   useEffect(() => {
@@ -53,9 +50,9 @@ export const useFocusTrap = (id = "#modal") => {
   }, [getTabbableElements]);
 
   useEffect(() => {
-    window.addEventListener("keydown", keyDownHandler);
+    window.addEventListener('keydown', keyDownHandler);
     return () => {
-      window.removeEventListener("keydown", keyDownHandler);
+      window.removeEventListener('keydown', keyDownHandler);
     };
   }, [keyDownHandler]);
 };

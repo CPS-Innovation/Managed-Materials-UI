@@ -1,29 +1,18 @@
 import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import './_button-menu.scss';
 
-type MenuItem = {
-  label: string;
-  onClick: () => void;
-  className?: string;
-  hide?: boolean;
-};
+type MenuItem = { label: string; onClick: () => void; className?: string; hide?: boolean };
 
 type Props = { menuTitle: string; menuItems: MenuItem[]; isDisabled?: boolean };
 
-export function ButtonMenuComponent({
-  menuTitle,
-  menuItems,
-  isDisabled = false
-}: Props) {
+export function ButtonMenuComponent({ menuTitle, menuItems, isDisabled = false }: Props) {
   const [openMenu, setOpenMenu] = useState(false);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const itemsRef = useRef<(HTMLButtonElement | null)[]>([]);
 
   // Focus helper
   const focusItem = (index: number) => {
-    const visibleItems = itemsRef.current.filter(
-      Boolean
-    ) as HTMLButtonElement[];
+    const visibleItems = itemsRef.current.filter(Boolean) as HTMLButtonElement[];
     if (!visibleItems.length) return;
 
     if (index >= visibleItems.length) index = 0;
@@ -33,12 +22,10 @@ export function ButtonMenuComponent({
 
   const currentFocusIndex = () => {
     const visibleItems = itemsRef.current.filter(
-      (item): item is HTMLButtonElement => item !== null
+      (item): item is HTMLButtonElement => item !== null,
     );
     const active = document.activeElement;
-    return active instanceof HTMLButtonElement
-      ? visibleItems.indexOf(active)
-      : -1;
+    return active instanceof HTMLButtonElement ? visibleItems.indexOf(active) : -1;
   };
 
   const closeMenu = (moveFocus = true) => {
@@ -60,9 +47,7 @@ export function ButtonMenuComponent({
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     const { key } = event;
     const isToggle = event.target === buttonRef.current;
-    const isMenuItem = itemsRef.current
-      .filter(Boolean)
-      .includes(event.target as HTMLButtonElement);
+    const isMenuItem = itemsRef.current.filter(Boolean).includes(event.target as HTMLButtonElement);
 
     if (isToggle) {
       if (isDisabled) return;
@@ -122,10 +107,7 @@ export function ButtonMenuComponent({
   return (
     <div
       className={`moj-button-menu ${isDisabled ? 'disabled' : ''}`}
-      style={{
-        opacity: isDisabled ? 0.5 : 1,
-        pointerEvents: isDisabled ? 'none' : 'auto'
-      }}
+      style={{ opacity: isDisabled ? 0.5 : 1, pointerEvents: isDisabled ? 'none' : 'auto' }}
       onKeyDown={handleKeyDown}
     >
       <button
@@ -144,10 +126,7 @@ export function ButtonMenuComponent({
             height="5"
             viewBox="0 0 11 5"
             xmlns="http://www.w3.org/2000/svg"
-            style={{
-              marginLeft: '8px',
-              transform: openMenu ? 'rotate(0deg)' : 'rotate(180deg)'
-            }}
+            style={{ marginLeft: '8px', transform: openMenu ? 'rotate(0deg)' : 'rotate(180deg)' }}
           >
             <path d="M5.5 0L11 5L0 5L5.5 0Z" fill="currentColor" />
           </svg>
@@ -177,7 +156,7 @@ export function ButtonMenuComponent({
                   {item.label}
                 </button>
               </li>
-            )
+            ),
           )}
         </ul>
       )}

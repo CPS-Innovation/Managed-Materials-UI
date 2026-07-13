@@ -13,13 +13,13 @@ export const saveRotations = async (p: {
     documentModifications: p.rotations.map((rotation) => ({
       pageIndex: rotation.pageNumber,
       operation: 'rotate',
-      arg: rotation.rotationDegrees
-    }))
+      arg: rotation.rotationDegrees,
+    })),
   };
 
   const response = await p.axiosInstance.post(
     `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.parentId}/versions/${p.childId}/modify`,
-    payload
+    payload,
   );
 
   return response.data;

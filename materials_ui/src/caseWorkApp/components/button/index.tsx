@@ -14,29 +14,19 @@ const buttonVariantMap: { [k in TButtonVariant]: string } = {
   inverse: 'govuk-button--inverse',
   default: 'govuk-button--secondary',
   secondary: 'govuk-button--secondary',
-  red: 'govuk-button--red' // custom class to maintain consistency, not required
+  red: 'govuk-button--red', // custom class to maintain consistency, not required
 };
 
 const buttonSizeStyleMap: { [k in TButtonSize]: CSSProperties } = {
   s: { fontSize: '0.875rem' },
-  m: {}
+  m: {},
 };
 const buttonVariantStyleMap: { [k in TButtonVariant]?: CSSProperties } = {
-  red: { backgroundColor: '#d4351c', color: 'white' }
+  red: { backgroundColor: '#d4351c', color: 'white' },
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      variant = 'default',
-      size = 'm',
-      className,
-      style,
-      children,
-      ...restProps
-    },
-    ref
-  ) => {
+  ({ variant = 'default', size = 'm', className, style, children, ...restProps }, ref) => {
     const variantClass = buttonVariantMap[variant];
     const variantStyle = buttonVariantStyleMap[variant];
     const sizeStyle = buttonSizeStyleMap[size];
@@ -52,5 +42,5 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         <span data-ismodified="1" className="br_wrap"></span>
       </button>
     );
-  }
+  },
 );

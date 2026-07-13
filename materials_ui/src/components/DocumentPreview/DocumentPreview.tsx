@@ -11,7 +11,7 @@ export default function DocumentPreview({ row }: Props) {
   const {
     data: caseDocumentData,
     loading: caseDocumentLoading,
-    error: caseDocumentError
+    error: caseDocumentError,
   } = useDocumentPreview({ materialId: row.materialId });
 
   const errorTitle = caseDocumentError?.toString().includes('403')
@@ -38,10 +38,7 @@ export default function DocumentPreview({ row }: Props) {
 
   return (
     <>
-      <LoadingSpinner
-        isLoading={caseDocumentLoading}
-        textContent="Loading preview..."
-      />
+      <LoadingSpinner isLoading={caseDocumentLoading} textContent="Loading preview..." />
       {content}
     </>
   );

@@ -16,9 +16,8 @@ const safeSetToLocalStorage = (p: { key: string; value: unknown }) => {
   window.localStorage.setItem(p.key, JSON.stringify(p.value));
 };
 
-const safeGetAccordionSectionIsExpandedFromLocalStorage = (p: {
-  key: string;
-}) => safeGetFromLocalStorage({ key: p.key, schema: z.boolean() });
+const safeGetAccordionSectionIsExpandedFromLocalStorage = (p: { key: string }) =>
+  safeGetFromLocalStorage({ key: p.key, schema: z.boolean() });
 
 export const GovUkAccordionSectionTemplate = (p: {
   title: string;
@@ -29,10 +28,7 @@ export const GovUkAccordionSectionTemplate = (p: {
 }) => {
   const isFirstRenderRef = useRef(true);
   const [isExpanded, setIsExpanded] = useState(
-    () =>
-      safeGetAccordionSectionIsExpandedFromLocalStorage({
-        key: p.localStorageKey
-      }) === true
+    () => safeGetAccordionSectionIsExpandedFromLocalStorage({ key: p.localStorageKey }) === true,
   );
 
   useEffect(() => {
@@ -64,9 +60,7 @@ export const GovUkAccordionSectionTemplate = (p: {
               >
                 <span className="govuk-accordion__section-toggle">
                   <span className="govuk-accordion__section-toggle-focus">
-                    <span className="govuk-accordion__section-toggle-text">
-                      {p.title}
-                    </span>
+                    <span className="govuk-accordion__section-toggle-text">{p.title}</span>
                     <span className="govuk-accordion-nav__chevron-wrapper">
                       <span
                         className={`govuk-accordion-nav__chevron${!isExpanded ? ' govuk-accordion-nav__chevron--down' : ''}`}

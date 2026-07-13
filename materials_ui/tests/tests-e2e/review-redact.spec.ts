@@ -6,7 +6,7 @@ test.describe('Review redact page', () => {
   test.beforeEach(async ({ page }) => {
     const loadingDocumentHeader = page.getByRole('heading', {
       name: 'Loading documents',
-      includeHidden: true
+      includeHidden: true,
     });
     await mockRoute(page, '/case-materials', mockCaseMaterials());
     await page.goto('./review-and-redact', { waitUntil: 'domcontentloaded' });
@@ -16,9 +16,7 @@ test.describe('Review redact page', () => {
   });
 
   test('T-001: page loads correctly with materials', async ({ page }) => {
-    await expect(
-      page.getByRole('searchbox', { name: 'Search within material' })
-    ).toBeVisible();
+    await expect(page.getByRole('searchbox', { name: 'Search within material' })).toBeVisible();
     await expect(page.getByText('Statements')).toBeVisible();
     await expect(page.getByText('Exhibits')).toBeVisible();
     await expect(page.getByText('MG forms')).toBeVisible();
@@ -27,24 +25,15 @@ test.describe('Review redact page', () => {
     await expect(page.getByText('Unused material')).toBeVisible();
   });
 
-  test('T-002: If no searches are found messages is displayed to user', async ({
-    page
-  }) => {
-    await expect(
-      page.getByRole('searchbox', { name: 'Search within material' })
-    ).toBeVisible();
-    await page
-      .getByRole('searchbox', { name: 'Search within material' })
-      .fill('test search');
+  test('T-002: If no searches are found messages is displayed to user', async ({ page }) => {
+    await expect(page.getByRole('searchbox', { name: 'Search within material' })).toBeVisible();
+    await page.getByRole('searchbox', { name: 'Search within material' }).fill('test search');
     await page
       .getByRole('heading', { name: 'Loading documents', includeHidden: true })
       .waitFor({ state: 'detached' });
     await page.getByRole('button', { name: 'Search' }).click();
     await page
-      .getByRole('heading', {
-        name: 'Loading search results',
-        includeHidden: true
-      })
+      .getByRole('heading', { name: 'Loading search results', includeHidden: true })
       .waitFor({ state: 'detached' });
     await expect(page.getByText('No results.')).toBeVisible();
   });

@@ -8,7 +8,7 @@ describe('<CaseSearchPage />', () => {
     render(
       <MemoryRouter>
         <CaseSearchPage />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
     expect(screen.getByText('Find a case')).toBeInTheDocument();
   });
@@ -17,7 +17,7 @@ describe('<CaseSearchPage />', () => {
     render(
       <MemoryRouter>
         <CaseSearchPage />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
     expect(screen.getByLabelText('Search for a case URN')).toBeInTheDocument();
   });
@@ -26,7 +26,7 @@ describe('<CaseSearchPage />', () => {
     render(
       <MemoryRouter>
         <CaseSearchPage />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
     expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument();
   });
@@ -35,10 +35,10 @@ describe('<CaseSearchPage />', () => {
     render(
       <MemoryRouter>
         <CaseSearchPage />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
     expect(
-      screen.getByText('Search and review a CPS case in England and Wales')
+      screen.getByText('Search and review a CPS case in England and Wales'),
     ).toBeInTheDocument();
   });
 
@@ -46,7 +46,7 @@ describe('<CaseSearchPage />', () => {
     render(
       <MemoryRouter>
         <CaseSearchPage />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
     expect(screen.getByText('Cancel')).toBeInTheDocument();
   });
@@ -55,7 +55,7 @@ describe('<CaseSearchPage />', () => {
     render(
       <MemoryRouter>
         <CaseSearchPage />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const input = screen.getByLabelText('Search for a case URN');
@@ -64,8 +64,8 @@ describe('<CaseSearchPage />', () => {
     await userEvent.type(input, '06SC12345711');
     await userEvent.click(button);
 
-    expect(
-      (await screen.findAllByText('Enter a URN in the right format')).length
-    ).toBeGreaterThan(0);
+    expect((await screen.findAllByText('Enter a URN in the right format')).length).toBeGreaterThan(
+      0,
+    );
   });
 });

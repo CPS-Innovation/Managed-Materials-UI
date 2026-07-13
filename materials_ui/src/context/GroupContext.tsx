@@ -11,9 +11,7 @@ export type GroupContextType = {
   hasAppAccess: () => boolean;
 };
 
-export const GroupDataContext = createContext<GroupContextType>(
-  {} as GroupContextType
-);
+export const GroupDataContext = createContext<GroupContextType>({} as GroupContextType);
 
 export const GroupDataProvider = ({ children }: PropsWithChildren) => {
   const [groups, setGroups] = useState<UserGroupType[]>(() => {

@@ -15,17 +15,15 @@ test.describe('Communications page', () => {
       mockCaseMaterials({
         subject: 'MG7 SMITH Will (Redacted)',
         type: 'DCF',
-        category: 'Communication'
-      })
+        category: 'Communication',
+      }),
     );
 
-    await expect(
-      page.getByText('MG7 SMITH Will (Redacted)', { exact: true })
-    ).toBeVisible();
+    await expect(page.getByText('MG7 SMITH Will (Redacted)', { exact: true })).toBeVisible();
   });
 
   test('T-002: page shows no communications text if no communications are displayed', async ({
-    page
+    page,
   }) => {
     mockRoute(page, '/case-materials', mockCaseMaterials({}));
 
@@ -33,9 +31,7 @@ test.describe('Communications page', () => {
     await page.waitForSelector('tbody'); // Ensure table exists first
     await page.route('/case-materials', (route) => route.abort());
     expect(
-      page.getByText(
-        'There are no communications that match your selection for this case'
-      )
+      page.getByText('There are no communications that match your selection for this case'),
     ).toBeVisible();
   });
 
@@ -48,14 +44,12 @@ test.describe('Communications page', () => {
         subject: 'MG7 SMITH Will (Redacted)',
         type: 'DCF',
         category: 'Communication',
-        direction: 'Incoming'
-      })
+        direction: 'Incoming',
+      }),
     );
     await page.getByTestId('direction-Incoming').check();
     await page.getByTestId('applyFiltersButton').click();
-    await expect(
-      page.getByText('MG7 SMITH Will (Redacted)', { exact: true })
-    ).toBeVisible();
+    await expect(page.getByText('MG7 SMITH Will (Redacted)', { exact: true })).toBeVisible();
   });
 
   //comms type filter
@@ -67,8 +61,8 @@ test.describe('Communications page', () => {
         subject: 'test 1',
         type: 'DCF',
         category: 'Communication',
-        method: 'Bundle'
-      })
+        method: 'Bundle',
+      }),
     );
 
     await page.getByTestId('method-Bundle').check();
@@ -84,8 +78,8 @@ test.describe('Communications page', () => {
         subject: 'test 2',
         type: 'DCF',
         category: 'Communication',
-        method: 'Police'
-      })
+        method: 'Police',
+      }),
     );
     await page.getByTestId('checkbox-party-Police').click();
     await page.getByTestId('applyFiltersButton').click();
@@ -100,8 +94,8 @@ test.describe('Communications page', () => {
         subject: 'test 3',
         type: 'Meeting',
         category: 'Communication',
-        method: 'Police'
-      })
+        method: 'Police',
+      }),
     );
 
     await page.getByTestId('type-Meeting').check();
@@ -126,8 +120,8 @@ test.describe('Communications page', () => {
         subject: 'test 1',
         type: 'Meeting',
         category: 'Communication',
-        method: 'Police'
-      })
+        method: 'Police',
+      }),
     );
     await page.getByRole('searchbox', { name: 'Subject' }).fill('test 1');
     await page.getByTestId('applyFiltersButton').click();

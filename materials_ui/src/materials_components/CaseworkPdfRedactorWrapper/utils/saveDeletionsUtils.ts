@@ -13,13 +13,13 @@ export const saveDeletions = async (p: {
     redactions: [],
     documentModifications: p.deletions.map((red) => ({
       pageIndex: red.pageNumber,
-      operation: 'delete'
-    }))
+      operation: 'delete',
+    })),
   };
 
   const response = await p.axiosInstance.put(
     `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.parentId}/versions/${p.childId}/redact`,
-    payload
+    payload,
   );
 
   return response.data;

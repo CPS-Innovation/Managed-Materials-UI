@@ -27,25 +27,17 @@ export const useCaseSearch = (urn: string | undefined) => {
           setBanner({
             type: 'error',
             header: 'Something went wrong',
-            content:
-              'There was a problem with the server when searching for a case.'
+            content: 'There was a problem with the server when searching for a case.',
           });
         }
-      }
-    }
+      },
+    },
   );
 
-  return {
-    caseDetails: data ?? null,
-    loading: isLoading || isValidating,
-    refresh: mutate
-  };
+  return { caseDetails: data ?? null, loading: isLoading || isValidating, refresh: mutate };
 };
 
-export const getCaseDetails = async (p: {
-  axiosInstance: AxiosInstance;
-  urn: string;
-}) => {
+export const getCaseDetails = async (p: { axiosInstance: AxiosInstance; urn: string }) => {
   return p.axiosInstance.get<CaseDetailsType>(`/urns/${p.urn}/cases`);
 };
 
@@ -57,7 +49,7 @@ export const useCaseDetails = (p: { urn: string }) => {
     () => {
       if (!p.urn) return;
       return getCaseDetails({ axiosInstance, urn: p.urn });
-    }
+    },
   );
 
   return rtn;

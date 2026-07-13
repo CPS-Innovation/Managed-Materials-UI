@@ -12,10 +12,7 @@ export const ManualRedactionForm = (p: {
     <div>
       <div className="govuk-label">Redaction Details</div>
       <div style={{ display: 'flex', alignItems: 'start', gap: '8px' }}>
-        <RedactionTypeSelect
-          initFocus
-          onRedactionTypeChange={setRedactionType}
-        />
+        <RedactionTypeSelect initFocus onRedactionTypeChange={setRedactionType} />
         <GovUkButton variant="secondary" onClick={p.onCancel}>
           Cancel
         </GovUkButton>

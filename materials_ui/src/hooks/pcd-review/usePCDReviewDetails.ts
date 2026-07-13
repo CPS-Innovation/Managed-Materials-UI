@@ -2,22 +2,16 @@ import useSWR from 'swr';
 
 import { useCaseInfoStore, useRequest } from '..';
 import { QUERY_KEYS } from '../../constants/query';
-import {
-  PCDReviewDetailsResponseType,
-  PCDReviewDetailsSchema
-} from '../../schemas/pcdReview';
+import { PCDReviewDetailsResponseType, PCDReviewDetailsSchema } from '../../schemas/pcdReview';
 
 export const usePCDReviewDetails = (historyId: number | undefined) => {
   const request = useRequest();
   const { caseInfo } = useCaseInfoStore();
 
-  const getPCDReviewDetails = async ([, requestedHistoryId]: readonly [
-    string,
-    number
-  ]) => {
+  const getPCDReviewDetails = async ([, requestedHistoryId]: readonly [string, number]) => {
     try {
       const response = await request.get(
-        `urns/${caseInfo?.urn}/cases/${caseInfo?.id}/history/${requestedHistoryId}/pcd-review-details`
+        `urns/${caseInfo?.urn}/cases/${caseInfo?.id}/history/${requestedHistoryId}/pcd-review-details`,
       );
       const parsedResponse = PCDReviewDetailsSchema.safeParse(response.data);
 
@@ -32,13 +26,10 @@ export const usePCDReviewDetails = (historyId: number | undefined) => {
     }
   };
 
-  const { data, error, isLoading, isValidating } =
-    useSWR<PCDReviewDetailsResponseType>(
-      caseInfo && historyId !== undefined
-        ? [QUERY_KEYS.PCD_REVIEW_REVIEW_DETAILS, historyId]
-        : null,
-      getPCDReviewDetails
-    );
+  const { data, error, isLoading, isValidating } = useSWR<PCDReviewDetailsResponseType>(
+    caseInfo && historyId !== undefined ? [QUERY_KEYS.PCD_REVIEW_REVIEW_DETAILS, historyId] : null,
+    getPCDReviewDetails,
+  );
 
   return { data, error, isLoading: isLoading || isValidating };
 };

@@ -16,21 +16,21 @@ const mockCaseDetails: CaseDetailsType = [
       dob: '01/01/1980',
       age: '',
       youth: false,
-      type: 'Person'
+      type: 'Person',
     },
     headlineCharge: {
       charge: 'FA97031\u00A0Theft',
       date: null,
       earlyDate: '2025-09-19',
       lateDate: '2025-09-22',
-      nextHearingDate: null
+      nextHearingDate: null,
     },
     defendants: [],
     witnesses: [],
-    preChargeDecisionRequests: []
-  }
+    preChargeDecisionRequests: [],
+  },
 ];
 
-export const mockCaseDetailsResponse = (
-  overwrite: Partial<CaseDetailsType[0]> = {}
-) => [{ ...mockCaseDetails[0], ...overwrite }];
+export const mockCaseDetailsResponse = (overwrite: Partial<CaseDetailsType[0]> = {}) => [
+  { ...mockCaseDetails[0], ...overwrite },
+];

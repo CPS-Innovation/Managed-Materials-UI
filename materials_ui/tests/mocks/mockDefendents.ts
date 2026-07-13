@@ -28,8 +28,8 @@ const defendants: DefendantsResponseType = {
           disposedReason: 'FINALISED',
           lastHearingOutcome: null,
           custodyTimeLimit: null,
-          latestPleaDescription: '-'
-        }
+          latestPleaDescription: '-',
+        },
       ],
       charges: [],
       proposedCharges: [],
@@ -47,10 +47,10 @@ const defendants: DefendantsResponseType = {
         workPhoneNumber: null,
         preferredCorrespondenceLanguage: 'English',
         religion: 'NotProvided',
-        guardian: null
-      }
-    }
-  ]
+        guardian: null,
+      },
+    },
+  ],
 };
 
 export const mockDefendants = (overwrite?: Partial<DefendantsResponseType>) => {

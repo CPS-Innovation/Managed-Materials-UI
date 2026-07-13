@@ -1,49 +1,41 @@
-import {
-  Reclassify_Orchestrated_Response_Type,
-  Reclassify_ClassificationEnumType
-} from '../schemas/forms/reclassify';
 import { BannerType, BannerTypeSchema } from '../schemas/banner';
+import {
+  Reclassify_ClassificationEnumType,
+  Reclassify_Orchestrated_Response_Type,
+} from '../schemas/forms/reclassify';
 
 export const getBannerData = (
   response: Reclassify_Orchestrated_Response_Type,
   classificationType: Reclassify_ClassificationEnumType,
-  isRenamed: boolean
+  isRenamed: boolean,
 ): BannerType[] => {
   const bannerTypes = BannerTypeSchema.enum;
 
   // STATEMENT HANDLING
   if (classificationType === 'STATEMENT') {
     if (response.status === 'Success') {
-      if (
-        response.witnessResult?.success &&
-        response.actionPlanResult?.success === false
-      ) {
+      if (response.witnessResult?.success && response.actionPlanResult?.success === false) {
         return [
           {
             type: 'success',
             header: 'Reclassification successful',
-            content: 'Material reclassified and witness added successfully.'
+            content: 'Material reclassified and witness added successfully.',
           },
           {
             type: 'error',
             header: 'Action plan creation failed',
-            content:
-              'Unable to reclassify material, add witness and send action plan.'
-          }
+            content: 'Unable to reclassify material, add witness and send action plan.',
+          },
         ];
       }
 
-      if (
-        response.witnessResult?.success &&
-        response.actionPlanResult?.success
-      ) {
+      if (response.witnessResult?.success && response.actionPlanResult?.success) {
         return [
           {
             type: bannerTypes.success,
             header: 'Reclassification successful',
-            content:
-              'Material reclassified, witness added and action plan sent successfully.'
-          }
+            content: 'Material reclassified, witness added and action plan sent successfully.',
+          },
         ];
       }
 
@@ -51,8 +43,8 @@ export const getBannerData = (
         {
           type: bannerTypes.success,
           header: 'Reclassification successful',
-          content: 'Material reclassified successfully.'
-        }
+          content: 'Material reclassified successfully.',
+        },
       ];
     } else if (response.status === 'PartialSuccess') {
       if (
@@ -63,13 +55,13 @@ export const getBannerData = (
           {
             type: 'success',
             header: 'Reclassification successful',
-            content: 'Material reclassified and witness added successfully.'
+            content: 'Material reclassified and witness added successfully.',
           },
           {
             type: 'error',
             header: 'Action plan creation failed',
-            content: 'Unable to send action plan.'
-          }
+            content: 'Unable to send action plan.',
+          },
         ];
       }
 
@@ -82,13 +74,13 @@ export const getBannerData = (
           {
             type: 'success',
             header: 'Action plan success',
-            content: 'Action plan sent successfully.'
+            content: 'Action plan sent successfully.',
           },
           {
             type: 'error',
             header: 'Reclassification failed',
-            content: 'Unable to reclassify material and add witness.'
-          }
+            content: 'Unable to reclassify material and add witness.',
+          },
         ];
       }
 
@@ -101,13 +93,13 @@ export const getBannerData = (
           {
             type: 'success',
             header: 'New witness and action plan success',
-            content: 'New witness added and action plan sent successfully.'
+            content: 'New witness added and action plan sent successfully.',
           },
           {
             type: 'error',
             header: 'Reclassification failed',
-            content: 'Unable to reclassify material.'
-          }
+            content: 'Unable to reclassify material.',
+          },
         ];
       }
 
@@ -121,9 +113,8 @@ export const getBannerData = (
           {
             type: bannerTypes.error,
             header: 'Reclassification failed',
-            content:
-              'Unable to reclassify material, add witness and send action plan.'
-          }
+            content: 'Unable to reclassify material, add witness and send action plan.',
+          },
         ];
       }
 
@@ -131,8 +122,8 @@ export const getBannerData = (
         {
           type: bannerTypes.error,
           header: 'Reclassification failed',
-          content: 'Unable to reclassify material.'
-        }
+          content: 'Unable to reclassify material.',
+        },
       ];
     }
   }
@@ -145,8 +136,8 @@ export const getBannerData = (
         {
           type: bannerTypes.success,
           header: 'Reclassification successful',
-          content: 'Material reclassified and renamed successfully.'
-        }
+          content: 'Material reclassified and renamed successfully.',
+        },
       ];
     }
 
@@ -154,8 +145,8 @@ export const getBannerData = (
       {
         type: bannerTypes.success,
         header: 'Reclassification successful',
-        content: 'Material reclassified successfully.'
-      }
+        content: 'Material reclassified successfully.',
+      },
     ];
   }
 
@@ -167,27 +158,27 @@ export const getBannerData = (
       banners.push({
         type: bannerTypes.success,
         header: 'Reclassification successful',
-        content: 'Material reclassified successfully.'
+        content: 'Material reclassified successfully.',
       });
 
       if (isRenamed && !response.renameMaterialResult?.success) {
         banners.push({
           type: bannerTypes.error,
           header: 'Rename failed',
-          content: 'Unable to rename material.'
+          content: 'Unable to rename material.',
         });
       }
     } else {
       banners.push({
         type: bannerTypes.error,
         header: 'Reclassification failed',
-        content: 'Unable to reclassify material.'
+        content: 'Unable to reclassify material.',
       });
       if (isRenamed) {
         banners.push({
           type: bannerTypes.success,
           header: 'Renamed successfully',
-          content: 'Material renamed successfully.'
+          content: 'Material renamed successfully.',
         });
       }
     }
@@ -196,10 +187,6 @@ export const getBannerData = (
   }
 
   return [
-    {
-      type: 'error',
-      header: 'Reclassification failed',
-      content: 'Unable to reclassify material.'
-    }
+    { type: 'error', header: 'Reclassification failed', content: 'Unable to reclassify material.' },
   ];
 };
