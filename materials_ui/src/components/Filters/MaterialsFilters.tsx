@@ -104,7 +104,6 @@ export const MaterialsFilters = () => {
               id={`category-${category}`}
               label={(() => {
                 const lookupLabel = categoryLabelLookup[category];
-                console.log({ lookupLabel, category });
                 return lookupLabel ? lookupLabel : category;
               })()}
               checked={
