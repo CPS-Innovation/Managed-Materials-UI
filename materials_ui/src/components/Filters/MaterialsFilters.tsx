@@ -5,6 +5,10 @@ import { useFeatureFlag, useFilters } from '../../hooks';
 import Checkbox from '../Checkbox/Checkbox';
 import { FilterForm } from './FilterForm';
 
+const categoryLabelLookup: { [k: string]: string } = {
+  'Defendant Pre Cons': 'Defendant Pre-Cons'
+};
+
 export const MaterialsFilters = () => {
   const {
     filters,
@@ -98,7 +102,10 @@ export const MaterialsFilters = () => {
           {categories.map((category) => (
             <Checkbox
               id={`category-${category}`}
-              label={category}
+              label={(() => {
+                const lookupLabel = categoryLabelLookup[category];
+                return lookupLabel ? lookupLabel : category;
+              })()}
               checked={
                 shallowFilters?.filters?.category?.includes(category) || false
               }
