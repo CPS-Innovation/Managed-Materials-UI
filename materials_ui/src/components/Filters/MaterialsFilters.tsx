@@ -37,7 +37,6 @@ export const MaterialsFilters = () => {
     setSearch(searchTerm);
   };
 
-  const categories = materialsCategoryList;
   const statusList = ['Used', 'Unused'];
 
   return (
@@ -99,19 +98,19 @@ export const MaterialsFilters = () => {
             <h3 className="govuk-heading-s small-heading-spacing">Category</h3>
           </legend>
 
-          {categories.map((category) => (
+          {materialsCategoryList.map(({ value, label }) => (
             <Checkbox
-              id={`category-${category}`}
+              id={`category-${value}`}
               label={(() => {
-                const lookupLabel = categoryLabelLookup[category];
-                return lookupLabel ? lookupLabel : category;
+                const lookupLabel = categoryLabelLookup[value];
+                return lookupLabel ? lookupLabel : label;
               })()}
               checked={
-                shallowFilters?.filters?.category?.includes(category) || false
+                shallowFilters?.filters?.category?.includes(value) || false
               }
               onChange={(event) => handleCheckboxChange('category', event)}
-              value={category}
-              key={category}
+              value={value}
+              key={value}
             />
           ))}
         </fieldset>
