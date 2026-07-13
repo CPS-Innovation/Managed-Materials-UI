@@ -5,10 +5,6 @@ import { useFeatureFlag, useFilters } from '../../hooks';
 import Checkbox from '../Checkbox/Checkbox';
 import { FilterForm } from './FilterForm';
 
-const categoryLabelLookup: { [k: string]: string } = {
-  'Defendant Pre Cons': 'Defendant Pre-Cons'
-};
-
 export const MaterialsFilters = () => {
   const {
     filters,
@@ -37,7 +33,6 @@ export const MaterialsFilters = () => {
     setSearch(searchTerm);
   };
 
-  const categories = materialsCategoryList;
   const statusList = ['Used', 'Unused'];
 
   return (
@@ -99,19 +94,16 @@ export const MaterialsFilters = () => {
             <h3 className="govuk-heading-s small-heading-spacing">Category</h3>
           </legend>
 
-          {categories.map((category) => (
+          {materialsCategoryList.map(({ value, label }) => (
             <Checkbox
-              id={`category-${category}`}
-              label={(() => {
-                const lookupLabel = categoryLabelLookup[category];
-                return lookupLabel ? lookupLabel : category;
-              })()}
+              id={`category-${value}`}
+              label={label}
               checked={
-                shallowFilters?.filters?.category?.includes(category) || false
+                shallowFilters?.filters?.category?.includes(value) ?? false
               }
               onChange={(event) => handleCheckboxChange('category', event)}
-              value={category}
-              key={category}
+              value={value}
+              key={value}
             />
           ))}
         </fieldset>
