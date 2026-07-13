@@ -22,7 +22,7 @@ test.describe('Review redact page', () => {
     await expect(page.getByText('Statements')).toBeVisible();
     await expect(page.getByText('Exhibits')).toBeVisible();
     await expect(page.getByText('MG forms')).toBeVisible();
-    await expect(page.getByText('Other documents')).toBeVisible();
+    await expect(page.getByText('Other material')).toBeVisible();
     await expect(page.getByText('Defendant pre-cons')).toBeVisible();
     await expect(page.getByText('Unused material')).toBeVisible();
   });

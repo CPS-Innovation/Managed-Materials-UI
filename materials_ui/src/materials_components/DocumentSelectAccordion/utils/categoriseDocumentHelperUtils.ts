@@ -4,7 +4,7 @@ export const categoryDetails = [
   { label: 'Statements', categoryName: 'statement' },
   { label: 'Exhibits', categoryName: 'exhibit' },
   { label: 'MG forms', categoryName: 'mgForm' },
-  { label: 'Other documents', categoryName: 'otherDocument' },
+  { label: 'Other material', categoryName: 'otherMaterial' },
   { label: 'Defendant pre-cons', categoryName: 'defendantPreCons' },
   { label: 'Unused material', categoryName: 'unusedMaterial' }
 ] as const;
@@ -21,7 +21,7 @@ export const documentTypeIdsMap: Record<TCategoryName, number[]> = {
     1019, 1024, 1025, 1026, 1027, 1033, 1034, 1035, 1036, 1037, 1038, 1039,
     1040, 1041, 1045, 1046, 1047, 1048, 1049, 1050, 1060, 1061, 1063, 1066, 1203
   ],
-  otherDocument: [-2, 1201],
+  otherMaterial: [-2, 1201],
   defendantPreCons: [1056, 1057],
   unusedMaterial: [1009, 1010, 1011, 1058, 1202, 100239, 226148]
 };
@@ -32,7 +32,7 @@ export const initDocsOnDocCategoryNamesMap = (): {
   statement: [],
   exhibit: [],
   mgForm: [],
-  otherDocument: [],
+  otherMaterial: [],
   defendantPreCons: [],
   unusedMaterial: []
 });
