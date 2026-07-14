@@ -1,18 +1,11 @@
 import { FieldErrors } from 'react-hook-form';
 import { RedactionLogFormValues } from '../RedactionLogModalBody';
 
-export const ErrorSummary = ({
-  errors
-}: {
-  errors: FieldErrors<RedactionLogFormValues>;
-}) => {
+export const ErrorSummary = ({ errors }: { errors: FieldErrors<RedactionLogFormValues> }) => {
   if (Object.keys(errors).length === 0) return null;
 
   return (
-    <div
-      className="govuk-error-summary govuk-!-margin-bottom-0"
-      data-module="govuk-error-summary"
-    >
+    <div className="govuk-error-summary govuk-!-margin-bottom-0" data-module="govuk-error-summary">
       <div role="alert">
         <h2 className="govuk-error-summary__title">There is a problem</h2>
         <div className="govuk-error-summary__body">

@@ -1,12 +1,8 @@
-import { usePagination } from 'react-use-pagination';
-import { useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { usePagination } from 'react-use-pagination';
 
-type UsePagerOptions = {
-  totalItems?: number;
-  initialPage?: number;
-  initialPageSize?: number;
-};
+type UsePagerOptions = { totalItems?: number; initialPage?: number; initialPageSize?: number };
 
 export const usePager = (options?: UsePagerOptions) => {
   const usePaginationData = usePagination(options);
@@ -17,10 +13,7 @@ export const usePager = (options?: UsePagerOptions) => {
     if (usePaginationData.currentPage === 0) {
       newQueryCommands.delete('page');
     } else {
-      newQueryCommands.set(
-        'page',
-        (usePaginationData.currentPage + 1 || '').toString()
-      );
+      newQueryCommands.set('page', (usePaginationData.currentPage + 1 || '').toString());
     }
     setQueryParams(newQueryCommands);
   }, [usePaginationData.currentPage]);

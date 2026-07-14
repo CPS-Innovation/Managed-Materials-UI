@@ -9,7 +9,7 @@ export const useSwitchContentArea = () => {
     const contentAreas = [
       document.querySelector('#side-panel'),
       document.querySelector('#document-tabs'),
-      document.querySelector('#active-tab-panel')
+      document.querySelector('#active-tab-panel'),
     ];
 
     return contentAreas.filter((contentArea) => contentArea);
@@ -21,7 +21,7 @@ export const useSwitchContentArea = () => {
     e.preventDefault();
     const contentAreas = getContentAreas();
     const activeAreaIndex = contentAreas.findIndex(
-      (contentArea) => document.activeElement === contentArea
+      (contentArea) => document.activeElement === contentArea,
     );
 
     if (

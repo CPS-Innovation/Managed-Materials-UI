@@ -17,16 +17,14 @@ export const useDocuments = () => {
 
   const { data, isLoading } = useSWR<DocumentResultType>(
     urn && caseId ? [QUERY_KEYS.GET_ALL_DOCUMENTS, urn, caseId] : null,
-    getDocuments
+    getDocuments,
   );
 
   const docTypes = data
     ? Array.from(
         new Set(
-          data
-            .map((doc) => doc.cmsDocType.documentType)
-            .filter((t) => t != null && t !== '')
-        )
+          data.map((doc) => doc.cmsDocType.documentType).filter((t) => t != null && t !== ''),
+        ),
       )
     : [];
 

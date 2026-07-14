@@ -9,7 +9,7 @@ export const documentSchema = z.object({
   cmsDocType: z.object({
     documentTypeId: z.number(),
     documentType: z.string().nullable(),
-    documentCategory: z.string()
+    documentCategory: z.string(),
   }),
   cmsOriginalFileName: z.string(),
   presentationTitle: z.string(),
@@ -17,9 +17,7 @@ export const documentSchema = z.object({
   isUnused: z.boolean(),
   hasNotes: z.boolean(),
   childId: z.number(),
-  presentationFlags: z
-    .object({ write: z.union([z.string(), z.boolean()]).nullish() })
-    .nullish()
+  presentationFlags: z.object({ write: z.union([z.string(), z.boolean()]).nullish() }).nullish(),
 });
 export const documentListSchema = z.array(documentSchema);
 export type TDocument = z.infer<typeof documentSchema>;
@@ -30,9 +28,7 @@ export const getDocumentListFromAxiosInstance = async (p: {
   urn: string | undefined;
   caseId: number | undefined;
 }) => {
-  const response = await p.axiosInstance.get(
-    `/api/urns/${p.urn}/cases/${p.caseId}/documents`
-  );
+  const response = await p.axiosInstance.get(`/api/urns/${p.urn}/cases/${p.caseId}/documents`);
 
   return response.data;
 };
@@ -44,7 +40,7 @@ export const getDocumentFromAxiosInstance = async (p: {
   versionId: number | undefined;
 }) => {
   const response = await p.axiosInstance.get(
-    `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.versionId}`
+    `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.versionId}`,
   );
 
   return response.data;
@@ -59,7 +55,7 @@ export const safeGetDocumentListFromAxiosInstance = async (p: {
     const resp = await getDocumentListFromAxiosInstance({
       urn: p.urn,
       caseId: p.caseId,
-      axiosInstance: p.axiosInstance
+      axiosInstance: p.axiosInstance,
     });
 
     return documentListSchema.safeParse(resp);
@@ -86,15 +82,10 @@ export const safeGetDocumentListFromLocalStorage = (p: {
 const DOCUMENT_LIST_RELOAD_ATTEMPTS = 3;
 const DOCUMENT_LIST_RELOAD_RETRY_DELAY_MS = 400;
 
-export const useGetDocumentList = (p: {
-  urn: string | undefined;
-  caseId: number | undefined;
-}) => {
+export const useGetDocumentList = (p: { urn: string | undefined; caseId: number | undefined }) => {
   const axiosInstance = useAxiosInstance();
 
-  const [data, setDocumentList] = useState<TDocumentList | null | undefined>(
-    undefined
-  );
+  const [data, setDocumentList] = useState<TDocumentList | null | undefined>(undefined);
   useEffect(() => {
     const key = `documentList-${p.urn}-${p.caseId}`;
     if (data) localStorage.setItem(key, JSON.stringify(data));
@@ -102,10 +93,7 @@ export const useGetDocumentList = (p: {
   }, [data]);
 
   const loadFromLocalStorage = () => {
-    const resp = safeGetDocumentListFromLocalStorage({
-      urn: p.urn,
-      caseId: p.caseId
-    });
+    const resp = safeGetDocumentListFromLocalStorage({ urn: p.urn, caseId: p.caseId });
 
     if (resp.success) setDocumentList(resp.data);
   };
@@ -115,7 +103,7 @@ export const useGetDocumentList = (p: {
       const resp = await safeGetDocumentListFromAxiosInstance({
         axiosInstance,
         urn: p.urn,
-        caseId: p.caseId
+        caseId: p.caseId,
       });
 
       if (resp.success) {
@@ -124,9 +112,7 @@ export const useGetDocumentList = (p: {
       }
 
       if (attempt < DOCUMENT_LIST_RELOAD_ATTEMPTS) {
-        await new Promise((resolve) =>
-          setTimeout(resolve, DOCUMENT_LIST_RELOAD_RETRY_DELAY_MS)
-        );
+        await new Promise((resolve) => setTimeout(resolve, DOCUMENT_LIST_RELOAD_RETRY_DELAY_MS));
       }
     }
 

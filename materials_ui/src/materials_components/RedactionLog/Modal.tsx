@@ -18,6 +18,6 @@ export const Modal = ({ children, onClose }: ModalProps) => {
         {children}
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };

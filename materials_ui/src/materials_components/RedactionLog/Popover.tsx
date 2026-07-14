@@ -14,7 +14,7 @@ export const Popover = ({ title, content }: Props) => {
         position: 'absolute',
         top: '40px',
         right: '0px',
-        zIndex: 1000
+        zIndex: 1000,
       }}
     >
       <h3 style={{ margin: 0, fontSize: '19px' }}>{title}</h3>

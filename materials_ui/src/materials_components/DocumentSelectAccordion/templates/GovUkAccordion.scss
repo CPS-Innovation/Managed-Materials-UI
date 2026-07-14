@@ -1,5 +1,5 @@
 .govuk-frontend-supported .govuk-accordion {
-  border:0;
+  border: 0;
   margin: 0;
 
   .govuk-accordion__section {
@@ -19,23 +19,23 @@
     border-bottom-style: solid;
     border-bottom-color: #f3f2f1;
     background-color: #f3f2f1;
-    
+
     &:hover {
       background-color: #e7e5e3;
       border-bottom-color: #e7e5e3;
     }
-    
+
     &:focus {
       border-bottom-color: black;
     }
 
     .govuk-accordion__section-toggle {
-      margin: 0 ;
-      
-      .govuk-accordion__section-toggle-focus{
-        display: flex ;
-        padding: 10px 18px ;
-        margin: 0 ;
+      margin: 0;
+
+      .govuk-accordion__section-toggle-focus {
+        display: flex;
+        padding: 10px 18px;
+        margin: 0;
         box-shadow: none;
 
         .govuk-accordion__section-toggle-text {
@@ -71,19 +71,19 @@
   display: flex;
   padding: 12px 22px;
   border-top: solid 1px #b1b4b6;
-  
+
   &.bg-blue {
     background-color: #1d70b813;
   }
   &.bg-white {
     background-color: #ffffff;
   }
-  
+
   &.show-left-border {
     padding-left: 17px;
     border-left: solid 5px #1d70b8;
   }
-  
+
   &.show-right-border {
     padding-right: 17px;
     border-right: solid 5px #1d70b8;
@@ -95,20 +95,17 @@
     flex-direction: column;
     gap: 8px;
   }
-  
 
   .govuk-link {
     cursor: pointer;
     color: #1d70b8;
 
     &:hover {
-      color: #003078
+      color: #003078;
     }
-   
+
     &.disabled {
       cursor: default;
     }
   }
 }
-
-

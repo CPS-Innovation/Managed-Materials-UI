@@ -4,7 +4,7 @@ import { GovUkButton } from './templates/GovUkButton';
 const deletionReasonData = [
   { id: '1', name: 'MG11 Backsheet' },
   { id: '2', name: 'Page contains personal information' },
-  { id: '3', name: 'Blank page' }
+  { id: '3', name: 'Blank page' },
 ];
 
 type TDeletionReason = (typeof deletionReasonData)[number];
@@ -25,9 +25,7 @@ const DeletionReasonSelect = (p: {
       className="govuk-select"
       value={deletionReasonId}
       onChange={(e) => {
-        const newDeletionReason = deletionReasonData.find(
-          (itm) => itm.id === e.target.value
-        );
+        const newDeletionReason = deletionReasonData.find((itm) => itm.id === e.target.value);
 
         setDeletionReasonId(e.target.value);
         p.onDeletionReasonChange(newDeletionReason);
@@ -64,11 +62,7 @@ export const DeletionReasonForm = (p: {
         <GovUkButton variant="secondary" onClick={p.onCancelClick}>
           Cancel
         </GovUkButton>
-        <GovUkButton
-          className="govuk-button"
-          disabled={!deletionReason}
-          onClick={p.onSaveSuccess}
-        >
+        <GovUkButton className="govuk-button" disabled={!deletionReason} onClick={p.onSaveSuccess}>
           Redact
         </GovUkButton>
       </div>

@@ -12,9 +12,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     base: '/materials-ui/',
-    define: {
-      __MAINTENANCE_MODE__: JSON.stringify(env.VITE_MAINTENANCE_MODE === 'true')
-    },
+    define: { __MAINTENANCE_MODE__: JSON.stringify(env.VITE_MAINTENANCE_MODE === 'true') },
     plugins: [
       svgr(),
       react(),
@@ -26,39 +24,33 @@ export default defineConfig(({ mode }) => {
             console.log(env.VITE_GLOBAL_SCRIPT_URL);
             return html.replace(
               '</head>',
-              `<script src="${env.VITE_GLOBAL_SCRIPT_URL}" type="module"></script>\n</head>`
+              `<script src="${env.VITE_GLOBAL_SCRIPT_URL}" type="module"></script>\n</head>`,
             );
           }
           return html;
-        }
+        },
       },
       {
         name: 'copy-govuk-assets',
         buildStart() {
-          const dest = path.resolve(
-            import.meta.dirname,
-            'public/assets/images'
-          );
+          const dest = path.resolve(import.meta.dirname, 'public/assets/images');
           fs.mkdirSync(dest, { recursive: true });
           const src = path.resolve(
             import.meta.dirname,
-            'node_modules/govuk-frontend/dist/govuk/assets/images'
+            'node_modules/govuk-frontend/dist/govuk/assets/images',
           );
           for (const file of fs.readdirSync(src)) {
             fs.copyFileSync(path.join(src, file), path.join(dest, file));
           }
-        }
+        },
       },
       {
         name: 'copy-index-to-root',
         closeBundle() {
-          const src = path.resolve(
-            import.meta.dirname,
-            'build/materials-ui/index.html'
-          );
+          const src = path.resolve(import.meta.dirname, 'build/materials-ui/index.html');
           const dest = path.resolve(import.meta.dirname, 'build/index.html');
           fs.copyFileSync(src, dest);
-        }
+        },
       },
       {
         name: 'redirect-trailing-slash',
@@ -71,12 +63,12 @@ export default defineConfig(({ mode }) => {
             }
             next();
           });
-        }
-      }
+        },
+      },
     ],
     resolve: {
       alias: [{ find: 'node_modules', replacement: '/node_modules' }],
-      dedupe: ['react', 'react-dom']
+      dedupe: ['react', 'react-dom'],
     },
     server: { port: 3000 },
     preview: {
@@ -103,8 +95,8 @@ export default defineConfig(({ mode }) => {
               ;
         `
           .replace(/\s{2,}/g, ' ')
-          .trim()
-      }
+          .trim(),
+      },
     },
     esbuild: { drop: mode === 'production' ? ['debugger'] : [] },
     build: {
@@ -135,9 +127,9 @@ export default defineConfig(({ mode }) => {
               }
               return 'vendor'; // Default fallback for other dependencies
             }
-          }
-        }
-      }
+          },
+        },
+      },
     },
     css: {
       preprocessorOptions: {
@@ -148,11 +140,11 @@ export default defineConfig(({ mode }) => {
             'import',
             'slash-div',
             'global-builtin',
-            'function-units'
+            'function-units',
           ],
-          quietDeps: true
-        }
-      }
+          quietDeps: true,
+        },
+      },
     },
     test: {
       globals: true,
@@ -160,7 +152,7 @@ export default defineConfig(({ mode }) => {
       outputFile: { junit: './unit-test-results.xml' },
       setupFiles: './src/setupTests.ts',
       silent: true,
-      exclude: ['e2e', 'node_modules']
-    }
+      exclude: ['e2e', 'node_modules'],
+    },
   };
 });

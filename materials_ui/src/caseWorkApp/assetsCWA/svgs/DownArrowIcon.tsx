@@ -1,8 +1,4 @@
-export const DownArrowIcon = (p: {
-  color: string;
-  rotateDegrees?: number;
-  scale?: number;
-}) => {
+export const DownArrowIcon = (p: { color: string; rotateDegrees?: number; scale?: number }) => {
   const rotateDegrees = p.rotateDegrees ?? 0;
   const scale = p.scale ?? 1;
   return (

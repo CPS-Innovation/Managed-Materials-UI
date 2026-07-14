@@ -5,6 +5,4 @@ import { expect } from 'vitest';
 expect.extend(matchers);
 
 // Mock import.meta if needed
-Object.defineProperty(global, 'import.meta', {
-  value: { env: { MODE: 'test' } }
-});
+Object.defineProperty(global, 'import.meta', { value: { env: { MODE: 'test' } } });

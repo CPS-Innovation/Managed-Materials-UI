@@ -1,7 +1,4 @@
-import {
-  FilterItem,
-  SortBy
-} from '../context/FiltersContext/helpers/types';
+import { FilterItem, SortBy } from '../context/FiltersContext/helpers/types';
 import { isObjectEmpty } from './object';
 
 export type ColumnSortFn<T> = (a: T, b: T, direction: SortBy) => number;
@@ -13,8 +10,8 @@ export type ColumnSortFn<T> = (a: T, b: T, direction: SortBy) => number;
 export const getSortFn = <T>(
   columns: { key: string; sortFn?: ColumnSortFn<T> }[],
   sort: FilterItem['sort'],
-  fallbackSortFn: (s: FilterItem['sort']) => (a: T, b: T) => number
-): (a: T, b: T) => number => {
+  fallbackSortFn: (s: FilterItem['sort']) => (a: T, b: T) => number,
+): ((a: T, b: T) => number) => {
   if (!sort?.column || !sort?.direction) {
     return fallbackSortFn(sort);
   }
@@ -37,11 +34,9 @@ export const defaultSortFn = <T>(sort: FilterItem['sort']) => {
     // @ts-expect-error need to figure out dynamic typing here
     const comparatorB = (b[sort?.column] || '').toLowerCase();
 
-    if (comparatorA < comparatorB)
-      return sort?.direction === 'ascending' ? -1 : 1;
+    if (comparatorA < comparatorB) return sort?.direction === 'ascending' ? -1 : 1;
 
-    if (comparatorA > comparatorB)
-      return sort?.direction === 'ascending' ? 1 : -1;
+    if (comparatorA > comparatorB) return sort?.direction === 'ascending' ? 1 : -1;
 
     return 0;
   };
@@ -73,8 +68,6 @@ export const defaultSearchFn = <T>(fieldName: string, searchTerm?: string) => {
     }
 
     // @ts-expect-error dynamic object index causing TS error
-    return (item[fieldName] as string)
-      ?.toLowerCase()
-      .includes(searchTerm?.toLowerCase() || '');
+    return (item[fieldName] as string)?.toLowerCase().includes(searchTerm?.toLowerCase() || '');
   };
 };

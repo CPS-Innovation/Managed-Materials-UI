@@ -17,7 +17,7 @@ export const useAutoReclassify = (options?: UseAutoReclassifyProps) => {
 
   const postAutoReclassify = () =>
     request.post<AutoReclassifyResponseType>(
-      `urns/${caseInfo?.urn}/cases/${caseInfo?.id}/uma-reclassify`
+      `urns/${caseInfo?.urn}/cases/${caseInfo?.id}/uma-reclassify`,
     );
 
   const { trigger, isMutating, error } = useSWRMutation(
@@ -33,8 +33,8 @@ export const useAutoReclassify = (options?: UseAutoReclassifyProps) => {
         if (options?.onError) {
           options.onError(error);
         }
-      }
-    }
+      },
+    },
   );
 
   return { isPending: isMutating, error, mutate: trigger };

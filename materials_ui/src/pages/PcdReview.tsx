@@ -11,17 +11,14 @@ import {
   type NavListItem,
   type NavListSection,
   SectionBreak,
-  TwoCol
+  TwoCol,
 } from '../components';
 
 import { PcdReviewCoreType, PcdReviewTypeLabel } from '../constants/enum.ts';
 import { useAppRoute, useCaseInfoStore } from '../hooks/';
 import { usePCDReviewCore } from '../hooks/pcd-review/usePCDReviewCore.ts';
 import { usePCDReviewDetails } from '../hooks/pcd-review/usePCDReviewDetails.ts';
-import type {
-  PCDReviewCoreResponseType,
-  PCDReviewDetailsResponseType
-} from '../schemas/pcdReview';
+import type { PCDReviewCoreResponseType, PCDReviewDetailsResponseType } from '../schemas/pcdReview';
 
 /**
  * compactWhitespace
@@ -53,7 +50,7 @@ dayjs.extend(customParseFormat);
 const PCD_REVIEW_CORE_NAV_TYPE_ORDER: PcdReviewCoreType[] = [
   PcdReviewCoreType.PreChargeDecisionAnalysis,
   PcdReviewCoreType.InitialReview,
-  PcdReviewCoreType.EarlyAdvice
+  PcdReviewCoreType.EarlyAdvice,
 ];
 
 const CHARGING_DECISION_TABLE_HEADINGS = [
@@ -61,37 +58,26 @@ const CHARGING_DECISION_TABLE_HEADINGS = [
   'Charging code',
   'Advice',
   'Evidential Reason Code (if ‘K’)',
-  'Public Interest Code (if C, D, D2, D5, E, F or L)'
+  'Public Interest Code (if C, D, D2, D5, E, F or L)',
 ];
 
-const PUBLIC_INTEREST_REASON_CODES = new Set([
-  'C',
-  'D',
-  'D2',
-  'D5',
-  'E',
-  'F',
-  'L'
-]);
+const PUBLIC_INTEREST_REASON_CODES = new Set(['C', 'D', 'D2', 'D5', 'E', 'F', 'L']);
 
-type AnalysisOutcome =
-  PCDReviewDetailsResponseType['preChargeDecisionAnalysisOutcome'];
+type AnalysisOutcome = PCDReviewDetailsResponseType['preChargeDecisionAnalysisOutcome'];
 type DecisionOutcome = PCDReviewDetailsResponseType['preChargeDecisionOutcome'];
 
 const ReviewSidebar = ({ core }: { core: PCDReviewCoreResponseType }) => {
   const { getRoute } = useAppRoute();
 
-  const sections: NavListSection[] = PCD_REVIEW_CORE_NAV_TYPE_ORDER.map(
-    (type) => ({
-      headerLabel: PcdReviewTypeLabel[type],
-      items: core
-        .filter((item) => item.type === type)
-        .map<NavListItem>((item) => ({
-          name: dayjs(item.date, 'DD/MM/YYYY').format('D MMMM YYYY'),
-          href: `${getRoute('PCD_REVIEW', false)}/${item.id}`
-        }))
-    })
-  );
+  const sections: NavListSection[] = PCD_REVIEW_CORE_NAV_TYPE_ORDER.map((type) => ({
+    headerLabel: PcdReviewTypeLabel[type],
+    items: core
+      .filter((item) => item.type === type)
+      .map<NavListItem>((item) => ({
+        name: dayjs(item.date, 'DD/MM/YYYY').format('D MMMM YYYY'),
+        href: `${getRoute('PCD_REVIEW', false)}/${item.id}`,
+      })),
+  }));
 
   return (
     <>
@@ -103,7 +89,7 @@ const ReviewSidebar = ({ core }: { core: PCDReviewCoreResponseType }) => {
 
 const ReviewSummary = ({
   analysis,
-  decision
+  decision,
 }: {
   analysis: AnalysisOutcome;
   decision: DecisionOutcome;
@@ -112,10 +98,7 @@ const ReviewSummary = ({
     items={[
       { title: 'Review type: ', description: [`${analysis.consultationType}`] },
       { title: 'Prosecutor name: ', description: [decision.decisionMadeBy] },
-      {
-        title: 'Review date: ',
-        description: [`${decision.pcdHistoryActionPlan[0]?.entryDate}`]
-      }
+      { title: 'Review date: ', description: [`${decision.pcdHistoryActionPlan[0]?.entryDate}`] },
     ]}
   />
 );
@@ -123,25 +106,19 @@ const ReviewSummary = ({
 const CaseHeadlineCodeTest = ({ analysis }: { analysis: AnalysisOutcome }) => {
   const items = [
     { header: 'Evidential Assessment', body: analysis.evidentialAssessment },
-    {
-      header: 'Public Interest Assessment',
-      body: analysis.publicInterestAssessment
-    },
+    { header: 'Public Interest Assessment', body: analysis.publicInterestAssessment },
     { header: 'Allocation', body: analysis.allocation },
     { header: 'ECHR', body: analysis.europeanCourtOfHumanRights },
-    {
-      header: 'Disclosure Actions and Issues',
-      body: analysis.disclosureActionsAndIssues
-    },
+    { header: 'Disclosure Actions and Issues', body: analysis.disclosureActionsAndIssues },
     { header: 'Trial Strategy', body: analysis.trialStrategy },
     {
       header: 'Witness / Victim Information and Actions',
-      body: analysis.witnessOrVictimInformationAndActions
+      body: analysis.witnessOrVictimInformationAndActions,
     },
     {
       header: 'Instructions to Op Delivery / Advocate',
-      body: analysis.instructionsToOperationsDeliveryOrAdvocate
-    }
+      body: analysis.instructionsToOperationsDeliveryOrAdvocate,
+    },
   ];
 
   return (
@@ -150,7 +127,7 @@ const CaseHeadlineCodeTest = ({ analysis }: { analysis: AnalysisOutcome }) => {
       <div
         className="govuk-body"
         dangerouslySetInnerHTML={{
-          __html: DomPurify.sanitize(compactWhitespace(analysis.caseSummary))
+          __html: DomPurify.sanitize(compactWhitespace(analysis.caseSummary)),
         }}
       />
       {items.map((c) => (
@@ -159,9 +136,7 @@ const CaseHeadlineCodeTest = ({ analysis }: { analysis: AnalysisOutcome }) => {
           {c.body && (
             <div
               className="govuk-body"
-              dangerouslySetInnerHTML={{
-                __html: DomPurify.sanitize(compactWhitespace(c.body))
-              }}
+              dangerouslySetInnerHTML={{ __html: DomPurify.sanitize(compactWhitespace(c.body)) }}
             />
           )}
         </div>
@@ -182,7 +157,7 @@ const ChargingDecisionTable = ({ decision }: { decision: DecisionOutcome }) => {
       advice: advice?.trim(),
       reason,
       reasonCode: d?.reasonCode,
-      publicInterestCode: d?.publicInterestCode
+      publicInterestCode: d?.publicInterestCode,
     };
   });
 
@@ -210,13 +185,9 @@ const ChargingDecisionTable = ({ decision }: { decision: DecisionOutcome }) => {
               </th>
               <td className="govuk-table__cell">{d.chargingCode}</td>
               <td className="govuk-table__cell">{d.advice}</td>
+              <td className="govuk-table__cell">{d.chargingCode === 'K' ? d.reason : '-'}</td>
               <td className="govuk-table__cell">
-                {d.chargingCode === 'K' ? d.reason : '-'}
-              </td>
-              <td className="govuk-table__cell">
-                {PUBLIC_INTEREST_REASON_CODES.has(d.reasonCode)
-                  ? d.publicInterestCode
-                  : '-'}
+                {PUBLIC_INTEREST_REASON_CODES.has(d.reasonCode) ? d.publicInterestCode : '-'}
               </td>
             </tr>
           ))}
@@ -232,26 +203,18 @@ const FurtherActionDetails = ({ decision }: { decision: DecisionOutcome }) => {
 
   return (
     <>
-      <h1 className="govuk-heading-l">
-        Further action agreed for codes A, B, B2, H, I, J
-      </h1>
+      <h1 className="govuk-heading-l">Further action agreed for codes A, B, B2, H, I, J</h1>
       <DefinitionList
         items={[
           { title: 'Action type:', description: [`${plan?.actionType}`] },
           { title: 'Action date:', description: [`${plan?.actionDate}`] },
           { title: '', description: [`${plan?.actionPoint}`] },
-          {
-            title: 'Return bail date:',
-            description: [`${firstDefendant?.returnBailDate}`]
-          },
+          { title: 'Return bail date:', description: [`${firstDefendant?.returnBailDate}`] },
           {
             title: 'Investigation stage at which advice sought:',
-            description: [decision.investigationStage]
+            description: [decision.investigationStage],
           },
-          {
-            title: 'How advice delivered:',
-            description: [`${decision.method}`]
-          }
+          { title: 'How advice delivered:', description: [`${decision.method}`] },
         ]}
       />
     </>
@@ -259,13 +222,10 @@ const FurtherActionDetails = ({ decision }: { decision: DecisionOutcome }) => {
 };
 
 export const PcdReviewPage = () => {
-  const { reviewHistoryId: reviewHistoryIdParam } = useParams<{
-    reviewHistoryId?: string;
-  }>();
+  const { reviewHistoryId: reviewHistoryIdParam } = useParams<{ reviewHistoryId?: string }>();
   const { caseInfo } = useCaseInfoStore();
 
-  const { data: pcdReviewCoreData, isLoading: pcdReviewCoreLoading } =
-    usePCDReviewCore();
+  const { data: pcdReviewCoreData, isLoading: pcdReviewCoreLoading } = usePCDReviewCore();
 
   const reviewHistoryId = Number(reviewHistoryIdParam);
   const firstPcdReviewCoreHistoryId = pcdReviewCoreData?.[0]?.id;
@@ -273,24 +233,18 @@ export const PcdReviewPage = () => {
     ? reviewHistoryId
     : firstPcdReviewCoreHistoryId;
   const shouldRedirectToFirstReview =
-    !reviewHistoryIdParam &&
-    !pcdReviewCoreLoading &&
-    firstPcdReviewCoreHistoryId !== undefined;
+    !reviewHistoryIdParam && !pcdReviewCoreLoading && firstPcdReviewCoreHistoryId !== undefined;
 
   const { isLoading: pcdReviewDetailsLoading, data: pcdReviewDetailsData } =
     usePCDReviewDetails(resolvedReviewHistoryId);
 
   const isLoadingPage = !caseInfo || pcdReviewCoreLoading;
   const noReviewCompleted =
-    !pcdReviewCoreLoading &&
-    Array.isArray(pcdReviewCoreData) &&
-    pcdReviewCoreData.length === 0;
+    !pcdReviewCoreLoading && Array.isArray(pcdReviewCoreData) && pcdReviewCoreData.length === 0;
 
   const noReviewContent = (
     <div className="govuk-main-wrapper">
-      <p className="govuk-body">
-        A Review has not yet been completed for this case.
-      </p>
+      <p className="govuk-body">A Review has not yet been completed for this case.</p>
     </div>
   );
 
@@ -303,11 +257,7 @@ export const PcdReviewPage = () => {
     const decision = pcdReviewDetailsData?.preChargeDecisionOutcome;
 
     if (!analysis || !decision) {
-      return (
-        <p className="govuk-body">
-          Details could not be loaded for this review.
-        </p>
-      );
+      return <p className="govuk-body">Details could not be loaded for this review.</p>;
     }
 
     return (

@@ -7,14 +7,11 @@ import { useEffect, useState } from 'react';
 const FORCED_COLORS_QUERY = '(forced-colors: active)';
 type PdfPageColors = { background: string; foreground: string };
 
-const HIGH_CONTRAST_PAGE_COLORS: PdfPageColors = {
-  background: 'Canvas',
-  foreground: 'CanvasText'
-};
+const HIGH_CONTRAST_PAGE_COLORS: PdfPageColors = { background: 'Canvas', foreground: 'CanvasText' };
 
 export function usePageColors(): PdfPageColors | undefined {
   const [isForcedColors, setIsForcedColors] = useState(() =>
-    Boolean(window.matchMedia?.(FORCED_COLORS_QUERY).matches)
+    Boolean(window.matchMedia?.(FORCED_COLORS_QUERY).matches),
   );
 
   useEffect(() => {

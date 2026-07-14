@@ -17,7 +17,7 @@ export function TableActions({
   showFilter,
   onSetShowFilter,
   menuItems = [],
-  selectedItems
+  selectedItems,
 }: Props) {
   const { caseInfo } = useCaseInfoStore();
   const [isSticky, setIsSticky] = useState(false);
@@ -29,7 +29,7 @@ export function TableActions({
       ([entry]) => {
         if (entry) setIsSticky(!entry.isIntersecting);
       },
-      { threshold: 0 }
+      { threshold: 0 },
     );
 
     if (ref.current) {
@@ -44,9 +44,7 @@ export function TableActions({
   return (
     <>
       <div ref={ref} style={{ height: 1 }}></div>
-      <div
-        className={`govuk-grid-row search-input-container ${isSticky ? 'is-sticky' : ''}`}
-      >
+      <div className={`govuk-grid-row search-input-container ${isSticky ? 'is-sticky' : ''}`}>
         <div className="search-input-row">
           {!isSticky && (
             <div className="filter-button">
@@ -58,7 +56,7 @@ export function TableActions({
                   onSetShowFilter(!showFilter);
                   log({
                     logLevel: 1,
-                    message: `HK-UI-FE: caseId [${caseInfo?.id}] - filter panel is now ${filterStatus}.`
+                    message: `HK-UI-FE: caseId [${caseInfo?.id}] - filter panel is now ${filterStatus}.`,
                   });
                 }}
               >

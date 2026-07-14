@@ -1,8 +1,4 @@
-export const RotateIcon = (p: {
-  flip?: boolean;
-  color: string;
-  rotateDegrees?: number;
-}) => {
+export const RotateIcon = (p: { flip?: boolean; color: string; rotateDegrees?: number }) => {
   const { rotateDegrees = 0, flip = false } = p;
   return (
     <svg
@@ -11,7 +7,7 @@ export const RotateIcon = (p: {
       style={{
         width: '100%',
         height: '100%',
-        transform: `rotate(${rotateDegrees}deg) scaleX(${flip ? -1 : 1})`
+        transform: `rotate(${rotateDegrees}deg) scaleX(${flip ? -1 : 1})`,
       }}
       fill={p.color}
     >

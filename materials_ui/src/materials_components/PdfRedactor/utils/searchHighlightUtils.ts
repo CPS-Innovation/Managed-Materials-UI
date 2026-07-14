@@ -13,13 +13,10 @@ export type TSearchHighlight = {
   yBottom: number;
 };
 
-export type THighlightLayer = {
-  highlights: TSearchHighlight[];
-  focusedId?: string;
-};
+export type THighlightLayer = { highlights: TSearchHighlight[]; focusedId?: string };
 
 export const convertMatchesToSearchHighlights = (
-  matches: SearchTermResultType['matches']
+  matches: SearchTermResultType['matches'],
 ): TSearchHighlight[] =>
   matches
     .flatMap((match) =>
@@ -30,13 +27,13 @@ export const convertMatchesToSearchHighlights = (
             w.boundingBox![0]!,
             w.boundingBox![2]!,
             w.boundingBox![4]!,
-            w.boundingBox![6]!
+            w.boundingBox![6]!,
           ];
           const ys = [
             w.boundingBox![1]!,
             w.boundingBox![3]!,
             w.boundingBox![5]!,
-            w.boundingBox![7]!
+            w.boundingBox![7]!,
           ];
           return {
             id: crypto.randomUUID(),
@@ -46,9 +43,9 @@ export const convertMatchesToSearchHighlights = (
             xLeft: Math.min(...xs) + PADDING_INCHES,
             xRight: Math.max(...xs) + PADDING_INCHES,
             yTop: Math.min(...ys) - PADDING_INCHES,
-            yBottom: Math.max(...ys) + PADDING_INCHES
+            yBottom: Math.max(...ys) + PADDING_INCHES,
           };
-        })
+        }),
     )
     .sort((a, b) => {
       if (a.pageNumber !== b.pageNumber) return a.pageNumber - b.pageNumber;

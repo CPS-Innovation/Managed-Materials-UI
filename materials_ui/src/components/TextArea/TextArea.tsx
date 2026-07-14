@@ -25,9 +25,9 @@ export const TextArea = forwardRef<HTMLTextAreaElement, Props>(
       onChange,
       required,
       rows = 5,
-      maxCharacters = 0
+      maxCharacters = 0,
     },
-    ref
+    ref,
   ) => {
     const [text, setText] = useState('');
     const hasError = !!error;
@@ -38,9 +38,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, Props>(
     };
 
     return (
-      <div
-        className={`govuk-form-group ${hasError ? 'govuk-form-group--error' : ''}`}
-      >
+      <div className={`govuk-form-group ${hasError ? 'govuk-form-group--error' : ''}`}>
         <label className="govuk-label" htmlFor={id} style={{ fontWeight: 700 }}>
           {label}
         </label>
@@ -74,14 +72,11 @@ export const TextArea = forwardRef<HTMLTextAreaElement, Props>(
         />
 
         {!!maxCharacters && (
-          <div
-            className="govuk-hint govuk-character-count__message"
-            style={{ marginTop: '-25px' }}
-          >
+          <div className="govuk-hint govuk-character-count__message" style={{ marginTop: '-25px' }}>
             You can enter up to {maxCharacters - text.length} characters
           </div>
         )}
       </div>
     );
-  }
+  },
 );

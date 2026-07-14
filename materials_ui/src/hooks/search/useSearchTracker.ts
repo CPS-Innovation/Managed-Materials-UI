@@ -15,11 +15,9 @@ export const useSearchTracker = (trigger: unknown) => {
   const getTracker = () => request.get(`/urns/${urn}/cases/${caseId}/tracker`);
 
   // Start pipeline once per case when first search is triggered
-  const { data: postData } = useSWR(
-    trigger ? ['tracker-init', urn, caseId] : null,
-    postInit,
-    { revalidateOnFocus: false }
-  );
+  const { data: postData } = useSWR(trigger ? ['tracker-init', urn, caseId] : null, postInit, {
+    revalidateOnFocus: false,
+  });
 
   // Poll until Completed
   const { data: trackerData, isLoading: trackerLoading } = useSWR(
@@ -33,8 +31,8 @@ export const useSearchTracker = (trigger: unknown) => {
           ? 1000
           : 0,
       dedupingInterval: 0,
-      revalidateOnFocus: false
-    }
+      revalidateOnFocus: false,
+    },
   );
 
   const failedToConvert =
@@ -42,7 +40,7 @@ export const useSearchTracker = (trigger: unknown) => {
       (doc: SearchTermResultType) =>
         doc.status === 'UnableToConvertToPdf' ||
         doc.conversionStatus === 'UnexpectedError' ||
-        doc.status === 'OcrAndIndexFailure'
+        doc.status === 'OcrAndIndexFailure',
     ) ?? [];
 
   const isComplete = trackerData?.data.status === 'Completed';

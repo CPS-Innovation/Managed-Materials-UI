@@ -1,18 +1,8 @@
 export type ContentItem = { key: string; value: unknown };
 
-type Props = {
-  title: string;
-  content: ContentItem[];
-  actionName?: string;
-  action?: () => void;
-};
+type Props = { title: string; content: ContentItem[]; actionName?: string; action?: () => void };
 
-export const SummaryCard = ({
-  title,
-  content,
-  actionName = 'Change',
-  action
-}: Props) => {
+export const SummaryCard = ({ title, content, actionName = 'Change', action }: Props) => {
   return (
     <div className="govuk-summary-card">
       <div className="govuk-summary-card__title-wrapper">

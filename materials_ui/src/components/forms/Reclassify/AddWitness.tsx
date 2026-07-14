@@ -3,15 +3,15 @@ import dayjs from 'dayjs';
 import { Controller, useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
-import { ErrorSummary, Radios, SelectList, TextArea, TextInput } from '../../index.ts';
 import { URL } from '../../../constants/url.ts';
 import { useCaseDefendants } from '../../../hooks/index.ts';
 import {
   Reclassify_WitnessAndActionPlanSchema,
-  type Reclassify_WitnessAndActionPlanType
+  type Reclassify_WitnessAndActionPlanType,
 } from '../../../schemas/forms/reclassify.ts';
 import { formatDateInputValue } from '../../../utils/date.ts';
 import type { ErrorSummaryItem } from '../../ErrorSummary/ErrorSummary.tsx';
+import { ErrorSummary, Radios, SelectList, TextArea, TextInput } from '../../index.ts';
 
 type Props = {
   data: Reclassify_WitnessAndActionPlanType;
@@ -24,11 +24,11 @@ export const AddWitness = ({ data, onSave }: Props) => {
     control,
     formState: { errors },
     handleSubmit,
-    watch
+    watch,
   } = useForm<Reclassify_WitnessAndActionPlanType>({
     defaultValues: data,
     // @ts-expect-error fix type
-    resolver: zodResolver(Reclassify_WitnessAndActionPlanSchema)
+    resolver: zodResolver(Reclassify_WitnessAndActionPlanSchema),
   });
 
   // format react-hook-form error object into array to be rendered by ErrorSummary
@@ -104,7 +104,7 @@ export const AddWitness = ({ data, onSave }: Props) => {
               legend="What do you want to request?"
               options={[
                 { id: 'KWD', value: 'KWD', label: 'Key witness details' },
-                { id: 'NKWD', value: 'NKWD', label: 'Non-key witness details' }
+                { id: 'NKWD', value: 'NKWD', label: 'Non-key witness details' },
               ]}
               required
               error={errors?.requestType?.message as string}
@@ -128,7 +128,7 @@ export const AddWitness = ({ data, onSave }: Props) => {
                 ...defendantSelectOptions,
                 ...(defendantSelectOptions?.length > 1
                   ? [{ label: 'All defendants', value: 0, id: 0 }]
-                  : [])
+                  : []),
               ]}
             />
           )}
@@ -174,18 +174,12 @@ export const AddWitness = ({ data, onSave }: Props) => {
           render={({ field }) => (
             <Radios
               {...field}
-              value={
-                field.value !== undefined
-                  ? field.value
-                    ? 'true'
-                    : 'false'
-                  : undefined
-              }
+              value={field.value !== undefined ? (field.value ? 'true' : 'false') : undefined}
               id={field.name}
               legend="Do you want to add a follow up?"
               options={[
                 { id: 'true', value: 'true', label: 'Yes' },
-                { id: 'false', value: 'false', label: 'No' }
+                { id: 'false', value: 'false', label: 'No' },
               ]}
               required
               error={errors?.followUp?.message as string}
@@ -220,11 +214,7 @@ export const AddWitness = ({ data, onSave }: Props) => {
         )}
 
         <div className="govuk-button-group">
-          <button
-            type="submit"
-            className="govuk-button"
-            data-module="govuk-button"
-          >
+          <button type="submit" className="govuk-button" data-module="govuk-button">
             Continue
           </button>
           <Link to={URL.MATERIALS} className="govuk-link cancel-status-change">

@@ -35,16 +35,14 @@ export const TextInput = forwardRef<HTMLInputElement, Props>(
       type = 'text',
       autocomplete,
       spellCheck,
-      readonly = false
+      readonly = false,
     },
-    ref
+    ref,
   ) => {
     const hasError = !!error;
 
     return (
-      <div
-        className={`govuk-form-group ${hasError ? 'govuk-form-group--error' : ''}`}
-      >
+      <div className={`govuk-form-group ${hasError ? 'govuk-form-group--error' : ''}`}>
         <label className="govuk-label" htmlFor={id} style={{ fontWeight: 700 }}>
           {label}
         </label>
@@ -82,5 +80,5 @@ export const TextInput = forwardRef<HTMLInputElement, Props>(
         />
       </div>
     );
-  }
+  },
 );

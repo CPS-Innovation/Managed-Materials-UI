@@ -1,10 +1,4 @@
-import {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type ReactNode
-} from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { useFocusTrap } from '../../../caseWorkApp/hooks/useFocusTrap';
 import { useLastFocus } from '../../../caseWorkApp/hooks/useLastFocus';
 
@@ -26,8 +20,7 @@ const computePosition = (p: {
   if (p.placement === 'above') {
     left = p.coordX - p.width / 2;
     const roomAbove = p.coordY - GAP_PX;
-    top =
-      roomAbove >= p.height ? p.coordY - GAP_PX - p.height : p.coordY + GAP_PX;
+    top = roomAbove >= p.height ? p.coordY - GAP_PX - p.height : p.coordY + GAP_PX;
   } else {
     left = p.coordX + p.width > vw ? p.coordX - p.width : p.coordX;
     top = p.coordY + p.height > vh ? p.coordY - p.height : p.coordY;
@@ -35,7 +28,7 @@ const computePosition = (p: {
 
   return {
     left: Math.min(Math.max(GAP_PX, left), vw - p.width - GAP_PX),
-    top: Math.min(Math.max(GAP_PX, top), vh - p.height - GAP_PX)
+    top: Math.min(Math.max(GAP_PX, top), vh - p.height - GAP_PX),
   };
 };
 
@@ -52,10 +45,7 @@ export const PdfRedactorMiniModal = (p: {
   const dimBackground = p.dimBackground ?? true;
   const placement = p.placement ?? 'auto';
   const popupRef = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState<{
-    left: number;
-    top: number;
-  } | null>(null);
+  const [position, setPosition] = useState<{ left: number; top: number } | null>(null);
 
   useFocusTrap('#pdf-redactor-mini-modal');
   useLastFocus();
@@ -79,15 +69,7 @@ export const PdfRedactorMiniModal = (p: {
     const el = popupRef.current;
     if (!el) return;
     const { width, height } = el.getBoundingClientRect();
-    setPosition(
-      computePosition({
-        coordX: p.coordX,
-        coordY: p.coordY,
-        width,
-        height,
-        placement
-      })
-    );
+    setPosition(computePosition({ coordX: p.coordX, coordY: p.coordY, width, height, placement }));
   }, [p.coordX, p.coordY, placement]);
 
   return (
@@ -101,7 +83,7 @@ export const PdfRedactorMiniModal = (p: {
           bottom: 0,
           backgroundColor: dimBackground ? '#00000080' : undefined,
           zIndex: 999,
-          pointerEvents: 'auto'
+          pointerEvents: 'auto',
         }}
         onClick={p.onBackgroundClick}
       />
@@ -122,7 +104,7 @@ export const PdfRedactorMiniModal = (p: {
           padding: '16px',
           zIndex: 1000,
           filter: 'drop-shadow(0 1px 2.5px #000)',
-          pointerEvents: 'auto'
+          pointerEvents: 'auto',
         }}
       >
         {p.children}

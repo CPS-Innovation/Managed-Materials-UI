@@ -3,14 +3,8 @@ import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
-import {
-  useCaseWitnesses,
-  useWitnessStatements
-} from '../../../hooks/index.ts';
-import {
-  EditStatementSchema,
-  EditStatementType
-} from '../../../schemas/forms/editStatement.ts';
+import { useCaseWitnesses, useWitnessStatements } from '../../../hooks/index.ts';
+import { EditStatementSchema, EditStatementType } from '../../../schemas/forms/editStatement.ts';
 import { CaseMaterialsType } from '../../../schemas/index.ts';
 import { SelectList } from '../../SelectList/SelectList.tsx';
 
@@ -26,21 +20,16 @@ type Props = {
   cancelUrl: string;
 };
 
-export const EditStatementForm = ({
-  formState,
-  material,
-  onSuccess,
-  cancelUrl
-}: Props) => {
+export const EditStatementForm = ({ formState, material, onSuccess, cancelUrl }: Props) => {
   const { selectOptions, loading: isWitnessesLoading } = useCaseWitnesses();
   const {
     data: witnessStatements,
     loading: isWitnessStatementsLoading,
-    setWitnessId
+    setWitnessId,
   } = useWitnessStatements();
 
   const matchedStatement = witnessStatements.find(
-    (statement) => statement.id === material.materialId
+    (statement) => statement.id === material.materialId,
   );
 
   const defaultStatementNumber = matchedStatement
@@ -51,21 +40,18 @@ export const EditStatementForm = ({
     control,
     handleSubmit,
     formState: { errors },
-    watch
+    watch,
   } = useForm<EditStatementType>({
     // @ts-expect-error fix type here
     resolver: zodResolver(EditStatementSchema),
     defaultValues: {
-      hasStatementDate: formState
-        ? formState?.hasStatementDate
-        : !!material?.recordedDate,
+      hasStatementDate: formState ? formState?.hasStatementDate : !!material?.recordedDate,
       materialId: material?.materialId,
-      statementDate:
-        formState?.statementDate || material?.recordedDate || undefined,
+      statementDate: formState?.statementDate || material?.recordedDate || undefined,
       statementNumber: formState?.statementNumber || undefined,
       used: formState ? formState.used : material?.status === 'Used',
-      witnessId: formState?.witnessId || material?.witnessId || undefined
-    }
+      witnessId: formState?.witnessId || material?.witnessId || undefined,
+    },
   });
 
   const fieldValues = watch();
@@ -122,12 +108,8 @@ export const EditStatementForm = ({
               label="Who is the witness?"
               error={errors?.witnessId?.message as string}
               options={[
-                {
-                  label: isWitnessesLoading ? 'Loading...' : 'Select witness',
-                  value: '',
-                  id: ''
-                },
-                ...selectOptions
+                { label: isWitnessesLoading ? 'Loading...' : 'Select witness', value: '', id: '' },
+                ...selectOptions,
               ]}
             />
           )}
@@ -139,18 +121,12 @@ export const EditStatementForm = ({
           render={({ field }) => (
             <Radios
               {...field}
-              value={
-                field.value !== undefined
-                  ? field.value
-                    ? 'true'
-                    : 'false'
-                  : undefined
-              }
+              value={field.value !== undefined ? (field.value ? 'true' : 'false') : undefined}
               id={field.name}
               legend="Does the statement have a date?"
               options={[
                 { id: 'true', value: 'true', label: 'Yes' },
-                { id: 'false', value: 'false', label: 'No' }
+                { id: 'false', value: 'false', label: 'No' },
               ]}
               required
               error={errors?.hasStatementDate?.message as string}
@@ -204,11 +180,7 @@ export const EditStatementForm = ({
         <UsedField control={control} errors={errors} />
 
         <div className="govuk-button-group">
-          <button
-            type="submit"
-            className="govuk-button"
-            data-module="govuk-button"
-          >
+          <button type="submit" className="govuk-button" data-module="govuk-button">
             Continue
           </button>
           <Link to={cancelUrl} className="govuk-link cancel-status-change">

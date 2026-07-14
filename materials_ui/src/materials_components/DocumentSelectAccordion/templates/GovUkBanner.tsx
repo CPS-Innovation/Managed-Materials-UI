@@ -2,7 +2,7 @@ type TBannerVariant = 'error' | 'success' | 'info';
 const variantClassMap: { [k in TBannerVariant]: string } = {
   error: 'banner-error',
   success: 'govuk-notification-banner--success',
-  info: ''
+  info: '',
 };
 
 export const GovUkBanner = (p: {
@@ -24,26 +24,16 @@ export const GovUkBanner = (p: {
     >
       <div
         className="govuk-notification-banner__header"
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}
+        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
       >
-        <h2
-          className="govuk-notification-banner__title"
-          id="govuk-notification-banner-title"
-        >
+        <h2 className="govuk-notification-banner__title" id="govuk-notification-banner-title">
           {p.headerTitle}
         </h2>
         {p.headerRight && <span>{p.headerRight}</span>}
       </div>
       <div className="govuk-notification-banner__content">
         {p.contentHeading && (
-          <h3
-            className="govuk-notification-banner__heading"
-            style={{ maxWidth: 'none' }}
-          >
+          <h3 className="govuk-notification-banner__heading" style={{ maxWidth: 'none' }}>
             {p.contentHeading}
           </h3>
         )}

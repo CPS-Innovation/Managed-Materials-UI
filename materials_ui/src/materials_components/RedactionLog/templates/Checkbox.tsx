@@ -7,14 +7,7 @@ type CheckboxProps = {
   isSmall?: boolean;
 };
 
-export const Checkbox = ({
-  id,
-  label,
-  hint,
-  checked,
-  onChange,
-  isSmall
-}: CheckboxProps) => {
+export const Checkbox = ({ id, label, hint, checked, onChange, isSmall }: CheckboxProps) => {
   return (
     <div
       className={`govuk-checkboxes ${isSmall ? 'govuk-checkboxes--small' : ''}`}
@@ -34,10 +27,7 @@ export const Checkbox = ({
         </label>
 
         {hint && (
-          <div
-            id={`${id}-item-hint`}
-            className="govuk-hint govuk-checkboxes__hint"
-          >
+          <div id={`${id}-item-hint`} className="govuk-hint govuk-checkboxes__hint">
             {hint}
           </div>
         )}

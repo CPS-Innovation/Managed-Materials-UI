@@ -10,12 +10,7 @@ export type TRect = {
   width: number;
   height: number;
 };
-export type TXywhPair = {
-  xLeft: number;
-  yBottom: number;
-  width: number;
-  height: number;
-};
+export type TXywhPair = { xLeft: number; yBottom: number; width: number; height: number };
 export type TRedaction = TCoordPair & {
   id: string;
   pageNumber: number;
@@ -30,7 +25,7 @@ export const redactionSchema = z.object({
   x1: z.number(),
   y1: z.number(),
   x2: z.number(),
-  y2: z.number()
+  y2: z.number(),
 });
 export const redactionsSchema = z.array(redactionSchema);
 
@@ -96,5 +91,5 @@ export const createRedaction = (p: {
   y2: p.coord2.y,
   pageNumber: p.pageNumber,
   pageHeight: p.pageRect.height / p.scale,
-  pageWidth: p.pageRect.width / p.scale
+  pageWidth: p.pageRect.width / p.scale,
 });

@@ -12,21 +12,16 @@ type Props = {
   excludedTypeIds: (string | number)[];
 };
 
-export const DocumentTypeField = ({
-  control,
-  errors,
-  type,
-  excludedTypeIds = []
-}: Props) => {
+export const DocumentTypeField = ({ control, errors, type, excludedTypeIds = [] }: Props) => {
   const { selectOptions } = useDocumentTypes();
 
   const filteredOptions = useMemo(
     () =>
       selectOptions(type).map((option) => ({
         ...option,
-        disabled: excludedTypeIds?.includes(option?.id)
+        disabled: excludedTypeIds?.includes(option?.id),
       })),
-    [excludedTypeIds, selectOptions, type]
+    [excludedTypeIds, selectOptions, type],
   );
 
   return (
@@ -40,10 +35,7 @@ export const DocumentTypeField = ({
           label="What is the material classification type?"
           error={errors?.documentType?.message as string}
           defaultValue={field?.value?.toString()}
-          options={[
-            { label: 'Select type', value: '', id: '' },
-            ...filteredOptions
-          ]}
+          options={[{ label: 'Select type', value: '', id: '' }, ...filteredOptions]}
           onChange={(value) => {
             field.onChange(value || undefined);
           }}

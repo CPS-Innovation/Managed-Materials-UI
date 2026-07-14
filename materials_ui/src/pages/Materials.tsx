@@ -8,7 +8,7 @@ import {
   MaterialsFilters,
   RenameDrawer,
   TableActions,
-  TwoCol
+  TwoCol,
 } from '../components';
 
 import {
@@ -16,13 +16,9 @@ import {
   useBanner,
   useCaseMaterial,
   useCaseMaterials,
-  useTableActions
+  useTableActions,
 } from '../hooks';
-import {
-  useCaseInfoStore,
-  useMaterialTags,
-  useSelectedItemsStore
-} from '../stores';
+import { useCaseInfoStore, useMaterialTags, useSelectedItemsStore } from '../stores';
 
 import { useNavigate } from 'react-router-dom';
 import { URL } from '../constants/url';
@@ -34,17 +30,16 @@ export const MaterialsPage = () => {
   const { getRoute } = useAppRoute();
   const navigate = useNavigate();
   const [showFilter, setShowFilter] = useState(true);
-  const [selectedMaterial, setSelectedMaterial] =
-    useState<CaseMaterialsType | null>(null);
+  const [selectedMaterial, setSelectedMaterial] = useState<CaseMaterialsType | null>(null);
   const { caseInfo } = useCaseInfoStore();
 
-  const { mutate: refreshCaseMaterials, loading: caseMaterialsLoading } =
-    useCaseMaterials({ dataType: 'materials' });
+  const { mutate: refreshCaseMaterials, loading: caseMaterialsLoading } = useCaseMaterials({
+    dataType: 'materials',
+  });
   const { setBanner, resetBanner } = useBanner();
   const { deselectMaterial } = useCaseMaterial();
 
-  const { items: selectedItems, clear: clearSelectedItems } =
-    useSelectedItemsStore();
+  const { items: selectedItems, clear: clearSelectedItems } = useSelectedItemsStore();
   const { setTags } = useMaterialTags();
 
   const {
@@ -54,13 +49,13 @@ export const MaterialsPage = () => {
     handleUnusedClick,
     determineReadStatusLabel,
     handleEditClick,
-    isReadStatusUpdating
+    isReadStatusUpdating,
   } = useTableActions({
     selectedItems: selectedItems.materials,
     refreshData: refreshCaseMaterials,
     setBanner,
     deselectItem: deselectMaterial,
-    resetBanner
+    resetBanner,
   });
 
   const handleRenameClick = () => {
@@ -71,10 +66,7 @@ export const MaterialsPage = () => {
 
   const handleDiscardClick = () => {
     navigate(getRoute('DISCARD'), {
-      state: {
-        selectedMaterial: selectedItems.materials[0],
-        returnTo: getRoute('MATERIALS')
-      }
+      state: { selectedMaterial: selectedItems.materials[0], returnTo: getRoute('MATERIALS') },
     });
   };
 
@@ -84,9 +76,7 @@ export const MaterialsPage = () => {
   };
 
   const handleSuccessfulRename = async () => {
-    setTags([
-      { materialId: selectedMaterial?.materialId as number, tagName: 'Renamed' }
-    ]);
+    setTags([{ materialId: selectedMaterial?.materialId as number, tagName: 'Renamed' }]);
 
     setSelectedMaterial(null);
     deselectMaterial();
@@ -95,7 +85,7 @@ export const MaterialsPage = () => {
     setBanner({
       type: 'success',
       header: 'Renaming successful',
-      content: 'Material successfully renamed.'
+      content: 'Material successfully renamed.',
     });
 
     await refreshCaseMaterials();
@@ -113,7 +103,7 @@ export const MaterialsPage = () => {
       if (!urn || !caseId) return;
       trackAction('OpenedInNewWindow', {
         materialId: materialId.toString(),
-        category: item.category
+        category: item.category,
       });
       navigateToViewDocumentPageInNewTab({ urn, caseId, materialId });
     }
@@ -127,21 +117,17 @@ export const MaterialsPage = () => {
         const rowDocId = row?.documentTypeId;
         if (!rowDocId) return false;
 
-        return (
-          [1031, 1059].includes(rowDocId) ||
-          selectedItems.communications.length > 1
-        );
-      })()
+        return [1031, 1059].includes(rowDocId) || selectedItems.communications.length > 1;
+      })(),
     },
     {
       label: 'Reclassify',
       onClick: handleReclassifyClick,
-      hide: selectedItems.materials?.length > 1 || !row?.isReclassifiable
+      hide: selectedItems.materials?.length > 1 || !row?.isReclassifiable,
     },
     {
       label: 'Update',
-      onClick: () =>
-        handleEditClick(row as CaseMaterialsType, getRoute('MATERIALS')),
+      onClick: () => handleEditClick(row as CaseMaterialsType, getRoute('MATERIALS')),
       hide: (() => {
         const itemMaterialsCategory = selectedItems.materials[0]?.category;
         if (!itemMaterialsCategory) return;
@@ -149,31 +135,31 @@ export const MaterialsPage = () => {
           selectedItems.materials.length > 1 ||
           !['Exhibit', 'Statement'].includes(itemMaterialsCategory)
         );
-      })()
+      })(),
     },
     {
       label: 'Redact',
       onClick: () => {
         if (row?.materialId) return handleRedactClick(row.materialId);
       },
-      hide: selectedItems.materials?.length > 1
+      hide: selectedItems.materials?.length > 1,
     },
     {
       label: 'Discard',
       onClick: handleDiscardClick,
       disabled: selectedItems.materials?.length > 1,
-      hide: selectedItems.materials?.length > 1
+      hide: selectedItems.materials?.length > 1,
     },
     {
       label: determineReadStatusLabel(selectedItems.materials),
-      onClick: () => handleReadStatusClick(selectedItems.materials)
+      onClick: () => handleReadStatusClick(selectedItems.materials),
     },
     {
       label: 'Mark as unused',
       onClick: () => handleUnusedClick(selectedItems.materials, URL.MATERIALS),
-      hide: selectedItems.materials?.some((item) => item.status === 'Unused')
+      hide: selectedItems.materials?.some((item) => item.status === 'Unused'),
     },
-    { label: 'View in new window', onClick: handleViewInNewWindowClick }
+    { label: 'View in new window', onClick: handleViewInNewWindowClick },
   ];
 
   return (

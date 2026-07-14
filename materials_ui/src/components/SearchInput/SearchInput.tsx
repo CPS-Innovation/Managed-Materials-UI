@@ -17,7 +17,7 @@ export const SearchInput = ({
   onSearch,
   hideButton = true,
   label,
-  placeholder
+  placeholder,
 }: Props) => {
   const [searchTerm, setSearchTerm] = useState('');
 

@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import type { ReclassifyFormData } from '../../../../hooks';
 import {
   type Reclassify_Orchestrated_Request_Type,
-  Reclassify_RequestTypeEnum
+  Reclassify_RequestTypeEnum,
 } from '../../../../schemas/forms/reclassify';
 import { formatDateInputValue } from '../../../../utils/date';
 
@@ -11,7 +11,7 @@ const dateFormat = 'YYYY-MM-DD';
 
 export const mapReclassifyStatement = (
   data: ReclassifyFormData,
-  urn: string
+  urn: string,
 ): Reclassify_Orchestrated_Request_Type => {
   if (data.classification !== 'STATEMENT') {
     throw new Error('Not a valid classification');
@@ -46,8 +46,8 @@ export const mapReclassifyStatement = (
               description: 'Key Witness Details',
               text: '',
               hidden: false,
-              hiddenDraft: false
-            }
+              hiddenDraft: false,
+            },
           ]
         : [
             {
@@ -55,10 +55,10 @@ export const mapReclassifyStatement = (
               description: 'Non-Key Witness Details',
               text: '',
               hidden: false,
-              hiddenDraft: false
-            }
-          ])
-    ]
+              hiddenDraft: false,
+            },
+          ]),
+    ],
   };
 
   const witness: Reclassify_Orchestrated_Request_Type['witness'] = {
@@ -66,8 +66,8 @@ export const mapReclassifyStatement = (
       ? { witnessId: data?.witnessId }
       : {
           firstName: witnessActionPlan?.firstName || '',
-          surname: witnessActionPlan?.surname || ''
-        })
+          surname: witnessActionPlan?.surname || '',
+        }),
   };
 
   return {
@@ -79,12 +79,10 @@ export const mapReclassifyStatement = (
       used: data?.used,
       statement: {
         statementNo: data?.statementNumber,
-        ...(data?.hasStatementDate
-          ? { date: formatDateInputValue(data?.statementDate) }
-          : {})
-      }
+        ...(data?.hasStatementDate ? { date: formatDateInputValue(data?.statementDate) } : {}),
+      },
     },
     witness,
-    ...(hasActionPlan ? { actionPlan: actionPlanData } : {})
+    ...(hasActionPlan ? { actionPlan: actionPlanData } : {}),
   };
 };

@@ -24,9 +24,7 @@ setup('setup cookie', async ({ browser }) => {
   await page.screenshot();
 
   const allCookies = await context.cookies();
-  const authCookie = allCookies.find(
-    (cookie) => cookie.name === 'Cms-Auth-Values'
-  );
+  const authCookie = allCookies.find((cookie) => cookie.name === 'Cms-Auth-Values');
 
   if (authCookie) {
     log('Cms-Auth-Value cookie found');

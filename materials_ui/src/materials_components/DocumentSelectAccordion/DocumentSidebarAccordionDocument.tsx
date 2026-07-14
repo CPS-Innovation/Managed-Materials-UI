@@ -3,12 +3,7 @@ import { DocumentSidebarTag } from './DocumentSidebarTag';
 import { TDocument } from './getters/getDocumentList';
 import { useGetDocumentNotes } from './getters/getDocumentNotes';
 import './templates/GovUkAccordion.scss';
-import {
-  NOTES_ARIA_LABELS,
-  NOTES_STATUS,
-  NotesIcon,
-  NotesStatus
-} from './templates/NotesIcon';
+import { NOTES_ARIA_LABELS, NOTES_STATUS, NotesIcon, NotesStatus } from './templates/NotesIcon';
 import { formatShortDate } from './utils/dateUtils';
 
 export const DocumentSidebarAccordionNoDocumentsAvailable = () => {
@@ -18,7 +13,7 @@ export const DocumentSidebarAccordionNoDocumentsAvailable = () => {
         borderTop: 'solid 1px #b1b4b6',
         background: '#ffffff',
         height: '60px',
-        padding: '12px'
+        padding: '12px',
       }}
     >
       There are no documents available.
@@ -36,7 +31,7 @@ const Tooltip = (p: { text: string }) => {
           padding: '8px 14px',
           borderRadius: '6px',
           whiteSpace: 'nowrap',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
         }}
       >
         {p.text}
@@ -48,7 +43,7 @@ const Tooltip = (p: { text: string }) => {
             height: '0',
             borderLeft: '6px solid transparent',
             borderRight: '6px solid transparent',
-            borderTop: '6px solid #3d3d3d'
+            borderTop: '6px solid #3d3d3d',
           }}
         />
       </div>
@@ -72,7 +67,7 @@ export const DocumentSidebarAccordionDocument = (p: {
     urn: p.urn,
     caseId: p.caseId,
     documentId: p.document.parentId,
-    revalidateOnMount: false
+    revalidateOnMount: false,
   });
 
   const tooltipText = (() => {
@@ -82,9 +77,7 @@ export const DocumentSidebarAccordionDocument = (p: {
 
     const firstNote = documentNotes.data[0];
 
-    return firstNote
-      ? `${firstNote.text} (+${documentNotes.data.length - 1} more)`
-      : '';
+    return firstNote ? `${firstNote.text} (+${documentNotes.data.length - 1} more)` : '';
   })();
 
   return (
@@ -96,9 +89,7 @@ export const DocumentSidebarAccordionDocument = (p: {
       NewVersionTag={p.newVersionDocumentId === p.document.parentId}
       showLeftBorder={p.activeDocumentId === p.document.parentId}
       showRightBorder={p.openDocumentIds.includes(p.document.parentId)}
-      backgroundColor={
-        p.readDocumentIds.includes(p.document.parentId) ? 'white' : 'blue'
-      }
+      backgroundColor={p.readDocumentIds.includes(p.document.parentId) ? 'white' : 'blue'}
       // backgroundColor="blue"
       notesStatus={(() => {
         if (
@@ -143,24 +134,11 @@ export const DocumentSidebarAccordionDocumentTemplate = (p: {
       className={`document-select-accordion-document ${p.backgroundColor === 'blue' ? 'bg-blue' : 'bg-white'} ${p.showLeftBorder ? 'show-left-border' : ''} ${p.showRightBorder ? 'show-right-border' : ''}`}
     >
       <div className="document-select-accordion-document--inner-wrapper">
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            width: '100%'
-          }}
-        >
+        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
           <div
-            style={{
-              display: 'flex',
-              gap: '8px',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
+            style={{ display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'center' }}
           >
-            {p.ActiveDocumentTag && (
-              <DocumentSidebarTag tagName="ActiveDocument" />
-            )}
+            {p.ActiveDocumentTag && <DocumentSidebarTag tagName="ActiveDocument" />}
             {p.NewTag && <DocumentSidebarTag tagName="New" />}
             {p.NewVersionTag && <DocumentSidebarTag tagName="NewVersion" />}
             {p.ReclassifiedTag && <DocumentSidebarTag tagName="Reclassified" />}
@@ -195,7 +173,7 @@ export const DocumentSidebarAccordionDocumentTemplate = (p: {
                   top: '0',
                   left: '50%',
                   transform: 'translate(-50%, -100%)',
-                  zIndex: 850
+                  zIndex: 850,
                 }}
               >
                 <Tooltip text={p.tooltipText} />

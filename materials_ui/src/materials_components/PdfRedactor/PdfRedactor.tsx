@@ -18,10 +18,7 @@ import { TDeletion, TIndexedDeletion } from './utils/deletionUtils';
 import { isRedactionEnabledMode, type TMode } from './utils/modeUtils';
 import styles from './utils/PdfRedactor.module.css';
 import { TIndexedRotation, TRotation } from './utils/rotationUtils';
-import type {
-  THighlightLayer,
-  TSearchHighlight
-} from './utils/searchHighlightUtils';
+import type { THighlightLayer, TSearchHighlight } from './utils/searchHighlightUtils';
 import { useTrigger } from './utils/useTriggger';
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
@@ -30,7 +27,7 @@ const modeClassMap: { [x in TMode]: string | undefined } = {
   redact: styles.redact,
   rotation: styles.rotation,
   deletion: styles.deletion,
-  disabled: undefined
+  disabled: undefined,
 };
 
 const useScaleHelper = (p?: { initScale?: number }) => {
@@ -50,21 +47,14 @@ const useScaleHelper = (p?: { initScale?: number }) => {
 const indexRedactionsOnPageNumber = (redactions: TRedaction[]) => {
   const temp: { [k: number]: TRedaction[] } = {};
   redactions.forEach((redaction) => (temp[redaction.pageNumber] = []));
-  redactions.forEach((redaction) =>
-    temp[redaction.pageNumber]!.push(redaction)
-  );
+  redactions.forEach((redaction) => temp[redaction.pageNumber]!.push(redaction));
   return temp;
 };
 
 const PdfRedactorFooter = (p: { children: React.ReactNode }) => {
   return (
     <div
-      style={{
-        border: '1px solid black',
-        background: 'white',
-        color: 'black',
-        userSelect: 'none'
-      }}
+      style={{ border: '1px solid black', background: 'white', color: 'black', userSelect: 'none' }}
     >
       {p.children}
     </div>
@@ -84,7 +74,7 @@ const RedactionsFooter = (p: {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '10px'
+          padding: '10px',
         }}
       >
         <button
@@ -96,9 +86,7 @@ const RedactionsFooter = (p: {
         <span style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <span>
             {p.redactions.length === 1 && <>There is 1 redaction</>}
-            {p.redactions.length > 1 && (
-              <>There are {p.redactions.length} redactions</>
-            )}
+            {p.redactions.length > 1 && <>There are {p.redactions.length} redactions</>}
           </span>
           <button
             className="govuk-button"
@@ -129,7 +117,7 @@ const RotationsFooter = (p: {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '10px'
+          padding: '10px',
         }}
       >
         <button
@@ -141,14 +129,9 @@ const RotationsFooter = (p: {
         <span style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <span>
             {p.rotations.length === 1 && <>There is 1 rotation</>}
-            {p.rotations.length > 1 && (
-              <>There are {p.rotations.length} rotations</>
-            )}
+            {p.rotations.length > 1 && <>There are {p.rotations.length} rotations</>}
           </span>
-          <button
-            className="govuk-button"
-            onClick={() => p.onSaveRotationsClick(p.rotations)}
-          >
+          <button className="govuk-button" onClick={() => p.onSaveRotationsClick(p.rotations)}>
             Save all rotations
           </button>
         </span>
@@ -169,7 +152,7 @@ const DeletionsFooter = (p: {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '10px'
+          padding: '10px',
         }}
       >
         <button
@@ -181,14 +164,9 @@ const DeletionsFooter = (p: {
         <span style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <span>
             {p.deletions.length === 1 && <>There is 1 deletion</>}
-            {p.deletions.length > 1 && (
-              <>There are {p.deletions.length} deletions</>
-            )}
+            {p.deletions.length > 1 && <>There are {p.deletions.length} deletions</>}
           </span>
-          <button
-            className="govuk-button"
-            onClick={() => p.onSaveDeletionsClick(p.deletions)}
-          >
+          <button className="govuk-button" onClick={() => p.onSaveDeletionsClick(p.deletions)}>
             Save all deletions
           </button>
         </span>
@@ -209,18 +187,14 @@ const usePreviousModeRef = (value: TMode) => {
   return { previousModeRef };
 };
 
-const writeRedactionsToCache = (p: {
-  key: string;
-  redactions: TRedaction[];
-}) => {
+const writeRedactionsToCache = (p: { key: string; redactions: TRedaction[] }) => {
   localStorage.setItem(p.key, JSON.stringify(p.redactions));
 };
 
 const getRedactionsFromCache = (key: string) => {
   const redactionsStr = localStorage.getItem(key);
   const jsonParsedRedactions = safeJsonParse(redactionsStr);
-  if (!jsonParsedRedactions.success)
-    return { success: false, data: undefined } as const;
+  if (!jsonParsedRedactions.success) return { success: false, data: undefined } as const;
 
   return redactionsSchema.safeParse(jsonParsedRedactions.data);
 };
@@ -232,10 +206,7 @@ export const PdfRedactor = (p: {
   mode: TMode;
   onModeChange: (x: TMode) => void;
   onRedactionsChange: (redactions: TRedaction[]) => void;
-  onAddRedactions: (p: {
-    redactions: TRedaction[];
-    highlightedText: string | undefined;
-  }) => void;
+  onAddRedactions: (p: { redactions: TRedaction[]; highlightedText: string | undefined }) => void;
   onRemoveRedactions: (redactionIds: string[]) => void;
   onSaveRedactions: () => Promise<void>;
   onSaveDeletions: () => Promise<void>;
@@ -268,9 +239,7 @@ export const PdfRedactor = (p: {
     modeRef.current = p.mode;
   }, [p.mode]);
 
-  const [displayToProceedModal, setDisplayToProceedModal] = useState<
-    TMode | undefined
-  >(undefined);
+  const [displayToProceedModal, setDisplayToProceedModal] = useState<TMode | undefined>(undefined);
 
   const [numPages, setNumPages] = useState<number>();
   const scaleHelper = useScaleHelper();
@@ -282,10 +251,7 @@ export const PdfRedactor = (p: {
   }, [p.redactions]);
   useEffect(() => {
     if (isFirstLoadRef.current) return;
-    writeRedactionsToCache({
-      key: getKeyForAutosaveRedactions(),
-      redactions: p.redactions
-    });
+    writeRedactionsToCache({ key: getKeyForAutosaveRedactions(), redactions: p.redactions });
   }, [p.redactions]);
 
   // group each highlight layer's matches by page number so every page can be
@@ -300,7 +266,7 @@ export const PdfRedactor = (p: {
         });
         return { byPage, focusedId: layer.focusedId };
       }),
-    [p.highlightLayers]
+    [p.highlightLayers],
   );
 
   const rotations = useMemo(() => {
@@ -318,10 +284,7 @@ export const PdfRedactor = (p: {
   }, [deletions]);
 
   useEffect(() => {
-    if (
-      p.mode === 'rotation' &&
-      (p.redactions.length > 0 || filteredDeletions.length > 0)
-    ) {
+    if (p.mode === 'rotation' && (p.redactions.length > 0 || filteredDeletions.length > 0)) {
       p.onModeChange(previousModeRef.current);
       setDisplayToProceedModal(previousModeRef.current);
     }
@@ -332,10 +295,7 @@ export const PdfRedactor = (p: {
       p.onModeChange(previousModeRef.current);
       setDisplayToProceedModal(previousModeRef.current);
     }
-    if (
-      p.mode === 'deletion' &&
-      (filteredRotations.length > 0 || p.redactions.length > 0)
-    ) {
+    if (p.mode === 'deletion' && (filteredRotations.length > 0 || p.redactions.length > 0)) {
       p.onModeChange(previousModeRef.current);
       setDisplayToProceedModal(previousModeRef.current);
     }
@@ -369,15 +329,14 @@ export const PdfRedactor = (p: {
     if (!elm) return;
 
     elm.addEventListener('mouseup', redactHighlightedIfTextRedactionMode);
-    return () =>
-      elm.removeEventListener('mouseup', redactHighlightedIfTextRedactionMode);
+    return () => elm.removeEventListener('mouseup', redactHighlightedIfTextRedactionMode);
   }, []);
 
   useDocumentFocus({ containerRef: pdfRedactorWrapperElmRef });
   useShiftReleaseRedactTrigger({
     modeRef,
     containerRef: pdfRedactorWrapperElmRef,
-    fire: redactHighlightedTextTrigger.fire
+    fire: redactHighlightedTextTrigger.fire,
   });
 
   const pageDeleteButtonDisabled = (numPages ?? 0) - deletions.length <= 1;
@@ -387,11 +346,7 @@ export const PdfRedactor = (p: {
   }, []);
 
   return (
-    <div
-      className={modeClassMap[p.mode]}
-      ref={pdfRedactorWrapperElmRef}
-      tabIndex={-1}
-    >
+    <div className={modeClassMap[p.mode]} ref={pdfRedactorWrapperElmRef} tabIndex={-1}>
       {displayToProceedModal && (
         <PdfRedactorCenteredModal
           onBackgroundClick={() => setDisplayToProceedModal(undefined)}
@@ -399,19 +354,13 @@ export const PdfRedactor = (p: {
           ariaLabel="Save changes before proceeding"
         >
           {isRedactionEnabledMode(displayToProceedModal) && (
-            <SaveToProceedToRedactionsModal
-              onClose={() => setDisplayToProceedModal(undefined)}
-            />
+            <SaveToProceedToRedactionsModal onClose={() => setDisplayToProceedModal(undefined)} />
           )}
           {displayToProceedModal === 'rotation' && (
-            <SaveToProceedToRotationsModal
-              onClose={() => setDisplayToProceedModal(undefined)}
-            />
+            <SaveToProceedToRotationsModal onClose={() => setDisplayToProceedModal(undefined)} />
           )}
           {displayToProceedModal === 'deletion' && (
-            <SaveToProceedToRotationsModal
-              onClose={() => setDisplayToProceedModal(undefined)}
-            />
+            <SaveToProceedToRotationsModal onClose={() => setDisplayToProceedModal(undefined)} />
           )}
         </PdfRedactorCenteredModal>
       )}
@@ -424,7 +373,7 @@ export const PdfRedactor = (p: {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            padding: '10px'
+            padding: '10px',
           }}
         >
           <span style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
@@ -432,11 +381,7 @@ export const PdfRedactor = (p: {
               className={`govuk-button ${
                 isRedactionEnabledMode(p.mode) ? '' : 'govuk-button--secondary'
               }`}
-              onClick={() =>
-                p.onModeChange(
-                  isRedactionEnabledMode(p.mode) ? 'disabled' : 'redact'
-                )
-              }
+              onClick={() => p.onModeChange(isRedactionEnabledMode(p.mode) ? 'disabled' : 'redact')}
               aria-label="Redaction mode"
               aria-pressed={isRedactionEnabledMode(p.mode)}
             >
@@ -491,15 +436,13 @@ export const PdfRedactor = (p: {
             backgroundColor: '#F3F2F1',
             paddingBottom: '70px',
             boxSizing: 'border-box',
-            border: 'solid 1px black'
+            border: 'solid 1px black',
           }}
         >
           <Document
             file={p.fileUrl}
             onLoadSuccess={async (pdf) => {
-              const cachedRedactionsResp = getRedactionsFromCache(
-                getKeyForAutosaveRedactions()
-              );
+              const cachedRedactionsResp = getRedactionsFromCache(getKeyForAutosaveRedactions());
               const cachedRedactions = cachedRedactionsResp.data;
               const initOrCachedRedactions = (() => {
                 if (p.initRedactions.length > 0) return p.initRedactions;
@@ -519,22 +462,18 @@ export const PdfRedactor = (p: {
                 pagesAmount={numPages!}
                 scale={scaleHelper.scale}
                 onMouseMove={() => {}}
-                redactHighlightedTextTriggerData={
-                  redactHighlightedTextTrigger.data
-                }
+                redactHighlightedTextTriggerData={redactHighlightedTextTrigger.data}
                 mode={p.mode}
                 onPageRedactionsChange={() => {}}
                 onAddRedactions={(x) => {
                   p.onRedactionsChange([...p.redactions, ...x]);
                   p.onAddRedactions({
                     redactions: x,
-                    highlightedText: window.getSelection()?.toString()
+                    highlightedText: window.getSelection()?.toString(),
                   });
                 }}
                 onRemoveRedactions={(ids) => {
-                  p.onRedactionsChange(
-                    p.redactions.filter((red) => !ids.includes(red.id))
-                  );
+                  p.onRedactionsChange(p.redactions.filter((red) => !ids.includes(red.id)));
                   p.onRemoveRedactions(ids);
                 }}
                 redactions={indexedRedactions[j + 1] ?? []}
@@ -545,45 +484,26 @@ export const PdfRedactor = (p: {
                 onPageRotationChange={(x) => {
                   p.onRotationsChange({
                     ...p.indexedRotation,
-                    [j + 1]: {
-                      id: crypto.randomUUID(),
-                      pageNumber: j + 1,
-                      rotationDegrees: x
-                    }
+                    [j + 1]: { id: crypto.randomUUID(), pageNumber: j + 1, rotationDegrees: x },
                   });
                 }}
                 highlightLayers={indexedHighlightLayers.map((layer) => ({
                   highlights: layer.byPage[j + 1] ?? [],
-                  focusedId: layer.focusedId
+                  focusedId: layer.focusedId,
                 }))}
                 pageIsDelete={!!p.indexedDeletion[j + 1]?.isDeleted}
                 onPageIsDeleteChange={(isDeleted) => {
-                  const deletion = {
-                    id: crypto.randomUUID(),
-                    pageNumber: j + 1,
-                    isDeleted
-                  };
+                  const deletion = { id: crypto.randomUUID(), pageNumber: j + 1, isDeleted };
                   const fn = isDeleted ? p.onDeletionAdd : p.onDeletionRemove;
                   fn(deletion);
-                  p.onDeletionsChange({
-                    ...p.indexedDeletion,
-                    [j + 1]: deletion
-                  });
+                  p.onDeletionsChange({ ...p.indexedDeletion, [j + 1]: deletion });
                 }}
               />
             ))}
           </Document>
         </div>
         {p.redactions.length > 0 && (
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '25px',
-              left: 0,
-              right: 0,
-              zIndex: 800
-            }}
-          >
+          <div style={{ position: 'absolute', bottom: '25px', left: 0, right: 0, zIndex: 800 }}>
             <RedactionsFooter
               redactions={p.redactions}
               onRemoveAllRedactionsClick={() => p.onRedactionsChange([])}
@@ -596,15 +516,7 @@ export const PdfRedactor = (p: {
           </div>
         )}
         {filteredRotations.length > 0 && (
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '25px',
-              left: 0,
-              right: 0,
-              zIndex: 800
-            }}
-          >
+          <div style={{ position: 'absolute', bottom: '25px', left: 0, right: 0, zIndex: 800 }}>
             <RotationsFooter
               rotations={filteredRotations}
               onRemoveAllRotationsClick={() => p.onRotationsChange({})}
@@ -616,15 +528,7 @@ export const PdfRedactor = (p: {
           </div>
         )}
         {filteredDeletions.length > 0 && (
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '25px',
-              left: 0,
-              right: 0,
-              zIndex: 800
-            }}
-          >
+          <div style={{ position: 'absolute', bottom: '25px', left: 0, right: 0, zIndex: 800 }}>
             <DeletionsFooter
               deletions={filteredDeletions}
               onRemoveAllDeletionsClick={() => p.onDeletionsChange({})}

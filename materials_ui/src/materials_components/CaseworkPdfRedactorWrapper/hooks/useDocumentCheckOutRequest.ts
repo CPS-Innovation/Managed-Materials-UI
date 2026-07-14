@@ -7,9 +7,7 @@ import { useAxiosInstance } from '../../../caseWorkApp/components/utils/getData'
 type UseDocumentCheckoutOptions = { caseId?: number; urn?: string };
 
 const extractReadableMessageFromError = (error: unknown) => {
-  const errorSchema = z.object({
-    response: z.object({ data: z.object({ Error: z.string() }) })
-  });
+  const errorSchema = z.object({ response: z.object({ data: z.object({ Error: z.string() }) }) });
   const parsed = errorSchema.safeParse(error);
   if (!parsed.success) return null;
 
@@ -27,7 +25,7 @@ const checkOutDocumentFromAxiosInstance = async (p: {
 }) => {
   try {
     const response = await p.axiosInstance.post(
-      `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.parentId}/versions/${p.childId}/checkout`
+      `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.parentId}/versions/${p.childId}/checkout`,
     );
 
     return { success: true, data: { response } } as const;
@@ -41,11 +39,7 @@ const checkOutDocumentFromAxiosInstance = async (p: {
       return { success: false, status: 'locked', message } as const;
     }
 
-    return {
-      success: false,
-      status: 'generic error',
-      message: defaultMessage
-    } as const;
+    return { success: false, status: 'generic error', message: defaultMessage } as const;
   }
 };
 
@@ -59,32 +53,24 @@ export const checkInDocumentFromAxiosInstance = async (p: {
   try {
     await p.axiosInstance.delete(
       `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.parentId}/versions/${p.childId}/checkout`,
-      { fetchOptions: { keepalive: true } }
+      { fetchOptions: { keepalive: true } },
     );
 
     return { success: true } as const;
   } catch (error: unknown) {
-    if (!!error && typeof error === 'object' && 'message' in error)
-      console.error(error?.message);
+    if (!!error && typeof error === 'object' && 'message' in error) console.error(error?.message);
 
     return { success: false } as const;
   }
 };
 
-export const useDocumentCheckOutRequest = ({
-  caseId,
-  urn
-}: UseDocumentCheckoutOptions) => {
+export const useDocumentCheckOutRequest = ({ caseId, urn }: UseDocumentCheckoutOptions) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const axiosInstance = useAxiosInstance();
 
-  const checkOut = async (fnProps: {
-    parentId: string;
-    childId: number | string;
-  }) => {
+  const checkOut = async (fnProps: { parentId: string; childId: number | string }) => {
     if (!urn) return { success: false, message: 'no urn provided' } as const;
-    if (!caseId)
-      return { success: false, message: 'no caseId provided' } as const;
+    if (!caseId) return { success: false, message: 'no caseId provided' } as const;
 
     setIsLoading(true);
     const resp = await checkOutDocumentFromAxiosInstance({
@@ -92,7 +78,7 @@ export const useDocumentCheckOutRequest = ({
       urn,
       caseId,
       parentId: fnProps.parentId,
-      childId: fnProps.childId
+      childId: fnProps.childId,
     });
     setIsLoading(false);
 
@@ -101,8 +87,7 @@ export const useDocumentCheckOutRequest = ({
 
   const checkIn = async (fnProps: { parentId: string; childId: number }) => {
     if (!urn) return { success: false, message: 'no urn provided' } as const;
-    if (!caseId)
-      return { success: false, message: 'no caseId provided' } as const;
+    if (!caseId) return { success: false, message: 'no caseId provided' } as const;
 
     setIsLoading(true);
     const resp = await checkInDocumentFromAxiosInstance({
@@ -110,7 +95,7 @@ export const useDocumentCheckOutRequest = ({
       urn,
       caseId,
       parentId: fnProps.parentId,
-      childId: fnProps.childId
+      childId: fnProps.childId,
     });
     setIsLoading(false);
 

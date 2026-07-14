@@ -13,13 +13,13 @@ export const useRequest = () => {
 
   const axiosInstance = axios.create({
     baseURL: `${POLARIS_GATEWAY_URL}/api/`,
-    withCredentials: true
+    withCredentials: true,
   });
 
   axiosInstance.interceptors.request.use(async (config) => {
     const tokenResponse = await msalInstance.acquireTokenSilent({
       ...loginRequest,
-      account: msalInstance.getActiveAccount()!
+      account: msalInstance.getActiveAccount()!,
     });
 
     config.headers['Authorization'] = `Bearer ${tokenResponse.accessToken}`;
@@ -47,16 +47,14 @@ export const useRequest = () => {
 
         if (
           !error.request.responseURL.includes('/uma-reclassify') &&
-          !/^\/api\/urns\/[^/]+\/cases$/.test(
-            new URL(error.request.responseURL).pathname
-          )
+          !/^\/api\/urns\/[^/]+\/cases$/.test(new URL(error.request.responseURL).pathname)
         ) {
           return navigate(`/${getRoute('SERVER_ERROR', false)}`);
         }
       }
 
       return Promise.reject(error);
-    }
+    },
   );
 
   return axiosInstance;
@@ -67,13 +65,13 @@ export const useAxiosInstance = () => {
 
   const axiosInstance = axios.create({
     baseURL: `${POLARIS_GATEWAY_URL}/api/`,
-    withCredentials: true
+    withCredentials: true,
   });
 
   axiosInstance.interceptors.request.use(async (config) => {
     const tokenResponse = await msalInstance.acquireTokenSilent({
       ...loginRequest,
-      account: msalInstance.getActiveAccount()!
+      account: msalInstance.getActiveAccount()!,
     });
 
     config.headers['Authorization'] = `Bearer ${tokenResponse.accessToken}`;

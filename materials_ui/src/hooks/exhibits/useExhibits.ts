@@ -4,14 +4,12 @@ export const useExhibits = () => {
   const {
     data: materials,
     loading: isLoading,
-    error
+    error,
   } = useCaseMaterials({ dataType: 'materials' });
 
   const references = materials?.length
     ? materials
-        ?.map((material) =>
-          (material.reference || '').trim().toLocaleLowerCase()
-        )
+        ?.map((material) => (material.reference || '').trim().toLocaleLowerCase())
         .filter((ref) => !!ref)
     : [];
 

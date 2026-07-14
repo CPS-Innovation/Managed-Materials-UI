@@ -9,7 +9,7 @@ const DefendantDetailsSchema = z.object({
   dob: z.string(),
   age: z.string(),
   youth: z.boolean(),
-  type: z.string()
+  type: z.string(),
 });
 
 const HeadlineChargeSchema = z.object({
@@ -17,13 +17,13 @@ const HeadlineChargeSchema = z.object({
   date: z.string().nullable(),
   earlyDate: z.string().nullable(),
   lateDate: z.string().nullable(),
-  nextHearingDate: z.string().nullable()
+  nextHearingDate: z.string().nullable(),
 });
 
 const CustodyTimeLimitSchema = z.object({
   expiryDate: z.string().nullable(),
   expiryDays: z.number().nullable(),
-  expiryIndicator: z.boolean().nullable()
+  expiryIndicator: z.boolean().nullable(),
 });
 
 const ChargesSchema = z.array(
@@ -37,8 +37,8 @@ const ChargesSchema = z.array(
     code: z.string(),
     shortDescription: z.string(),
     longDescription: z.string(),
-    custodyTimeLimit: CustodyTimeLimitSchema
-  })
+    custodyTimeLimit: CustodyTimeLimitSchema,
+  }),
 );
 
 const DefendantSchema = z.array(
@@ -48,8 +48,8 @@ const DefendantSchema = z.array(
     defendantDetails: DefendantDetailsSchema,
     custodyTimeLimit: CustodyTimeLimitSchema,
     charges: ChargesSchema,
-    proposedCharges: z.array(z.unknown())
-  })
+    proposedCharges: z.array(z.unknown()),
+  }),
 );
 
 const WitnessSchema = z.array(
@@ -70,8 +70,8 @@ const WitnessSchema = z.array(
     professional: z.boolean(),
     specialNeeds: z.boolean(),
     intimidated: z.boolean(),
-    victim: z.boolean()
-  })
+    victim: z.boolean(),
+  }),
 );
 
 export const caseDetailsSchema = z.array(
@@ -85,8 +85,8 @@ export const caseDetailsSchema = z.array(
     headlineCharge: HeadlineChargeSchema,
     defendants: DefendantSchema,
     witnesses: WitnessSchema,
-    preChargeDecisionRequests: z.array(z.unknown())
-  })
+    preChargeDecisionRequests: z.array(z.unknown()),
+  }),
 );
 
 export type CaseDetailsType = z.infer<typeof caseDetailsSchema>;

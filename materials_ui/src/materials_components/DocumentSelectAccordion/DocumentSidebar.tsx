@@ -21,10 +21,7 @@ export const DocumentSidebar = (p: {
     { mode: 'accordion' } | { mode: 'notes'; documentId: string }
   >({ mode: 'accordion' });
 
-  useTriggerListener({
-    triggerData: p.reloadTriggerData,
-    fn: () => documentList.load()
-  });
+  useTriggerListener({ triggerData: p.reloadTriggerData, fn: () => documentList.load() });
 
   const documentList = useGetDocumentList({ urn, caseId });
   useEffect(() => {
@@ -49,9 +46,7 @@ export const DocumentSidebar = (p: {
           openDocumentIds={p.openDocumentIds}
           onSetActiveDocumentIds={(docIds) => p.onSetDocumentOpenIds(docIds)}
           onDocumentClick={p.onDocumentClick}
-          onNotesClick={(docId: string) =>
-            setStatus({ mode: 'notes', documentId: docId })
-          }
+          onNotesClick={(docId: string) => setStatus({ mode: 'notes', documentId: docId })}
           ActionComponent={p.ActionComponent}
         />
       </div>
