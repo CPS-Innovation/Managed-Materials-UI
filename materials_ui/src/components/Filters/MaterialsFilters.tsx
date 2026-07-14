@@ -64,6 +64,7 @@ export const MaterialsFilters = () => {
           <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">
             <h3 className="govuk-heading-s small-heading-spacing">Status</h3>
           </legend>
+
           {statusList.map((status) => (
             <Checkbox
               id={`status-${status}`}
