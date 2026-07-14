@@ -40,6 +40,7 @@ const presentationWriteFlagToRedactionDisabledMessageMap: { [k: string]: string 
   IsPageRotationModeOn:
     'Redaction is unavailable in page rotation mode, please turn off page rotation to continue with redaction.',
 };
+
 const getDocumentRedactionDisabledMessage = (doc: TDocument | null | undefined) => {
   const writePresentationFlag = doc?.presentationFlags?.write;
   if (!writePresentationFlag) return null;
