@@ -34,12 +34,13 @@ import { saveRotations } from './utils/saveRotationsUtils';
 const presentationWriteFlagToRedactionDisabledMessageMap: { [k: string]: string } = {
   IsRedactionServiceOffline: 'Redaction is currently unavailable and undergoing maintenance.',
   OnlyAvailableInCms: 'This document can only be redacted in CMS.',
-  DocTypeNotAllowed: 'Redaction is not supported for this document type.',
+  DocTypeNotAllowed: 'You cannot redact this type of document',
   OriginalFileTypeNotAllowed: 'Redaction is not supported for this file type.',
-  IsDispatched: 'This is a dispatched document.',
+  IsDispatched: 'You cannot redact this type of document because it has been dispatched.',
   IsPageRotationModeOn:
     'Redaction is unavailable in page rotation mode, please turn off page rotation to continue with redaction.',
 };
+
 const getDocumentRedactionDisabledMessage = (doc: TDocument | null | undefined) => {
   const writePresentationFlag = doc?.presentationFlags?.write;
   if (!writePresentationFlag) return null;
