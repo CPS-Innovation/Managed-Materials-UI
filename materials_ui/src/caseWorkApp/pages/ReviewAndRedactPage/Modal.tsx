@@ -6,11 +6,7 @@ export type ModalProps = {
   onEscPress: () => void;
 };
 
-export const Modal = ({
-  children,
-  onBackgroundClick,
-  onEscPress
-}: ModalProps) => {
+export const Modal = ({ children, onBackgroundClick, onEscPress }: ModalProps) => {
   const popupRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -41,7 +37,7 @@ export const Modal = ({
           zIndex: 999,
           display: 'flex',
           justifyContent: 'center',
-          alignItems: 'center'
+          alignItems: 'center',
         }}
         onClick={onBackgroundClick}
       >
@@ -53,7 +49,7 @@ export const Modal = ({
             boxShadow: '0 0 5px 5px #0003',
             zIndex: 1000,
             filter: 'drop-shadow(0 1px 2.5px #000)',
-            overflow: 'hidden'
+            overflow: 'hidden',
           }}
           onClick={(e) => e.stopPropagation()}
         >

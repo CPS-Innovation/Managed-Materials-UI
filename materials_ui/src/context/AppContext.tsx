@@ -16,7 +16,7 @@ export const AppContext = createContext<AppContextTypeWithSetter>({
   wmReturnUrl: null,
   removeBanner: () => null,
   setBannerState: () => null,
-  setWmTriageUrl: () => null
+  setWmTriageUrl: () => null,
 });
 
 export const AppContextProvider = ({ children }: PropsWithChildren) => {
@@ -36,9 +36,7 @@ export const AppContextProvider = ({ children }: PropsWithChildren) => {
   };
 
   const removeBanner = (bannerIdentifier: string) => {
-    setBanner(
-      banners.filter((banner) => banner.identifier !== bannerIdentifier)
-    );
+    setBanner(banners.filter((banner) => banner.identifier !== bannerIdentifier));
   };
 
   const setWmTriageUrl = (url?: string | null) => {
@@ -47,14 +45,7 @@ export const AppContextProvider = ({ children }: PropsWithChildren) => {
 
   return (
     <AppContext.Provider
-      value={{
-        banners,
-        clearBanners,
-        wmReturnUrl,
-        removeBanner,
-        setBannerState,
-        setWmTriageUrl
-      }}
+      value={{ banners, clearBanners, wmReturnUrl, removeBanner, setBannerState, setWmTriageUrl }}
     >
       {children}
     </AppContext.Provider>

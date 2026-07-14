@@ -7,17 +7,9 @@ import { EditExhibitForm } from '../components/forms/EditMaterial/EditExhibit';
 import { EditStatementForm } from '../components/forms/EditMaterial/EditStatement';
 import { Summary } from '../components/forms/EditMaterial/Summary';
 import type { ContentItem } from '../components/SummaryCard/SummaryCard';
-import {
-  useAppRoute,
-  useBanner,
-  useCaseWitnesses,
-  useEditMaterial
-} from '../hooks';
+import { useAppRoute, useBanner, useCaseWitnesses, useEditMaterial } from '../hooks';
 import type { CaseMaterialsType } from '../schemas';
-import {
-  EditExhibitType,
-  EditStatementType
-} from '../schemas/forms/editStatement';
+import { EditExhibitType, EditStatementType } from '../schemas/forms/editStatement';
 import { useMaterialTags } from '../stores';
 import { trackAction } from '../telemetry/appInsights';
 
@@ -30,39 +22,23 @@ export const EditMaterialPage = () => {
   const { setBanner } = useBanner();
   const navigate = useNavigate();
   const [formStep, setFormStep] = useState<FormStep>('form');
-  const [formData, setFormData] = useState<
-    EditStatementType | EditExhibitType | null
-  >(null);
+  const [formData, setFormData] = useState<EditStatementType | EditExhibitType | null>(null);
   const { getWitnessById, formatWitnessName } = useCaseWitnesses();
   const location = useLocation();
-  const { returnTo, row } = (location?.state ||
-    {}) as EditMaterialLocationState;
+  const { returnTo, row } = (location?.state || {}) as EditMaterialLocationState;
   const type = row?.category === 'Statement' ? 'Statement' : 'Exhibit';
 
   const { updateExhibit, updateStatement } = useEditMaterial({
     onError: () => {
-      setBanner({
-        type: 'error',
-        header: 'Unable to update material selected.'
-      });
+      setBanner({ type: 'error', header: 'Unable to update material selected.' });
     },
     onSuccess: (response) => {
-      trackAction('Updated', {
-        materialId: row?.materialId?.toString(),
-        category: row?.category
-      });
+      trackAction('Updated', { materialId: row?.materialId?.toString(), category: row?.category });
       setTags([{ materialId: response?.materialId, tagName: 'Updated' }]);
-      setBanner(
-        {
-          type: 'success',
-          header: 'Success',
-          content: `Material has been updated`
-        },
-        true
-      );
+      setBanner({ type: 'success', header: 'Success', content: `Material has been updated` }, true);
 
       navigate(returnTo, { state: { persistBanner: true } });
-    }
+    },
   });
 
   const returnUrlPath = returnTo || getRoute('MATERIALS');
@@ -91,77 +67,59 @@ export const EditMaterialPage = () => {
     }
   };
 
-  const summaryCardData: { data: ContentItem[]; title: string } =
-    useMemo(() => {
-      if (type === 'Statement') {
-        const statementData = formData as EditStatementType;
+  const summaryCardData: { data: ContentItem[]; title: string } = useMemo(() => {
+    if (type === 'Statement') {
+      const statementData = formData as EditStatementType;
 
-        const witness = getWitnessById(statementData?.witnessId);
+      const witness = getWitnessById(statementData?.witnessId);
 
-        // statement data
-        return {
-          data: [
-            { key: 'Who is the witness?', value: formatWitnessName(witness) },
-            {
-              key: 'Does the statement have a date?',
-              value: statementData?.hasStatementDate ? 'Yes' : 'No'
-            },
-            ...(statementData?.hasStatementDate
-              ? [
-                  {
-                    key: 'What is the statement date?',
-                    value: dayjs(statementData?.statementDate).format(
-                      'D MMM YYYY'
-                    )
-                  }
-                ]
-              : []),
-            {
-              key: 'What is the statement number?',
-              value: statementData?.statementNumber
-            },
-            {
-              key: 'What is the material status?',
-              value: statementData?.used ? 'Used' : 'Unused'
-            }
-          ],
-          title: `Statement ${row?.type} details`
-        };
-      }
-
-      const exhibitData = formData as EditExhibitType;
-
-      // exhibit data
+      // statement data
       return {
         data: [
+          { key: 'Who is the witness?', value: formatWitnessName(witness) },
           {
-            key: 'What is the exhibit reference number?',
-            value: exhibitData?.reference
+            key: 'Does the statement have a date?',
+            value: statementData?.hasStatementDate ? 'Yes' : 'No',
           },
-          { key: 'What is the exhibit item?', value: exhibitData?.item },
-          { key: 'What is the exhibit name?', value: exhibitData?.subject },
-
-          ...(exhibitData?.existingproducerOrWitnessId ||
-          exhibitData?.producedBy
+          ...(statementData?.hasStatementDate
             ? [
                 {
-                  key: 'Exhibit producer or witness',
-                  value: exhibitData?.existingproducerOrWitnessId
-                    ? formatWitnessName(
-                        getWitnessById(exhibitData?.existingproducerOrWitnessId)
-                      )
-                    : exhibitData?.producedBy
-                }
+                  key: 'What is the statement date?',
+                  value: dayjs(statementData?.statementDate).format('D MMM YYYY'),
+                },
               ]
             : []),
-          {
-            key: 'What is the material status?',
-            value: exhibitData?.used ? 'Used' : 'Unused'
-          }
+          { key: 'What is the statement number?', value: statementData?.statementNumber },
+          { key: 'What is the material status?', value: statementData?.used ? 'Used' : 'Unused' },
         ],
-        title: row?.type
+        title: `Statement ${row?.type} details`,
       };
-    }, [formData, row]);
+    }
+
+    const exhibitData = formData as EditExhibitType;
+
+    // exhibit data
+    return {
+      data: [
+        { key: 'What is the exhibit reference number?', value: exhibitData?.reference },
+        { key: 'What is the exhibit item?', value: exhibitData?.item },
+        { key: 'What is the exhibit name?', value: exhibitData?.subject },
+
+        ...(exhibitData?.existingproducerOrWitnessId || exhibitData?.producedBy
+          ? [
+              {
+                key: 'Exhibit producer or witness',
+                value: exhibitData?.existingproducerOrWitnessId
+                  ? formatWitnessName(getWitnessById(exhibitData?.existingproducerOrWitnessId))
+                  : exhibitData?.producedBy,
+              },
+            ]
+          : []),
+        { key: 'What is the material status?', value: exhibitData?.used ? 'Used' : 'Unused' },
+      ],
+      title: row?.type,
+    };
+  }, [formData, row]);
 
   const renderBackLink = () => {
     if (formStep === 'summary') {
@@ -227,9 +185,7 @@ export const EditMaterialPage = () => {
               />
             )}
           </div>
-          <div className="govuk-grid-column-one-half">
-            {row && <DocumentPreview row={row} />}
-          </div>
+          <div className="govuk-grid-column-one-half">{row && <DocumentPreview row={row} />}</div>
         </div>
       </div>
     </>

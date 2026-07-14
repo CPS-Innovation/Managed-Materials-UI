@@ -15,9 +15,7 @@ export const App = () => {
   }, [instance, accounts]);
 
   const account = instance.getActiveAccount() || accounts[0];
-  const role = (account?.idTokenClaims?.roles as string[] | undefined)?.join(
-    ','
-  );
+  const role = (account?.idTokenClaims?.roles as string[] | undefined)?.join(',');
 
   useEffect(() => {
     if (role) setTelemetryUserRole(role);

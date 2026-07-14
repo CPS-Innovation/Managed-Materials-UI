@@ -6,7 +6,7 @@ export const CaseInfoSchema = z.strictObject({
   leadDefendantFirstNames: z.string(),
   leadDefendantSurname: z.string(),
   numberOfDefendants: z.number(),
-  unitName: z.string()
+  unitName: z.string(),
 });
 
 export const CaseInfoRequestSchema = z.null();

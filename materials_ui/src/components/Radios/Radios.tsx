@@ -23,24 +23,11 @@ export type Props = {
 
 export const Radios = forwardRef<HTMLInputElement, Props>(
   (
-    {
-      error,
-      id,
-      legend,
-      name,
-      onChange,
-      options,
-      required = false,
-      inline,
-      value,
-      defaultValue
-    },
-    ref
+    { error, id, legend, name, onChange, options, required = false, inline, value, defaultValue },
+    ref,
   ) => {
     return (
-      <div
-        className={`govuk-form-group${error ? ' govuk-form-group--error' : ''}`}
-      >
+      <div className={`govuk-form-group${error ? ' govuk-form-group--error' : ''}`}>
         <fieldset
           className="govuk-fieldset"
           role="radiogroup"
@@ -48,9 +35,7 @@ export const Radios = forwardRef<HTMLInputElement, Props>(
           aria-invalid={!!error}
           id={id}
         >
-          <legend className="govuk-fieldset__legend govuk-fieldset__legend--s">
-            {legend}
-          </legend>
+          <legend className="govuk-fieldset__legend govuk-fieldset__legend--s">{legend}</legend>
 
           {error && (
             <p className="govuk-error-message">
@@ -76,19 +61,14 @@ export const Radios = forwardRef<HTMLInputElement, Props>(
                     checked={option.value === value}
                     onChange={() => onChange(option)}
                   />
-                  <label
-                    className="govuk-label govuk-radios__label"
-                    htmlFor={`radio-${option.id}`}
-                  >
+                  <label className="govuk-label govuk-radios__label" htmlFor={`radio-${option.id}`}>
                     {option.label}
                   </label>
                 </div>
 
                 {option.conditionalField &&
                   (option.value === defaultValue || value === option.value) && (
-                    <div className="govuk-radios__conditional">
-                      {option.conditionalField}
-                    </div>
+                    <div className="govuk-radios__conditional">{option.conditionalField}</div>
                   )}
               </Fragment>
             ))}
@@ -96,5 +76,5 @@ export const Radios = forwardRef<HTMLInputElement, Props>(
         </fieldset>
       </div>
     );
-  }
+  },
 );

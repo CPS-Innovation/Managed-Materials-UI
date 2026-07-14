@@ -1,8 +1,4 @@
-export const TickCircleIcon = (p: {
-  height: number;
-  width: number;
-  color?: string;
-}) => {
+export const TickCircleIcon = (p: { height: number; width: number; color?: string }) => {
   return (
     <div style={{ width: `${p.width}px`, height: `${p.height}px` }}>
       <svg

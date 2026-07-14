@@ -1,11 +1,5 @@
 import dayjs from 'dayjs';
-import {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState
-} from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 type Props = {
   id: string;
@@ -20,15 +14,9 @@ export const DateField = forwardRef<HTMLInputElement, Props>(
   ({ error, id, hint, label, onChange, value }, ref) => {
     const initialDate = value && dayjs(value).isValid() ? dayjs(value) : null;
 
-    const [day, setDay] = useState<string>(
-      initialDate ? String(initialDate.date()) : ''
-    );
-    const [month, setMonth] = useState<string>(
-      initialDate ? String(initialDate.month() + 1) : ''
-    );
-    const [year, setYear] = useState<string>(
-      initialDate ? String(initialDate.year()) : ''
-    );
+    const [day, setDay] = useState<string>(initialDate ? String(initialDate.date()) : '');
+    const [month, setMonth] = useState<string>(initialDate ? String(initialDate.month() + 1) : '');
+    const [year, setYear] = useState<string>(initialDate ? String(initialDate.year()) : '');
 
     // Internal refs
     const dayRef = useRef<HTMLInputElement>(null);
@@ -48,14 +36,8 @@ export const DateField = forwardRef<HTMLInputElement, Props>(
     }, [day, month, year, onChange]);
 
     return (
-      <div
-        className={`govuk-form-group ${error ? 'govuk-form-group--error' : ''}`}
-      >
-        <fieldset
-          className="govuk-fieldset"
-          role="group"
-          aria-describedby={`${id}-hint`}
-        >
+      <div className={`govuk-form-group ${error ? 'govuk-form-group--error' : ''}`}>
+        <fieldset className="govuk-fieldset" role="group" aria-describedby={`${id}-hint`}>
           <legend
             className="govuk-fieldset__legend govuk-fieldset__legend--l"
             style={{ fontSize: 19 }}
@@ -78,10 +60,7 @@ export const DateField = forwardRef<HTMLInputElement, Props>(
           <div className="govuk-date-input" id={id}>
             <div className="govuk-date-input__item">
               <div className="govuk-form-group">
-                <label
-                  className="govuk-label govuk-date-input__label"
-                  htmlFor={`${id}-day`}
-                >
+                <label className="govuk-label govuk-date-input__label" htmlFor={`${id}-day`}>
                   Day
                 </label>
                 <input
@@ -98,10 +77,7 @@ export const DateField = forwardRef<HTMLInputElement, Props>(
             </div>
             <div className="govuk-date-input__item">
               <div className="govuk-form-group">
-                <label
-                  className="govuk-label govuk-date-input__label"
-                  htmlFor={`${id}-month`}
-                >
+                <label className="govuk-label govuk-date-input__label" htmlFor={`${id}-month`}>
                   Month
                 </label>
                 <input
@@ -118,10 +94,7 @@ export const DateField = forwardRef<HTMLInputElement, Props>(
             </div>
             <div className="govuk-date-input__item">
               <div className="govuk-form-group">
-                <label
-                  className="govuk-label govuk-date-input__label"
-                  htmlFor={`${id}-year`}
-                >
+                <label className="govuk-label govuk-date-input__label" htmlFor={`${id}-year`}>
                   Year
                 </label>
                 <input
@@ -140,5 +113,5 @@ export const DateField = forwardRef<HTMLInputElement, Props>(
         </fieldset>
       </div>
     );
-  }
+  },
 );

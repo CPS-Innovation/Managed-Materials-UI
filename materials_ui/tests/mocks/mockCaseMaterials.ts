@@ -24,16 +24,13 @@ const material: CaseMaterialsType[] = [
     reference: 't1',
     item: 'test',
     existingproducerOrWitnessId: 0,
-    isReclassifiable: true
-  }
+    isReclassifiable: true,
+  },
 ];
 
 export const mockCaseMaterials = (overwrite?: Partial<CaseMaterialsType>) => {
   try {
-    return material.map((currentMaterial) => ({
-      ...currentMaterial,
-      ...overwrite
-    }));
+    return material.map((currentMaterial) => ({ ...currentMaterial, ...overwrite }));
   } catch (error) {
     console.error('Error in mockCaseMaterials:', error);
     throw error;

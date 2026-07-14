@@ -21,12 +21,8 @@ export const CloseTabUnsavedRedactionsModal = (p: {
             <p className="govuk-body">
               {`You have ${p.redactions?.length ?? 0} unsaved redaction ${isPlural ? 's' : ''}`}
             </p>
-            <p className="govuk-body">
-              Return to the document to save your redactions
-            </p>
-            <p className="govuk-body">
-              If you select Ignore your redactions will not be applied.
-            </p>
+            <p className="govuk-body">Return to the document to save your redactions</p>
+            <p className="govuk-body">If you select Ignore your redactions will not be applied.</p>
             <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
               <Button variant="primary" onClick={p.onReturnClick}>
                 Return to case file

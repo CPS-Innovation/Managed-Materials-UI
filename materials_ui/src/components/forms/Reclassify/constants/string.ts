@@ -3,15 +3,10 @@ import { Reclassify_ClassificationForm } from '../../../../schemas/forms/reclass
 const BE_TO_FE_CLASSIFICATIONS_MAP: Record<
   Reclassify_ClassificationForm['classification'],
   string
-> = {
-  STATEMENT: 'Statement',
-  EXHIBIT: 'Exhibit',
-  'MG Form': 'MG Forms',
-  OTHER: 'Other'
-};
+> = { STATEMENT: 'Statement', EXHIBIT: 'Exhibit', 'MG Form': 'MG Forms', OTHER: 'Other' };
 
 export const mapBEClassificationToFE = (
-  classification: Reclassify_ClassificationForm['classification']
+  classification: Reclassify_ClassificationForm['classification'],
 ) => {
   return BE_TO_FE_CLASSIFICATIONS_MAP[classification];
 };

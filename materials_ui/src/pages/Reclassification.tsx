@@ -6,11 +6,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ErrorSummary, LoadingSpinner, Radios } from '../components';
 import DocumentPreview from '../components/DocumentPreview/DocumentPreview';
 import type { ErrorSummaryItem } from '../components/ErrorSummary/ErrorSummary';
-import {
-  AddWitness,
-  MaterialName,
-  Summary
-} from '../components/forms/Reclassify';
+import { AddWitness, MaterialName, Summary } from '../components/forms/Reclassify';
 import { categoryOptions } from '../components/forms/Reclassify/constants/options';
 import { generateMaterialName } from '../components/forms/Reclassify/utils/form';
 import {
@@ -22,14 +18,14 @@ import {
   useDocumentTypes,
   useExhibits,
   useReclassify,
-  useReclassifyForm
+  useReclassifyForm,
 } from '../hooks';
 import { CaseMaterialsType } from '../schemas';
 import {
   Reclassify_ClassificationEnumType,
   Reclassify_ClassificationForm,
   Reclassify_ClassificationFormSchema,
-  Reclassify_WitnessAndActionPlanType
+  Reclassify_WitnessAndActionPlanType,
 } from '../schemas/forms/reclassify';
 import { useMaterialTags } from '../stores';
 import { trackAction } from '../telemetry/appInsights';
@@ -45,18 +41,13 @@ export const ReclassificationPage = () => {
   const { getDocumentTypeById } = useDocumentTypes();
   const { resetBanner, setBanner } = useBanner();
   const { compareRefs } = useExhibits();
-  const {
-    isLocked: isCaseLocked,
-    name: caseLockName,
-    refreshCaseLockStatus
-  } = useCaseLockCheck();
+  const { isLocked: isCaseLocked, name: caseLockName, refreshCaseLockStatus } = useCaseLockCheck();
 
   if (!material) {
     navigate(getRoute('MATERIALS'));
   }
 
-  const { changeFormStep, currentStep, formData, saveFormData } =
-    useReclassifyForm(material);
+  const { changeFormStep, currentStep, formData, saveFormData } = useReclassifyForm(material);
 
   const { loading: reclassifyLoading, submitReclassification } = useReclassify({
     materialId: material.materialId,
@@ -64,7 +55,7 @@ export const ReclassificationPage = () => {
       setBanner({
         type: 'error',
         header: 'Reclassify unsuccessful',
-        content: 'Unable to reclassify the material selected'
+        content: 'Unable to reclassify the material selected',
       });
     },
     onSuccess: (response) => {
@@ -77,7 +68,7 @@ export const ReclassificationPage = () => {
       const banners = getBannerData(
         response?.data,
         formData?.classification as Reclassify_ClassificationEnumType,
-        isRenamed
+        isRenamed,
       );
 
       banners.forEach((banner) => {
@@ -87,29 +78,23 @@ export const ReclassificationPage = () => {
       if (response.data.status !== 'Failed') {
         trackAction('Reclassified', {
           materialId: material.materialId?.toString(),
-          category: material.category
+          category: material.category,
         });
         const documentType = getDocumentTypeById(fieldValues.documentType);
         const materialReclassifiedId =
-          response?.data?.reclassificationResult?.resultData
-            ?.reclassifyCommunication?.id;
+          response?.data?.reclassificationResult?.resultData?.reclassifyCommunication?.id;
 
-        setTags([
-          {
-            materialId: materialReclassifiedId as number,
-            tagName: 'Reclassified'
-          }
-        ]);
+        setTags([{ materialId: materialReclassifiedId as number, tagName: 'Reclassified' }]);
 
         // if material reclassified to a communication, redirect to communication tab instead of materials
         navigate(
           documentType?.category === 'Communication'
             ? getRoute('COMMUNICATIONS')
             : getRoute('MATERIALS'),
-          { state: { persistBanner: true } }
+          { state: { persistBanner: true } },
         );
       }
-    }
+    },
   });
 
   const {
@@ -120,11 +105,11 @@ export const ReclassificationPage = () => {
     resetField,
     setError,
     setValue,
-    watch
+    watch,
   } = useForm<Reclassify_ClassificationForm>({
     // @ts-expect-error fix type here
     resolver: zodResolver(Reclassify_ClassificationFormSchema),
-    defaultValues: formData
+    defaultValues: formData,
   });
 
   const fieldValues = watch();
@@ -133,8 +118,7 @@ export const ReclassificationPage = () => {
   // so we're doing it here in a slightly hacky way
   const errors = useMemo((): FieldErrors => {
     if (formErrors.classification) {
-      formErrors.classification.message =
-        'Choose a new material classification category';
+      formErrors.classification.message = 'Choose a new material classification category';
     }
 
     return formErrors;
@@ -150,7 +134,7 @@ export const ReclassificationPage = () => {
       if (compareRefs(data?.referenceNumber)) {
         setError('referenceNumber', {
           type: 'manual',
-          message: `The reference number '${data?.referenceNumber}' has already been used`
+          message: `The reference number '${data?.referenceNumber}' has already been used`,
         });
 
         return;
@@ -158,9 +142,7 @@ export const ReclassificationPage = () => {
     }
 
     // no additional form steps for these classifications, head to the summary view
-    if (
-      ['EXHIBIT', 'MG Form', 'OTHER'].includes(data?.classification as string)
-    ) {
+    if (['EXHIBIT', 'MG Form', 'OTHER'].includes(data?.classification as string)) {
       saveFormData(data);
       changeFormStep('summary');
     }
@@ -185,9 +167,7 @@ export const ReclassificationPage = () => {
     changeFormStep('summary');
   };
 
-  const handleAddWitnessAndActionPlanFormSubmit = (
-    data: Reclassify_WitnessAndActionPlanType
-  ) => {
+  const handleAddWitnessAndActionPlanFormSubmit = (data: Reclassify_WitnessAndActionPlanType) => {
     if (formData?.classification === 'STATEMENT') {
       saveFormData({
         witnessActionPlan: data,
@@ -195,8 +175,8 @@ export const ReclassificationPage = () => {
           'MG11',
           (data?.firstName as string) || '',
           (data?.surname as string) || '',
-          formatDate(formData?.statementDate, '-', 'DD-MM-YYYY')
-        )
+          formatDate(formData?.statementDate, '-', 'DD-MM-YYYY'),
+        ),
       });
     }
 
@@ -215,10 +195,7 @@ export const ReclassificationPage = () => {
     if (currentStep !== 'classification') {
       let goToStep: FormStep;
 
-      if (
-        formData.classification === 'STATEMENT' &&
-        currentStep === 'subject'
-      ) {
+      if (formData.classification === 'STATEMENT' && currentStep === 'subject') {
         if (formData?.witnessId === 0) {
           goToStep = 'addWitness';
         }
@@ -257,9 +234,8 @@ export const ReclassificationPage = () => {
         setBanner({
           type: 'error',
           header: `You cannot complete this action due to the case being in use by ${caseLockName}`,
-          content:
-            'To unlock, please contact the user and ask them to exit the case',
-          identifier: 'caselock'
+          content: 'To unlock, please contact the user and ask them to exit the case',
+          identifier: 'caselock',
         });
       } else {
         resetBanner('caselock');
@@ -314,9 +290,7 @@ export const ReclassificationPage = () => {
             {currentStep === 'classification' && (
               <>
                 <h2 className="govuk-caption-l hmrc-caption-l">
-                  <span className="govuk-visually-hidden">
-                    This section is{' '}
-                  </span>
+                  <span className="govuk-visually-hidden">This section is </span>
                   Reclassify
                 </h2>
                 <h1 className="govuk-heading-l">Material category</h1>
@@ -325,7 +299,7 @@ export const ReclassificationPage = () => {
                   onSubmit={handleSubmit(
                     // @ts-expect-error need to fix type
                     handleFormSubmit,
-                    handleErrorsOnSubmit
+                    handleErrorsOnSubmit,
                   )}
                   noValidate
                 >
@@ -342,7 +316,7 @@ export const ReclassificationPage = () => {
                           control,
                           fieldValues,
                           errors,
-                          material
+                          material,
                         )}
                         required
                         error={errors?.classification?.message as string}
@@ -352,17 +326,10 @@ export const ReclassificationPage = () => {
                   />
 
                   <div className="govuk-button-group">
-                    <button
-                      type="submit"
-                      className="govuk-button"
-                      data-module="govuk-button"
-                    >
+                    <button type="submit" className="govuk-button" data-module="govuk-button">
                       Continue
                     </button>
-                    <Link
-                      to={getRoute('MATERIALS')}
-                      className="govuk-link cancel-status-change"
-                    >
+                    <Link to={getRoute('MATERIALS')} className="govuk-link cancel-status-change">
                       Cancel
                     </Link>
                   </div>
@@ -370,40 +337,27 @@ export const ReclassificationPage = () => {
               </>
             )}
 
-            {formData.classification === 'STATEMENT' &&
-              currentStep === 'addWitness' && (
-                <>
-                  <h2 className="govuk-caption-l hmrc-caption-l">
-                    <span className="govuk-visually-hidden">
-                      This section is{' '}
-                    </span>
-                    Reclassify
-                  </h2>
-                  <h1 className="govuk-heading-l">
-                    New witness and action plan request
-                  </h1>
-                  <AddWitness
-                    data={
-                      formData?.witnessActionPlan as Reclassify_WitnessAndActionPlanType
-                    }
-                    onSave={handleAddWitnessAndActionPlanFormSubmit}
-                  />
-                </>
-              )}
+            {formData.classification === 'STATEMENT' && currentStep === 'addWitness' && (
+              <>
+                <h2 className="govuk-caption-l hmrc-caption-l">
+                  <span className="govuk-visually-hidden">This section is </span>
+                  Reclassify
+                </h2>
+                <h1 className="govuk-heading-l">New witness and action plan request</h1>
+                <AddWitness
+                  data={formData?.witnessActionPlan as Reclassify_WitnessAndActionPlanType}
+                  onSave={handleAddWitnessAndActionPlanFormSubmit}
+                />
+              </>
+            )}
 
             {currentStep === 'subject' && (
-              <MaterialName
-                data={formData}
-                onSave={handleMaterialNameFormSubmit}
-              />
+              <MaterialName data={formData} onSave={handleMaterialNameFormSubmit} />
             )}
 
             {currentStep === 'summary' && (
               <>
-                <LoadingSpinner
-                  isLoading={reclassifyLoading}
-                  textContent="Please wait..."
-                />
+                <LoadingSpinner isLoading={reclassifyLoading} textContent="Please wait..." />
                 {!reclassifyLoading && (
                   <>
                     <h1 className="govuk-heading-l">Check your answers</h1>

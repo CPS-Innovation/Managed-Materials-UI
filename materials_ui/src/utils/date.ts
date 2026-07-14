@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 export const formatDate = (
   dateStr?: string | Date,
   separator: string = '/',
-  expectedFormat?: string
+  expectedFormat?: string,
 ): string => {
   if (!dateStr) return '-';
 
@@ -22,9 +22,5 @@ export const formatDateInputValue = (dateStr?: string | Date) => {
 
 export const formatDateLong = (d?: string | null) =>
   d
-    ? new Date(d).toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric'
-      })
+    ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })
     : '';

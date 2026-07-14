@@ -1,10 +1,4 @@
-import {
-  Control,
-  Controller,
-  FieldErrors,
-  FieldValues,
-  Path
-} from 'react-hook-form';
+import { Control, Controller, FieldErrors, FieldValues, Path } from 'react-hook-form';
 import { TextInput } from '../../..';
 
 type Props<T extends FieldValues> = {
@@ -18,7 +12,7 @@ export const SubjectField = <T extends FieldValues>({
   control,
   defaultValue,
   errors,
-  label
+  label,
 }: Props<T>) => {
   return (
     <Controller

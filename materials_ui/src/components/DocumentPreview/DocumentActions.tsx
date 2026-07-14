@@ -1,10 +1,6 @@
 type Props = { label: string; isOpen: boolean; onDocumentOpen: () => void };
 
-export default function DocumentActions({
-  label,
-  isOpen = false,
-  onDocumentOpen
-}: Props) {
+export default function DocumentActions({ label, isOpen = false, onDocumentOpen }: Props) {
   return (
     <a
       href="#"
@@ -18,7 +14,7 @@ export default function DocumentActions({
         marginBottom: '0px',
         display: 'inline-flex',
         alignItems: 'center',
-        justifyContent: 'flex-end'
+        justifyContent: 'flex-end',
       }}
       data-testid="buttonActions"
     >

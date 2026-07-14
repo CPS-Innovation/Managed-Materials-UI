@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 export type TTriggerData = [] | undefined;
 export const useTrigger = () => {
@@ -11,10 +11,7 @@ export const useTrigger = () => {
   return { data, fire };
 };
 
-export const useTriggerListener = (p: {
-  triggerData: TTriggerData;
-  fn: () => void;
-}) => {
+export const useTriggerListener = (p: { triggerData: TTriggerData; fn: () => void }) => {
   useEffect(() => {
     if (!p.triggerData) return;
     p.fn();

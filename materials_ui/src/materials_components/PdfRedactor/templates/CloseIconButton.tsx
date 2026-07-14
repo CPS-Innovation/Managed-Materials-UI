@@ -14,15 +14,10 @@ export const CloseIconButton = (p: { onClick: () => void }) => {
         cursor: 'pointer',
         border: 'none',
         padding: 0,
-        display: 'inline-flex'
+        display: 'inline-flex',
       }}
     >
-      <svg
-        viewBox="0 0 25 25"
-        xmlns="http://www.w3.org/2000/svg"
-        height="45px"
-        width="45px"
-      >
+      <svg viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg" height="45px" width="45px">
         <path stroke="white" strokeWidth="3" d="M7.25,7.25,17.75,17.75" />
         <path stroke="white" strokeWidth="3" d="M7.25,17.75,17.75,7.25" />
       </svg>

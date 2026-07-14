@@ -4,9 +4,7 @@ import { SELECTED_MATERIAL_QUERY_PARAM } from '../../constants/materials';
 export const useCaseMaterial = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const newQueryCommands = new URLSearchParams(searchParams);
-  const selectedMaterialId = newQueryCommands.get(
-    SELECTED_MATERIAL_QUERY_PARAM
-  );
+  const selectedMaterialId = newQueryCommands.get(SELECTED_MATERIAL_QUERY_PARAM);
 
   const selectMaterial = (materialId: number) => {
     newQueryCommands.set(SELECTED_MATERIAL_QUERY_PARAM, materialId.toString());

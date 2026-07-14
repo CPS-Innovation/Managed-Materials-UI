@@ -8,7 +8,7 @@ import {
   useCaseDefendants,
   useCaseWitnesses,
   useDocumentTypes,
-  useExhibitProducers
+  useExhibitProducers,
 } from '../../../hooks';
 import type { Reclassify_ClassificationForm } from '../../../schemas/forms/reclassify';
 import { formatDate } from '../../../utils/date';
@@ -43,7 +43,7 @@ export const Summary = ({ data, onChange, onSave }: Props) => {
   const documentType = getDocumentTypeById(data?.documentType as number);
   const usedStatus = data?.used ? 'Used' : 'Unused';
   const classification = mapBEClassificationToFE(
-    data?.classification as Reclassify_ClassificationForm['classification']
+    data?.classification as Reclassify_ClassificationForm['classification'],
   );
   const witnessName =
     data?.classification === 'STATEMENT'
@@ -53,15 +53,11 @@ export const Summary = ({ data, onChange, onSave }: Props) => {
     data?.classification === 'STATEMENT'
       ? data?.witnessActionPlan?.defendantId === 0
         ? 'All defendants'
-        : formatDefendantName(
-            getDefendantById(data?.witnessActionPlan?.defendantId as number)
-          )
+        : formatDefendantName(getDefendantById(data?.witnessActionPlan?.defendantId as number))
       : null;
 
   const exhibitProducer =
-    data?.classification === 'EXHIBIT'
-      ? getExhibitProducerById(data?.producerId)
-      : false;
+    data?.classification === 'EXHIBIT' ? getExhibitProducerById(data?.producerId) : false;
 
   return (
     <>
@@ -77,8 +73,8 @@ export const Summary = ({ data, onChange, onSave }: Props) => {
                 <br />
                 {documentType?.name}
               </>
-            )
-          }
+            ),
+          },
         ]}
       />
 
@@ -88,29 +84,21 @@ export const Summary = ({ data, onChange, onSave }: Props) => {
             action={() => handleChangeClick('classification')}
             title={`${documentType?.name} details`}
             content={[
-              {
-                key: 'Who is the Witness',
-                value: witnessName || 'New witness (see below)'
-              },
+              { key: 'Who is the Witness', value: witnessName || 'New witness (see below)' },
               {
                 key: 'Does the statement have a date?',
-                value: data?.hasStatementDate ? 'Yes' : 'No'
+                value: data?.hasStatementDate ? 'Yes' : 'No',
               },
               ...(data?.hasStatementDate
                 ? [
                     {
                       key: 'What is the statement date?',
-                      value: data?.statementDate
-                        ? formatDate(data?.statementDate)
-                        : ''
-                    }
+                      value: data?.statementDate ? formatDate(data?.statementDate) : '',
+                    },
                   ]
                 : []),
-              {
-                key: 'Statement number',
-                value: data?.statementNumber as number
-              },
-              { key: 'What is the material status?', value: usedStatus }
+              { key: 'Statement number', value: data?.statementNumber as number },
+              { key: 'What is the material status?', value: usedStatus },
             ]}
           />
 
@@ -121,41 +109,29 @@ export const Summary = ({ data, onChange, onSave }: Props) => {
               content={[
                 { key: 'Name', value: data?.witnessActionPlan?.firstName },
                 { key: 'Surname', value: data?.witnessActionPlan?.surname },
-                {
-                  key: 'Contested issue',
-                  value: data?.witnessActionPlan?.actionPointText
-                },
+                { key: 'Contested issue', value: data?.witnessActionPlan?.actionPointText },
                 {
                   key: 'What do you want to request',
                   value:
                     data?.witnessActionPlan?.requestType === 'KWD'
                       ? 'Key witness details'
-                      : 'Non-key witness details'
+                      : 'Non-key witness details',
                 },
-                {
-                  key: 'Select the defendant the action plan relates to',
-                  value: defendantName
-                },
-                {
-                  key: 'Describe the action plan',
-                  value: data?.witnessActionPlan?.actionPlan
-                },
-                {
-                  key: 'Date needed',
-                  value: formatDate(data?.witnessActionPlan?.dateNeeded)
-                },
+                { key: 'Select the defendant the action plan relates to', value: defendantName },
+                { key: 'Describe the action plan', value: data?.witnessActionPlan?.actionPlan },
+                { key: 'Date needed', value: formatDate(data?.witnessActionPlan?.dateNeeded) },
                 {
                   key: 'Do you want to add a follow up?',
-                  value: data?.witnessActionPlan?.followUp ? 'Yes' : 'No'
+                  value: data?.witnessActionPlan?.followUp ? 'Yes' : 'No',
                 },
                 ...(data?.witnessActionPlan?.followUp
                   ? [
                       {
                         key: 'Follow up date',
-                        value: formatDate(data?.witnessActionPlan?.followUpDate)
-                      }
+                        value: formatDate(data?.witnessActionPlan?.followUpDate),
+                      },
                     ]
-                  : [])
+                  : []),
               ]}
             />
           )}
@@ -177,13 +153,11 @@ export const Summary = ({ data, onChange, onSave }: Props) => {
                 ? [
                     {
                       key: 'Exhibit producer',
-                      value: exhibitProducer
-                        ? exhibitProducer?.producer
-                        : data?.producedBy
-                    }
+                      value: exhibitProducer ? exhibitProducer?.producer : data?.producedBy,
+                    },
                   ]
                 : []),
-              { key: 'What is the material status?', value: usedStatus }
+              { key: 'What is the material status?', value: usedStatus },
             ]}
           />
         </>
@@ -192,24 +166,18 @@ export const Summary = ({ data, onChange, onSave }: Props) => {
       {['MG Form', 'OTHER'].includes(data.classification as string) && (
         <SummaryCard
           action={() =>
-            handleChangeClick(
-              data.classification === 'STATEMENT' ? 'subject' : 'classification'
-            )
+            handleChangeClick(data.classification === 'STATEMENT' ? 'subject' : 'classification')
           }
           title={`${documentType?.name} details`}
           content={[
             { key: 'Material name', value: data?.subject },
-            { key: 'What is the material status?', value: usedStatus }
+            { key: 'What is the material status?', value: usedStatus },
           ]}
         />
       )}
 
       <div className="govuk-button-group">
-        <button
-          className="govuk-button"
-          data-module="govuk-button"
-          onClick={handleSaveClick}
-        >
+        <button className="govuk-button" data-module="govuk-button" onClick={handleSaveClick}>
           Save
         </button>
         <Link to={URL.MATERIALS} className="govuk-link cancel-status-change">

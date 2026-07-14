@@ -5,15 +5,10 @@ import type { ReclassifyFormData } from '../../../hooks';
 import { useCaseWitnesses, useWitnessStatements } from '../../../hooks';
 import { UsedField } from './common/UsedField';
 
-type Props = {
-  control: Control;
-  errors?: FieldErrors;
-  data?: ReclassifyFormData;
-};
+type Props = { control: Control; errors?: FieldErrors; data?: ReclassifyFormData };
 
 export const Statement = ({ control, data, errors }: Props) => {
-  const { selectOptions: witnessOptions, loading: isWitnessesLoading } =
-    useCaseWitnesses();
+  const { selectOptions: witnessOptions, loading: isWitnessesLoading } = useCaseWitnesses();
   const { data: witnessStatements, setWitnessId } = useWitnessStatements();
 
   if (data?.classification !== 'STATEMENT') {
@@ -65,20 +60,14 @@ export const Statement = ({ control, data, errors }: Props) => {
                 ? [{ label: 'Loading...', value: '', id: '' }]
                 : [{ label: 'Select witness', value: '', id: '' }]),
               ...witnessOptions,
-              {
-                label: 'Witness not on the list - add witness',
-                value: '0',
-                id: '0'
-              }
+              { label: 'Witness not on the list - add witness', value: '0', id: '0' },
             ]}
           />
         )}
       />
       {data?.witnessId === 0 && (
         <p style={{ margin: '-20px 0 20px' }}>
-          <strong>
-            You will be asked to add a new witness on the next page.
-          </strong>
+          <strong>You will be asked to add a new witness on the next page.</strong>
         </p>
       )}
 
@@ -88,18 +77,12 @@ export const Statement = ({ control, data, errors }: Props) => {
         render={({ field }) => (
           <Radios
             {...field}
-            value={
-              field.value !== undefined
-                ? field.value
-                  ? 'true'
-                  : 'false'
-                : undefined
-            }
+            value={field.value !== undefined ? (field.value ? 'true' : 'false') : undefined}
             id={field.name}
             legend="Does the statement have a date?"
             options={[
               { id: 'true', value: 'true', label: 'Yes' },
-              { id: 'false', value: 'false', label: 'No' }
+              { id: 'false', value: 'false', label: 'No' },
             ]}
             required
             error={errors?.hasStatementDate?.message as string}

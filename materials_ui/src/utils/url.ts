@@ -1,9 +1,6 @@
 import { APP_DEFAULT_PAGE } from '../constants/url';
 
-export const isPathCurrentUrl = (
-  currentPath: string,
-  path: string = ''
-): boolean => {
+export const isPathCurrentUrl = (currentPath: string, path: string = ''): boolean => {
   if (!path) return false;
 
   if (currentPath === '/' && path === APP_DEFAULT_PAGE) {
@@ -24,12 +21,10 @@ export const isPathCurrentUrl = (
 export const isAllowedDomain = (url: string) => {
   const decodedUrl = decodeURIComponent(url);
   const domainToTest = decodedUrl.match(
-    /^(?:https?:)?(?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:/\n]+)/im
+    /^(?:https?:)?(?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:/\n]+)/im,
   )?.[1];
 
-  const domains: string[] = (
-    import.meta.env.VITE_ALLOWED_RETURN_DOMAINS || ''
-  ).split(',');
+  const domains: string[] = (import.meta.env.VITE_ALLOWED_RETURN_DOMAINS || '').split(',');
 
   if (!decodedUrl) return false;
 

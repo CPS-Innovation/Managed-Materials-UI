@@ -3,7 +3,7 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  background-color: #F3F2F1;
+  background-color: #f3f2f1;
   padding: 2rem;
   border: 2px solid black;
 }
@@ -15,7 +15,7 @@
 }
 
 .react-pdf__Page {
-  background-color: #F3F2F1 !important;
+  background-color: #f3f2f1 !important;
   position: relative;
 }
 

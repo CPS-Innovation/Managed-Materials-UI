@@ -7,7 +7,7 @@ import { useAxiosInstance } from './getAxiosInstance';
 const documentNoteSchema = z.object({
   createdByName: z.string(),
   date: z.string(),
-  text: z.string()
+  text: z.string(),
 });
 const documentNotesSchema = z.array(documentNoteSchema);
 
@@ -23,7 +23,7 @@ export const postDocumentNotesFromAxiosInstance = async (p: {
 }) => {
   const response = await p.axiosInstance.post(
     `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/notes`,
-    { Text: p.text }
+    { Text: p.text },
   );
 
   return response.data;
@@ -36,7 +36,7 @@ export const getDocumentNotesFromAxiosInstance = async (p: {
   caseId: number | undefined;
 }) => {
   const response = await p.axiosInstance.get(
-    `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/notes`
+    `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/notes`,
   );
 
   return response.data;
@@ -75,7 +75,7 @@ export const safeGetDocumentNotesFromAxiosInstance = async (p: {
       urn: p.urn,
       caseId: p.caseId,
       documentId: p.documentId,
-      axiosInstance: p.axiosInstance
+      axiosInstance: p.axiosInstance,
     });
 
     return documentNotesSchema.safeParse(resp);
@@ -93,7 +93,7 @@ export const safeSetDocumentNotesFromLocalStorage = (p: {
   const localStorageKey = createGetDocumentNotesKey({
     urn: p.urn,
     documentId: p.documentId,
-    caseId: p.caseId
+    caseId: p.caseId,
   });
   window.localStorage.setItem(localStorageKey, JSON.stringify(p.data));
 };
@@ -116,13 +116,10 @@ export const useGetDocumentNotes = (p: {
   const rtn = useSWR(
     key,
     async () => {
-      const resp = await safeGetDocumentNotesFromAxiosInstance({
-        ...p,
-        axiosInstance
-      });
+      const resp = await safeGetDocumentNotesFromAxiosInstance({ ...p, axiosInstance });
       return resp.success ? resp.data : null;
     },
-    { fallbackData, revalidateOnMount }
+    { fallbackData, revalidateOnMount },
   );
 
   useEffect(() => {

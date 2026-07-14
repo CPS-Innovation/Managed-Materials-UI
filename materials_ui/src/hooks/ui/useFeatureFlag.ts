@@ -3,13 +3,9 @@ import { PRIVATE_BETA_FEATURE_USER_GROUPS } from '../../constants';
 import { GroupDataContext } from '../../context';
 import { UserGroupType } from '../../schemas/user';
 
-type UseFeatureFlag = (
-  allowedGroups: number[],
-  groupsOverride?: UserGroupType[]
-) => boolean;
+type UseFeatureFlag = (allowedGroups: number[], groupsOverride?: UserGroupType[]) => boolean;
 
-const featureFlagsDisabled =
-  import.meta.env.VITE_DISABLE_FEATURE_FLAGS === 'true';
+const featureFlagsDisabled = import.meta.env.VITE_DISABLE_FEATURE_FLAGS === 'true';
 
 export const useFeatureFlag = (): UseFeatureFlag => {
   const { groups = [] } = useContext(GroupDataContext);
@@ -28,7 +24,7 @@ export const useFeatureFlag = (): UseFeatureFlag => {
         .map((groupId) => {
           return PRIVATE_BETA_FEATURE_USER_GROUPS[groupId];
         })
-        .includes(group?.id)
+        .includes(group?.id),
     );
   };
 };

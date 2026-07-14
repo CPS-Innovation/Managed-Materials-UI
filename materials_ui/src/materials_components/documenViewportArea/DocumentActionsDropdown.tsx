@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   DropdownButton2,
-  DropdownListItem
+  DropdownListItem,
 } from '../../caseWorkApp/components/dropDownButton/DropdownButton';
 import { TMode } from '../PdfRedactor/utils/modeUtils';
 
@@ -9,7 +9,7 @@ const DROPDOWN_ACTIONS = {
   LOG_REDACTION: 'log-redaction',
   ROTATE: 'rotate',
   DELETE: 'delete',
-  VIEW_NEW_WINDOW: 'view-new-window'
+  VIEW_NEW_WINDOW: 'view-new-window',
 } as const;
 
 type DocumentActionsDropdownProps = {
@@ -25,7 +25,7 @@ export const DocumentActionsDropdown = ({
   onModeChange,
   onRedactionLogClick,
   onViewInNewWindowClick,
-  numOfDocumentPages
+  numOfDocumentPages,
 }: DocumentActionsDropdownProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -55,9 +55,7 @@ export const DocumentActionsDropdown = ({
             setIsDropdownOpen(false);
           }}
         >
-          {mode === 'rotation'
-            ? 'Hide rotate document pages'
-            : 'Rotate document pages'}
+          {mode === 'rotation' ? 'Hide rotate document pages' : 'Rotate document pages'}
         </DropdownListItem>
         {numOfDocumentPages > 1 && (
           <DropdownListItem
@@ -68,9 +66,7 @@ export const DocumentActionsDropdown = ({
               setIsDropdownOpen(false);
             }}
           >
-            {mode === 'deletion'
-              ? 'Hide delete page options'
-              : 'Show delete page options'}
+            {mode === 'deletion' ? 'Hide delete page options' : 'Show delete page options'}
           </DropdownListItem>
         )}
         <DropdownListItem

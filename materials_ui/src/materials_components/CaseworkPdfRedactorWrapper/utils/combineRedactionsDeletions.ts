@@ -10,9 +10,7 @@ export const combineRedactionsWithRedactionDetails = (p: {
 }) => {
   const redactionsWithDetails = p.redactions
     .map((x) => {
-      const thisDetails = p.redactionDetails.find(
-        (y) => y.redactionId === x.id
-      );
+      const thisDetails = p.redactionDetails.find((y) => y.redactionId === x.id);
       if (!thisDetails) return undefined;
       return { ...x, ...thisDetails };
     })

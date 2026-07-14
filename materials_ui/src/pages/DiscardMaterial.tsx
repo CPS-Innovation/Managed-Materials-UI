@@ -14,9 +14,7 @@ export const DiscardMaterialPage = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const { setBanner } = useBanner();
-  const { mutate: refreshCaseMaterials } = useCaseMaterials({
-    dataType: 'materials'
-  });
+  const { mutate: refreshCaseMaterials } = useCaseMaterials({ dataType: 'materials' });
 
   const material = state?.selectedMaterial;
 
@@ -27,7 +25,7 @@ export const DiscardMaterialPage = () => {
     onSuccess: async () => {
       trackAction('Discarded', {
         materialId: material?.materialId?.toString(),
-        category: material?.category
+        category: material?.category,
       });
       setError('');
 
@@ -38,7 +36,7 @@ export const DiscardMaterialPage = () => {
       setBanner({
         type: 'success',
         header: 'Discard successful',
-        content: `${material?.subject} has been discarded.`
+        content: `${material?.subject} has been discarded.`,
       });
     },
     onError: async () => {
@@ -46,14 +44,10 @@ export const DiscardMaterialPage = () => {
 
       errorMessage = `Unable to discard ${material?.subject}. Please try again.`;
       setError(errorMessage);
-      setBanner({
-        type: 'error',
-        header: 'Discard unsuccessful',
-        content: errorMessage
-      });
+      setBanner({ type: 'error', header: 'Discard unsuccessful', content: errorMessage });
 
       navigate(returnTo, { state: { persistBanner: true } });
-    }
+    },
   });
 
   useEffect(() => {
@@ -75,7 +69,7 @@ export const DiscardMaterialPage = () => {
       await trigger({
         materialId: material?.materialId,
         discardReason: reason.value as string,
-        discardReasonDescription: reason.label
+        discardReasonDescription: reason.label,
       });
     }
   };
@@ -98,8 +92,7 @@ export const DiscardMaterialPage = () => {
 
           <div className="govuk-main-wrapper">
             <h2 className="govuk-caption-l hmrc-caption-l">
-              <span className="govuk-visually-hidden">This section is</span>{' '}
-              Discard material
+              <span className="govuk-visually-hidden">This section is</span> Discard material
             </h2>
             <h1 className="govuk-heading-l">Reason for discarding material</h1>
 
@@ -111,7 +104,7 @@ export const DiscardMaterialPage = () => {
                 onChange={handleRadioChange}
                 options={DISCARD_MATERIAL_OPTIONS.map((option) => ({
                   ...option,
-                  id: option.value
+                  id: option.value,
                 }))}
                 value={reason?.value as string}
                 required

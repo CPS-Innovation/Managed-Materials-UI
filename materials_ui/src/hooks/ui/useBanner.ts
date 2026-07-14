@@ -3,8 +3,7 @@ import { AppContext } from '../../context/AppContext';
 import { BannerType } from '../../schemas';
 
 export const useBanner = () => {
-  const { banners, clearBanners, removeBanner, setBannerState } =
-    useContext(AppContext);
+  const { banners, clearBanners, removeBanner, setBannerState } = useContext(AppContext);
 
   const setBanner = (banner: BannerType, persistBanners?: boolean) => {
     setBannerState(banner, persistBanners);

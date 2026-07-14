@@ -5,6 +5,6 @@ export type { CaseInfoType } from './caseinfo';
 export type {
   CaseMaterialDataType,
   CaseMaterialsResponseType,
-  CaseMaterialsType
+  CaseMaterialsType,
 } from './caseMaterials';
 export type { StatusTag } from './statusTags';

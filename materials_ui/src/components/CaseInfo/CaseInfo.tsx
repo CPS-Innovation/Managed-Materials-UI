@@ -17,9 +17,7 @@ export const CaseInfo = ({ caseInfo }: Props) => {
     return null;
   }
 
-  const handleCaseDefendantsLinkClick = (
-    event: MouseEvent<HTMLAnchorElement>
-  ) => {
+  const handleCaseDefendantsLinkClick = (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
 
     navigate(getRoute('REVIEW_REDACT'), { state: { docType: 'DAC' } });
@@ -30,9 +28,7 @@ export const CaseInfo = ({ caseInfo }: Props) => {
     ? `, ${caseInfo?.leadDefendantFirstNames}`
     : '';
   const plusNumber =
-    caseInfo?.numberOfDefendants > 1
-      ? ` +${caseInfo?.numberOfDefendants - 1}`
-      : '';
+    caseInfo?.numberOfDefendants > 1 ? ` +${caseInfo?.numberOfDefendants - 1}` : '';
 
   const caseInfoName = `${surname}${firstNames}${plusNumber}`;
 
@@ -49,9 +45,7 @@ export const CaseInfo = ({ caseInfo }: Props) => {
           <div className="govuk-grid-row">
             <div className="caseInfo__container govuk-grid-column-full">
               <div className="caseInfo__info">
-                <h2 className="govuk-heading-m case-info-name">
-                  {caseInfoName}
-                </h2>
+                <h2 className="govuk-heading-m case-info-name">{caseInfoName}</h2>
                 <p className="govuk-body caseInfo__urn">{caseInfo?.urn}</p>
                 {caseInfo.numberOfDefendants > 0 && (
                   <p style={{ marginTop: 0 }}>

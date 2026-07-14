@@ -10,7 +10,7 @@ describe('useMaterialTags Store', () => {
   it('should set new tags correctly', () => {
     const newTags = [
       { materialId: 1, tagName: 'tag1' },
-      { materialId: 2, tagName: 'tag2' }
+      { materialId: 2, tagName: 'tag2' },
     ];
 
     useMaterialTags.getState().setTags(newTags);
@@ -22,14 +22,14 @@ describe('useMaterialTags Store', () => {
   it('should update existing tags when the same materialId is added with new tagName', () => {
     const initialTags = [
       { materialId: 1, tagName: 'tag1' },
-      { materialId: 2, tagName: 'tag2' }
+      { materialId: 2, tagName: 'tag2' },
     ];
 
     useMaterialTags.getState().setTags(initialTags);
 
     const updatedTags = [
       { materialId: 1, tagName: 'updatedTag1' },
-      { materialId: 3, tagName: 'tag3' }
+      { materialId: 3, tagName: 'tag3' },
     ];
 
     useMaterialTags.getState().setTags(updatedTags);
@@ -38,21 +38,21 @@ describe('useMaterialTags Store', () => {
     expect(store.materialTags).toEqual([
       { materialId: 1, tagName: 'updatedTag1' },
       { materialId: 2, tagName: 'tag2' },
-      { materialId: 3, tagName: 'tag3' }
+      { materialId: 3, tagName: 'tag3' },
     ]);
   });
 
   it('should add new tags and update existing ones with the same materialId', () => {
     const newTags = [
       { materialId: 1, tagName: 'tag1' },
-      { materialId: 2, tagName: 'tag2' }
+      { materialId: 2, tagName: 'tag2' },
     ];
 
     useMaterialTags.getState().setTags(newTags);
 
     const duplicateTags = [
       { materialId: 1, tagName: 'newTag1' },
-      { materialId: 3, tagName: 'newTag3' }
+      { materialId: 3, tagName: 'newTag3' },
     ];
 
     useMaterialTags.getState().setTags(duplicateTags);
@@ -61,14 +61,14 @@ describe('useMaterialTags Store', () => {
     expect(store.materialTags).toEqual([
       { materialId: 1, tagName: 'newTag1' },
       { materialId: 2, tagName: 'tag2' },
-      { materialId: 3, tagName: 'newTag3' }
+      { materialId: 3, tagName: 'newTag3' },
     ]);
   });
 
   it('should clear all tags when clearTags is called with no materialIdsToRemove', () => {
     const newTags = [
       { materialId: 1, tagName: 'tag1' },
-      { materialId: 2, tagName: 'tag2' }
+      { materialId: 2, tagName: 'tag2' },
     ];
 
     useMaterialTags.getState().setTags(newTags);
@@ -82,7 +82,7 @@ describe('useMaterialTags Store', () => {
     const newTags = [
       { materialId: 1, tagName: 'tag1' },
       { materialId: 2, tagName: 'tag2' },
-      { materialId: 3, tagName: 'tag3' }
+      { materialId: 3, tagName: 'tag3' },
     ];
 
     useMaterialTags.getState().setTags(newTags);
@@ -96,7 +96,7 @@ describe('useMaterialTags Store', () => {
   it('should not modify tags when clearTags is called with an empty array', () => {
     const newTags = [
       { materialId: 1, tagName: 'tag1' },
-      { materialId: 2, tagName: 'tag2' }
+      { materialId: 2, tagName: 'tag2' },
     ];
 
     useMaterialTags.getState().setTags(newTags);

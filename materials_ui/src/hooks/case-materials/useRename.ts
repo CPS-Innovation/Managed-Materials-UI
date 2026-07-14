@@ -1,34 +1,25 @@
 import useSWRMutation from 'swr/mutation';
 import { QUERY_KEYS } from '../../constants/query.ts';
 import { TDocument } from '../../materials_components/DocumentSelectAccordion/getters/getDocumentList.tsx';
-import {
-  CaseMaterialRenameResponseType,
-  CaseMaterialsType
-} from '../../schemas/caseMaterials.ts';
+import { CaseMaterialRenameResponseType, CaseMaterialsType } from '../../schemas/caseMaterials.ts';
 import { SwrPayload } from '../../schemas/index.ts';
 import { useCaseInfoStore } from '../../stores/index.ts';
 import { useLogger, useRequest } from '../index.ts';
 
-type UseRenameOptions = {
-  onError?: (error: Error) => void;
-  onSuccess?: () => void;
-};
+type UseRenameOptions = { onError?: (error: Error) => void; onSuccess?: () => void };
 
 export const useRename = (
   material: CaseMaterialsType | (TDocument & { materialId?: number }) | null,
-  options?: UseRenameOptions
+  options?: UseRenameOptions,
 ) => {
   const request = useRequest();
   const { caseInfo } = useCaseInfoStore();
   const { log } = useLogger();
 
-  const renameMaterialRequest = (
-    _url: string,
-    { arg: newSubject }: SwrPayload<string>
-  ) => {
+  const renameMaterialRequest = (_url: string, { arg: newSubject }: SwrPayload<string>) => {
     return request.patch<CaseMaterialRenameResponseType>(
       `/urns/${caseInfo?.urn}/cases/${caseInfo?.id}/materials/${material?.materialId}/rename`,
-      { materialId: material?.materialId, subject: newSubject }
+      { materialId: material?.materialId, subject: newSubject },
     );
   };
   const { trigger, isMutating } = useSWRMutation(
@@ -42,7 +33,7 @@ export const useRename = (
         console.error('Error renaming material:', error);
         log({
           logLevel: 1,
-          message: `HK-UI-FE: caseId [${caseInfo?.id}] - materialID [${material?.materialId}] has not been renamed.`
+          message: `HK-UI-FE: caseId [${caseInfo?.id}] - materialID [${material?.materialId}] has not been renamed.`,
         });
       },
       onSuccess: () => {
@@ -51,10 +42,10 @@ export const useRename = (
 
         log({
           logLevel: 1,
-          message: `HK-UI-FE: caseId [${caseInfo?.id}] - materialID [${material?.materialId}] has been renamed.`
+          message: `HK-UI-FE: caseId [${caseInfo?.id}] - materialID [${material?.materialId}] has been renamed.`,
         });
-      }
-    }
+      },
+    },
   );
 
   return { trigger, isMutating };

@@ -13,13 +13,7 @@ export const UsedField = ({ control, errors }: Props) => {
       render={({ field }) => (
         <Radios
           {...field}
-          value={
-            field.value !== undefined
-              ? field.value
-                ? 'true'
-                : 'false'
-              : undefined
-          }
+          value={field.value !== undefined ? (field.value ? 'true' : 'false') : undefined}
           id={field.name}
           legend="What is the material status?"
           options={usedOptions}

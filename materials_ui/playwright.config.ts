@@ -27,8 +27,8 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
-    ["html", { outputFolder: "./tests/playwright-report" }],
-    ["junit", { outputFile: "./tests/e2e-test-results.xml" }],
+    ['html', { outputFolder: './tests/playwright-report' }],
+    ['junit', { outputFile: './tests/e2e-test-results.xml' }],
   ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
@@ -38,10 +38,10 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
-    navigationTimeout: 60 * 1000,  // 60s for page.goto()
-    actionTimeout: 30 * 1000,      // 30s for clicks/fills
+    navigationTimeout: 60 * 1000, // 60s for page.goto()
+    actionTimeout: 30 * 1000, // 30s for clicks/fills
   },
-  
+
   /* Configure projects for major browsers */
   projects: [
     // {
@@ -76,10 +76,10 @@ export default defineConfig({
       use: {
         ...devices['Desktop Edge'],
         channel: 'msedge',
-        storageState: 'tests/.auth/globalSetup.json'
+        storageState: 'tests/.auth/globalSetup.json',
       },
-      dependencies: ['setup']
-    }
+      dependencies: ['setup'],
+    },
     // {
     //   name: 'Google Chrome',
     //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
@@ -95,7 +95,7 @@ export default defineConfig({
     env: {
       ...process.env,
       // Keep E2E independent from external script availability in CI.
-      VITE_GLOBAL_SCRIPT_URL: ''
-    }
-  }
+      VITE_GLOBAL_SCRIPT_URL: '',
+    },
+  },
 });

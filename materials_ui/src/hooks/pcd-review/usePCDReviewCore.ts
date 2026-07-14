@@ -2,10 +2,7 @@ import useSWR from 'swr';
 
 import { useCaseInfoStore, useRequest } from '..';
 import { QUERY_KEYS } from '../../constants/query';
-import {
-  PCDReviewCoreResponseType,
-  PCDReviewCoreSchema
-} from '../../schemas/pcdReview';
+import { PCDReviewCoreResponseType, PCDReviewCoreSchema } from '../../schemas/pcdReview';
 
 export const usePCDReviewCore = () => {
   const request = useRequest();
@@ -14,7 +11,7 @@ export const usePCDReviewCore = () => {
   const getPCDReviewCore = async () => {
     try {
       const response = await request.get(
-        `urns/${caseInfo?.urn}/cases/${caseInfo?.id}/pcd-review-core`
+        `urns/${caseInfo?.urn}/cases/${caseInfo?.id}/pcd-review-core`,
       );
 
       const parsedResponse = PCDReviewCoreSchema.safeParse(response.data);
@@ -30,11 +27,10 @@ export const usePCDReviewCore = () => {
     }
   };
 
-  const { data, error, isLoading, isValidating } =
-    useSWR<PCDReviewCoreResponseType>(
-      caseInfo ? QUERY_KEYS.PCD_REVIEW_CORE : null,
-      getPCDReviewCore
-    );
+  const { data, error, isLoading, isValidating } = useSWR<PCDReviewCoreResponseType>(
+    caseInfo ? QUERY_KEYS.PCD_REVIEW_CORE : null,
+    getPCDReviewCore,
+  );
 
   return { data, error, isLoading: isLoading || isValidating };
 };

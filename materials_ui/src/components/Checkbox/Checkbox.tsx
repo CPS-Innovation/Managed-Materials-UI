@@ -17,7 +17,7 @@ export default function Checkbox({
   ariaLabel,
   labelVisuallyHidden,
   onChange,
-  value
+  value,
 }: Props) {
   return (
     <div
@@ -38,11 +38,7 @@ export default function Checkbox({
           value={value}
         />
         <label className="govuk-label govuk-checkboxes__label" htmlFor={id}>
-          {labelVisuallyHidden ? (
-            <span className="govuk-visually-hidden">{label}</span>
-          ) : (
-            label
-          )}
+          {labelVisuallyHidden ? <span className="govuk-visually-hidden">{label}</span> : label}
         </label>
       </div>
     </div>

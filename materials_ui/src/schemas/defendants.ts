@@ -26,8 +26,8 @@ export const DefendantSchema = z.object({
       disposedReason: z.string(),
       lastHearingOutcome: z.string().nullable(),
       custodyTimeLimit: z.string().nullable(),
-      latestPleaDescription: z.string()
-    })
+      latestPleaDescription: z.string(),
+    }),
   ),
   charges: z.array(z.unknown()),
   proposedCharges: z.array(z.unknown()),
@@ -45,13 +45,11 @@ export const DefendantSchema = z.object({
     workPhoneNumber: z.string().nullable(),
     preferredCorrespondenceLanguage: z.string(),
     religion: z.string(),
-    guardian: z.string().nullable()
-  })
+    guardian: z.string().nullable(),
+  }),
 });
 
-export const DefendantsResponseSchema = z.object({
-  defendants: z.array(DefendantSchema)
-});
+export const DefendantsResponseSchema = z.object({ defendants: z.array(DefendantSchema) });
 
 export type DefendantType = z.infer<typeof DefendantSchema>;
 export type DefendantsResponseType = z.infer<typeof DefendantsResponseSchema>;

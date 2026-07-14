@@ -9,10 +9,7 @@ export const useAxiosInstances = () => {
   const createInstance = (baseURL: string, scopes?: string[]) => {
     const instance = axios.create({ baseURL, withCredentials: true });
     instance.interceptors.request.use(async (config) => {
-      const accessToken = await getAccessTokenFromMsalInstance(
-        msalInstance,
-        scopes
-      );
+      const accessToken = await getAccessTokenFromMsalInstance(msalInstance, scopes);
       config.headers.Authorization = `Bearer ${accessToken}`;
       config.headers['Correlation-Id'] = crypto.randomUUID();
       config.headers.ClientName = 'ManageMaterials';
@@ -27,8 +24,8 @@ export const useAxiosInstances = () => {
     axiosInstance: createInstance(import.meta.env.VITE_POLARIS_GATEWAY_URL),
     redactionLogAxios: createInstance(
       import.meta.env.VITE_REDACTION_LOG_URL,
-      redactionLogScope ? [redactionLogScope] : undefined
-    )
+      redactionLogScope ? [redactionLogScope] : undefined,
+    ),
   };
 };
 
@@ -40,13 +37,10 @@ export const getDocuments = async (p: {
   caseId: number | undefined;
 }) => {
   try {
-    const response = await p.axiosInstance.get(
-      `/api/urns/${p.urn}/cases/${p.caseId}/documents`
-    );
+    const response = await p.axiosInstance.get(`/api/urns/${p.urn}/cases/${p.caseId}/documents`);
     return response.data;
   } catch (error) {
-    if (error instanceof AxiosError)
-      console.error(`Error getting documents: ${error.message}`);
+    if (error instanceof AxiosError) console.error(`Error getting documents: ${error.message}`);
   }
 };
 
@@ -60,7 +54,7 @@ export const getPdfFiles = async (p: {
   try {
     const response = await p.axiosInstance.get(
       `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.parentId}/versions/${p.childId}/pdf`,
-      { responseType: 'blob' }
+      { responseType: 'blob' },
     );
     return response.data;
   } catch (error: unknown) {
@@ -71,9 +65,7 @@ export const getPdfFiles = async (p: {
   }
 };
 
-export const getDocumentTypeMappings = async (p: {
-  axiosInstance: AxiosInstance;
-}) => {
+export const getDocumentTypeMappings = async (p: { axiosInstance: AxiosInstance }) => {
   try {
     const response = await p.axiosInstance.get('/api/polarisMappings');
     return response.data;
@@ -88,8 +80,7 @@ export const getLookups = async (p: { axiosInstance: AxiosInstance }) => {
     const response = await p.axiosInstance.get('/api/lookUps');
     return response.data;
   } catch (error) {
-    if (error instanceof AxiosError)
-      console.error(`Error getting lookups: ${error.message}`);
+    if (error instanceof AxiosError) console.error(`Error getting lookups: ${error.message}`);
   }
 };
 
@@ -101,18 +92,11 @@ export const postRedactionLog = async (p: {
     const response = await p.axiosInstance.post('/api/redactionLogs', p.data);
     return response.data;
   } catch (error) {
-    if (error instanceof AxiosError)
-      console.error(`Error posting redaction log: ${error.message}`);
+    if (error instanceof AxiosError) console.error(`Error posting redaction log: ${error.message}`);
     throw error;
   }
 };
 
 export const GetDataFromAxios = () => {
-  return {
-    useAxiosInstance,
-    getDocuments,
-    getPdfFiles,
-    getLookups,
-    postRedactionLog
-  };
+  return { useAxiosInstance, getDocuments, getPdfFiles, getLookups, postRedactionLog };
 };

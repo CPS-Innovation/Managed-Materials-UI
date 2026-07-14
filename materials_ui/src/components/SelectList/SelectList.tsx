@@ -22,26 +22,13 @@ type Props = {
 
 export const SelectList = forwardRef<HTMLSelectElement, Props>(
   (
-    {
-      id,
-      defaultValue,
-      disabled = false,
-      label,
-      hint,
-      error,
-      options,
-      onChange,
-      required,
-      value
-    },
-    ref
+    { id, defaultValue, disabled = false, label, hint, error, options, onChange, required, value },
+    ref,
   ) => {
     const hasError = !!error;
 
     return (
-      <div
-        className={`govuk-form-group ${hasError ? 'govuk-form-group--error' : ''}`}
-      >
+      <div className={`govuk-form-group ${hasError ? 'govuk-form-group--error' : ''}`}>
         <label className="govuk-label" htmlFor={id} style={{ fontWeight: 700 }}>
           {label}
         </label>
@@ -73,17 +60,12 @@ export const SelectList = forwardRef<HTMLSelectElement, Props>(
           required={required}
         >
           {options.map(({ value, label, id, disabled = false }) => (
-            <option
-              key={id}
-              value={value}
-              id={`option-${id}`}
-              disabled={disabled}
-            >
+            <option key={id} value={value} id={`option-${id}`} disabled={disabled}>
               {label}
             </option>
           ))}
         </select>
       </div>
     );
-  }
+  },
 );
