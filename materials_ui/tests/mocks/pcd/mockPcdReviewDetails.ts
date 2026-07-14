@@ -1,6 +1,6 @@
 import {
   PCDReviewDetailsSchema,
-  type PCDReviewDetailsResponseType
+  type PCDReviewDetailsResponseType,
 } from '../../../src/schemas/pcdReview';
 
 const PcdReviewDetailsDataResponse: PCDReviewDetailsResponseType = {
@@ -13,8 +13,7 @@ const PcdReviewDetailsDataResponse: PCDReviewDetailsResponseType = {
     consultationType: 'Full Code Test',
     disclosureActionsAndIssues:
       'Think about what steps to take regarding disclosing information now. Try to anticipate issues that might come up as the cases progresses.',
-    europeanCourtOfHumanRights:
-      'Human rights factors are not an issue in this case at this time',
+    europeanCourtOfHumanRights: 'Human rights factors are not an issue in this case at this time',
     evidentialAssessment:
       'Explain if and how the evidence proves all elements of the offence or offences in accordance with the Full Code Test. Your assessment should anticipate any likely issues for trial and suggest ways to overcome potential challenges to the prosecution case.',
     id: 4380514,
@@ -31,34 +30,16 @@ const PcdReviewDetailsDataResponse: PCDReviewDetailsResponseType = {
     prosecutorDeclaration:
       'I confirm that I have considered the impact of potentially disclosable material, on the decision to charge or continue with proceedings, including any unexamined material or material that could be obtained through further reasonable lines of inquiry',
     monitoringCodes: [
-      {
-        code: '',
-        description: 'Domestic Violence',
-        type: 0,
-        disabled: false,
-        isAssigned: true
-      },
-      {
-        code: '',
-        description: 'Pre-Charge Decision',
-        type: 0,
-        disabled: false,
-        isAssigned: true
-      },
-      {
-        code: '',
-        description: 'Rape',
-        type: 0,
-        disabled: false,
-        isAssigned: true
-      },
+      { code: '', description: 'Domestic Violence', type: 0, disabled: false, isAssigned: true },
+      { code: '', description: 'Pre-Charge Decision', type: 0, disabled: false, isAssigned: true },
+      { code: '', description: 'Rape', type: 0, disabled: false, isAssigned: true },
       {
         code: '',
         description: 'Vulnerable/Intimidated victim',
         type: 0,
         disabled: false,
-        isAssigned: true
-      }
+        isAssigned: true,
+      },
     ],
     isCompleted: true,
     eventDate: '19/05/2025',
@@ -73,27 +54,27 @@ const PcdReviewDetailsDataResponse: PCDReviewDetailsResponseType = {
         { itemName: '', title: '', description: '', comment: '' },
         { itemName: '', title: '', description: '', comment: '' },
         { itemName: '', title: '', description: '', comment: '' },
-        { itemName: '', title: '', description: '', comment: '' }
+        { itemName: '', title: '', description: '', comment: '' },
       ],
-      policeResponse: ''
+      policeResponse: '',
     },
     currentEvent: {
       id: 4380514,
       name: 'Initial Review',
       date: '19/05/2025',
       authorOrVenue: 'Erika Farrugia',
-      type: 1
+      type: 1,
     },
     nextEventLink: [
       {
         id: 4380514,
         href: 'api/cases/2161796/history?caseId=4380514&historyType=1',
         rel: 'InitialReview',
-        type: 'GET'
-      }
+        type: 'GET',
+      },
     ],
     dppConsent: null,
-    linkedCaseUrns: []
+    linkedCaseUrns: [],
   },
   preChargeDecisionOutcome: {
     author: 'Erika Farrugia',
@@ -115,7 +96,7 @@ const PcdReviewDetailsDataResponse: PCDReviewDetailsResponseType = {
         pcdPrincipalOffenceCategory: '',
         reasonCode: 'K',
         publicInterestCode: '',
-        chargeDetails: []
+        chargeDetails: [],
       },
       {
         id: 2785313,
@@ -131,8 +112,8 @@ const PcdReviewDetailsDataResponse: PCDReviewDetailsResponseType = {
         pcdPrincipalOffenceCategory: '',
         reasonCode: 'C',
         publicInterestCode: 'D77 - Public Interest Code',
-        chargeDetails: []
-      }
+        chargeDetails: [],
+      },
     ],
     eventDate: '19/05/2025',
     id: 4380522,
@@ -154,7 +135,7 @@ const PcdReviewDetailsDataResponse: PCDReviewDetailsResponseType = {
         actionPoint:
           'Requested:\n- Victim Personal Statement;\n(Please provide the witness personal statement as we can see what was actually said as this is missing from the files)',
         policeCovidUrgency: '',
-        cpsCovidUrgency: ''
+        cpsCovidUrgency: '',
       },
       {
         actionType: 'Action Plan',
@@ -165,7 +146,7 @@ const PcdReviewDetailsDataResponse: PCDReviewDetailsResponseType = {
         actionPoint:
           'Requested:\n- Medical Evidence;\n(Send us the medical evidence of the injuries incurred as a result of the assault)',
         policeCovidUrgency: '',
-        cpsCovidUrgency: ''
+        cpsCovidUrgency: '',
       },
       {
         actionType: 'Action Plan',
@@ -176,8 +157,8 @@ const PcdReviewDetailsDataResponse: PCDReviewDetailsResponseType = {
         actionPoint:
           'Requested:\n- Unused/Sensitive Material;\n(Any further Unused Material that may be needed for a further review)',
         policeCovidUrgency: '',
-        cpsCovidUrgency: ''
-      }
+        cpsCovidUrgency: '',
+      },
     ],
     urn: '16123630825',
     currentEvent: {
@@ -185,32 +166,32 @@ const PcdReviewDetailsDataResponse: PCDReviewDetailsResponseType = {
       name: 'Pre-charge Decision',
       date: '19/05/2025',
       authorOrVenue: 'Erika Farrugia',
-      type: 3
+      type: 3,
     },
     nextEventLink: [
       {
         id: 4380522,
         href: 'api/cases/2161796/history?caseId=4380522&historyType=3',
         rel: 'PreChargeDecision',
-        type: 'GET'
-      }
-    ]
-  }
+        type: 'GET',
+      },
+    ],
+  },
 };
 
 PCDReviewDetailsSchema.parse(PcdReviewDetailsDataResponse);
 
 export const mockPcdReviewDetailsResponse = (
-  overwrite?: Partial<PCDReviewDetailsResponseType>
+  overwrite?: Partial<PCDReviewDetailsResponseType>,
 ): PCDReviewDetailsResponseType => ({
   ...PcdReviewDetailsDataResponse,
   ...overwrite,
   preChargeDecisionAnalysisOutcome: {
     ...PcdReviewDetailsDataResponse.preChargeDecisionAnalysisOutcome,
-    ...overwrite?.preChargeDecisionAnalysisOutcome
+    ...overwrite?.preChargeDecisionAnalysisOutcome,
   },
   preChargeDecisionOutcome: {
     ...PcdReviewDetailsDataResponse.preChargeDecisionOutcome,
-    ...overwrite?.preChargeDecisionOutcome
-  }
+    ...overwrite?.preChargeDecisionOutcome,
+  },
 });

@@ -4,11 +4,7 @@ import './Banner.scss';
 
 type Props = BannerType;
 
-export const Banner = ({
-  type = 'success',
-  header,
-  content
-}: PropsWithChildren<Props>) => {
+export const Banner = ({ type = 'success', header, content }: PropsWithChildren<Props>) => {
   const bannerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -49,10 +45,7 @@ export const Banner = ({
       tabIndex={-1}
     >
       <div className="govuk-notification-banner__header">
-        <h2
-          className="govuk-notification-banner__title"
-          id="govuk-notification-banner-title"
-        >
+        <h2 className="govuk-notification-banner__title" id="govuk-notification-banner-title">
           {getBannerTitle()}
         </h2>
       </div>

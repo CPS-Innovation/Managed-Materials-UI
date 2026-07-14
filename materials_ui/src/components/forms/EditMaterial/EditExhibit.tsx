@@ -3,10 +3,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
 import { useExhibitProducers } from '../../../hooks/index.ts';
-import {
-  EditExhibitSchema,
-  EditExhibitType
-} from '../../../schemas/forms/editStatement.ts';
+import { EditExhibitSchema, EditExhibitType } from '../../../schemas/forms/editStatement.ts';
 import { CaseMaterialsType } from '../../../schemas/index.ts';
 import { SelectList } from '../../SelectList/SelectList.tsx';
 
@@ -21,22 +18,15 @@ type Props = {
   onSuccess: (data: EditExhibitType) => void;
 };
 
-export const EditExhibitForm = ({
-  cancelUrl,
-  formState,
-  material,
-  onSuccess
-}: Props) => {
-  const {
-    selectOptions: exhibitProducers,
-    loading: isExhibitProducersLoading
-  } = useExhibitProducers();
+export const EditExhibitForm = ({ cancelUrl, formState, material, onSuccess }: Props) => {
+  const { selectOptions: exhibitProducers, loading: isExhibitProducersLoading } =
+    useExhibitProducers();
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-    watch
+    watch,
   } = useForm<EditExhibitType>({
     // @ts-expect-error fix type
     resolver: zodResolver(EditExhibitSchema),
@@ -48,14 +38,11 @@ export const EditExhibitForm = ({
       subject: formState?.item || material?.subject || '',
       used: formState?.used || material?.status === 'Used',
       existingproducerOrWitnessId:
-        formState?.existingproducerOrWitnessId ||
-        material?.existingproducerOrWitnessId,
+        formState?.existingproducerOrWitnessId || material?.existingproducerOrWitnessId,
       producedBy:
         formState?.producedBy ||
-        (!material?.existingproducerOrWitnessId
-          ? material?.producer?.trim()
-          : undefined)
-    }
+        (!material?.existingproducerOrWitnessId ? material?.producer?.trim() : undefined),
+    },
   });
 
   const fieldValues = watch();
@@ -126,10 +113,8 @@ export const EditExhibitForm = ({
               options={[
                 ...(isExhibitProducersLoading
                   ? [{ label: 'Loading...', value: '', id: '' }]
-                  : [
-                      { label: 'Select producer or witness', value: '', id: '' }
-                    ]),
-                ...exhibitProducers
+                  : [{ label: 'Select producer or witness', value: '', id: '' }]),
+                ...exhibitProducers,
               ]}
             />
           )}
@@ -154,11 +139,7 @@ export const EditExhibitForm = ({
         <UsedField control={control} errors={errors} />
 
         <div className="govuk-button-group">
-          <button
-            type="submit"
-            className="govuk-button"
-            data-module="govuk-button"
-          >
+          <button type="submit" className="govuk-button" data-module="govuk-button">
             Continue
           </button>
           <Link to={cancelUrl} className="govuk-link cancel-status-change">

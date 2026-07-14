@@ -11,7 +11,7 @@ export const Pagination = ({
   setNextPage,
   setPage,
   setPreviousPage,
-  totalPages
+  totalPages,
 }: Props) => {
   const pageNumbers = [];
   const currentPagePlusOne = currentPage + 1;
@@ -105,9 +105,7 @@ export const Pagination = ({
               key={index}
               id={`pagination-item-${index}`}
               className={`govuk-pagination__item ${
-                currentPagePlusOne === pageNumber
-                  ? 'govuk-pagination__item--current'
-                  : ''
+                currentPagePlusOne === pageNumber ? 'govuk-pagination__item--current' : ''
               }`}
             >
               <a
@@ -121,7 +119,7 @@ export const Pagination = ({
                 {pageNumber}
               </a>
             </li>
-          )
+          ),
         )}
 
         {currentPagePlusOne < totalPages && (

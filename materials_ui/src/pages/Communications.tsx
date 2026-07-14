@@ -8,7 +8,7 @@ import {
   LoadingSpinner,
   RenameDrawer,
   TableActions,
-  TwoCol
+  TwoCol,
 } from '../components';
 
 import {
@@ -16,30 +16,25 @@ import {
   useBanner,
   useCaseMaterial,
   useCaseMaterials,
-  useTableActions
+  useTableActions,
 } from '../hooks';
 import { navigateToViewDocumentPageInNewTab } from '../hooks/ui/navigateToViewDocumentPageInNewTab';
 import { CaseMaterialsType } from '../schemas';
-import {
-  useCaseInfoStore,
-  useMaterialTags,
-  useSelectedItemsStore
-} from '../stores';
+import { useCaseInfoStore, useMaterialTags, useSelectedItemsStore } from '../stores';
 import { trackAction } from '../telemetry/appInsights';
 
 export const CommunicationsPage = () => {
-  const [selectedMaterial, setSelectedMaterial] =
-    useState<CaseMaterialsType | null>(null);
+  const [selectedMaterial, setSelectedMaterial] = useState<CaseMaterialsType | null>(null);
   const { setBanner, resetBanner } = useBanner();
-  const { loading: caseMaterialsLoading, mutate: refreshCommunications } =
-    useCaseMaterials({ dataType: 'communications' });
+  const { loading: caseMaterialsLoading, mutate: refreshCommunications } = useCaseMaterials({
+    dataType: 'communications',
+  });
   const { deselectMaterial } = useCaseMaterial();
   const { getRoute } = useAppRoute();
   const { setTags } = useMaterialTags();
 
   const [showFilter, setShowFilter] = useState(true);
-  const { items: selectedItems, clear: clearSelectedItems } =
-    useSelectedItemsStore();
+  const { items: selectedItems, clear: clearSelectedItems } = useSelectedItemsStore();
   const { caseInfo } = useCaseInfoStore();
 
   const {
@@ -50,13 +45,13 @@ export const CommunicationsPage = () => {
     handleReadStatusClick,
     handleUnusedClick,
     determineReadStatusLabel,
-    isReadStatusUpdating
+    isReadStatusUpdating,
   } = useTableActions({
     selectedItems: selectedItems.communications,
     refreshData: refreshCommunications,
     setBanner,
     deselectItem: deselectMaterial,
-    resetBanner
+    resetBanner,
   });
 
   const handleRenameClick = () => {
@@ -71,9 +66,7 @@ export const CommunicationsPage = () => {
   };
 
   const handleSuccessfulRename = async () => {
-    setTags([
-      { materialId: selectedMaterial?.materialId as number, tagName: 'Renamed' }
-    ]);
+    setTags([{ materialId: selectedMaterial?.materialId as number, tagName: 'Renamed' }]);
 
     setSelectedMaterial(null);
     deselectMaterial();
@@ -82,7 +75,7 @@ export const CommunicationsPage = () => {
     setBanner({
       type: 'success',
       header: 'Renaming successful',
-      content: 'Material successfully renamed.'
+      content: 'Material successfully renamed.',
     });
 
     await refreshCommunications();
@@ -98,7 +91,7 @@ export const CommunicationsPage = () => {
 
     trackAction('OpenedInNewWindow', {
       materialId: row?.materialId?.toString(),
-      category: row?.category
+      category: row?.category,
     });
     navigateToViewDocumentPageInNewTab({ urn, caseId, materialId });
   };
@@ -111,21 +104,17 @@ export const CommunicationsPage = () => {
         const rowDocId = row?.documentTypeId;
         if (!rowDocId) return false;
 
-        return (
-          [1031, 1059].includes(rowDocId) ||
-          selectedItems.communications.length > 1
-        );
-      })()
+        return [1031, 1059].includes(rowDocId) || selectedItems.communications.length > 1;
+      })(),
     },
     {
       label: 'Reclassify',
       onClick: handleReclassifyClick,
-      hide: !row?.isReclassifiable || selectedItems.communications.length > 1
+      hide: !row?.isReclassifiable || selectedItems.communications.length > 1,
     },
     {
       label: 'Update',
-      onClick: () =>
-        handleEditClick(row as CaseMaterialsType, getRoute('COMMUNICATIONS')),
+      onClick: () => handleEditClick(row as CaseMaterialsType, getRoute('COMMUNICATIONS')),
       hide: (() => {
         const itemCommsCategory = selectedItems.communications[0]?.category;
         if (!itemCommsCategory) return;
@@ -133,37 +122,33 @@ export const CommunicationsPage = () => {
           selectedItems.communications.length > 1 ||
           !['Exhibit', 'Statement'].includes(itemCommsCategory)
         );
-      })()
+      })(),
     },
     {
       label: 'Redact',
       onClick: () => {
         if (row?.materialId) return handleRedactClick(row.materialId);
       },
-      hide: selectedItems.communications.length > 1
+      hide: selectedItems.communications.length > 1,
     },
     {
       label: 'Discard',
       onClick: () => handleDiscardClick(getRoute('COMMUNICATIONS')),
-      hide: selectedItems.communications.length > 1
+      hide: selectedItems.communications.length > 1,
     },
     {
       label: determineReadStatusLabel(selectedItems.communications),
-      onClick: () => handleReadStatusClick(selectedItems.communications)
+      onClick: () => handleReadStatusClick(selectedItems.communications),
     },
     {
       label: 'Mark as unused',
-      onClick: () =>
-        handleUnusedClick(
-          selectedItems.communications,
-          getRoute('COMMUNICATIONS')
-        )
+      onClick: () => handleUnusedClick(selectedItems.communications, getRoute('COMMUNICATIONS')),
     },
     {
       label: 'View in new window',
       onClick: handleViewInNewWindowClick,
-      hide: selectedItems.communications?.length !== 1
-    }
+      hide: selectedItems.communications?.length !== 1,
+    },
   ];
 
   useEffect(() => {

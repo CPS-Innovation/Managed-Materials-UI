@@ -12,14 +12,11 @@ export const MaterialsFilters = () => {
     shallowFilters,
     setCheckboxFilter,
     setSearch,
-    saveFiltersToContext
+    saveFiltersToContext,
   } = useFilters('materials');
   const hasAccess = useFeatureFlag();
 
-  const handleCheckboxChange = (
-    filterGroup: string,
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleCheckboxChange = (filterGroup: string, event: ChangeEvent<HTMLInputElement>) => {
     const { checked, value } = event.target;
 
     setCheckboxFilter(filterGroup, value, checked);
@@ -48,18 +45,12 @@ export const MaterialsFilters = () => {
           <div className="govuk-form-group">
             <fieldset className="govuk-fieldset">
               <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">
-                <h3 className="govuk-heading-s small-heading-spacing">
-                  New material
-                </h3>
+                <h3 className="govuk-heading-s small-heading-spacing">New material</h3>
               </legend>
               <Checkbox
                 id="readStatus"
                 label="Show only new material (unread)"
-                checked={
-                  shallowFilters?.filters?.readStatus?.includes(
-                    READ_STATUS.UNREAD
-                  ) || false
-                }
+                checked={shallowFilters?.filters?.readStatus?.includes(READ_STATUS.UNREAD) || false}
                 onChange={(event) => handleCheckboxChange('readStatus', event)}
                 value={READ_STATUS.UNREAD}
               />
@@ -77,9 +68,7 @@ export const MaterialsFilters = () => {
             <Checkbox
               id={`status-${status}`}
               label={status}
-              checked={
-                shallowFilters?.filters?.status?.includes(status) || false
-              }
+              checked={shallowFilters?.filters?.status?.includes(status) || false}
               onChange={(event) => handleCheckboxChange('status', event)}
               value={status}
               key={status}
@@ -98,9 +87,7 @@ export const MaterialsFilters = () => {
             <Checkbox
               id={`category-${value}`}
               label={label}
-              checked={
-                shallowFilters?.filters?.category?.includes(value) ?? false
-              }
+              checked={shallowFilters?.filters?.category?.includes(value) ?? false}
               onChange={(event) => handleCheckboxChange('category', event)}
               value={value}
               key={value}

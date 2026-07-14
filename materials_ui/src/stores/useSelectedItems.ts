@@ -16,10 +16,7 @@ type SelectedItemsStore = {
   clear: (type?: SelectedItemKeys) => void;
 };
 
-const defaultState: SelectedItemsDefaultState = {
-  communications: [],
-  materials: []
-};
+const defaultState: SelectedItemsDefaultState = { communications: [], materials: [] };
 
 export const useSelectedItemsStore = create<SelectedItemsStore>((set) => ({
   items: { ...defaultState },
@@ -29,12 +26,7 @@ export const useSelectedItemsStore = create<SelectedItemsStore>((set) => ({
       const stateIds = state.items[type].map((item) => item.id);
       const dedupedState = items.filter((item) => !stateIds.includes(item.id));
 
-      return {
-        items: {
-          ...state.items,
-          [type]: [...(state.items[type] ?? []), ...dedupedState]
-        }
-      };
+      return { items: { ...state.items, [type]: [...(state.items[type] ?? []), ...dedupedState] } };
     });
   },
 
@@ -45,8 +37,8 @@ export const useSelectedItemsStore = create<SelectedItemsStore>((set) => ({
       return {
         items: {
           ...state.items,
-          [type]: state.items[type].filter((item) => !idsToRemove.has(item.id))
-        }
+          [type]: state.items[type].filter((item) => !idsToRemove.has(item.id)),
+        },
       };
     }),
 
@@ -56,5 +48,5 @@ export const useSelectedItemsStore = create<SelectedItemsStore>((set) => ({
     } else {
       set(() => ({ items: { ...defaultState } }));
     }
-  }
+  },
 }));

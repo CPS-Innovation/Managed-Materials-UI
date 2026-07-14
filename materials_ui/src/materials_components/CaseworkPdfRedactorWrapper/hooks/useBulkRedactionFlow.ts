@@ -20,9 +20,7 @@ export const useBulkRedactionFlow = (p: {
 }) => {
   const featureFlags = useUserGroupsFeatureFlag();
 
-  const [popupProps, setPopupProps] = useState<TRedactionPopupProps | null>(
-    null
-  );
+  const [popupProps, setPopupProps] = useState<TRedactionPopupProps | null>(null);
 
   const removeRedactions = (ids: string[]) =>
     p.setRedactions((prev) => prev.filter((r) => !ids.includes(r.id)));
@@ -32,7 +30,7 @@ export const useBulkRedactionFlow = (p: {
     urn: p.urn,
     caseId: p.caseId,
     versionId: p.childId,
-    documentId: p.parentId
+    documentId: p.parentId,
   });
 
   // pin the popover above whichever match is currently focused
@@ -40,14 +38,10 @@ export const useBulkRedactionFlow = (p: {
     const focusedId = bulkSearch.focusedCandidate?.id;
     if (!focusedId) return;
 
-    const elm = document.querySelector(
-      `[data-text-highlight-id="${focusedId}"]`
-    );
+    const elm = document.querySelector(`[data-text-highlight-id="${focusedId}"]`);
     if (!elm) return;
     const matchTop = elm.getBoundingClientRect().top;
-    setPopupProps((prev) =>
-      prev ? { ...prev, x: window.innerWidth / 2, y: matchTop } : prev
-    );
+    setPopupProps((prev) => (prev ? { ...prev, x: window.innerWidth / 2, y: matchTop } : prev));
   }, [bulkSearch.focusedCandidate?.id]);
 
   const trimmedSearchText = popupProps?.highlightedText?.trim() ?? '';
@@ -65,7 +59,7 @@ export const useBulkRedactionFlow = (p: {
   const onSaveSingle = (currentType: TRedactionType) => {
     p.setSelectedRedactionTypes((prev) => [
       ...prev,
-      { id: currentType.id, name: currentType.name }
+      { id: currentType.id, name: currentType.name },
     ]);
     closePopover();
   };
@@ -85,7 +79,7 @@ export const useBulkRedactionFlow = (p: {
     p.setRedactions((prev) => [...prev, focused]);
     p.setSelectedRedactionTypes((prev) => [
       ...prev,
-      { id: currentType.id, name: currentType.name }
+      { id: currentType.id, name: currentType.name },
     ]);
     const willBeEmpty = bulkSearch.candidates.length === 1;
     bulkSearch.removeFocused();
@@ -97,10 +91,7 @@ export const useBulkRedactionFlow = (p: {
     p.setRedactions((prev) => [...prev, ...bulkSearch.candidates]);
     p.setSelectedRedactionTypes((prev) => [
       ...prev,
-      ...Array(bulkSearch.candidates.length).fill({
-        id: currentType.id,
-        name: currentType.name
-      })
+      ...Array(bulkSearch.candidates.length).fill({ id: currentType.id, name: currentType.name }),
     ]);
     closePopover();
   };
@@ -116,19 +107,19 @@ export const useBulkRedactionFlow = (p: {
           onViewPrevious: bulkSearch.goPrev,
           onViewNext: bulkSearch.goNext,
           onRedactFocused: acceptFocusedMatch,
-          onRedactAll: acceptAllMatches
+          onRedactAll: acceptAllMatches,
         }
       : undefined;
 
   const highlightLayer: THighlightLayer = {
     highlights: convertCandidatesToSearchHighlights(bulkSearch.candidates),
-    focusedId: bulkSearch.focusedCandidate?.id
+    focusedId: bulkSearch.focusedCandidate?.id,
   };
 
   return {
     highlightLayer,
     popupProps,
     openPopover: (props: TRedactionPopupProps) => setPopupProps(props),
-    popoverProps: { onClose, onSaveSingle, bulkProps }
+    popoverProps: { onClose, onSaveSingle, bulkProps },
   };
 };

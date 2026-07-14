@@ -34,7 +34,7 @@ export type RedactionLogFormValues = {
 const RedactionTypesGrid = ({
   value,
   onChange,
-  redactionTypes = []
+  redactionTypes = [],
 }: {
   value: number[];
   onChange: (next: number[]) => void;
@@ -60,7 +60,7 @@ const RedactionTypesGrid = ({
         display: 'grid',
         gridTemplateColumns: 'repeat(4, 1fr)',
         gap: '8px',
-        marginTop: '8px'
+        marginTop: '8px',
       }}
     >
       {redactionTypes.map((type) => (
@@ -81,13 +81,13 @@ export const RedactionLogModalBody = ({
   activeDocument,
   mode,
   selectedRedactionTypes,
-  lookups
+  lookups,
 }: RedactionLogModalBodyProps) => {
   const {
     control,
     register,
     watch,
-    formState: { errors }
+    formState: { errors },
   } = useFormContext<RedactionLogFormValues>();
 
   const [showPopover, setShowPopover] = useState(false);
@@ -100,7 +100,7 @@ export const RedactionLogModalBody = ({
   const redactionTypes =
     lookups?.missedRedactions?.map((redaction) => ({
       id: parseInt(redaction.id),
-      name: redaction.name
+      name: redaction.name,
     })) || [];
 
   return (
@@ -117,14 +117,11 @@ export const RedactionLogModalBody = ({
                 selectedRedactionTypes.reduce(
                   (acc, x) => {
                     const current = acc[x.id];
-                    acc[x.id] = {
-                      name: current?.name ?? x.name,
-                      count: (current?.count ?? 0) + 1
-                    };
+                    acc[x.id] = { name: current?.name ?? x.name, count: (current?.count ?? 0) + 1 };
                     return acc;
                   },
-                  {} as Record<string, { name: string; count: number }>
-                )
+                  {} as Record<string, { name: string; count: number }>,
+                ),
               ).map(([id, value]) => (
                 <li key={id}>
                   {value.count} - {value.name}
@@ -143,14 +140,10 @@ export const RedactionLogModalBody = ({
           }
         >
           <fieldset className="govuk-fieldset">
-            <legend className="govuk-fieldset__legend">
-              Confirm the redaction type
-            </legend>
+            <legend className="govuk-fieldset__legend">Confirm the redaction type</legend>
 
             {errors.redactionCategorySelected && (
-              <p className="govuk-error-message">
-                {errors.redactionCategorySelected.message}
-              </p>
+              <p className="govuk-error-message">{errors.redactionCategorySelected.message}</p>
             )}
 
             <Controller
@@ -184,7 +177,7 @@ export const RedactionLogModalBody = ({
                         if (!underRedactionSelected) return true;
                         if (arr && arr.length > 0) return true;
                         return 'Select an under redaction type';
-                      }
+                      },
                     }}
                     render={({ field }) => (
                       <>
@@ -194,9 +187,7 @@ export const RedactionLogModalBody = ({
                           </p>
                         )}
 
-                        <legend className="govuk-fieldset__legend">
-                          Types of redaction
-                        </legend>
+                        <legend className="govuk-fieldset__legend">Types of redaction</legend>
                         <RedactionTypesGrid
                           value={field.value ?? []}
                           onChange={field.onChange}
@@ -229,7 +220,7 @@ export const RedactionLogModalBody = ({
                 validate: () =>
                   underRedactionSelected || overRedactionSelected
                     ? true
-                    : 'Select a redaction category'
+                    : 'Select a redaction category',
               }}
               render={() => <></>}
             />
@@ -244,9 +235,7 @@ export const RedactionLogModalBody = ({
                   className={`govuk-form-group ${errors.overReason?.message ? 'govuk-form-group--error' : ''}`}
                 >
                   {errors.overReason?.message && (
-                    <p className="govuk-error-message">
-                      {errors.overReason?.message}
-                    </p>
+                    <p className="govuk-error-message">{errors.overReason?.message}</p>
                   )}
                   <Controller
                     name="overReason"
@@ -254,19 +243,13 @@ export const RedactionLogModalBody = ({
                     rules={{
                       validate: (value) => {
                         if (!overRedactionSelected) return true;
-                        if (
-                          value === 'investigative-agency' ||
-                          value === 'cps-colleague'
-                        )
+                        if (value === 'investigative-agency' || value === 'cps-colleague')
                           return true;
                         return 'Select an under redaction type';
-                      }
+                      },
                     }}
                     render={({ field }) => (
-                      <div
-                        className="govuk-radios govuk-radios--small"
-                        data-module="govuk-radios"
-                      >
+                      <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
                         <div className="govuk-radios__item">
                           <input
                             className="govuk-radios__input"
@@ -316,13 +299,11 @@ export const RedactionLogModalBody = ({
                         if (!overRedactionSelected) return true;
                         if (arr && arr.length > 0) return true;
                         return 'Select an over redaction type';
-                      }
+                      },
                     }}
                     render={({ field }) => (
                       <>
-                        <legend className="govuk-fieldset__legend">
-                          Types of redaction
-                        </legend>
+                        <legend className="govuk-fieldset__legend">Types of redaction</legend>
 
                         {errors.overRedactionTypeIds && (
                           <p className="govuk-error-message">
@@ -354,16 +335,14 @@ export const RedactionLogModalBody = ({
             gap: '8px',
             justifyContent: 'space-between',
             width: '50%',
-            position: 'relative'
+            position: 'relative',
           }}
         >
           <label className="govuk-label" htmlFor="supportingNotes">
             Supporting notes (optional)
           </label>
           {errors.supportingNotes && (
-            <p className="govuk-error-message">
-              {errors.supportingNotes.message}
-            </p>
+            <p className="govuk-error-message">{errors.supportingNotes.message}</p>
           )}
 
           <a
@@ -381,8 +360,8 @@ export const RedactionLogModalBody = ({
                 return (
                   <ul style={{ paddingLeft: '1rem', fontSize: '19px' }}>
                     <li>
-                      Detail the redaction issue identified, e.g. Statement of
-                      XX (Initials) DOB redacted
+                      Detail the redaction issue identified, e.g. Statement of XX (Initials) DOB
+                      redacted
                     </li>
                     <li>Avoid recording full names</li>
                     <li>Do not record sensitive personal data</li>
@@ -401,10 +380,7 @@ export const RedactionLogModalBody = ({
           style={{ width: '50%' }}
           maxLength={400}
           {...register('supportingNotes', {
-            maxLength: {
-              value: 400,
-              message: 'Supporting notes cannot exceed 400 characters'
-            }
+            maxLength: { value: 400, message: 'Supporting notes cannot exceed 400 characters' },
           })}
         />
 

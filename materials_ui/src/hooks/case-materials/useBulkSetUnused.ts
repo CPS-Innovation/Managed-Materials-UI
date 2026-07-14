@@ -3,10 +3,7 @@ import useSWRMutation from 'swr/mutation';
 import { useBanner, useLogger, useRequest } from '..';
 import { QUERY_KEYS } from '../../constants/query';
 import { SwrPayload } from '../../schemas';
-import {
-  BulkSetUnusedRequestType,
-  BulkSetUnusedResponseType
-} from '../../schemas/bulkSetUnused';
+import { BulkSetUnusedRequestType, BulkSetUnusedResponseType } from '../../schemas/bulkSetUnused';
 import { useCaseInfoStore } from '../../stores';
 
 type UseBulkSetUnusedOptions = {
@@ -14,10 +11,7 @@ type UseBulkSetUnusedOptions = {
   onSuccess?: (response: { data: BulkSetUnusedResponseType }) => void;
 };
 
-export const useBulkSetUnused = ({
-  onError,
-  onSuccess
-}: UseBulkSetUnusedOptions) => {
+export const useBulkSetUnused = ({ onError, onSuccess }: UseBulkSetUnusedOptions) => {
   const request = useRequest();
   const { resetBanner } = useBanner();
   const { log } = useLogger();
@@ -25,14 +19,14 @@ export const useBulkSetUnused = ({
 
   const postBulkSetUnused = async (
     _url: string,
-    { arg: data }: SwrPayload<BulkSetUnusedRequestType>
+    { arg: data }: SwrPayload<BulkSetUnusedRequestType>,
   ) => {
     resetBanner();
 
     return request
       .post<BulkSetUnusedResponseType>(
         `urns/${caseInfo?.urn}/cases/${caseInfo?.id}/bulk-set-unused`,
-        data
+        data,
       )
       .then((response) => response);
   };
@@ -49,11 +43,10 @@ export const useBulkSetUnused = ({
 
         log({
           logLevel: 3,
-          message:
-            'HK-UI-FE: Failed to update status to Unused for selected materials.'
+          message: 'HK-UI-FE: Failed to update status to Unused for selected materials.',
         });
-      }
-    }
+      },
+    },
   );
 
   return { trigger, isMutating, error, data };

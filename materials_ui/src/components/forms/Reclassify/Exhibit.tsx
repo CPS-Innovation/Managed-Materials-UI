@@ -15,10 +15,8 @@ type Props = {
 };
 
 export const Exhibit = ({ control, data, errors, currentMaterial }: Props) => {
-  const {
-    selectOptions: exhibitProducerOptions,
-    loading: isExhibitProducersLoading
-  } = useExhibitProducers();
+  const { selectOptions: exhibitProducerOptions, loading: isExhibitProducersLoading } =
+    useExhibitProducers();
 
   return (
     <>
@@ -43,11 +41,7 @@ export const Exhibit = ({ control, data, errors, currentMaterial }: Props) => {
         )}
       />
 
-      <SubjectField
-        control={control}
-        errors={errors}
-        label="Exhibit name (subject)"
-      />
+      <SubjectField control={control} errors={errors} label="Exhibit name (subject)" />
 
       <Controller
         control={control}
@@ -79,7 +73,7 @@ export const Exhibit = ({ control, data, errors, currentMaterial }: Props) => {
               ...(isExhibitProducersLoading
                 ? [{ label: 'Loading...', value: '', id: '' }]
                 : [{ label: 'Select producer or witness', value: '', id: '' }]),
-              ...exhibitProducerOptions
+              ...exhibitProducerOptions,
             ]}
           />
         )}

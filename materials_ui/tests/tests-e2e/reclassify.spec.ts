@@ -12,15 +12,9 @@ test.beforeEach(async ({ page }) => {
   await page
     .getByRole('heading', { name: 'Loading case', includeHidden: true })
     .waitFor({ state: 'detached' });
-  const rowFilter = page
-    .getByRole('row')
-    .filter({ hasText: 'MG15(CNOI)' })
-    .getByRole('checkbox');
+  const rowFilter = page.getByRole('row').filter({ hasText: 'MG15(CNOI)' }).getByRole('checkbox');
   await rowFilter.check();
-  await page
-    .getByRole('button', { name: 'Action on selection' })
-    .first()
-    .click();
+  await page.getByRole('button', { name: 'Action on selection' }).first().click();
   await page.getByRole('listitem').filter({ hasText: 'Reclassify' }).click();
 });
 
@@ -29,9 +23,7 @@ test('page loads as expected', async ({ page }) => {
   const title = await page.title();
   const mainHeading = page.getByRole('heading', { level: 1 });
   const backLink = page.getByRole('link', { name: 'Back' });
-  const firstQuestion = page.getByText(
-    'What is the new material classification category?',
-  );
+  const firstQuestion = page.getByText('What is the new material classification category?');
   const radios = page.getByRole('radio');
   const submitButton = page.getByRole('button', { name: 'Continue' });
   const cancelLink = page.getByRole('link', { name: 'Cancel' });
@@ -80,15 +72,11 @@ test.describe('validation', () => {
   test('statement errors', async ({ page }) => {
     await page.getByRole('radio', { name: 'Statement' }).check();
     await page.getByRole('button', { name: 'Continue' }).click();
-    const dateErrorMessage = page.getByRole('link', {
-      name: 'Select if statement has a date',
-    });
+    const dateErrorMessage = page.getByRole('link', { name: 'Select if statement has a date' });
     const statementNumberErrorMessage = page.getByRole('link', {
       name: 'Enter a statement number',
     });
-    const witnessErrorMessage = page.getByRole('link', {
-      name: 'Choose a witness',
-    });
+    const witnessErrorMessage = page.getByRole('link', { name: 'Choose a witness' });
     await expect(dateErrorMessage).toBeVisible();
     await expect(statementNumberErrorMessage).toBeVisible();
     await expect(witnessErrorMessage).toBeVisible();
@@ -103,18 +91,12 @@ test.describe('validation', () => {
     await page.getByText('Statement number').fill('1');
     await page.getByRole('button', { name: 'Continue' }).click();
     await page.getByRole('button', { name: 'Continue' }).click();
-    const firstNameErorMessage = page.getByRole('link', {
-      name: 'Enter the first name',
-    });
-    const lastNameErrorMessage = page.getByRole('link', {
-      name: 'Enter the last name',
-    });
+    const firstNameErorMessage = page.getByRole('link', { name: 'Enter the first name' });
+    const lastNameErrorMessage = page.getByRole('link', { name: 'Enter the last name' });
     const contestedIssueErrorMessage = page.getByRole('link', {
       name: 'Enter the contested issue',
     });
-    const requestErrorMessage = page.getByRole('link', {
-      name: 'Choose what you want to request',
-    });
+    const requestErrorMessage = page.getByRole('link', { name: 'Choose what you want to request' });
     const defendantErrorMessage = page.getByRole('link', {
       name: 'Select a defendant the action plan relates to',
     });
@@ -143,9 +125,7 @@ test.describe('validation', () => {
       name: 'Choose a material classification type',
     });
     const itemErrorMessage = page.getByRole('link', { name: 'Enter the item' });
-    const exhibitRefErrorMessage = page.getByRole('link', {
-      name: 'Enter the exhibit reference',
-    });
+    const exhibitRefErrorMessage = page.getByRole('link', { name: 'Enter the exhibit reference' });
     await expect(exhibitTypeErrorMessage).toBeVisible();
     await expect(itemErrorMessage).toBeVisible();
     await expect(exhibitRefErrorMessage).toBeVisible();
@@ -170,11 +150,7 @@ test.describe('validation', () => {
 
 test.describe('form submission', () => {
   test('reclassify MG forms', async ({ page }) => {
-    await mockRoute(
-      page,
-      'material/8836399/reclassify-complete',
-      mockOchestration(),
-    );
+    await mockRoute(page, 'material/8836399/reclassify-complete', mockOchestration());
 
     await page.getByRole('radio', { name: 'MG Forms' }).check();
     await page.getByLabel('What is the material').selectOption('1064');
@@ -183,18 +159,12 @@ test.describe('form submission', () => {
     await page
       .getByRole('heading', { name: 'Please wait..', includeHidden: true })
       .waitFor({ state: 'detached' });
-    await expect(
-      page.getByText('Material reclassified successfully'),
-    ).toBeVisible();
+    await expect(page.getByText('Material reclassified successfully')).toBeVisible();
   });
 
   test('statement reclassify with witness', async ({ page }) => {
     await mockRoute(page, 'case-witnesses?caseId=2167259', mockWitness());
-    await mockRoute(
-      page,
-      'material/8836399/reclassify-complete',
-      mockOchestration(),
-    );
+    await mockRoute(page, 'material/8836399/reclassify-complete', mockOchestration());
     await page.unroute('api/case-materials');
     await mockRoute(
       page,
@@ -218,18 +188,12 @@ test.describe('form submission', () => {
     await page
       .getByRole('heading', { name: 'Please wait..', includeHidden: true })
       .waitFor({ state: 'detached' });
-    await expect(
-      page.getByText('Material reclassified successfully'),
-    ).toBeVisible();
+    await expect(page.getByText('Material reclassified successfully')).toBeVisible();
   });
 
   test('statement reclassify with add witness', async ({ page }) => {
     await mockRoute(page, 'case-witnesses?caseId=2167259', mockWitness());
-    await mockRoute(
-      page,
-      'material/8836399/reclassify-complete',
-      mockOchestration(),
-    );
+    await mockRoute(page, 'material/8836399/reclassify-complete', mockOchestration());
     await page.unroute('api/case-materials');
     await mockRoute(
       page,
@@ -254,12 +218,8 @@ test.describe('form submission', () => {
 
     await page.getByRole('textbox', { name: 'First name' }).fill('John');
     await page.getByRole('textbox', { name: 'Last name' }).fill('Doe');
-    await page
-      .getByRole('textbox', { name: 'Contested issue' })
-      .fill('Contested issue');
-    await page
-      .getByRole('radio', { name: 'Key witness details', exact: true })
-      .check();
+    await page.getByRole('textbox', { name: 'Contested issue' }).fill('Contested issue');
+    await page.getByRole('radio', { name: 'Key witness details', exact: true }).check();
     await page
       .getByLabel('Select the defendant the action plan relates to')
       .selectOption('Will SMITH');
@@ -281,11 +241,7 @@ test.describe('form submission', () => {
 
   test('reclassify exhibit', async ({ page }) => {
     await mockRoute(page, 'case-witnesses?caseId=2167259', mockWitness());
-    await mockRoute(
-      page,
-      'api/material/8836399/reclassify-complete',
-      mockOchestration(),
-    );
+    await mockRoute(page, 'api/material/8836399/reclassify-complete', mockOchestration());
 
     await page.unroute('api/case-materials');
 
@@ -302,39 +258,22 @@ test.describe('form submission', () => {
         documentTypeId: 1062,
       }),
     );
-    await mockRoute(
-      page,
-      'api/case-defendants?caseId=2167259',
-      mockDefendants(),
-    );
+    await mockRoute(page, 'api/case-defendants?caseId=2167259', mockDefendants());
     await page.getByRole('radio', { name: 'Exhibit' }).check();
-    await page
-      .getByLabel('What is the material classification type?')
-      .selectOption('MG15(ROTI)');
+    await page.getByLabel('What is the material classification type?').selectOption('MG15(ROTI)');
     await page.getByRole('textbox', { name: 'Item' }).fill('Item 1');
-    await page
-      .getByRole('textbox', { name: 'Exhibit reference' })
-      .fill('AT-01');
+    await page.getByRole('textbox', { name: 'Exhibit reference' }).fill('AT-01');
     await page.getByRole('button', { name: 'Continue' }).click();
     await page.getByRole('button', { name: 'Save' }).click();
     await expect(
-      page.getByRole('heading', {
-        name: 'Please wait...',
-        includeHidden: true,
-      }),
+      page.getByRole('heading', { name: 'Please wait...', includeHidden: true }),
     ).toBeVisible();
-    await expect(
-      page.getByText('Material reclassified successfully'),
-    ).toBeVisible();
+    await expect(page.getByText('Material reclassified successfully')).toBeVisible();
   });
 
   test('reclassify other', async ({ page }) => {
     await mockRoute(page, 'case-witnesses?caseId=2167259', mockWitness());
-    await mockRoute(
-      page,
-      'api/material/4242662/reclassify-complete',
-      mockOchestration(),
-    );
+    await mockRoute(page, 'api/material/4242662/reclassify-complete', mockOchestration());
 
     await page.unroute('api/case-materials');
 
@@ -351,29 +290,17 @@ test.describe('form submission', () => {
         documentTypeId: 1062,
       }),
     );
-    await mockRoute(
-      page,
-      'api/case-defendants?caseId=2147043',
-      mockDefendants(),
-    );
+    await mockRoute(page, 'api/case-defendants?caseId=2147043', mockDefendants());
 
-    await mockRoute(
-      page,
-      'api/material/8836399/reclassify-complete',
-      mockOchestration(),
-    );
+    await mockRoute(page, 'api/material/8836399/reclassify-complete', mockOchestration());
 
     await page.getByRole('radio', { name: 'Other' }).check();
-    await page
-      .getByLabel('What is the material classification type?')
-      .selectOption('1201');
+    await page.getByLabel('What is the material classification type?').selectOption('1201');
     await page.getByRole('button', { name: 'Continue' }).click();
     await page.getByRole('button', { name: 'Save' }).click();
     await page
       .getByRole('heading', { name: 'Please wait..', includeHidden: true })
       .waitFor({ state: 'detached' });
-    await expect(
-      page.getByText('Material reclassified successfully'),
-    ).toBeVisible();
+    await expect(page.getByText('Material reclassified successfully')).toBeVisible();
   });
 });

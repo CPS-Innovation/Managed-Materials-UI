@@ -4,29 +4,19 @@ import { TDocument } from '../../DocumentSelectAccordion/getters/getDocumentList
 import { TRedactionType } from '../../PdfRedactor/RedactionTypeSelect';
 import { RedactionLogFormInputs } from '../RedactionLogModal';
 
-const normalizeToString = (
-  value: string | number | undefined | null
-): string =>
+const normalizeToString = (value: string | number | undefined | null): string =>
   value === undefined || value === null ? '' : value.toString().trim();
 
-const findAreaAndUnit = (
-  lookups: TLookupsResponse,
-  areaId: string,
-  unitId: string
-) => {
+const findAreaAndUnit = (lookups: TLookupsResponse, areaId: string, unitId: string) => {
   const trimmedAreaId = normalizeToString(areaId);
   const trimmedUnitId = normalizeToString(unitId);
 
   for (const area of lookups.areas || []) {
     if (
       normalizeToString(area.id) === trimmedAreaId &&
-      area.children?.some(
-        (child) => normalizeToString(child.id) === trimmedUnitId
-      )
+      area.children?.some((child) => normalizeToString(child.id) === trimmedUnitId)
     ) {
-      const unit = area.children?.find(
-        (child) => normalizeToString(child.id) === trimmedUnitId
-      );
+      const unit = area.children?.find((child) => normalizeToString(child.id) === trimmedUnitId);
       return { area, unit };
     }
   }
@@ -34,12 +24,10 @@ const findAreaAndUnit = (
   for (const division of lookups.divisions || []) {
     if (
       normalizeToString(division.id) === trimmedAreaId &&
-      division.children?.some(
-        (child) => normalizeToString(child.id) === trimmedUnitId
-      )
+      division.children?.some((child) => normalizeToString(child.id) === trimmedUnitId)
     ) {
       const unit = division.children?.find(
-        (child) => normalizeToString(child.id) === trimmedUnitId
+        (child) => normalizeToString(child.id) === trimmedUnitId,
       );
       return { area: division, unit };
     }
@@ -52,15 +40,13 @@ const createOverUnderModeRedactions = (
   lookups: TLookupsResponse,
   underRedactionTypeIds: number[],
   overRedactionTypeIds: number[],
-  overReason: 'investigative-agency' | 'cps-colleague' | null
+  overReason: 'investigative-agency' | 'cps-colleague' | null,
 ): RedactionLogData['redactions'] => {
   const redactionsArray: RedactionLogData['redactions'] = [];
   const isReturnedToIA = overReason === 'investigative-agency';
 
   const findRedactionType = (typeId: number) =>
-    lookups.missedRedactions?.find(
-      (rt) => normalizeToString(rt.id) === normalizeToString(typeId)
-    );
+    lookups.missedRedactions?.find((rt) => normalizeToString(rt.id) === normalizeToString(typeId));
 
   // under redactions
   underRedactionTypeIds.forEach((typeId) => {
@@ -69,7 +55,7 @@ const createOverUnderModeRedactions = (
       redactionsArray.push({
         missedRedaction: { id: redactionType.id, name: redactionType.name },
         redactionType: 1,
-        returnedToInvestigativeAuthority: isReturnedToIA
+        returnedToInvestigativeAuthority: isReturnedToIA,
       });
     }
   });
@@ -81,7 +67,7 @@ const createOverUnderModeRedactions = (
       redactionsArray.push({
         missedRedaction: { id: redactionType.id, name: redactionType.name },
         redactionType: 2,
-        returnedToInvestigativeAuthority: isReturnedToIA
+        returnedToInvestigativeAuthority: isReturnedToIA,
       });
     }
   });
@@ -89,13 +75,11 @@ const createOverUnderModeRedactions = (
   return redactionsArray;
 };
 
-const createListModeRedactions = (
-  types: TRedactionType[]
-): RedactionLogData['redactions'] =>
+const createListModeRedactions = (types: TRedactionType[]): RedactionLogData['redactions'] =>
   types.map(({ id, name }) => ({
     missedRedaction: { id, name },
     redactionType: 1,
-    returnedToInvestigativeAuthority: false
+    returnedToInvestigativeAuthority: false,
   }));
 
 type TransformFormDataToApiFormatParams = {
@@ -113,7 +97,7 @@ export const transformFormDataToApiFormat = ({
   activeDocument,
   lookups,
   mode,
-  listModeRedactionTypes
+  listModeRedactionTypes,
 }: TransformFormDataToApiFormatParams): RedactionLogData => {
   if (!lookups) {
     throw new Error('Lookups data is required for form transformation');
@@ -122,19 +106,17 @@ export const transformFormDataToApiFormat = ({
   const { area, unit } = findAreaAndUnit(
     lookups,
     formData.areasAndDivisionsId,
-    formData.businessUnitId
+    formData.businessUnitId,
   );
 
   const investigatingAgency = lookups.investigatingAgencies?.find(
-    (ia) =>
-      normalizeToString(ia.id) ===
-      normalizeToString(formData.investigatingAgencyId)
+    (ia) => normalizeToString(ia.id) === normalizeToString(formData.investigatingAgencyId),
   );
 
   const documentType = lookups.documentTypes?.find(
     (dt) =>
       normalizeToString(dt.id) &&
-      normalizeToString(dt.id) === normalizeToString(formData.documentTypeId)
+      normalizeToString(dt.id) === normalizeToString(formData.documentTypeId),
   );
 
   const redactions =
@@ -144,7 +126,7 @@ export const transformFormDataToApiFormat = ({
           lookups,
           formData.underRedactionTypeIds,
           formData.overRedactionTypeIds,
-          formData.overReason
+          formData.overReason,
         );
 
   return {
@@ -156,28 +138,25 @@ export const transformFormDataToApiFormat = ({
           : `${formData.areasAndDivisionsId}-${formData.businessUnitId}`,
       type: 'Area',
       areaDivisionName: area?.name || '',
-      name: unit?.name || ''
+      name: unit?.name || '',
     },
     investigatingAgency: {
       id: investigatingAgency?.id || formData.investigatingAgencyId,
-      name: investigatingAgency?.name || ''
+      name: investigatingAgency?.name || '',
     },
     documentType: {
       id: documentType?.id || normalizeToString(formData.documentTypeId),
-      name: documentType?.name || ''
+      name: documentType?.name || '',
     },
     redactions,
     notes: formData.supportingNotes,
     chargeStatus: formData.chargeStatus,
     cmsValues: {
       originalFileName: activeDocument?.cmsOriginalFileName || '',
-      documentId: activeDocument?.parentId
-        ? activeDocument.parentId.replace(/^CMS-/, '')
-        : 0,
+      documentId: activeDocument?.parentId ? activeDocument.parentId.replace(/^CMS-/, '') : 0,
       documentType: activeDocument?.cmsDocType.documentType || '',
-      fileCreatedDate:
-        activeDocument?.cmsFileCreatedDate || new Date().toISOString(),
-      documentTypeId: activeDocument?.cmsDocType.documentTypeId || 0
-    }
+      fileCreatedDate: activeDocument?.cmsFileCreatedDate || new Date().toISOString(),
+      documentTypeId: activeDocument?.cmsDocType.documentTypeId || 0,
+    },
   };
 };

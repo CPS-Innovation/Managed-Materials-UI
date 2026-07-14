@@ -15,7 +15,7 @@ const redactionTypeData = [
   { id: '12', name: 'Phone number' },
   { id: '13', name: 'Email address' },
   { id: '14', name: 'Previous convictions' },
-  { id: '15', name: 'Other' }
+  { id: '15', name: 'Other' },
 ];
 
 export type TRedactionType = (typeof redactionTypeData)[number];
@@ -38,9 +38,7 @@ export const RedactionTypeSelect = (p: {
       style={p.fullWidth ? { width: '100%' } : undefined}
       value={redactionTypeId}
       onChange={(e) => {
-        const newRedactionType = redactionTypeData.find(
-          (itm) => itm.id === e.target.value
-        );
+        const newRedactionType = redactionTypeData.find((itm) => itm.id === e.target.value);
 
         setRedactionTypeId(e.target.value);
         p.onRedactionTypeChange(newRedactionType);

@@ -18,9 +18,5 @@ export const useCaseInfo = ({ caseId, urn }: UseCaseInfoProps) => {
 
   const { data, isLoading, isValidating, mutate } = useSWR(key, getCaseInfo);
 
-  return {
-    caseInfo: data || null,
-    loading: isLoading || isValidating,
-    refresh: mutate
-  };
+  return { caseInfo: data || null, loading: isLoading || isValidating, refresh: mutate };
 };

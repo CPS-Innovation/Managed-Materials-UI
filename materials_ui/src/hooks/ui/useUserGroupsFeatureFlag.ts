@@ -3,8 +3,7 @@ import { PRIVATE_BETA_FEATURE_USER_GROUPS } from '../../constants';
 
 export type UserGroupsFeatureFlags = { bulkRedaction: boolean };
 
-const featureFlagsDisabled =
-  import.meta.env.VITE_DISABLE_FEATURE_FLAGS === 'true';
+const featureFlagsDisabled = import.meta.env.VITE_DISABLE_FEATURE_FLAGS === 'true';
 
 export const useUserGroupsFeatureFlag = (): UserGroupsFeatureFlags => {
   const { instance } = useMsal();

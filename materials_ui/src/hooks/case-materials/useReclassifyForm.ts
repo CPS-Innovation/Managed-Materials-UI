@@ -5,7 +5,7 @@ import {
   Reclassify_TypeMGFormType,
   Reclassify_TypeOtherType,
   Reclassify_TypeStatementType,
-  Reclassify_WitnessAndActionPlanType
+  Reclassify_WitnessAndActionPlanType,
 } from '../../schemas/forms/reclassify';
 
 export type FormStep = 'classification' | 'summary' | 'addWitness' | 'subject';
@@ -15,10 +15,7 @@ type Reclassify_Statement_With_ActionPlan = {
   witnessActionPlan: Reclassify_WitnessAndActionPlanType;
 };
 
-type Reclassify_Statement_Without_ActionPlan = {
-  witnessId: number;
-  witnessActionPlan?: undefined;
-};
+type Reclassify_Statement_Without_ActionPlan = { witnessId: number; witnessActionPlan?: undefined };
 
 type Reclassify_Statement_Data = (
   | Reclassify_Statement_With_ActionPlan
@@ -37,7 +34,7 @@ export const useReclassifyForm = (material: CaseMaterialsType) => {
   const [formData, setFormData] = useState<Partial<ReclassifyFormData>>({
     materialId: material?.materialId,
     subject: material?.subject,
-    used: true
+    used: true,
   });
 
   const changeFormStep = (step: FormStep) => {

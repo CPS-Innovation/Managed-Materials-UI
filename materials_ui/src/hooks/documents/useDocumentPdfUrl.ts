@@ -12,7 +12,7 @@ const getDocumentBlobFromAxiosInstance = async (p: {
   try {
     const response = await p.axiosInstance.get(
       `/urns/${p.urn}/cases/${p.caseId}/materials/${p.materialId}/document`,
-      { responseType: 'blob' }
+      { responseType: 'blob' },
     );
 
     const blob = response.data;
@@ -26,11 +26,7 @@ const getDocumentBlobFromAxiosInstance = async (p: {
   }
 };
 
-export const useDocumentPdfUrl = (p: {
-  urn: string;
-  caseId: number;
-  materialId: string;
-}) => {
+export const useDocumentPdfUrl = (p: { urn: string; caseId: number; materialId: string }) => {
   const [pdfUrl, setPdfUrl] = useState<string | null | undefined>();
   const axiosInstance = useAxiosInstance();
 
@@ -40,7 +36,7 @@ export const useDocumentPdfUrl = (p: {
         axiosInstance,
         urn: p.urn,
         caseId: p.caseId,
-        materialId: stripCmsPrefix(p.materialId)
+        materialId: stripCmsPrefix(p.materialId),
       });
 
       if (!resp.success) return setPdfUrl(null);

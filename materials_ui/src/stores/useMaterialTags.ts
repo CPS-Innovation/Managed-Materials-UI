@@ -18,7 +18,7 @@ export const useMaterialTags = create<MaterialTagsStore>((set) => ({
 
       newMaterialTags.forEach((newTag) => {
         const existingIndex = updatedMaterialTags.findIndex(
-          (item) => item.materialId === newTag.materialId
+          (item) => item.materialId === newTag.materialId,
         );
 
         if (existingIndex === -1) {
@@ -35,9 +35,7 @@ export const useMaterialTags = create<MaterialTagsStore>((set) => ({
     set((state) => ({
       materialTags:
         materialIdsToRemove && materialIdsToRemove.length > 0
-          ? state.materialTags.filter(
-              (item) => !materialIdsToRemove.includes(item.materialId)
-            )
-          : []
-    }))
+          ? state.materialTags.filter((item) => !materialIdsToRemove.includes(item.materialId))
+          : [],
+    })),
 }));

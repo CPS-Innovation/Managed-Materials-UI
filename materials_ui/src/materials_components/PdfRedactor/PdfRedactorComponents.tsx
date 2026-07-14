@@ -17,7 +17,7 @@ export const RedactionTooltip = (p: { onClick: () => void }) => {
         padding: 0,
         cursor: 'pointer',
         font: 'inherit',
-        color: 'inherit'
+        color: 'inherit',
       }}
     >
       <div
@@ -25,7 +25,7 @@ export const RedactionTooltip = (p: { onClick: () => void }) => {
           display: 'inline-flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          alignItems: 'center'
+          alignItems: 'center',
         }}
       >
         <div
@@ -37,7 +37,7 @@ export const RedactionTooltip = (p: { onClick: () => void }) => {
             display: 'inline-block',
             color: 'white',
             fontWeight: '500',
-            whiteSpace: 'nowrap'
+            whiteSpace: 'nowrap',
           }}
         >
           Remove Redaction
@@ -48,7 +48,7 @@ export const RedactionTooltip = (p: { onClick: () => void }) => {
             height: '0',
             borderLeft: '15px solid transparent',
             borderRight: '15px solid transparent',
-            borderTop: '15px solid #00703c'
+            borderTop: '15px solid #00703c',
           }}
         ></div>
       </div>
@@ -88,14 +88,10 @@ export const PdfTextHighlightOverlay = (p: {
               style={{
                 height: '100%',
                 width: '100%',
-                background: isFocused
-                  ? 'rgba(255, 221, 0, 0.4)'
-                  : 'rgba(255, 0, 0, 0.3)',
-                border: isFocused
-                  ? '3px dashed rgba(255, 221, 0, 0.4)'
-                  : '3px dashed #ff4141',
+                background: isFocused ? 'rgba(255, 221, 0, 0.4)' : 'rgba(255, 0, 0, 0.3)',
+                border: isFocused ? '3px dashed rgba(255, 221, 0, 0.4)' : '3px dashed #ff4141',
                 boxSizing: 'border-box',
-                pointerEvents: 'none'
+                pointerEvents: 'none',
               }}
             />
           </PositionPdfOverlayBox>
@@ -106,7 +102,7 @@ export const PdfTextHighlightOverlay = (p: {
 };
 
 export const PositionPdfOverlayBox = (
-  p: TXywhPair & { scale: number; children: React.ReactNode }
+  p: TXywhPair & { scale: number; children: React.ReactNode },
 ) => (
   <div
     style={{
@@ -114,7 +110,7 @@ export const PositionPdfOverlayBox = (
       left: `${p.xLeft * p.scale}px`,
       bottom: `${p.yBottom * p.scale}px`,
       width: `${p.width * p.scale}px`,
-      height: `${p.height * p.scale}px`
+      height: `${p.height * p.scale}px`,
     }}
   >
     {p.children}
@@ -130,7 +126,7 @@ export const CloseIcon = (p: { color?: string }) => (
       alignItems: 'center',
       justifyContent: 'center',
       fontWeight: 'bold',
-      color: p.color ?? 'black'
+      color: p.color ?? 'black',
     }}
   >
     ×
@@ -149,16 +145,14 @@ export const RedactionBox = (p: {
       className={`redaction-box ${p.interactive ? 'interactive' : ''}`}
       tabIndex={p.interactive ? 0 : -1}
       role={p.interactive ? 'button' : undefined}
-      aria-label={
-        p.interactive ? 'Redaction area. Press Enter to remove.' : undefined
-      }
+      aria-label={p.interactive ? 'Redaction area. Press Enter to remove.' : undefined}
       style={{
         position: 'relative',
         boxSizing: 'border-box',
         background: p.background,
         border: p.border,
         height: '100%',
-        width: '100%'
+        width: '100%',
       }}
       onKeyDown={(e) => {
         if (e.code === 'Enter' || e.code === 'Space') {
@@ -178,7 +172,7 @@ export const PositionedRedactionBox = (
     onRedactionBoxEnterPress: () => void;
     onRedactionTooltipClick: () => void;
     interactive: boolean;
-  }
+  },
 ) => {
   return (
     <PositionPdfOverlayBox
@@ -199,7 +193,7 @@ export const PositionedRedactionBox = (
             position: 'absolute',
             top: '-2px',
             left: '50%',
-            transform: 'translate(-50%, -100%)'
+            transform: 'translate(-50%, -100%)',
           }}
         >
           <RedactionTooltip onClick={p.onRedactionTooltipClick} />

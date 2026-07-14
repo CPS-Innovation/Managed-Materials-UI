@@ -26,7 +26,7 @@ export const QUERY_KEYS = {
   DOCUMENT_SEARCH: 'documentSearch',
   GET_ALL_DOCUMENTS: 'getAllDocuments',
   UPDATE_STATEMENT: 'updateStatement',
-  UPDATE_EXHIBIT: 'updateExhibit'
+  UPDATE_EXHIBIT: 'updateExhibit',
 };
 
 export const DEFAULT_RESULTS_PER_PAGE = 20;

@@ -16,21 +16,14 @@ export const NotAuthorisedPage = () => {
             rel="noopener noreferrer"
           >
             CMS (opens in new tab)
-            <img
-              src={NewWindowIcon}
-              alt="Open in new window"
-              className="new-window-icon"
-            />
+            <img src={NewWindowIcon} alt="Open in new window" className="new-window-icon" />
           </a>
         </p>
         <p className="govuk-body">
-          To return to the case reopen in 'Casework App' and go to 'Bulk UM
-          Classification'.
+          To return to the case reopen in 'Casework App' and go to 'Bulk UM Classification'.
         </p>
 
-        <div className="govuk-inset-text">
-          CMS_AUTH_ERROR: Unable to connect to CMS.
-        </div>
+        <div className="govuk-inset-text">CMS_AUTH_ERROR: Unable to connect to CMS.</div>
       </>
     </Layout>
   );

@@ -7,16 +7,9 @@ type AccordionItemProps = {
   index: number;
 };
 
-type AccordionProps = {
-  items: Omit<AccordionItemProps, 'index'>[];
-  plain?: boolean;
-};
+type AccordionProps = { items: Omit<AccordionItemProps, 'index'>[]; plain?: boolean };
 
-export const AccordionItem = ({
-  title,
-  content,
-  index
-}: AccordionItemProps) => {
+export const AccordionItem = ({ title, content, index }: AccordionItemProps) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const itemId = index + 1;
   const titleTxt = isExpanded ? title.expanded : title.collapsed;
@@ -39,9 +32,7 @@ export const AccordionItem = ({
                   <span
                     className={`govuk-accordion-nav__chevron${!isExpanded ? ' govuk-accordion-nav__chevron--down' : ''}`}
                   ></span>
-                  <span className="govuk-accordion__section-toggle-text">
-                    {titleTxt}
-                  </span>
+                  <span className="govuk-accordion__section-toggle-text">{titleTxt}</span>
                 </span>
               </span>
             </button>
@@ -62,12 +53,7 @@ export const Accordion = ({ items = [], plain = false }: AccordionProps) => {
       data-testid="accordion"
     >
       {items.map((item, index) => (
-        <AccordionItem
-          title={item.title}
-          content={item.content}
-          index={index}
-          key={index}
-        />
+        <AccordionItem title={item.title} content={item.content} index={index} key={index} />
       ))}
     </div>
   );
