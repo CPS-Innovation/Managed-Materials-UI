@@ -79,6 +79,9 @@ export const safeGetDocumentListFromLocalStorage = (p: {
   }
 };
 
+const DOCUMENT_LIST_RELOAD_ATTEMPTS = 3;
+const DOCUMENT_LIST_RELOAD_RETRY_DELAY_MS = 400;
+
 export const useGetDocumentList = (p: { urn: string | undefined; caseId: number | undefined }) => {
   const axiosInstance = useAxiosInstance();
 
@@ -96,13 +99,24 @@ export const useGetDocumentList = (p: { urn: string | undefined; caseId: number 
   };
 
   const loadFromAxiosInstance = async () => {
-    const resp = await safeGetDocumentListFromAxiosInstance({
-      axiosInstance,
-      urn: p.urn,
-      caseId: p.caseId,
-    });
+    for (let attempt = 1; attempt <= DOCUMENT_LIST_RELOAD_ATTEMPTS; attempt++) {
+      const resp = await safeGetDocumentListFromAxiosInstance({
+        axiosInstance,
+        urn: p.urn,
+        caseId: p.caseId,
+      });
 
-    setDocumentList(resp.success ? resp.data : null);
+      if (resp.success) {
+        setDocumentList(resp.data);
+        return;
+      }
+
+      if (attempt < DOCUMENT_LIST_RELOAD_ATTEMPTS) {
+        await new Promise((resolve) => setTimeout(resolve, DOCUMENT_LIST_RELOAD_RETRY_DELAY_MS));
+      }
+    }
+
+    setDocumentList((prev) => prev ?? null);
   };
 
   const clear = () => setDocumentList(undefined);
