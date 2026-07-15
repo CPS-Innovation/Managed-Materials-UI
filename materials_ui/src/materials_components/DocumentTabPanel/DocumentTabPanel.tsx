@@ -5,6 +5,7 @@ import {
   getPdfFiles,
   useAxiosInstances,
 } from '../../caseWorkApp/components/utils/getData';
+import { FileTooLargeToRedactModal } from '../../caseWorkApp/pages/ReviewAndRedactPage/FileTooLargeToRedactModal';
 import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
 import { Banner } from '../../components';
 import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
@@ -13,7 +14,7 @@ import { TDocument } from '../DocumentSelectAccordion/getters/getDocumentList';
 import { DocumentViewportArea } from '../documenViewportArea';
 import { TRedactionType } from '../PdfRedactor/RedactionTypeSelect';
 import { TRedaction } from '../PdfRedactor/utils/coordUtils';
-import { TMode } from '../PdfRedactor/utils/modeUtils';
+import { isRedactionEnabledMode, TMode } from '../PdfRedactor/utils/modeUtils';
 import type { TSearchHighlight } from '../PdfRedactor/utils/searchHighlightUtils';
 import { TTriggerData } from '../PdfRedactor/utils/useTriggger';
 import { RedactionLogModal } from '../RedactionLog/RedactionLogModal';
@@ -72,6 +73,8 @@ export const DocumentTabPanel = ({
   const [pdfFileUrl, setPdfFileUrl] = useState<string>('');
   const [status, setStatus] = useState<LoadStatus>('loading');
   const [statusCode, setStatusCode] = useState<number | null>(null);
+  const [isFileTooLarge, setIsFileTooLarge] = useState(false);
+  const [showFileTooLargeModal, setShowFileTooLargeModal] = useState(false);
   const blobUrlRef = useRef<string | null>(null);
 
   const [showRedactionLogModal, setShowRedactionLogModal] = useState(false);
@@ -84,13 +87,14 @@ export const DocumentTabPanel = ({
       setStatus('loading');
 
       try {
-        const blob = await getPdfFiles({
+        const { blob, isFileTooLarge } = await getPdfFiles({
           axiosInstance,
           urn,
           caseId,
           parentId: parentId,
           childId: childId,
         });
+        setIsFileTooLarge(isFileTooLarge);
 
         if (blob instanceof Blob) {
           const url = URL.createObjectURL(blob);
@@ -147,6 +151,10 @@ export const DocumentTabPanel = ({
 
       <LoadingSpinner isLoading={status === 'loading'} textContent="Loading document..." />
 
+      {showFileTooLargeModal && (
+        <FileTooLargeToRedactModal onReturnClick={() => setShowFileTooLargeModal(false)} />
+      )}
+
       {status === 'error' && <div className="govuk-error-message">Failed to load Document</div>}
 
       {status === 'error' && statusCode === 403 && (
@@ -162,7 +170,16 @@ export const DocumentTabPanel = ({
           <DocumentViewportArea
             documentName={document.presentationTitle}
             mode={mode}
-            onModeChange={onModeChange}
+            onModeChange={(newMode) => {
+              const isStartRedactingClick = newMode === 'redact' && !isRedactionEnabledMode(mode);
+
+              if (isStartRedactingClick && isFileTooLarge) {
+                setShowFileTooLargeModal(true);
+                return;
+              }
+
+              onModeChange(newMode);
+            }}
             searchMode={
               searchContext
                 ? {
