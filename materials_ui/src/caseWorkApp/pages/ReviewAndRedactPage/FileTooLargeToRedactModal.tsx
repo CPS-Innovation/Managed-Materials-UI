@@ -3,6 +3,8 @@ import { Button } from '../../components/button';
 import { Modal } from './Modal';
 
 export const FileTooLargeToRedactModal = (p: { onReturnClick: () => void }) => {
+  const MAX_REDACTABLE_FILE_SIZE = 15;
+
   return (
     <Modal onBackgroundClick={p.onReturnClick} onEscPress={p.onReturnClick}>
       <GovUkBanner
@@ -11,7 +13,9 @@ export const FileTooLargeToRedactModal = (p: { onReturnClick: () => void }) => {
         contentHeading="File is too large for redaction"
         contentBody={
           <>
-            <p className="govuk-body">This file is larger than 15MB and cannot be redacted.</p>
+            <p className="govuk-body">
+              This file is larger than {MAX_REDACTABLE_FILE_SIZE}MB and cannot be redacted.
+            </p>
 
             <p className="govuk-body">Compress the file and try again.</p>
 
