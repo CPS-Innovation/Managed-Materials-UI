@@ -31,7 +31,7 @@ import { saveDeletions } from './utils/saveDeletionsUtils';
 import { saveRedactions } from './utils/saveRedactionsUtils';
 import { saveRotations } from './utils/saveRotationsUtils';
 
-const presentationWriteFlagToRedactionDisabledMessageMap: { [k: string]: string } = {
+const presentationWriteFlagToRedactionDisabledMessageMap = {
   IsRedactionServiceOffline: 'Redaction is currently unavailable and undergoing maintenance.',
   OnlyAvailableInCms: 'This document can only be redacted in CMS.',
   DocTypeNotAllowed: 'You cannot redact this type of document',
@@ -39,13 +39,15 @@ const presentationWriteFlagToRedactionDisabledMessageMap: { [k: string]: string 
   IsDispatched: 'You cannot redact this type of document because it has been dispatched.',
   IsPageRotationModeOn:
     'Redaction is unavailable in page rotation mode, please turn off page rotation to continue with redaction.',
-};
+} as const;
 
 const getDocumentRedactionDisabledMessage = (doc: TDocument | null | undefined) => {
   const writePresentationFlag = doc?.presentationFlags?.write;
   if (!writePresentationFlag) return null;
 
-  const value = presentationWriteFlagToRedactionDisabledMessageMap[`${writePresentationFlag}`];
+  const value = (presentationWriteFlagToRedactionDisabledMessageMap as { [k: string]: string })[
+    `${writePresentationFlag}`
+  ];
   return value ? value : null;
 };
 
@@ -302,8 +304,9 @@ export const CaseworkPdfRedactorWrapper = (p: {
           if (isUnredactableDocumentCategory || isDocumentDispatched) {
             removeRedactions(add.map((x) => x.id));
             const message = (() => {
-              if (isDocumentDispatched) return 'This is a dispatched document';
-              return 'Redaction is not supported for this document type.';
+              if (isDocumentDispatched)
+                return presentationWriteFlagToRedactionDisabledMessageMap.IsDispatched;
+              return presentationWriteFlagToRedactionDisabledMessageMap.DocTypeNotAllowed;
             })();
             setDocumentIsUnableToBeRedactedPopupProps({ message });
             return;
