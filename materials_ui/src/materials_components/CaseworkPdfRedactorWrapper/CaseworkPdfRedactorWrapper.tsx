@@ -195,7 +195,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
             <PdfRedactorCenteredModal
               onBackgroundClick={closeModal}
               onEscPress={closeModal}
-              ariaLabel="Unable to redact"
+              ariaLabel="Unable to redact document"
             >
               <GovUkBanner
                 variant="error"
@@ -205,7 +205,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
                     <CloseIcon color="white" />
                   </Button>
                 }
-                contentHeading="Unable to redact"
+                contentHeading="Unable to redact document"
                 contentBody={redactionDisabledModalProps.message}
               />
             </PdfRedactorCenteredModal>
@@ -244,14 +244,17 @@ export const CaseworkPdfRedactorWrapper = (p: {
               onEscPress={closeModal}
               ariaLabel="Unable to redact document"
             >
-              <div style={{ background: 'white', padding: '20px' }}>
-                <h1 className="govuk-heading-m">Unable to redact document</h1>
-                <div>{documentIsUnableToBeRedactedPopupProps.message}</div>
-                <br />
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <GovUkButton onClick={closeModal}>Ok</GovUkButton>
-                </div>
-              </div>
+              <GovUkBanner
+                variant="error"
+                headerTitle="Error"
+                headerRight={
+                  <Button variant="red" autoFocus onClick={closeModal}>
+                    <CloseIcon color="white" />
+                  </Button>
+                }
+                contentHeading="Unable to redact document"
+                contentBody={documentIsUnableToBeRedactedPopupProps.message}
+              />
             </PdfRedactorCenteredModal>
           );
         })()}
