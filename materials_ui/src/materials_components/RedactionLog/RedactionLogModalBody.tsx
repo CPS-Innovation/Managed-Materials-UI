@@ -343,7 +343,6 @@ export const RedactionLogModalBody = ({
           <label className="govuk-label" htmlFor="supportingNotes">
             Supporting notes {isSelectedRedactionOfOtherType ? '' : '(optional)'}
           </label>
-
           <a
             className="govuk-link"
             onClick={() => setShowPopover(!showPopover)}
