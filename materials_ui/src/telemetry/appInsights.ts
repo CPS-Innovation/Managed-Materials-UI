@@ -7,6 +7,7 @@ const samplingPercentage =
 
 let appInsights: ApplicationInsights | undefined;
 let userRole: string | undefined;
+let authenticatedUserId: string | undefined;
 
 const normaliseError = (error: unknown): Error =>
   error instanceof Error ? error : new Error(String(error));
@@ -44,6 +45,13 @@ export const initTelemetry = () => {
       item.tags['ai.cloud.role'] = cloudRole;
     }
 
+    // Stamp the signed-in user (MSAL localAccountId, a GUID — no PII) so
+    // reports can count distinct people rather than anonymous browser ids.
+    if (authenticatedUserId) {
+      item.tags ??= {};
+      item.tags['ai.user.authUserId'] = authenticatedUserId;
+    }
+
     if (userRole) {
       item.data ??= {};
       item.data.userRole = userRole;
@@ -61,6 +69,10 @@ export const setTelemetryUserRole = (role: string) => {
   userRole = role;
 };
 
+export const setTelemetryAuthenticatedUser = (id: string) => {
+  authenticatedUserId = id;
+};
+
 export const trackPageView = (pathname: string) => {
   if (!appInsights) return;
   const name = stripCaseIdsFromRoute(pathname);
@@ -72,6 +84,9 @@ export const trackPageView = (pathname: string) => {
 
 export const trackAction = (action: string, properties?: ICustomProperties) =>
   appInsights?.trackEvent({ name: 'UserAction' }, { action, ...properties });
+
+// Once per load; events are not client-sampled (unlike page views / PageVisitTime).
+export const trackAppOpened = () => appInsights?.trackEvent({ name: 'AppOpened' });
 
 export const trackEvent = (name: string, properties?: ICustomProperties) =>
   appInsights?.trackEvent({ name }, properties);
