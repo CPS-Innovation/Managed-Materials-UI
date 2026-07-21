@@ -87,9 +87,9 @@ export const DocumentKeywordSearch = ({ modalOpen, setModalOpen }: DocumentKeywo
 
   const highlightExactMatches = (
     text: string,
-    words: { boundingBox: number[] | null; text: string; matchType: string[] }[],
+    words: { boundingBox: number[] | null; text: string; matchType: string }[],
   ) => {
-    const exactWords = words.filter((w) => w.matchType.includes('Exact')).map((w) => w.text);
+    const exactWords = words.filter((w) => w.matchType === 'Exact').map((w) => w.text);
 
     if (!text || exactWords.length === 0) return text;
 
@@ -185,7 +185,7 @@ export const DocumentKeywordSearch = ({ modalOpen, setModalOpen }: DocumentKeywo
                 const isExpanded = expandedDocuments[doc.parentId] ?? false;
                 const first = doc.matches[0];
                 const firstLineMatchCount =
-                  first?.words.filter((word) => word.matchType?.includes('Exact')).length ?? 0;
+                  first?.words.filter((word) => word.matchType === 'Exact').length ?? 0;
                 const remainingCount = (doc.resultsPerDocumentCount ?? 0) - firstLineMatchCount;
 
                 return (

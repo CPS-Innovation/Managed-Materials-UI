@@ -264,7 +264,7 @@ export const PdfRedactor = (p: {
           if (!byPage[highlight.pageNumber]) byPage[highlight.pageNumber] = [];
           byPage[highlight.pageNumber]!.push(highlight);
         });
-        return { byPage, focusedId: layer.focusedId };
+        return { byPage, focusedId: layer.focusedId, onHighlightClick: layer.onHighlightClick };
       }),
     [p.highlightLayers],
   );
@@ -490,6 +490,7 @@ export const PdfRedactor = (p: {
                 highlightLayers={indexedHighlightLayers.map((layer) => ({
                   highlights: layer.byPage[j + 1] ?? [],
                   focusedId: layer.focusedId,
+                  onHighlightClick: layer.onHighlightClick,
                 }))}
                 pageIsDelete={!!p.indexedDeletion[j + 1]?.isDeleted}
                 onPageIsDeleteChange={(isDeleted) => {

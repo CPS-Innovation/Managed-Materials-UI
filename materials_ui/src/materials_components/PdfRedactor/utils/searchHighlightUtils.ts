@@ -1,4 +1,5 @@
 import type { SearchTermResultType } from '../../../schemas/documents';
+import type { TRedaction } from './coordUtils';
 
 const PADDING_INCHES = 0.03;
 
@@ -13,7 +14,22 @@ export type TSearchHighlight = {
   yBottom: number;
 };
 
-export type THighlightLayer = { highlights: TSearchHighlight[]; focusedId?: string };
+export type THighlightLayer = {
+  highlights: TSearchHighlight[];
+  focusedId?: string;
+  onHighlightClick?: (highlight: TSearchHighlight) => void;
+};
+
+export const convertSearchHighlightToRedaction = (highlight: TSearchHighlight): TRedaction => ({
+  id: crypto.randomUUID(),
+  pageNumber: highlight.pageNumber,
+  pageHeight: highlight.pageHeight,
+  pageWidth: highlight.pageWidth,
+  x1: highlight.xLeft,
+  y1: highlight.pageHeight - highlight.yBottom,
+  x2: highlight.xRight,
+  y2: highlight.pageHeight - highlight.yTop,
+});
 
 export const convertMatchesToSearchHighlights = (
   matches: SearchTermResultType['matches'],
@@ -21,7 +37,7 @@ export const convertMatchesToSearchHighlights = (
   matches
     .flatMap((match) =>
       match.words
-        .filter((w) => w.matchType?.includes('Exact') && w.boundingBox)
+        .filter((w) => w.matchType === 'Exact' && w.boundingBox)
         .map((w) => {
           const xs = [
             w.boundingBox![0]!,
@@ -40,7 +56,7 @@ export const convertMatchesToSearchHighlights = (
             pageNumber: match.pageIndex,
             pageHeight: match.pageHeight,
             pageWidth: match.pageWidth,
-            xLeft: Math.min(...xs) + PADDING_INCHES,
+            xLeft: Math.min(...xs) - PADDING_INCHES,
             xRight: Math.max(...xs) + PADDING_INCHES,
             yTop: Math.min(...ys) - PADDING_INCHES,
             yBottom: Math.max(...ys) + PADDING_INCHES,

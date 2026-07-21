@@ -526,6 +526,7 @@ export const PdfRedactorPage = (p: {
                   focusedId={layer.focusedId}
                   pageDimensions={pageDimensions}
                   scale={p.scale}
+                  onHighlightClick={layer.onHighlightClick}
                 />
               ))}
           </div>
