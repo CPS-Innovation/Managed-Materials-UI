@@ -35,8 +35,8 @@ export const DocumentSchema = z.object({
 
 export const SearchResultSchema = z.object({
   id: z.string(),
-  parentId: z.string(),
-  childId: z.string(),
+  documentId: z.string(),
+  versionId: z.number(),
   fileName: z.string(),
   pageIndex: z.number(),
   lineIndex: z.number(),
@@ -47,7 +47,7 @@ export const SearchResultSchema = z.object({
     z.object({
       boundingBox: z.array(z.number()).nullable(),
       text: z.string(),
-      matchType: z.array(z.string()),
+      matchType: z.string(),
     }),
   ),
 });
@@ -68,7 +68,7 @@ export const SearchTermResultSchema = z.object({
         z.object({
           boundingBox: z.array(z.number()).nullable(),
           text: z.string(),
-          matchType: z.array(z.string()),
+          matchType: z.string(),
         }),
       ),
     }),

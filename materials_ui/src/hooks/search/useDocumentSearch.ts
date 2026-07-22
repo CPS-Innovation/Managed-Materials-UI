@@ -38,10 +38,10 @@ export const useDocumentSearchResults = (
   const combinedSearchResults: SearchTermResultType[] = [];
 
   for (const doc of documents) {
-    const matches = searchResults.filter((sr) => sr.parentId === doc.parentId);
+    const matches = searchResults.filter((sr) => sr.documentId === doc.parentId);
 
     const resultsPerDocumentCount = matches.reduce((acc, curr) => {
-      const count = curr.words.filter((w) => w.matchType?.includes('Exact')).length;
+      const count = curr.words.filter((w) => w.matchType === 'Exact').length;
 
       return acc + count;
     }, 0);

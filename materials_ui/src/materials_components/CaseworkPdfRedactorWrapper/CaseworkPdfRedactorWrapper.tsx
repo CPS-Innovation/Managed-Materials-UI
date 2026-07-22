@@ -17,7 +17,11 @@ import { TCoord, TRedaction } from '../PdfRedactor/utils/coordUtils';
 import { TIndexedDeletion } from '../PdfRedactor/utils/deletionUtils';
 import { TMode } from '../PdfRedactor/utils/modeUtils';
 import { TIndexedRotation, TRotation } from '../PdfRedactor/utils/rotationUtils';
-import type { THighlightLayer, TSearchHighlight } from '../PdfRedactor/utils/searchHighlightUtils';
+import {
+  convertSearchHighlightToRedaction,
+  type THighlightLayer,
+  type TSearchHighlight,
+} from '../PdfRedactor/utils/searchHighlightUtils';
 import { TTriggerData, useTriggerListener } from '../PdfRedactor/utils/useTriggger';
 import { useWindowMouseListener } from '../PdfRedactor/utils/useWindowMouseListener';
 import { useBulkRedactionFlow } from './hooks/useBulkRedactionFlow';
@@ -137,14 +141,6 @@ export const CaseworkPdfRedactorWrapper = (p: {
     setSelectedRedactionTypes,
   });
 
-  const searchLayer: THighlightLayer = {
-    highlights: p.searchHighlights ?? [],
-    focusedId:
-      p.focusedSearchIndex !== undefined
-        ? p.searchHighlights?.[p.focusedSearchIndex]?.id
-        : undefined,
-  };
-
   const [documentIsCheckedOutPopupProps, setDocumentIsCheckedOutPopupProps] = useState<{
     action: string;
     message: string;
@@ -183,6 +179,73 @@ export const CaseworkPdfRedactorWrapper = (p: {
     });
     setIsDocumentCheckedOut(checkoutResponse.success);
     return checkoutResponse;
+  };
+
+  const handleAddRedactions = async ({
+    redactions: add,
+    highlightedText,
+  }: {
+    redactions: TRedaction[];
+    highlightedText: string | undefined;
+  }) => {
+    if (isUnredactableDocumentCategory || isDocumentDispatched) {
+      removeRedactions(add.map((x) => x.id));
+      const message = (() => {
+        if (isDocumentDispatched)
+          return presentationWriteFlagToRedactionDisabledMessageMap.IsDispatched;
+        return presentationWriteFlagToRedactionDisabledMessageMap.DocTypeNotAllowed;
+      })();
+      setDocumentIsUnableToBeRedactedPopupProps({ message });
+      return;
+    }
+
+    const popoverAnchor = (() => {
+      if (highlightedText) {
+        const rect = window.getSelection()?.getRangeAt(0)?.getBoundingClientRect();
+        if (rect && rect.width > 0) {
+          return { x: (rect.left + rect.right) / 2, y: rect.top };
+        }
+      }
+      return { x: mousePos.current.x, y: mousePos.current.y };
+    })();
+
+    const checkoutResponsePromise = checkCheckoutStatus();
+    const redactionDisabledMessage = getDocumentRedactionDisabledMessage(p.document);
+    if (redactionDisabledMessage) {
+      removeRedactions(add.map((x) => x.id));
+      setRedactionDisabledModalProps({ message: redactionDisabledMessage });
+      return;
+    }
+    const checkoutResponse = await checkoutResponsePromise;
+    if (!checkoutResponse.success) {
+      removeRedactions(add.map((x) => x.id));
+      const message = createCheckoutMessageFromCheckoutResponse({
+        action: 'redact',
+        message: checkoutResponse.message,
+      });
+      setDocumentIsCheckedOutPopupProps({ action: 'redact', message });
+      return;
+    }
+
+    bulkFlow.openPopover({
+      x: popoverAnchor.x,
+      y: popoverAnchor.y,
+      redactionIds: add.map((x) => x.id),
+      highlightedText,
+    });
+  };
+
+  const searchLayer: THighlightLayer = {
+    highlights: p.searchHighlights ?? [],
+    focusedId:
+      p.focusedSearchIndex !== undefined
+        ? p.searchHighlights?.[p.focusedSearchIndex]?.id
+        : undefined,
+    onHighlightClick: (highlight) => {
+      const redaction = convertSearchHighlightToRedaction(highlight);
+      setRedactions((prev) => [...prev, redaction]);
+      handleAddRedactions({ redactions: [redaction], highlightedText: undefined });
+    },
   };
 
   return (
@@ -303,53 +366,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
             setSelectedRedactionTypes([]);
           }
         }}
-        onAddRedactions={async ({ redactions: add, highlightedText }) => {
-          if (isUnredactableDocumentCategory || isDocumentDispatched) {
-            removeRedactions(add.map((x) => x.id));
-            const message = (() => {
-              if (isDocumentDispatched)
-                return presentationWriteFlagToRedactionDisabledMessageMap.IsDispatched;
-              return presentationWriteFlagToRedactionDisabledMessageMap.DocTypeNotAllowed;
-            })();
-            setDocumentIsUnableToBeRedactedPopupProps({ message });
-            return;
-          }
-
-          const popoverAnchor = (() => {
-            if (highlightedText) {
-              const rect = window.getSelection()?.getRangeAt(0)?.getBoundingClientRect();
-              if (rect && rect.width > 0) {
-                return { x: (rect.left + rect.right) / 2, y: rect.top };
-              }
-            }
-            return { x: mousePos.current.x, y: mousePos.current.y };
-          })();
-
-          const checkoutResponsePromise = checkCheckoutStatus();
-          const redactionDisabledMessage = getDocumentRedactionDisabledMessage(p.document);
-          if (redactionDisabledMessage) {
-            removeRedactions(add.map((x) => x.id));
-            setRedactionDisabledModalProps({ message: redactionDisabledMessage });
-            return;
-          }
-          const checkoutResponse = await checkoutResponsePromise;
-          if (!checkoutResponse.success) {
-            removeRedactions(add.map((x) => x.id));
-            const message = createCheckoutMessageFromCheckoutResponse({
-              action: 'redact',
-              message: checkoutResponse.message,
-            });
-            setDocumentIsCheckedOutPopupProps({ action: 'redact', message });
-            return;
-          }
-
-          bulkFlow.openPopover({
-            x: popoverAnchor.x,
-            y: popoverAnchor.y,
-            redactionIds: add.map((x) => x.id),
-            highlightedText,
-          });
-        }}
+        onAddRedactions={handleAddRedactions}
         onRemoveRedactions={() => {}}
         onSaveRedactions={async () => {
           p.onRedactionSaveStatusChange('saving');

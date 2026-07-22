@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { CSSProperties, ReactNode } from 'react';
 import { useScrollToFocusedHighlight } from './hooks/useScrollToFocusedHighlight';
 import type { TXywhPair } from './utils/coordUtils';
 import type { TSearchHighlight } from './utils/searchHighlightUtils';
@@ -61,8 +61,11 @@ export const PdfTextHighlightOverlay = (p: {
   focusedId?: string;
   pageDimensions: { width: number; height: number };
   scale: number;
+  onHighlightClick?: (highlight: TSearchHighlight) => void;
 }) => {
   useScrollToFocusedHighlight(p.highlights, p.focusedId);
+
+  const isClickable = !!p.onHighlightClick;
 
   return (
     <>
@@ -74,6 +77,15 @@ export const PdfTextHighlightOverlay = (p: {
         const height = (hl.yBottom - hl.yTop) * heightScale;
         const yBottom = p.pageDimensions.height - hl.yBottom * heightScale;
         const isFocused = hl.id === p.focusedId;
+        const boxStyle: CSSProperties = {
+          height: '100%',
+          width: '100%',
+          background: isFocused ? 'rgba(255, 221, 0, 0.4)' : 'rgba(255, 0, 0, 0.3)',
+          border: isFocused ? '3px dashed rgba(255, 221, 0, 0.4)' : '3px dashed #ff4141',
+          boxSizing: 'border-box',
+          pointerEvents: isClickable ? 'auto' : 'none',
+          cursor: isClickable ? 'pointer' : undefined,
+        };
         return (
           <PositionPdfOverlayBox
             key={hl.id}
@@ -83,17 +95,17 @@ export const PdfTextHighlightOverlay = (p: {
             height={height}
             scale={p.scale}
           >
-            <div
-              data-text-highlight-id={hl.id}
-              style={{
-                height: '100%',
-                width: '100%',
-                background: isFocused ? 'rgba(255, 221, 0, 0.4)' : 'rgba(255, 0, 0, 0.3)',
-                border: isFocused ? '3px dashed rgba(255, 221, 0, 0.4)' : '3px dashed #ff4141',
-                boxSizing: 'border-box',
-                pointerEvents: 'none',
-              }}
-            />
+            {isClickable ? (
+              <button
+                type="button"
+                data-text-highlight-id={hl.id}
+                aria-label="Redact search match"
+                onClick={() => p.onHighlightClick!(hl)}
+                style={{ ...boxStyle, margin: 0, position: 'relative', zIndex: 11 }}
+              />
+            ) : (
+              <div data-text-highlight-id={hl.id} style={boxStyle} />
+            )}
           </PositionPdfOverlayBox>
         );
       })}
