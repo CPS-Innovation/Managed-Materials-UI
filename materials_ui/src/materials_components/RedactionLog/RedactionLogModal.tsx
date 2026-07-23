@@ -172,7 +172,7 @@ export const RedactionLogModal = ({
   if (!isOpen) return null;
 
   return (
-    <Modal onClose={onClose}>
+    <Modal onClose={onClose} ariaLabel={`${urn} - Redaction Log`}>
       <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} noValidate>
           {redactionSaveStatus === 'saving' && (

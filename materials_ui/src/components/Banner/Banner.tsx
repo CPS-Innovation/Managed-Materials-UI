@@ -40,7 +40,7 @@ export const Banner = ({ type = 'success', header, content }: PropsWithChildren<
       ref={bannerRef}
       className={`govuk-notification-banner ${getBannerClass()}`}
       role="alert"
-      aria-labelledby="govuk-notification-banner-title"
+      aria-label={`${getBannerTitle()}: ${header}${content ? `. ${content}` : ''}`}
       data-module="govuk-notification-banner"
       tabIndex={-1}
     >
