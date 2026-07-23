@@ -25,7 +25,7 @@ export const CloseTabUnsavedRedactionsModal = (p: {
             <p className="govuk-body">If you select Ignore your redactions will not be applied.</p>
             <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
               <Button variant="primary" onClick={p.onReturnClick}>
-                Return to case file
+                Return to document
               </Button>
               <Button variant="inverse" onClick={p.onIgnoreClick}>
                 Ignore

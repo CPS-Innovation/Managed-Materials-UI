@@ -26,7 +26,7 @@ export const FileTooLargeToRedactModal = (p: { onReturnClick: () => void }) => {
 
             <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
               <Button variant="primary" onClick={p.onReturnClick}>
-                Return to case file
+                Return to document
               </Button>
             </div>
           </>
