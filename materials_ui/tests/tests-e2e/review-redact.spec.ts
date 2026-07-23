@@ -26,6 +26,10 @@ test.describe('Review redact page', () => {
   });
 
   test('T-002: If no searches are found messages is displayed to user', async ({ page }) => {
+    await mockRoute(page, '/cases/2167259', {});
+    await mockRoute(page, '/cases/2167259/tracker', { status: 'Completed', documents: [] });
+    await mockRoute(page, '/cases/2167259/search/**', []);
+
     await expect(page.getByRole('searchbox', { name: 'Search within material' })).toBeVisible();
     await page.getByRole('searchbox', { name: 'Search within material' }).fill('test search');
     await page
