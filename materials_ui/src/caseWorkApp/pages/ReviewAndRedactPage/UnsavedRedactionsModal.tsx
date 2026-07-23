@@ -55,7 +55,7 @@ export const UnsavedRedactionsModal = ({
             <br />
             <div style={{ display: 'flex', gap: '16px' }}>
               <Button variant="primary" onClick={onReturnClick}>
-                Return to document
+                Return to case
               </Button>
               <Button variant="inverse" onClick={onIgnoreClick}>
                 Ignore
