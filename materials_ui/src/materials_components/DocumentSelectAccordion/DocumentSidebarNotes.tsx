@@ -66,9 +66,9 @@ export const DocumentSidebarNotes = (p: {
             maxLength={NOTES_CHAR_COUNT_MAX_LENGTH}
             rows={5}
           />
-          <span id="notes-char-count" role="status">
+          <output id="notes-char-count" htmlFor="notes-textarea">
             You have {remainingCharacters} characters remaining
-          </span>
+          </output>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <GovUkButton
               onClick={async () => {

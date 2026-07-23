@@ -35,12 +35,15 @@ export const Banner = ({ type = 'success', header, content }: PropsWithChildren<
     }
   };
 
+  const title = `${getBannerTitle()}: ${header}`;
+  const announcement = content ? `${title}. ${content}` : title;
+
   return (
     <div
       ref={bannerRef}
       className={`govuk-notification-banner ${getBannerClass()}`}
       role="alert"
-      aria-label={`${getBannerTitle()}: ${header}${content ? `. ${content}` : ''}`}
+      aria-label={announcement}
       data-module="govuk-notification-banner"
       tabIndex={-1}
     >
