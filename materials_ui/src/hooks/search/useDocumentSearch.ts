@@ -4,13 +4,10 @@ import { QUERY_KEYS } from '../../constants/query';
 import {
   DocumentResultType,
   SearchResultType,
-  SearchTermResultType
+  SearchTermResultType,
 } from '../../schemas/documents';
 
-export const useDocumentSearch = (
-  searchTerm: string | null,
-  trackerComplete: boolean
-) => {
+export const useDocumentSearch = (searchTerm: string | null, trackerComplete: boolean) => {
   const request = useRequest();
   const { caseInfo } = useCaseInfoStore();
 
@@ -25,10 +22,8 @@ export const useDocumentSearch = (
       .then((res) => res.data);
 
   const { data, isLoading } = useSWR(
-    searchTerm && trackerComplete
-      ? [QUERY_KEYS.DOCUMENT_SEARCH, urn, caseId, searchTerm]
-      : null,
-    getSearch
+    searchTerm && trackerComplete ? [QUERY_KEYS.DOCUMENT_SEARCH, urn, caseId, searchTerm] : null,
+    getSearch,
   );
 
   return { searchResults: data ?? null, loading: isLoading };
@@ -36,19 +31,17 @@ export const useDocumentSearch = (
 
 export const useDocumentSearchResults = (
   documents: DocumentResultType = [],
-  searchResults: SearchResultType[] = []
+  searchResults: SearchResultType[] = [],
 ) => {
   if (!documents || !searchResults) return [];
 
   const combinedSearchResults: SearchTermResultType[] = [];
 
   for (const doc of documents) {
-    const matches = searchResults.filter((sr) => sr.parentId === doc.parentId);
+    const matches = searchResults.filter((sr) => sr.documentId === doc.parentId);
 
     const resultsPerDocumentCount = matches.reduce((acc, curr) => {
-      const count = curr.words.filter((w) =>
-        w.matchType?.includes('Exact')
-      ).length;
+      const count = curr.words.filter((w) => w.matchType === 'Exact').length;
 
       return acc + count;
     }, 0);
@@ -70,9 +63,9 @@ export const useDocumentSearchResults = (
           lineIndex: match.lineIndex,
           pageHeight: match.pageHeight,
           pageWidth: match.pageWidth,
-          words: match.words
+          words: match.words,
         })),
-        resultsPerDocumentCount
+        resultsPerDocumentCount,
       });
     }
   }

@@ -3,8 +3,9 @@ import { useEffect, useRef, useState } from 'react';
 import {
   getLookups,
   getPdfFiles,
-  useAxiosInstances
+  useAxiosInstances,
 } from '../../caseWorkApp/components/utils/getData';
+import { FileTooLargeToRedactModal } from '../../caseWorkApp/pages/ReviewAndRedactPage/FileTooLargeToRedactModal';
 import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
 import { Banner } from '../../components';
 import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
@@ -13,7 +14,7 @@ import { TDocument } from '../DocumentSelectAccordion/getters/getDocumentList';
 import { DocumentViewportArea } from '../documenViewportArea';
 import { TRedactionType } from '../PdfRedactor/RedactionTypeSelect';
 import { TRedaction } from '../PdfRedactor/utils/coordUtils';
-import { TMode } from '../PdfRedactor/utils/modeUtils';
+import { isRedactionEnabledMode, TMode } from '../PdfRedactor/utils/modeUtils';
 import type { TSearchHighlight } from '../PdfRedactor/utils/searchHighlightUtils';
 import { TTriggerData } from '../PdfRedactor/utils/useTriggger';
 import { RedactionLogModal } from '../RedactionLog/RedactionLogModal';
@@ -65,21 +66,20 @@ export const DocumentTabPanel = ({
   searchContext,
   onFocusedSearchIndexChange,
   onBackToSearchResults,
-  checkInDocumentTriggerData
+  checkInDocumentTriggerData,
 }: DocumentTabPanelProps) => {
   const { redactionLogAxios, axiosInstance } = useAxiosInstances();
 
   const [pdfFileUrl, setPdfFileUrl] = useState<string>('');
   const [status, setStatus] = useState<LoadStatus>('loading');
   const [statusCode, setStatusCode] = useState<number | null>(null);
+  const [isFileTooLarge, setIsFileTooLarge] = useState(false);
+  const [showFileTooLargeModal, setShowFileTooLargeModal] = useState(false);
   const blobUrlRef = useRef<string | null>(null);
 
   const [showRedactionLogModal, setShowRedactionLogModal] = useState(false);
-  const [redactionSaveStatus, setRedactionSaveStatus] = useState<
-    'saving' | 'saved'
-  >();
-  const [redactionLogModalData, setRedactionLogModalData] =
-    useState<RedactionLogModalData>();
+  const [redactionSaveStatus, setRedactionSaveStatus] = useState<'saving' | 'saved'>();
+  const [redactionLogModalData, setRedactionLogModalData] = useState<RedactionLogModalData>();
   const [lookups, setLookups] = useState<TLookupsResponse>();
 
   useEffect(() => {
@@ -87,13 +87,14 @@ export const DocumentTabPanel = ({
       setStatus('loading');
 
       try {
-        const blob = await getPdfFiles({
+        const { blob, isFileTooLarge } = await getPdfFiles({
           axiosInstance,
           urn,
           caseId,
           parentId: parentId,
-          childId: childId
+          childId: childId,
         });
+        setIsFileTooLarge(isFileTooLarge);
 
         if (blob instanceof Blob) {
           const url = URL.createObjectURL(blob);
@@ -104,9 +105,7 @@ export const DocumentTabPanel = ({
           setStatus('error');
         }
       } catch (e) {
-        setStatusCode(
-          axios.isAxiosError(e) ? (e.response?.status ?? null) : null
-        );
+        setStatusCode(axios.isAxiosError(e) ? (e.response?.status ?? null) : null);
         setStatus('error');
       }
     };
@@ -150,22 +149,19 @@ export const DocumentTabPanel = ({
         />
       )}
 
-      <LoadingSpinner
-        isLoading={status === 'loading'}
-        textContent="Loading document..."
-      />
+      <LoadingSpinner isLoading={status === 'loading'} textContent="Loading document..." />
 
-      {status === 'error' && (
-        <div className="govuk-error-message">Failed to load Document</div>
+      {showFileTooLargeModal && (
+        <FileTooLargeToRedactModal onReturnClick={() => setShowFileTooLargeModal(false)} />
       )}
+
+      {status === 'error' && <div className="govuk-error-message">Failed to load Document</div>}
 
       {status === 'error' && statusCode === 403 && (
         <Banner
           type="error"
           header="This document is password protected"
-          content={
-            'Ask the agency who supplied it to remove the password and resend the document.'
-          }
+          content={'Ask the agency who supplied it to remove the password and resend the document.'}
         />
       )}
 
@@ -174,7 +170,16 @@ export const DocumentTabPanel = ({
           <DocumentViewportArea
             documentName={document.presentationTitle}
             mode={mode}
-            onModeChange={onModeChange}
+            onModeChange={(newMode) => {
+              const isStartRedactingClick = newMode === 'redact' && !isRedactionEnabledMode(mode);
+
+              if (isStartRedactingClick && isFileTooLarge) {
+                setShowFileTooLargeModal(true);
+                return;
+              }
+
+              onModeChange(newMode);
+            }}
             searchMode={
               searchContext
                 ? {
@@ -182,17 +187,15 @@ export const DocumentTabPanel = ({
                     totalMatches: searchContext.highlights.length,
                     focusedIndex: searchContext.focusedIndex,
                     onPrev: () =>
-                      onFocusedSearchIndexChange?.(
-                        Math.max(0, searchContext.focusedIndex - 1)
-                      ),
+                      onFocusedSearchIndexChange?.(Math.max(0, searchContext.focusedIndex - 1)),
                     onNext: () =>
                       onFocusedSearchIndexChange?.(
                         Math.min(
                           searchContext.highlights.length - 1,
-                          searchContext.focusedIndex + 1
-                        )
+                          searchContext.focusedIndex + 1,
+                        ),
                       ),
-                    onBackToSearchResults: () => onBackToSearchResults?.()
+                    onBackToSearchResults: () => onBackToSearchResults?.(),
                   }
                 : undefined
             }

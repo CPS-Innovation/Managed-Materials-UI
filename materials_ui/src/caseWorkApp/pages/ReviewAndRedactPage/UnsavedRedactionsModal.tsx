@@ -17,18 +17,15 @@ export const UnsavedRedactionsModal = ({
   documents,
   onReturnClick,
   onIgnoreClick,
-  onDocumentClick
+  onDocumentClick,
 }: UnsavedRedactionsModalProps) => {
-  const documentIdsWithRedactions = Object.keys(
-    redactionsIndexedOnDocumentId
-  ).filter(
+  const documentIdsWithRedactions = Object.keys(redactionsIndexedOnDocumentId).filter(
     (docId) =>
-      redactionsIndexedOnDocumentId[docId] &&
-      redactionsIndexedOnDocumentId[docId].length > 0
+      redactionsIndexedOnDocumentId[docId] && redactionsIndexedOnDocumentId[docId].length > 0,
   );
 
   const documentsWithRedactions = documents.filter((doc) =>
-    documentIdsWithRedactions.includes(doc.parentId)
+    documentIdsWithRedactions.includes(doc.parentId),
   );
 
   const isPluralDocuments = documentsWithRedactions.length !== 1;
@@ -41,9 +38,7 @@ export const UnsavedRedactionsModal = ({
         contentHeading={`You have ${documentsWithRedactions.length} document${isPluralDocuments ? 's' : ''} with unsaved redactions `}
         contentBody={
           <>
-            <div
-              style={{ display: 'flex', gap: '4px', flexDirection: 'column' }}
-            >
+            <div style={{ display: 'flex', gap: '4px', flexDirection: 'column' }}>
               {documentsWithRedactions.map((doc) => (
                 <a
                   className="govuk-link"
@@ -55,14 +50,12 @@ export const UnsavedRedactionsModal = ({
               ))}
             </div>
             <br />
-            <div>
-              Return to the case to save your redactions in these documents
-            </div>
+            <div>Return to the case to save your redactions in these documents</div>
             <div>If you select Ignore your redactions will not be applied.</div>
             <br />
             <div style={{ display: 'flex', gap: '16px' }}>
               <Button variant="primary" onClick={onReturnClick}>
-                Return to case file
+                Return to case
               </Button>
               <Button variant="inverse" onClick={onIgnoreClick}>
                 Ignore

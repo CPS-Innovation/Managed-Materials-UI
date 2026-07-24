@@ -9,16 +9,16 @@ const mockOrchestratedResponse: Reclassify_Orchestrated_Response_Type = {
     success: true,
     operationName: 'ReclassifyCaseMaterial',
     errorMessage: '',
-    resultData: { reclassifyCommunication: { id: 8836399 } }
+    resultData: { reclassifyCommunication: { id: 8836399 } },
   },
   renameMaterialResult: null,
   actionPlanResult: null,
   witnessResult: null,
   errors: [''],
   warnings: null,
-  contentType: 'application/json'
+  contentType: 'application/json',
 };
 
 export const mockOchestration = (
-  overwrites: Partial<Reclassify_Orchestrated_Response_Type> = {}
+  overwrites: Partial<Reclassify_Orchestrated_Response_Type> = {},
 ) => ({ ...mockOrchestratedResponse, ...overwrites });

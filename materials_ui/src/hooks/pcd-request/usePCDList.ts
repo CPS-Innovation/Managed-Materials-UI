@@ -10,21 +10,17 @@ export const usePCDList = () => {
   const getPCDList = async () =>
     await request
       .get<PCDListingResponseType>(
-        `urns/${caseInfo?.urn}/cases/${caseInfo?.id}/pcds/${caseInfo?.id}/pcd-request-core`
+        `urns/${caseInfo?.urn}/cases/${caseInfo?.id}/pcds/${caseInfo?.id}/pcd-request-core`,
       )
       .then((response) => response.data);
 
   const { data, error, isLoading, isValidating } = useSWR(
     caseInfo ? QUERY_KEYS.PCD_REQUESTS : null,
-    getPCDList
+    getPCDList,
   );
 
   const sortByDate = (a: PCDListingType, b: PCDListingType) =>
     Date.parse(b.decisionRequested) - Date.parse(a.decisionRequested);
 
-  return {
-    data: data?.sort(sortByDate) || undefined,
-    error,
-    isLoading: isLoading || isValidating
-  };
+  return { data: data?.sort(sortByDate) || undefined, error, isLoading: isLoading || isValidating };
 };

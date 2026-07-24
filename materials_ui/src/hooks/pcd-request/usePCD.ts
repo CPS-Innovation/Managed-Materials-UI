@@ -13,13 +13,13 @@ export const usePCD = ({ pcdId }: UsePCDProps) => {
   const getPCDDetails = async () =>
     await request
       .get<PCDDetailsResponseType>(
-        `urns/${caseInfo?.urn}/cases/${caseInfo?.id}/pcds/${pcdId}/pcd-request`
+        `urns/${caseInfo?.urn}/cases/${caseInfo?.id}/pcds/${pcdId}/pcd-request`,
       )
       .then((response) => response.data);
 
   const { data, error, isLoading, isValidating } = useSWR(
     caseInfo && pcdId ? `${QUERY_KEYS.PCD_REQUEST}/${pcdId}` : null,
-    getPCDDetails
+    getPCDDetails,
   );
 
   return { data, error, isLoading: isLoading || isValidating };

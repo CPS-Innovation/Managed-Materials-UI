@@ -1,8 +1,5 @@
 import { useState } from 'react';
-import {
-  RedactionTypeSelect,
-  TRedactionType
-} from '../PdfRedactor/RedactionTypeSelect';
+import { RedactionTypeSelect, TRedactionType } from '../PdfRedactor/RedactionTypeSelect';
 import { GovUkButton } from '../PdfRedactor/templates/GovUkButton';
 
 export type TBulkSearchSummary =
@@ -23,10 +20,8 @@ export type TBulkProps = {
 const BulkSearchStatusText = (p: { search: TBulkSearchSummary }) => {
   if (p.search.status === 'idle') return null;
   if (p.search.status === 'loading') return <span>Searching…</span>;
-  if (p.search.status === 'error')
-    return <span>Couldn’t search this document.</span>;
-  if (p.search.count === 0)
-    return <span>No other matches found in the document.</span>;
+  if (p.search.status === 'error') return <span>Couldn’t search this document.</span>;
+  if (p.search.count === 0) return <span>No other matches found in the document.</span>;
   return (
     <span>
       This phrase appears <strong>{p.search.count}</strong> time
@@ -41,8 +36,7 @@ export const BulkRedactionForm = (p: {
 }) => {
   const [redactionType, setRedactionType] = useState<TRedactionType>();
 
-  const completedSearch =
-    p.bulkProps.search.status === 'done' ? p.bulkProps.search : undefined;
+  const completedSearch = p.bulkProps.search.status === 'done' ? p.bulkProps.search : undefined;
   const matchCount = completedSearch?.count ?? 0;
   const hasMatches = matchCount >= 1;
   const hasMultipleMatches = matchCount >= 2;
@@ -58,11 +52,7 @@ export const BulkRedactionForm = (p: {
 
   return (
     <div style={{ minWidth: '360px' }}>
-      <RedactionTypeSelect
-        initFocus
-        fullWidth
-        onRedactionTypeChange={setRedactionType}
-      />
+      <RedactionTypeSelect initFocus fullWidth onRedactionTypeChange={setRedactionType} />
 
       {p.bulkProps.search.status !== 'idle' && (
         <div style={{ marginTop: '12px', fontSize: '16px' }} aria-live="polite">
@@ -72,11 +62,7 @@ export const BulkRedactionForm = (p: {
 
       {!completedSearch && (
         <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-          <GovUkButton
-            style={bulkButtonStyle}
-            disabled={!redactionType}
-            onClick={handleRedactThis}
-          >
+          <GovUkButton style={bulkButtonStyle} disabled={!redactionType} onClick={handleRedactThis}>
             Redact this text
           </GovUkButton>
           <GovUkButton
@@ -85,9 +71,7 @@ export const BulkRedactionForm = (p: {
             disabled={!redactionType || p.bulkProps.search.status === 'loading'}
             onClick={p.bulkProps.onFindMatchingText}
           >
-            {p.bulkProps.search.status === 'error'
-              ? 'Try again'
-              : 'Find matching text'}
+            {p.bulkProps.search.status === 'error' ? 'Try again' : 'Find matching text'}
           </GovUkButton>
         </div>
       )}
@@ -101,11 +85,7 @@ export const BulkRedactionForm = (p: {
           >
             View previous
           </GovUkButton>
-          <GovUkButton
-            variant="secondary"
-            style={bulkButtonStyle}
-            onClick={p.bulkProps.onViewNext}
-          >
+          <GovUkButton variant="secondary" style={bulkButtonStyle} onClick={p.bulkProps.onViewNext}>
             View next
           </GovUkButton>
         </div>
@@ -113,11 +93,7 @@ export const BulkRedactionForm = (p: {
 
       {completedSearch && (
         <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-          <GovUkButton
-            style={bulkButtonStyle}
-            disabled={!redactionType}
-            onClick={handleRedactThis}
-          >
+          <GovUkButton style={bulkButtonStyle} disabled={!redactionType} onClick={handleRedactThis}>
             Redact this
           </GovUkButton>
           {hasMultipleMatches && (

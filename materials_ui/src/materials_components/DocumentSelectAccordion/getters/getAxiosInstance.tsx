@@ -7,7 +7,7 @@ export const useAxiosInstance = () => {
 
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_POLARIS_GATEWAY_URL,
-    withCredentials: true
+    withCredentials: true,
   });
 
   axiosInstance.interceptors.request.use(async (config) => {

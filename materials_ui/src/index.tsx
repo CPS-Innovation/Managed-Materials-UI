@@ -11,12 +11,15 @@ import './App.scss';
 import { AppContextProvider } from './context/AppContext';
 import { FilterProvider } from './context/FiltersContext';
 import { msalConfig } from './msalInstance';
+import { initTelemetry } from './telemetry/appInsights';
+
+initTelemetry();
 
 if (import.meta.env.DEV && !import.meta.env.VITE_E2E) {
   const { worker } = await import('./mocks/browser');
   await worker.start({
     onUnhandledRequest: 'bypass',
-    serviceWorker: { url: `${import.meta.env.BASE_URL}mockServiceWorker.js` }
+    serviceWorker: { url: `${import.meta.env.BASE_URL}mockServiceWorker.js` },
   });
 }
 
@@ -31,13 +34,7 @@ if (redirectResult?.account) {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <MsalProvider instance={msalInstance}>
-    <SWRConfig
-      value={{
-        errorRetryCount: 0,
-        revalidateOnFocus: false,
-        shouldRetryOnError: false
-      }}
-    >
+    <SWRConfig value={{ errorRetryCount: 0, revalidateOnFocus: false, shouldRetryOnError: false }}>
       <BrowserRouter
         basename={import.meta.env.BASE_URL}
         future={{ v7_startTransition: false, v7_relativeSplatPath: false }}
@@ -49,5 +46,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         </AppContextProvider>
       </BrowserRouter>
     </SWRConfig>
-  </MsalProvider>
+  </MsalProvider>,
 );

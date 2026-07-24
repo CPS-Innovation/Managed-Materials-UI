@@ -17,7 +17,7 @@ export const FilterForm = ({
   onSearchChange,
   searchLabel,
   defaultSearchValue,
-  children
+  children,
 }: FilterFormProps) => {
   return (
     <form

@@ -9,10 +9,7 @@ import { SelectDropdown } from './templates/Select';
 
 type RedactionLogModalHeaderProps = { urn: string; lookups?: TLookupsResponse };
 
-export const RedactionLogModalHeader = ({
-  urn,
-  lookups
-}: RedactionLogModalHeaderProps) => {
+export const RedactionLogModalHeader = ({ urn, lookups }: RedactionLogModalHeaderProps) => {
   const areas = lookups?.areas || [];
   const divisions = lookups?.divisions || [];
   const investigatingAgencies = lookups?.investigatingAgencies || [];
@@ -26,12 +23,11 @@ export const RedactionLogModalHeader = ({
   const {
     control,
     setValue,
-    formState: { errors }
+    formState: { errors },
   } = useFormContext<RedactionLogFormInputs>();
 
   if (errors.areasAndDivisionsId) {
-    errors.areasAndDivisionsId.message =
-      'Please enter valid CPS Area or Central Casework Division';
+    errors.areasAndDivisionsId.message = 'Please enter valid CPS Area or Central Casework Division';
   }
 
   if (errors.businessUnitId) {
@@ -46,12 +42,10 @@ export const RedactionLogModalHeader = ({
           alignItems: 'center',
           justifyContent: 'space-between',
           marginBottom: '2rem',
-          position: 'relative'
+          position: 'relative',
         }}
       >
-        <h1 className="govuk-heading-l govuk-!-margin-bottom-0">
-          {urn} - Redaction Log
-        </h1>
+        <h1 className="govuk-heading-l govuk-!-margin-bottom-0">{urn} - Redaction Log</h1>
         <a
           className="govuk-link"
           style={{ fontSize: '19px' }}
@@ -67,16 +61,16 @@ export const RedactionLogModalHeader = ({
               return (
                 <ul style={{ paddingLeft: '1rem', fontSize: '19px' }}>
                   <li>
-                    This popup allows the capture of details which will be
-                    recorded into the Redaction Log automatically
+                    This popup allows the capture of details which will be recorded into the
+                    Redaction Log automatically
                   </li>
                   <li>
-                    Once added, if an entry needs editing or deleting, this
-                    should be done in the Redaction log
+                    Once added, if an entry needs editing or deleting, this should be done in the
+                    Redaction log
                   </li>
                   <li>
-                    Once added, if an entry needs editing or deleting, this
-                    should be done in the Redaction log
+                    Once added, if an entry needs editing or deleting, this should be done in the
+                    Redaction log
                   </li>
                 </ul>
               );
@@ -95,7 +89,7 @@ export const RedactionLogModalHeader = ({
           gap: '20px',
           width: '100%',
           maxWidth: '100%',
-          marginBottom: '0'
+          marginBottom: '0',
         }}
       >
         <Controller
@@ -103,8 +97,7 @@ export const RedactionLogModalHeader = ({
           control={control}
           rules={{
             required: true,
-            validate: (v) =>
-              v !== '' || 'Select a CPS Area or Central Casework Division'
+            validate: (v) => v !== '' || 'Select a CPS Area or Central Casework Division',
           }}
           render={({ field }) => (
             <SelectDropdown
@@ -118,11 +111,7 @@ export const RedactionLogModalHeader = ({
                 setSelectedId(e.target.value);
                 setValue('businessUnitId', '');
               }}
-              error={
-                errors.areasAndDivisionsId
-                  ? 'Select an Area or Division'
-                  : undefined
-              }
+              error={errors.areasAndDivisionsId ? 'Select an Area or Division' : undefined}
             />
           )}
         />
@@ -130,10 +119,7 @@ export const RedactionLogModalHeader = ({
         <Controller
           name="businessUnitId"
           control={control}
-          rules={{
-            required: true,
-            validate: (v) => v !== '' || 'Select a CPS Business Unit'
-          }}
+          rules={{ required: true, validate: (v) => v !== '' || 'Select a CPS Business Unit' }}
           render={({ field }) => (
             <SelectDropdown
               label="CPS Business Unit: "
@@ -142,9 +128,7 @@ export const RedactionLogModalHeader = ({
               options={selectedItem?.children || []}
               value={field.value}
               onChange={(e) => field.onChange(e.target.value)}
-              error={
-                errors.businessUnitId ? 'Select a Business Unit' : undefined
-              }
+              error={errors.businessUnitId ? 'Select a Business Unit' : undefined}
             />
           )}
         />

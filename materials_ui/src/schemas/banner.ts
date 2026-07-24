@@ -6,7 +6,7 @@ export const BannerSchema = z.object({
   type: BannerTypeSchema.optional(),
   header: z.string(),
   content: z.string().optional(),
-  identifier: z.string().optional()
+  identifier: z.string().optional(),
 });
 
 export type BannerTypeEnum = z.infer<typeof BannerTypeSchema>;

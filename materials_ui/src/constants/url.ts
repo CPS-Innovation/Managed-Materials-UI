@@ -15,7 +15,7 @@ export const URL = {
   COMMUNICATIONS: '/communications',
   ERROR: '/error',
   PCD_REVIEW: '/pcd-review',
-  PCD_REVIEW_DETAILS: '/pcd-review:pcdId'
+  PCD_REVIEW_DETAILS: '/pcd-review:pcdId',
 };
 
 export const APP_DEFAULT_PAGE = URL.ROOT;
@@ -50,8 +50,7 @@ export const API_ENDPOINTS = {
   RECLASSIFY: '/material/{materialId}/reclassify-complete',
   EXHIBIT_PRODUCERS: '/exhibit-producers',
   CREATE_WITNESS: '/case-witnesses',
-  CREATE_ACTION_PLAN: '/action-plan'
+  CREATE_ACTION_PLAN: '/action-plan',
 };
 
-export const AUTH_REDIRECT_URL =
-  '{apiUrl}/init?caseId={caseId}&screen={screenPath}';
+export const AUTH_REDIRECT_URL = '{apiUrl}/init?caseId={caseId}&screen={screenPath}';

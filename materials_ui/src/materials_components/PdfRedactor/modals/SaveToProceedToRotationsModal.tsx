@@ -9,7 +9,7 @@ export const SaveToProceedToRotationsModal = (p: { onClose: () => void }) => {
         maxWidth: '45vw',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'stretch'
+        alignItems: 'stretch',
       }}
     >
       <div
@@ -17,7 +17,7 @@ export const SaveToProceedToRotationsModal = (p: { onClose: () => void }) => {
           background: '#f1f2f3',
           borderBottom: 'solid 1px #b1b4b6',
           display: 'flex',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
         }}
       >
         <div style={{ fontSize: '20px', fontWeight: 700, padding: '10px' }}>
@@ -25,14 +25,7 @@ export const SaveToProceedToRotationsModal = (p: { onClose: () => void }) => {
         </div>
         <CloseIconButton onClick={() => p.onClose()} />
       </div>
-      <div
-        style={{
-          padding: '16px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px'
-        }}
-      >
+      <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
           <span
             style={{
@@ -40,19 +33,17 @@ export const SaveToProceedToRotationsModal = (p: { onClose: () => void }) => {
               overflow: 'hidden',
               minWidth: '45px',
               minHeight: '45px',
-              display: 'inline-flex'
+              display: 'inline-flex',
             }}
           >
             <CloseIcon backgroundColor="black" />
           </span>
           <div style={{ fontSize: '20px', fontWeight: 700 }}>
-            You cannot rotate pages as you have unsaved redactions/deletions and
-            these will be lost.
+            You cannot rotate pages as you have unsaved redactions/deletions and these will be lost.
           </div>
         </div>
         <div style={{ fontSize: '20px' }}>
-          Remove or save your redactions/deletions and you will be able to
-          continue.
+          Remove or save your redactions/deletions and you will be able to continue.
         </div>
         <div>
           <GovUkButton onClick={() => p.onClose()} variant="inverse">

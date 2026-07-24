@@ -3,10 +3,7 @@ import './Drawer.scss';
 
 type Props = { heading: string };
 
-export default function Drawer({
-  heading,
-  children
-}: PropsWithChildren<Props>) {
+export default function Drawer({ heading, children }: PropsWithChildren<Props>) {
   return (
     <div className="drawer-container">
       <div className="drawer-header">

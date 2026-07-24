@@ -21,7 +21,7 @@ export const useLogger = () => {
         console.error('Failed to send log:', error);
       }
     },
-    [request]
+    [request],
   );
 
   return { log };

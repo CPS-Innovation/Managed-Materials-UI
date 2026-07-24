@@ -1,7 +1,4 @@
-export const replaceTokens = (
-  stringToReplace: string,
-  tokens: Record<string, string | number>
-) => {
+export const replaceTokens = (stringToReplace: string, tokens: Record<string, string | number>) => {
   let str = stringToReplace;
 
   Object.entries(tokens).map(([key, token]) => {

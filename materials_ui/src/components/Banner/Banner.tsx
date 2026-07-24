@@ -4,11 +4,7 @@ import './Banner.scss';
 
 type Props = BannerType;
 
-export const Banner = ({
-  type = 'success',
-  header,
-  content
-}: PropsWithChildren<Props>) => {
+export const Banner = ({ type = 'success', header, content }: PropsWithChildren<Props>) => {
   const bannerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -39,20 +35,20 @@ export const Banner = ({
     }
   };
 
+  const title = `${getBannerTitle()}: ${header}`;
+  const announcement = content ? `${title}. ${content}` : title;
+
   return (
     <div
       ref={bannerRef}
       className={`govuk-notification-banner ${getBannerClass()}`}
       role="alert"
-      aria-labelledby="govuk-notification-banner-title"
+      aria-label={announcement}
       data-module="govuk-notification-banner"
       tabIndex={-1}
     >
       <div className="govuk-notification-banner__header">
-        <h2
-          className="govuk-notification-banner__title"
-          id="govuk-notification-banner-title"
-        >
+        <h2 className="govuk-notification-banner__title" id="govuk-notification-banner-title">
           {getBannerTitle()}
         </h2>
       </div>

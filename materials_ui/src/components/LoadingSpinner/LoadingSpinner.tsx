@@ -1,14 +1,8 @@
 import { useRef } from 'react';
 
-type Props = {
-  isLoading: boolean;
-  textContent?: string;
-};
+type Props = { isLoading: boolean; textContent?: string };
 
-export const LoadingSpinner = ({
-  isLoading,
-  textContent = 'Loading...',
-}: Props) => {
+export const LoadingSpinner = ({ isLoading, textContent = 'Loading...' }: Props) => {
   const wasLoading = useRef(false);
   const completeMessage = 'Loading complete.';
 

@@ -5,11 +5,7 @@ import { DocumentTypeField } from './common/DocumentTypeField';
 import { SubjectField } from './common/SubjectField';
 import { UsedField } from './common/UsedField';
 
-type Props = {
-  control: Control;
-  errors?: FieldErrors;
-  currentMaterial: CaseMaterialsType;
-};
+type Props = { control: Control; errors?: FieldErrors; currentMaterial: CaseMaterialsType };
 
 export const MGForms = ({ control, errors, currentMaterial }: Props) => {
   return (

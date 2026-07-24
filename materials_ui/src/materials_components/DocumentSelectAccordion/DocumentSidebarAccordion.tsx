@@ -1,30 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import {
   DocumentSidebarAccordionDocument,
-  DocumentSidebarAccordionNoDocumentsAvailable
+  DocumentSidebarAccordionNoDocumentsAvailable,
 } from './DocumentSidebarAccordionDocument';
 import { DocumentSidebarWrapper } from './DocumentSidebarWrapper';
 import { TDocument, TDocumentList } from './getters/getDocumentList';
 import {
   GovUkAccordionOpenCloseLinkTemplate,
   GovUkAccordionSectionTemplate,
-  GovUkAccordionTemplate
+  GovUkAccordionTemplate,
 } from './templates/GovUkAccordion';
 import { categoriseDocument } from './utils/categoriseDocument';
 import {
   categoryDetails,
-  initDocsOnDocCategoryNamesMap
+  initDocsOnDocCategoryNamesMap,
 } from './utils/categoriseDocumentHelperUtils';
 import {
   safeGetDocumentSidebarReadDocIdsFromLocalStorage,
-  safeSetDocumentSidebarReadDocIdsFromLocalStorage
+  safeSetDocumentSidebarReadDocIdsFromLocalStorage,
 } from './utils/DocumentSidebarLocalStorageUtils';
 import { areSetsEqual } from './utils/generalUtils';
 
-const createOpenDocumentAccordionSectionKey = (p: {
-  caseId: number;
-  sectionTitle: string;
-}) => `openDocumentAccordionSection-${p.caseId}-${p.sectionTitle}`;
+const createOpenDocumentAccordionSectionKey = (p: { caseId: number; sectionTitle: string }) =>
+  `openDocumentAccordionSection-${p.caseId}-${p.sectionTitle}`;
 
 export const DocumentSidebarAccordion = (p: {
   caseId: number;
@@ -40,9 +38,7 @@ export const DocumentSidebarAccordion = (p: {
 }) => {
   const { caseId } = p;
 
-  const [openDocumentIds, setOpenDocumentIds] = useState<string[]>(
-    p.openDocumentIds
-  );
+  const [openDocumentIds, setOpenDocumentIds] = useState<string[]>(p.openDocumentIds);
 
   const isNoChangeInActiveDocIds = () =>
     areSetsEqual(new Set(openDocumentIds), new Set(p.openDocumentIds));
@@ -57,13 +53,11 @@ export const DocumentSidebarAccordion = (p: {
   }, [openDocumentIds]);
 
   const [readDocumentIds, setReadDocumentIds] = useState<string[]>(
-    safeGetDocumentSidebarReadDocIdsFromLocalStorage(p.caseId)
+    safeGetDocumentSidebarReadDocIdsFromLocalStorage(p.caseId),
   );
 
   useEffect(() => {
-    const newReadDocIds = [
-      ...new Set([...readDocumentIds, ...p.openDocumentIds])
-    ];
+    const newReadDocIds = [...new Set([...readDocumentIds, ...p.openDocumentIds])];
     safeSetDocumentSidebarReadDocIdsFromLocalStorage({ caseId, newReadDocIds });
   }, [readDocumentIds]);
 
@@ -77,13 +71,11 @@ export const DocumentSidebarAccordion = (p: {
     key: x.label,
     label: x.label,
     categoryName: x.categoryName,
-    documents: docsOnDocCategoryNames[x.categoryName]
+    documents: docsOnDocCategoryNames[x.categoryName],
   }));
 
   const [isExpandedController, setIsExpandedController] = useState(false);
-  const [isExpandedSectionsTracker, setIsExpandedSectionsTracker] = useState<
-    boolean[]
-  >([]);
+  const [isExpandedSectionsTracker, setIsExpandedSectionsTracker] = useState<boolean[]>([]);
   useEffect(() => {
     if (isExpandedSectionsTracker.length === 0) return;
     const allSectionsExpanded = isExpandedSectionsTracker.every((x) => x);
@@ -115,7 +107,7 @@ export const DocumentSidebarAccordion = (p: {
               }}
               localStorageKey={createOpenDocumentAccordionSectionKey({
                 caseId: p.caseId,
-                sectionTitle: item.label
+                sectionTitle: item.label,
               })}
             >
               {item.documents.length === 0 ? (
@@ -131,20 +123,13 @@ export const DocumentSidebarAccordion = (p: {
                     readDocumentIds={readDocumentIds}
                     onDocumentClick={() => {
                       p.onDocumentClick?.(document.parentId);
-                      setReadDocumentIds((docIds) => [
-                        ...new Set([...docIds, document.parentId])
-                      ]);
-                      const docSet = new Set([
-                        ...openDocumentIds,
-                        document.parentId
-                      ]);
+                      setReadDocumentIds((docIds) => [...new Set([...docIds, document.parentId])]);
+                      const docSet = new Set([...openDocumentIds, document.parentId]);
                       setOpenDocumentIds([...docSet]);
                     }}
                     onNotesClick={() => p.onNotesClick(document.parentId)}
                     ActionComponent={
-                      p.ActionComponent ? (
-                        <p.ActionComponent document={document} />
-                      ) : null
+                      p.ActionComponent ? <p.ActionComponent document={document} /> : null
                     }
                     urn={p.urn}
                     caseId={p.caseId}

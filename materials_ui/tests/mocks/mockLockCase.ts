@@ -4,11 +4,9 @@ const lockCase: CaseLockStatusResponseType = {
   caseLockedMessage: 'null',
   isLocked: false,
   isLockedByCurrentUser: false,
-  lockedByUser: 'null'
+  lockedByUser: 'null',
 };
 
-export const mockLockCase = (
-  overwrite?: Partial<CaseLockStatusResponseType>
-) => {
+export const mockLockCase = (overwrite?: Partial<CaseLockStatusResponseType>) => {
   return { ...lockCase, ...overwrite };
 };

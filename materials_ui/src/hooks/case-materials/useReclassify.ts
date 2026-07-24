@@ -4,13 +4,13 @@ import {
   mapReclassifyExhibit,
   mapReclassifyMGForm,
   mapReclassifyOther,
-  mapReclassifyStatement
+  mapReclassifyStatement,
 } from '../../components/forms/Reclassify/mappers';
 import { SwrPayload } from '../../schemas';
 import {
   Reclassify_ClassificationEnumType,
   Reclassify_Orchestrated_Request_Type,
-  Reclassify_Orchestrated_Response_Type
+  Reclassify_Orchestrated_Response_Type,
 } from '../../schemas/forms/reclassify';
 import { ReclassifyFormData } from './useReclassifyForm';
 
@@ -36,34 +36,28 @@ const getDataMapper = (classification: Reclassify_ClassificationEnumType) => {
 export type UseReclassifyOptions = {
   materialId: number;
   onError?: (error: Error) => void;
-  onSuccess?: (response: {
-    data: Reclassify_Orchestrated_Response_Type;
-  }) => void;
+  onSuccess?: (response: { data: Reclassify_Orchestrated_Response_Type }) => void;
 };
 
-export const useReclassify = ({
-  materialId,
-  onError,
-  onSuccess
-}: UseReclassifyOptions) => {
+export const useReclassify = ({ materialId, onError, onSuccess }: UseReclassifyOptions) => {
   const request = useRequest();
   const { caseInfo } = useCaseInfoStore();
 
   const postReclassification = async (
     _url: string,
-    { arg: data }: SwrPayload<Reclassify_Orchestrated_Request_Type>
+    { arg: data }: SwrPayload<Reclassify_Orchestrated_Request_Type>,
   ) => {
     return await request.post<Reclassify_Orchestrated_Response_Type>(
       `/urns/${caseInfo?.urn}/cases/${caseInfo?.id}/materials/${materialId}/reclassify-complete`,
-      data
+      data,
     );
   };
 
-  const { trigger: submitReclassify, isMutating: isReclassifyLoading } =
-    useSWRMutation(QUERY_KEYS.RECLASSIFY_MATERIAL, postReclassification, {
-      onError,
-      onSuccess
-    });
+  const { trigger: submitReclassify, isMutating: isReclassifyLoading } = useSWRMutation(
+    QUERY_KEYS.RECLASSIFY_MATERIAL,
+    postReclassification,
+    { onError, onSuccess },
+  );
 
   const submitReclassification = async (data: ReclassifyFormData) => {
     const mapper = getDataMapper(data?.classification);

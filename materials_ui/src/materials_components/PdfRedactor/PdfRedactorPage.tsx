@@ -1,17 +1,13 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-  type MouseEvent as ReactMouseEvent
-} from 'react';
+import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from 'react';
 import { Page } from 'react-pdf';
+import { usePageColors } from '../../hooks/ui/usePageColors';
 import { DocumentIcon } from './icons/DocumentIcon';
 import { RotateIcon } from './icons/RotateIcon';
 import {
   PdfTextHighlightOverlay,
   PositionedRedactionBox,
   PositionPdfOverlayBox,
-  RedactionBox
+  RedactionBox,
 } from './PdfRedactorComponents';
 
 import './PdfRedactorPage.scss';
@@ -24,7 +20,7 @@ import {
   getPdfCoords,
   MIN_REDACTION_SIZE_PX,
   type TCoord,
-  type TRedaction
+  type TRedaction,
 } from './utils/coordUtils';
 import { createId } from './utils/generalUtils';
 import { getPdfCoordPairsOfHighlightedText } from './utils/highlightedTextUtils';
@@ -38,21 +34,14 @@ const isSelectableTextTarget = (target: EventTarget | null) => {
   return el.tagName === 'SPAN' && !!el.closest('.react-pdf__Page__textContent');
 };
 
-const isAreaLargeEnoughToRedact = (
-  corner1: TCoord,
-  corner2: TCoord,
-  scale: number
-) => {
+const isAreaLargeEnoughToRedact = (corner1: TCoord, corner2: TCoord, scale: number) => {
   const { width, height } = convertCoordPairToXywh({
     x1: corner1.x,
     y1: corner1.y,
     x2: corner2.x,
-    y2: corner2.y
+    y2: corner2.y,
   });
-  return (
-    width * scale >= MIN_REDACTION_SIZE_PX &&
-    height * scale >= MIN_REDACTION_SIZE_PX
-  );
+  return width * scale >= MIN_REDACTION_SIZE_PX && height * scale >= MIN_REDACTION_SIZE_PX;
 };
 
 export const PdfRedactorRotationOverlay = (p: {
@@ -75,17 +64,10 @@ export const PdfRedactorRotationOverlay = (p: {
             padding: 0,
             paddingRight: '8px',
             gap: '8px',
-            alignItems: 'center'
+            alignItems: 'center',
           }}
         >
-          <span
-            style={{
-              background: '#1d70b8',
-              height: '25px',
-              width: '25px',
-              padding: '5px'
-            }}
-          >
+          <span style={{ background: '#1d70b8', height: '25px', width: '25px', padding: '5px' }}>
             <RotateIcon color="white" />
           </span>
           <div>
@@ -104,25 +86,13 @@ export const PdfRedactorRotationOverlay = (p: {
         right: 0,
         left: 0,
         backgroundColor: '#00000055',
-        zIndex: 500
+        zIndex: 500,
       }}
     >
       <div
-        style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%,-50%)'
-        }}
+        style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }}
       >
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            color: '#ffffff',
-            gap: '8px'
-          }}
-        >
+        <div style={{ display: 'flex', flexDirection: 'column', color: '#ffffff', gap: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
             <GovUkButton
               variant="inverse"
@@ -137,16 +107,11 @@ export const PdfRedactorRotationOverlay = (p: {
                 padding: 0,
                 paddingRight: '8px',
                 gap: '8px',
-                alignItems: 'center'
+                alignItems: 'center',
               }}
             >
               <span
-                style={{
-                  background: '#1d70b8',
-                  height: '25px',
-                  width: '25px',
-                  padding: '5px'
-                }}
+                style={{ background: '#1d70b8', height: '25px', width: '25px', padding: '5px' }}
               >
                 <RotateIcon color="white" flip />
               </span>
@@ -168,26 +133,19 @@ export const PdfRedactorRotationOverlay = (p: {
                 padding: 0,
                 paddingLeft: '8px',
                 gap: '8px',
-                alignItems: 'center'
+                alignItems: 'center',
               }}
             >
               <div>rotate page right</div>
               <span
-                style={{
-                  background: '#1d70b8',
-                  height: '25px',
-                  width: '25px',
-                  padding: '5px'
-                }}
+                style={{ background: '#1d70b8', height: '25px', width: '25px', padding: '5px' }}
               >
                 <RotateIcon color="white" />
               </span>
             </GovUkButton>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <span style={{ fontSize: '2.5rem' }}>
-              Rotate page {p.pageRotation}&deg;
-            </span>
+            <span style={{ fontSize: '2.5rem' }}>Rotate page {p.pageRotation}&deg;</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <button
@@ -205,7 +163,7 @@ export const PdfRedactorRotationOverlay = (p: {
                 padding: 0,
                 font: 'inherit',
                 lineHeight: 'inherit',
-                textDecoration: 'underline'
+                textDecoration: 'underline',
               }}
             >
               Cancel
@@ -240,7 +198,7 @@ export const PdfRedactorDeletionOverlay = (p: {
                 padding: 0,
                 paddingRight: '8px',
                 gap: '8px',
-                alignItems: 'center'
+                alignItems: 'center',
               }}
               disabled={pageDeleteButtonDisabled}
             >
@@ -249,18 +207,12 @@ export const PdfRedactorDeletionOverlay = (p: {
                   background: pageDeleteButtonDisabled ? 'gray' : '#1d70b8',
                   height: '25px',
                   width: '25px',
-                  padding: '5px'
+                  padding: '5px',
                 }}
               >
                 <DeleteIcon color="white" />
               </span>
-              <div
-                style={{
-                  textDecoration: pageDeleteButtonDisabled
-                    ? 'line-through'
-                    : 'none'
-                }}
-              >
+              <div style={{ textDecoration: pageDeleteButtonDisabled ? 'line-through' : 'none' }}>
                 Delete page {p.pageNumber} / {p.pagesAmount}
               </div>
             </GovUkButton>
@@ -276,7 +228,7 @@ export const PdfRedactorDeletionOverlay = (p: {
             right: 0,
             left: 0,
             backgroundColor: '#00000055',
-            zIndex: 500
+            zIndex: 500,
           }}
         >
           <div
@@ -284,24 +236,11 @@ export const PdfRedactorDeletionOverlay = (p: {
               position: 'absolute',
               top: '50%',
               left: '50%',
-              transform: 'translate(-50%,-50%)'
+              transform: 'translate(-50%,-50%)',
             }}
           >
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                color: '#ffffff',
-                gap: '8px'
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  gap: '20px'
-                }}
-              >
+            <div style={{ display: 'flex', flexDirection: 'column', color: '#ffffff', gap: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '20px' }}>
                 <span style={{ height: '125px', width: '125px' }}>
                   <DocumentIcon color="white" rotateDegrees={0} />
                 </span>
@@ -313,8 +252,7 @@ export const PdfRedactorDeletionOverlay = (p: {
               </div>
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <span style={{ color: '#ffffff', textAlign: 'center' }}>
-                  Click "save all deletions" to remove the page from the
-                  document
+                  Click "save all deletions" to remove the page from the document
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -330,7 +268,7 @@ export const PdfRedactorDeletionOverlay = (p: {
                     padding: 0,
                     font: 'inherit',
                     lineHeight: 'inherit',
-                    textDecoration: 'underline'
+                    textDecoration: 'underline',
                   }}
                 >
                   Cancel
@@ -362,16 +300,14 @@ export const PdfRedactorPage = (p: {
   highlightLayers?: THighlightLayer[];
 }) => {
   const { pageNumber, scale, redactions } = p;
-  const [pageDimensions, setPageDimensions] = useState<{
-    width: number;
-    height: number;
-  } | null>(null);
+  const pageColors = usePageColors();
+  const [pageDimensions, setPageDimensions] = useState<{ width: number; height: number } | null>(
+    null,
+  );
 
   const [firstCorner, setFirstCorner] = useState<TCoord | null>(null);
   const [isAreaDragging, setIsAreaDragging] = useState(false);
-  const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(
-    null
-  );
+  const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null);
   const cancelAreaDrag = () => {
     setFirstCorner(null);
     setIsAreaDragging(false);
@@ -395,19 +331,10 @@ export const PdfRedactorPage = (p: {
       const pageHeight = pdfPageRect.height / p.scale;
       const pageWidth = pdfPageRect.width / p.scale;
 
-      const coordPairs = getPdfCoordPairsOfHighlightedText({
-        pdfPageRect,
-        scale
-      });
+      const coordPairs = getPdfCoordPairsOfHighlightedText({ pdfPageRect, scale });
 
       const newRedactions = coordPairs.map((coordPair) => {
-        return {
-          ...coordPair,
-          id: createId(),
-          pageNumber,
-          pageHeight,
-          pageWidth
-        };
+        return { ...coordPair, id: createId(), pageNumber, pageHeight, pageWidth };
       });
 
       if (newRedactions.length === 0) return;
@@ -416,15 +343,14 @@ export const PdfRedactorPage = (p: {
       p.onPageRedactionsChange([...redactions, ...newRedactions]);
 
       window.getSelection()?.removeAllRanges();
-    }
+    },
   });
 
   const pdfPageWrapperElmRef = useRef<HTMLDivElement | null>(null);
   const requestAnimationFrameRef = useRef<number | null>(null);
   useEffect(() => {
     return () => {
-      if (requestAnimationFrameRef.current)
-        cancelAnimationFrame(requestAnimationFrameRef.current);
+      if (requestAnimationFrameRef.current) cancelAnimationFrame(requestAnimationFrameRef.current);
     };
   }, []);
 
@@ -444,13 +370,10 @@ export const PdfRedactorPage = (p: {
         coord2: mousePos,
         pageNumber: p.pageNumber,
         pageRect: pdfPageWrapperElm.getBoundingClientRect(),
-        scale
+        scale,
       });
       p.onAddRedactions([newRedaction]);
-      p.onPageRedactionsChange([
-        ...(redactions ? redactions : []),
-        newRedaction
-      ]);
+      p.onPageRedactionsChange([...(redactions ? redactions : []), newRedaction]);
     }
 
     setFirstCorner(null);
@@ -465,7 +388,7 @@ export const PdfRedactorPage = (p: {
       screenX: e.clientX,
       screenY: e.clientY,
       scale: p.scale,
-      pdfPageRect: e.currentTarget.getBoundingClientRect()
+      pdfPageRect: e.currentTarget.getBoundingClientRect(),
     });
     if (!start) return;
 
@@ -482,7 +405,7 @@ export const PdfRedactorPage = (p: {
           display: 'block',
           margin: 'auto',
           width: 'fit-content',
-          padding: '10px 10px 0px 10px'
+          padding: '10px 10px 0px 10px',
         }}
       >
         <span style={{ position: 'relative', display: 'inline-flex' }}>
@@ -506,23 +429,19 @@ export const PdfRedactorPage = (p: {
           <div
             ref={pdfPageWrapperElmRef}
             style={{ position: 'relative' }}
-            className={`react-pdf-page-wrapper${
-              isAreaDragging ? ' area-dragging' : ''
-            }`}
+            className={`react-pdf-page-wrapper${isAreaDragging ? ' area-dragging' : ''}`}
             onMouseUp={finishAreaRedactionDrag}
           >
             <Page
               pageNumber={p.pageNumber}
+              pageColors={pageColors}
               onRenderSuccess={() => {
                 const canvas = pdfPageWrapperElmRef.current?.querySelector(
-                  '.react-pdf__Page__canvas'
+                  '.react-pdf__Page__canvas',
                 );
                 if (!canvas) return;
                 const rect = canvas.getBoundingClientRect();
-                setPageDimensions({
-                  width: rect.width / p.scale,
-                  height: rect.height / p.scale
-                });
+                setPageDimensions({ width: rect.width / p.scale, height: rect.height / p.scale });
               }}
               onMouseDown={startAreaRedactionDrag}
               scale={p.scale}
@@ -538,7 +457,7 @@ export const PdfRedactorPage = (p: {
                     screenX: e.clientX,
                     screenY: e.clientY,
                     scale: p.scale,
-                    pdfPageRect: rect
+                    pdfPageRect: rect,
                   });
                   setMousePos(coord);
 
@@ -549,13 +468,12 @@ export const PdfRedactorPage = (p: {
             {firstCorner &&
               mousePos &&
               (() => {
-                const { xLeft, yBottom, width, height } =
-                  convertCoordPairToXywh({
-                    x1: firstCorner.x,
-                    y1: firstCorner.y,
-                    x2: mousePos.x,
-                    y2: mousePos.y
-                  });
+                const { xLeft, yBottom, width, height } = convertCoordPairToXywh({
+                  x1: firstCorner.x,
+                  y1: firstCorner.y,
+                  x2: mousePos.x,
+                  y2: mousePos.y,
+                });
 
                 return (
                   <PositionPdfOverlayBox
@@ -575,21 +493,14 @@ export const PdfRedactorPage = (p: {
               })()}
 
             {redactions?.map((box, i) => {
-              const { xLeft, yBottom, width, height } =
-                convertCoordPairToXywh(box);
+              const { xLeft, yBottom, width, height } = convertCoordPairToXywh(box);
 
-              const widthScale = pageDimensions
-                ? pageDimensions.width / box.pageWidth
-                : 1;
-              const heightScale = pageDimensions
-                ? pageDimensions.height / box.pageHeight
-                : 1;
+              const widthScale = pageDimensions ? pageDimensions.width / box.pageWidth : 1;
+              const heightScale = pageDimensions ? pageDimensions.height / box.pageHeight : 1;
 
               const handleRemoveRedaction = (fnProps: { boxId: string }) => {
                 p.onRemoveRedactions([fnProps.boxId]);
-                p.onPageRedactionsChange(
-                  redactions?.filter((x) => x.id !== fnProps.boxId)
-                );
+                p.onPageRedactionsChange(redactions?.filter((x) => x.id !== fnProps.boxId));
               };
 
               return (
@@ -600,12 +511,8 @@ export const PdfRedactorPage = (p: {
                   width={width * widthScale}
                   height={height * heightScale}
                   scale={p.scale}
-                  onRedactionBoxEnterPress={() =>
-                    handleRemoveRedaction({ boxId: box.id })
-                  }
-                  onRedactionTooltipClick={() =>
-                    handleRemoveRedaction({ boxId: box.id })
-                  }
+                  onRedactionBoxEnterPress={() => handleRemoveRedaction({ boxId: box.id })}
+                  onRedactionTooltipClick={() => handleRemoveRedaction({ boxId: box.id })}
                   interactive
                 />
               );
@@ -619,6 +526,7 @@ export const PdfRedactorPage = (p: {
                   focusedId={layer.focusedId}
                   pageDimensions={pageDimensions}
                   scale={p.scale}
+                  onHighlightClick={layer.onHighlightClick}
                 />
               ))}
           </div>

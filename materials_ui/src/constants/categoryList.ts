@@ -1,11 +1,11 @@
 export const materialsCategoryList = [
-  'Statement',
-  'Exhibit',
-  'MG Form',
-  'Other Material',
-  'Unused Material',
-  'Defendant Pre Cons'
-];
+  { value: 'Statement', label: 'Statements' },
+  { value: 'Exhibit', label: 'Exhibits' },
+  { value: 'MG Form', label: 'MG forms' },
+  { value: 'Other Material', label: 'Other material' },
+  { value: 'Defendant Pre Cons', label: 'Defendant pre-cons' },
+  { value: 'Unused Material', label: 'Unused material' },
+] as const;
 
 export const communicationsCategoryList = [
   'Bundle',
@@ -13,7 +13,7 @@ export const communicationsCategoryList = [
   'Email',
   'Item',
   'Meeting',
-  'Telephone call'
+  'Telephone call',
 ];
 
 export const communicationsWithList = [
@@ -23,7 +23,7 @@ export const communicationsWithList = [
   'Defence',
   'Police',
   'WCU',
-  'Other'
+  'Other',
 ];
 
 export const typeList = [
@@ -36,5 +36,5 @@ export const typeList = [
   'Forwarded Internal Email',
   'Correspondence',
   'Other Communication',
-  'Service of ABE'
+  'Service of ABE',
 ];

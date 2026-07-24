@@ -4,7 +4,7 @@ import { DocumentSidebarWrapper } from './DocumentSidebarWrapper';
 import { useAxiosInstance } from './getters/getAxiosInstance';
 import {
   postDocumentNotesFromAxiosInstance,
-  useGetDocumentNotes
+  useGetDocumentNotes,
 } from './getters/getDocumentNotes';
 import { CloseIconButton } from './templates/CloseIconButton';
 import { GovUkBanner } from './templates/GovUkBanner';
@@ -30,7 +30,7 @@ export const DocumentSidebarNotes = (p: {
   const documentNotes = useGetDocumentNotes({
     urn: p.urn,
     caseId: p.caseId,
-    documentId: p.documentId
+    documentId: p.documentId,
   });
 
   return (
@@ -39,12 +39,10 @@ export const DocumentSidebarNotes = (p: {
         style={{
           borderBottom: 'solid 1px #b1b4b6',
           display: 'flex',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
         }}
       >
-        <div style={{ fontSize: '20px', fontWeight: 700, padding: '10px' }}>
-          Notes
-        </div>
+        <div style={{ fontSize: '20px', fontWeight: 700, padding: '10px' }}>Notes</div>
         <CloseIconButton onClick={() => p.onBackButtonClick()} />
       </div>
       {savedSuccessfully && (
@@ -56,11 +54,7 @@ export const DocumentSidebarNotes = (p: {
       )}
       <div style={{ padding: '10px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          <label
-            htmlFor="notes-textarea"
-            className="govuk-label"
-            style={{ fontWeight: 700 }}
-          >
+          <label htmlFor="notes-textarea" className="govuk-label" style={{ fontWeight: 700 }}>
             Add a note to the document
           </label>
           <GovUkTextarea
@@ -72,21 +66,10 @@ export const DocumentSidebarNotes = (p: {
             maxLength={NOTES_CHAR_COUNT_MAX_LENGTH}
             rows={5}
           />
-          <span
-            id="notes-char-count"
-            role="status"
-            aria-live="polite"
-            aria-atomic="true"
-          >
+          <output id="notes-char-count" htmlFor="notes-textarea">
             You have {remainingCharacters} characters remaining
-          </span>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}
-          >
+          </output>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <GovUkButton
               onClick={async () => {
                 await postDocumentNotesFromAxiosInstance({
@@ -94,7 +77,7 @@ export const DocumentSidebarNotes = (p: {
                   urn: p.urn,
                   documentId: p.documentId,
                   caseId: p.caseId,
-                  text
+                  text,
                 });
                 setSavedSuccessfully(true);
                 documentNotes.mutate();
@@ -116,20 +99,13 @@ export const DocumentSidebarNotes = (p: {
                 borderLeft: 'solid 4px #0066cc',
                 display: 'flex',
                 gap: '10px',
-                flexDirection: 'column'
+                flexDirection: 'column',
               }}
             >
               {documentNotes.data.map((note) => (
-                <div
-                  style={{ display: 'flex', gap: '10px' }}
-                  key={`${note.date}-${note.text}`}
-                >
+                <div style={{ display: 'flex', gap: '10px' }} key={`${note.date}-${note.text}`}>
                   <div
-                    style={{
-                      width: '10px',
-                      height: '6px',
-                      borderBottom: 'solid 4px #0066cc'
-                    }}
+                    style={{ width: '10px', height: '6px', borderBottom: 'solid 4px #0066cc' }}
                   />
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 700 }}>{note.createdByName}</div>

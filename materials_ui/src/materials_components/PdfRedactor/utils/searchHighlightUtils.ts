@@ -1,4 +1,5 @@
 import type { SearchTermResultType } from '../../../schemas/documents';
+import type { TRedaction } from './coordUtils';
 
 const PADDING_INCHES = 0.03;
 
@@ -16,39 +17,51 @@ export type TSearchHighlight = {
 export type THighlightLayer = {
   highlights: TSearchHighlight[];
   focusedId?: string;
+  onHighlightClick?: (highlight: TSearchHighlight) => void;
 };
 
+export const convertSearchHighlightToRedaction = (highlight: TSearchHighlight): TRedaction => ({
+  id: crypto.randomUUID(),
+  pageNumber: highlight.pageNumber,
+  pageHeight: highlight.pageHeight,
+  pageWidth: highlight.pageWidth,
+  x1: highlight.xLeft,
+  y1: highlight.pageHeight - highlight.yBottom,
+  x2: highlight.xRight,
+  y2: highlight.pageHeight - highlight.yTop,
+});
+
 export const convertMatchesToSearchHighlights = (
-  matches: SearchTermResultType['matches']
+  matches: SearchTermResultType['matches'],
 ): TSearchHighlight[] =>
   matches
     .flatMap((match) =>
       match.words
-        .filter((w) => w.matchType?.includes('Exact') && w.boundingBox)
+        .filter((w) => w.matchType === 'Exact' && w.boundingBox)
         .map((w) => {
           const xs = [
             w.boundingBox![0]!,
             w.boundingBox![2]!,
             w.boundingBox![4]!,
-            w.boundingBox![6]!
+            w.boundingBox![6]!,
           ];
           const ys = [
             w.boundingBox![1]!,
             w.boundingBox![3]!,
             w.boundingBox![5]!,
-            w.boundingBox![7]!
+            w.boundingBox![7]!,
           ];
           return {
             id: crypto.randomUUID(),
             pageNumber: match.pageIndex,
             pageHeight: match.pageHeight,
             pageWidth: match.pageWidth,
-            xLeft: Math.min(...xs) + PADDING_INCHES,
+            xLeft: Math.min(...xs) - PADDING_INCHES,
             xRight: Math.max(...xs) + PADDING_INCHES,
             yTop: Math.min(...ys) - PADDING_INCHES,
-            yBottom: Math.max(...ys) + PADDING_INCHES
+            yBottom: Math.max(...ys) + PADDING_INCHES,
           };
-        })
+        }),
     )
     .sort((a, b) => {
       if (a.pageNumber !== b.pageNumber) return a.pageNumber - b.pageNumber;

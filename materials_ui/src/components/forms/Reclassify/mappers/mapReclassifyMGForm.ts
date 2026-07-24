@@ -3,7 +3,7 @@ import type { Reclassify_Orchestrated_Request_Type } from '../../../../schemas/f
 
 export const mapReclassifyMGForm = (
   data: ReclassifyFormData,
-  urn: string
+  urn: string,
 ): Reclassify_Orchestrated_Request_Type => {
   if (data.classification !== 'MG Form') {
     throw new Error('Not a valid classification');
@@ -15,7 +15,7 @@ export const mapReclassifyMGForm = (
       classification: 'OTHER',
       documentTypeId: data?.documentType,
       subject: data?.subject,
-      used: data?.used
-    }
+      used: data?.used,
+    },
   };
 };

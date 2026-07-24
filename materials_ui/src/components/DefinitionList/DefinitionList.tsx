@@ -8,9 +8,7 @@ export const DefinitionList = ({ items, fixedWidth }: Props) => {
   if (!items.length) return null;
 
   return (
-    <dl
-      className={`definition-list ${fixedWidth ? 'definition-list--fixed-width' : ''}`}
-    >
+    <dl className={`definition-list ${fixedWidth ? 'definition-list--fixed-width' : ''}`}>
       {items.map((item, index) => (
         <div key={index} className="definition-list__row">
           <dt className="definition-list__title">{item.title}</dt>

@@ -3,7 +3,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import {
   getDocumentTypeMappings,
   postRedactionLog,
-  useAxiosInstances
+  useAxiosInstances,
 } from '../../caseWorkApp/components/utils/getData';
 import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
 import { ChargeStatusCode } from '../../constants/chargeStatus';
@@ -17,7 +17,7 @@ import { RedactionLogModalBody } from './RedactionLogModalBody';
 import { RedactionLogModalHeader } from './RedactionLogModalHeader';
 import {
   getDocumentTypeValueFromMappings,
-  type RedactionLogMappingData
+  type RedactionLogMappingData,
 } from './utils/getDocumentTypeValueFromMappings';
 import { transformFormDataToApiFormat } from './utils/transformFormData';
 
@@ -55,11 +55,7 @@ type RedactionLogModalProps = {
 };
 
 const WhiteTickIcon = () => (
-  <svg
-    className={styles.whiteTickIcon}
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 512 512"
-  >
+  <svg className={styles.whiteTickIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
     <path d="M369.2,174.8c7.8,7.8,7.8,20.5,0,28.3L235,337.2c-7.8,7.8-20.5,7.8-28.3,0l-63.9-63.9c-7.8-7.8-7.8-20.5,0-28.3c7.8-7.8,20.5-7.8,28.3,0l49.7,49.7l120-120C348.7,167,361.4,167,369.2,174.8z M512,256c0,141.5-114.5,256-256,256C114.5,512,0,397.5,0,256C0,114.5,114.5,0,256,0C397.5,0,512,114.5,512,256z M472,256c0-119.4-96.6-216-216-216C136.6,40,40,136.6,40,256c0,119.4,96.6,216,216,216C375.4,472,472,375.4,472,256z" />
   </svg>
 );
@@ -74,10 +70,11 @@ export const RedactionLogModal = ({
   mode,
   redactions,
   selectedRedactionTypes = [],
-  redactionSaveStatus
+  redactionSaveStatus,
 }: RedactionLogModalProps) => {
-  const [documentTypeMappings, setDocumentTypeMappings] =
-    useState<RedactionLogMappingData | null>(null);
+  const [documentTypeMappings, setDocumentTypeMappings] = useState<RedactionLogMappingData | null>(
+    null,
+  );
   const { data: caseDetailsResponse } = useCaseDetails({ urn });
 
   const chargeStatusFromCase = useMemo((): ChargeStatusCode | undefined => {
@@ -91,24 +88,20 @@ export const RedactionLogModal = ({
       return undefined;
     }
 
-    return row.isCaseCharged
-      ? ChargeStatusCode.PostCharge
-      : ChargeStatusCode.PreCharge;
+    return row.isCaseCharged ? ChargeStatusCode.PostCharge : ChargeStatusCode.PreCharge;
   }, [caseId, caseDetailsResponse]);
 
   const policeCode = urn.substring(0, 2);
 
   const existingInvestigatingAgencyId = lookups?.ouCodeMapping.find(
-    (ia) => ia.ouCode === policeCode
+    (ia) => ia.ouCode === policeCode,
   )?.investigatingAgencyCode;
 
   const { redactionLogAxios } = useAxiosInstances();
 
   useEffect(() => {
     const loadDocumentTypeMappings = async () => {
-      const data = await getDocumentTypeMappings({
-        axiosInstance: redactionLogAxios
-      });
+      const data = await getDocumentTypeMappings({ axiosInstance: redactionLogAxios });
       if (data) {
         setDocumentTypeMappings(data);
       }
@@ -130,8 +123,8 @@ export const RedactionLogModal = ({
       investigatingAgencyId: existingInvestigatingAgencyId || '',
       chargeStatus: chargeStatusFromCase ?? ChargeStatusCode.PreCharge,
       documentTypeId: activeDocument?.cmsDocType.documentTypeId || '',
-      supportingNotes: ''
-    }
+      supportingNotes: '',
+    },
   });
 
   useEffect(() => {
@@ -143,7 +136,7 @@ export const RedactionLogModal = ({
 
     const documentTypeIdValue = getDocumentTypeValueFromMappings(
       cmsDocumentTypeId,
-      documentTypeMappings
+      documentTypeMappings,
     );
 
     if (!documentTypeIdValue) {
@@ -153,7 +146,7 @@ export const RedactionLogModal = ({
     form.setValue('documentTypeId', documentTypeIdValue, {
       shouldDirty: false,
       shouldTouch: false,
-      shouldValidate: false
+      shouldValidate: false,
     });
   }, [activeDocument?.cmsDocType.documentTypeId, documentTypeMappings, form]);
 
@@ -165,13 +158,10 @@ export const RedactionLogModal = ({
         activeDocument,
         lookups,
         mode,
-        listModeRedactionTypes: selectedRedactionTypes
+        listModeRedactionTypes: selectedRedactionTypes,
       });
 
-      await postRedactionLog({
-        axiosInstance: redactionLogAxios,
-        data: apiData
-      });
+      await postRedactionLog({ axiosInstance: redactionLogAxios, data: apiData });
 
       onClose();
     } catch (error) {
@@ -182,7 +172,7 @@ export const RedactionLogModal = ({
   if (!isOpen) return null;
 
   return (
-    <Modal onClose={onClose}>
+    <Modal onClose={onClose} ariaLabel={`${urn} - Redaction Log`}>
       <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} noValidate>
           {redactionSaveStatus === 'saving' && (
@@ -195,9 +185,7 @@ export const RedactionLogModal = ({
           {redactionSaveStatus === 'saved' && (
             <div className={styles.savedBanner}>
               <WhiteTickIcon />
-              <h2 className={styles.bannerText}>
-                Redactions successfully saved
-              </h2>
+              <h2 className={styles.bannerText}>Redactions successfully saved</h2>
             </div>
           )}
 

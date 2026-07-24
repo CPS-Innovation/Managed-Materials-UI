@@ -8,10 +8,7 @@ export { useEditMaterial } from './case-materials/useEditMaterial';
 export { useReadStatus } from './case-materials/useReadStatus';
 export { useReclassify } from './case-materials/useReclassify';
 export { useReclassifyForm } from './case-materials/useReclassifyForm';
-export type {
-  FormStep,
-  ReclassifyFormData
-} from './case-materials/useReclassifyForm';
+export type { FormStep, ReclassifyFormData } from './case-materials/useReclassifyForm';
 export { useRename } from './case-materials/useRename';
 export { useCaseDefendants } from './case/useCaseDefendants';
 export { useCaseInfo } from './case/useCaseInfo';
@@ -26,10 +23,7 @@ export { useExhibits } from './exhibits/useExhibits';
 export { usePCD } from './pcd-request/usePCD';
 export { usePCDList } from './pcd-request/usePCDList';
 export { useCaseSearch } from './search/useCaseSearch';
-export {
-  useDocumentSearch,
-  useDocumentSearchResults
-} from './search/useDocumentSearch';
+export { useDocumentSearch, useDocumentSearchResults } from './search/useDocumentSearch';
 export { useSearchTracker } from './search/useSearchTracker';
 export { useAppRoute } from './ui/useAppRoute';
 export { useBanner } from './ui/useBanner';
@@ -37,6 +31,7 @@ export { useDebounce } from './ui/useDebounce';
 export { useFeatureFlag } from './ui/useFeatureFlag';
 export { useFilters } from './ui/useFilters';
 export { useLogger } from './ui/useLogger';
+export { usePageColors } from './ui/usePageColors';
 export { usePager } from './ui/usePager';
 export { useRequest } from './ui/useRequest';
 export { useStoreLogger } from './ui/useStoreLogger';

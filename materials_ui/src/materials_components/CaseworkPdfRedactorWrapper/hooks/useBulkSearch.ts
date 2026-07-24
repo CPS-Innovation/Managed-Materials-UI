@@ -22,7 +22,7 @@ const wait = (ms: number, signal: AbortSignal) =>
         clearTimeout(timeoutId);
         resolve();
       },
-      { once: true }
+      { once: true },
     );
   });
 
@@ -33,9 +33,7 @@ export const useBulkSearch = (p: {
   versionId: number;
   documentId: string;
 }) => {
-  const [state, setState] = useState<TBulkSearchInternalState>({
-    status: 'idle'
-  });
+  const [state, setState] = useState<TBulkSearchInternalState>({ status: 'idle' });
   const abortRef = useRef<AbortController | null>(null);
 
   const clear = useCallback(() => {
@@ -60,7 +58,7 @@ export const useBulkSearch = (p: {
             versionId: p.versionId,
             documentId: p.documentId,
             searchText,
-            signal: controller.signal
+            signal: controller.signal,
           });
           if (controller.signal.aborted) return undefined;
 
@@ -94,7 +92,7 @@ export const useBulkSearch = (p: {
         return undefined;
       }
     },
-    [p.axiosInstance, p.urn, p.caseId, p.versionId, p.documentId]
+    [p.axiosInstance, p.urn, p.caseId, p.versionId, p.documentId],
   );
 
   const nudge = (delta: number) =>
@@ -110,14 +108,12 @@ export const useBulkSearch = (p: {
   const removeFocused = useCallback(() => {
     setState((prev) => {
       if (prev.status !== 'done' || prev.candidates.length === 0) return prev;
-      const remaining = prev.candidates.filter(
-        (_, i) => i !== prev.focusedIndex
-      );
+      const remaining = prev.candidates.filter((_, i) => i !== prev.focusedIndex);
       if (remaining.length === 0) return { status: 'idle' };
       return {
         status: 'done',
         candidates: remaining,
-        focusedIndex: Math.min(prev.focusedIndex, remaining.length - 1)
+        focusedIndex: Math.min(prev.focusedIndex, remaining.length - 1),
       };
     });
   }, []);
@@ -136,6 +132,6 @@ export const useBulkSearch = (p: {
     clear,
     goNext,
     goPrev,
-    removeFocused
+    removeFocused,
   };
 };

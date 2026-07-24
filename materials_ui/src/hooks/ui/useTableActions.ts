@@ -23,7 +23,7 @@ export const useTableActions = ({
   refreshData,
   setBanner,
   deselectItem,
-  resetBanner
+  resetBanner,
 }: TableActionsProps) => {
   const { getRoute } = useAppRoute();
   const navigate = useNavigate();
@@ -32,37 +32,26 @@ export const useTableActions = ({
   const [isReadStatusUpdating, setIsReadStatusUpdating] = useState(false);
 
   const handleReclassifyClick = () => {
-    navigate(getRoute('RECLASSIFICATION'), {
-      state: { row: selectedItems[0] }
-    });
+    navigate(getRoute('RECLASSIFICATION'), { state: { row: selectedItems[0] } });
   };
 
   const handleDiscardClick = (returnToUrl: string) => {
     navigate(getRoute('DISCARD'), {
-      state: { selectedMaterial: selectedItems[0], returnTo: returnToUrl }
+      state: { selectedMaterial: selectedItems[0], returnTo: returnToUrl },
     });
   };
 
   const handleEditClick = (material: CaseMaterialsType, returnTo: string) => {
-    navigate(getRoute('UPDATE_MATERIAL'), {
-      state: { returnTo, row: material }
-    });
+    navigate(getRoute('UPDATE_MATERIAL'), { state: { returnTo, row: material } });
   };
 
   const handleRedactClick = (materialId: number) => {
-    navigate(getRoute('REVIEW_REDACT'), {
-      state: { materialId: `CMS-${materialId}` }
-    });
+    navigate(getRoute('REVIEW_REDACT'), { state: { materialId: `CMS-${materialId}` } });
   };
 
-  const handleUnusedClick = (
-    materials: CaseMaterialsType[],
-    returnTo: string
-  ) => {
+  const handleUnusedClick = (materials: CaseMaterialsType[], returnTo: string) => {
     resetBanner();
-    navigate(getRoute('RECLASSIFY_TO_UNUSED'), {
-      state: { materials, returnTo }
-    });
+    navigate(getRoute('RECLASSIFY_TO_UNUSED'), { state: { materials, returnTo } });
   };
 
   const determineReadStatusLabel = (items: CaseMaterialsType[]) => {
@@ -83,7 +72,7 @@ export const useTableActions = ({
         await trigger({
           materialId: row.materialId,
           state: row.readStatus === READ_STATUS.READ ? 'unread' : 'read',
-          correspondenceId: uuidv4()
+          correspondenceId: uuidv4(),
         });
       }
 
@@ -93,15 +82,14 @@ export const useTableActions = ({
       setBanner({
         type: 'success',
         header: 'Read status updated',
-        content: 'Selected items have been updated.'
+        content: 'Selected items have been updated.',
       });
     } catch (error) {
       console.error('Error updating read status:', error);
       setBanner({
         type: 'error',
         header: 'Error updating read status',
-        content:
-          'There was an error updating the read status of the selected items.'
+        content: 'There was an error updating the read status of the selected items.',
       });
     } finally {
       setIsReadStatusUpdating(false);
@@ -116,6 +104,6 @@ export const useTableActions = ({
     handleUnusedClick,
     determineReadStatusLabel,
     handleReadStatusClick,
-    isReadStatusUpdating
+    isReadStatusUpdating,
   };
 };

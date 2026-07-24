@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import classes from "./index.module.scss";
+import React, { useState } from 'react';
+import classes from './index.module.scss';
 
 type TooltipProps = {
   text: string;
   children: React.ReactNode;
-  position?: "top" | "bottom" | "left" | "right";
+  position?: 'top' | 'bottom' | 'left' | 'right';
   className?: string;
   dataTestId?: string;
   onHoverCallback?: () => void;
@@ -14,8 +14,8 @@ export const Tooltip: React.FC<TooltipProps> = ({
   text,
   children,
   className,
-  position = "bottom",
-  dataTestId = "tooltip",
+  position = 'bottom',
+  dataTestId = 'tooltip',
   onHoverCallback,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false);
@@ -33,11 +33,11 @@ export const Tooltip: React.FC<TooltipProps> = ({
 
   const getPositionClass = () => {
     switch (position) {
-      case "right":
+      case 'right':
         return classes.tooltipRight;
-      case "left":
+      case 'left':
         return classes.tooltipLeft;
-      case "top":
+      case 'top':
         return classes.tooltipTop;
       default:
         return classes.tooltipBottom;
@@ -49,7 +49,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
 
   return (
     <div
-      className={`${classes.tooltipContainer} ${className ? className : ""}`}
+      className={`${classes.tooltipContainer} ${className ? className : ''}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >

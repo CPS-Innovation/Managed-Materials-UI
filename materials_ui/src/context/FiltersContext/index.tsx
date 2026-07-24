@@ -1,10 +1,6 @@
 import { createContext, PropsWithChildren, useState } from 'react';
 
-import type {
-  FilterItem,
-  FilterKeys,
-  FiltersContextState
-} from './helpers/types';
+import type { FilterItem, FilterKeys, FiltersContextState } from './helpers/types';
 import { getDefaultState } from './helpers/utils';
 
 // DATA STRUCTURE
@@ -18,14 +14,8 @@ import { getDefaultState } from './helpers/utils';
 
 export type FiltersContext = {
   filters: FiltersContextState;
-  createFilterContext: (
-    filterSet: FilterKeys,
-    defaultState?: FilterItem
-  ) => void;
-  updateFilterContext: (
-    filterSet: FilterKeys,
-    newFilterSet: FilterItem
-  ) => void;
+  createFilterContext: (filterSet: FilterKeys, defaultState?: FilterItem) => void;
+  updateFilterContext: (filterSet: FilterKeys, newFilterSet: FilterItem) => void;
   resetFilterContext: (filterSet: FilterKeys) => void;
   resetAllFilters: () => void;
 };
@@ -41,34 +31,25 @@ export const FilterContext = createContext<FiltersContext>({
 export const FilterProvider = ({ children }: PropsWithChildren) => {
   const [filters, setFilters] = useState<FiltersContextState>({});
 
-  const createFilterContext = (
-    filterSet: string,
-    defaultState?: FilterItem
-  ) => {
-    setFilters((prev) => ({
-      ...prev,
-      [filterSet]: getDefaultState(defaultState)
-    }));
+  const createFilterContext = (filterSet: string, defaultState?: FilterItem) => {
+    setFilters((prev) => ({ ...prev, [filterSet]: getDefaultState(defaultState) }));
   };
 
-  const updateFilterContext = (
-    filterSet: FilterKeys,
-    newFilterSet: FilterItem
-  ) => {
+  const updateFilterContext = (filterSet: FilterKeys, newFilterSet: FilterItem) => {
     setFilters((prev) => ({
       ...prev,
       [filterSet]: {
         filters: { ...(newFilterSet.filters ?? {}) },
         search: newFilterSet.search ?? '',
-        sort: newFilterSet.sort ?? prev[filterSet]?.sort
-      }
+        sort: newFilterSet.sort ?? prev[filterSet]?.sort,
+      },
     }));
   };
 
   const resetFilterContext = (filterSet: FilterKeys) => {
     setFilters((prev) => ({
       ...prev,
-      [filterSet]: { sort: prev[filterSet]?.sort, filters: {}, search: '' }
+      [filterSet]: { sort: prev[filterSet]?.sort, filters: {}, search: '' },
     }));
   };
 
@@ -81,7 +62,7 @@ export const FilterProvider = ({ children }: PropsWithChildren) => {
         resetAllFilters,
         createFilterContext,
         resetFilterContext,
-        updateFilterContext
+        updateFilterContext,
       }}
     >
       {children}

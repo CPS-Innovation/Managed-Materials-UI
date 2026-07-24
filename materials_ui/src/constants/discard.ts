@@ -4,5 +4,5 @@ export const DISCARD_MATERIAL_OPTIONS = [
   { label: 'Duplicate', value: 'DUP' },
   { label: 'Illegible', value: 'ILG' },
   { label: 'Replaced', value: 'REP' },
-  { label: 'Superfluous', value: 'SUP' }
+  { label: 'Superfluous', value: 'SUP' },
 ];

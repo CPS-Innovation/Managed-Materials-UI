@@ -19,5 +19,5 @@ export const useCaseInfoStore = create<CaseStore>((set) => ({
 
   setIsLoading: (isLoading) => set(() => ({ isLoading })),
 
-  clearCaseInfo: () => set(() => ({ caseInfo: null }))
+  clearCaseInfo: () => set(() => ({ caseInfo: null })),
 }));

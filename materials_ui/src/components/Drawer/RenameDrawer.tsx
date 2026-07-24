@@ -2,6 +2,7 @@ import { ChangeEvent, FormEvent, useState } from 'react';
 import { useRename } from '../../hooks';
 import { TDocument } from '../../materials_components/DocumentSelectAccordion/getters/getDocumentList';
 import { CaseMaterialsType } from '../../schemas';
+import { trackAction } from '../../telemetry/appInsights';
 import { LoadingSpinner } from '../LoadingSpinner/LoadingSpinner';
 import Drawer from './Drawer';
 
@@ -13,29 +14,29 @@ type Props = {
 
 export const RenameDrawer = ({ material, onCancel, onSuccess }: Props) => {
   const { isMutating, trigger: renameMaterial } = useRename(material, {
-    onSuccess
+    onSuccess: () => {
+      trackAction('Renamed', {
+        materialId:
+          material && 'materialId' in material ? material.materialId?.toString() : undefined,
+        category: material && 'category' in material ? material.category : undefined,
+      });
+      onSuccess();
+    },
   });
   const [error, setError] = useState<string>('');
 
-  const getDefaultMaterialName = (
-    material: CaseMaterialsType | TDocument | null
-  ) => {
+  const getDefaultMaterialName = (material: CaseMaterialsType | TDocument | null) => {
     if (!material) return '';
     if ('subject' in material && typeof material.subject === 'string') {
       return material.subject;
     }
-    if (
-      'presentationTitle' in material &&
-      typeof material.presentationTitle === 'string'
-    ) {
+    if ('presentationTitle' in material && typeof material.presentationTitle === 'string') {
       return material.presentationTitle;
     }
     return '';
   };
 
-  const [inputValue, setInputValue] = useState<string>(
-    getDefaultMaterialName(material)
-  );
+  const [inputValue, setInputValue] = useState<string>(getDefaultMaterialName(material));
 
   if (!material) return null;
 
@@ -74,23 +75,13 @@ export const RenameDrawer = ({ material, onCancel, onSuccess }: Props) => {
 
   return (
     <Drawer heading="Rename">
-      <LoadingSpinner
-        isLoading={isMutating}
-        textContent="Renaming material..."
-      />
+      <LoadingSpinner isLoading={isMutating} textContent="Renaming material..." />
       {!isMutating && (
         <form onSubmit={handleSubmit}>
-          <div
-            className={`${
-              error ? 'govuk-form-group--error' : 'govuk-form-group'
-            }`}
-          >
+          <div className={`${error ? 'govuk-form-group--error' : 'govuk-form-group'}`}>
             <div>
               <h1 className="govuk-label-wrapper">
-                <label
-                  className="govuk-label govuk-label--s"
-                  htmlFor="new-material-name"
-                >
+                <label className="govuk-label govuk-label--s" htmlFor="new-material-name">
                   What is the new name of the material?
                 </label>
               </h1>
@@ -103,9 +94,7 @@ export const RenameDrawer = ({ material, onCancel, onSuccess }: Props) => {
               )}
 
               <input
-                className={`${
-                  error ? 'govuk-input govuk-input--error' : 'govuk-input'
-                }`}
+                className={`${error ? 'govuk-input govuk-input--error' : 'govuk-input'}`}
                 id="new-material-name"
                 name="newMaterialName"
                 type="text"

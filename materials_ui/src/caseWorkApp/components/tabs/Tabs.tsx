@@ -31,9 +31,7 @@ export const Tabs: React.FC<TabsProps> = ({
   const activeTabArrayPos = items.findIndex((item) => item.id === activeTabId);
   const activeTabIndex = activeTabArrayPos === -1 ? 0 : activeTabArrayPos;
 
-  const handleRegionKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (
-    ev
-  ) => {
+  const handleRegionKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (ev) => {
     if (ev.target !== ev.currentTarget) return;
     if (ev.code === 'ArrowLeft' || ev.code === 'ArrowRight') {
       ev.preventDefault();
@@ -44,9 +42,7 @@ export const Tabs: React.FC<TabsProps> = ({
       ev.preventDefault();
       document.getElementById('tabs-dropdown')?.click();
       setTimeout(() => {
-        document
-          .querySelector<HTMLElement>('#dropdown-panel button:not(:disabled)')
-          ?.focus();
+        document.querySelector<HTMLElement>('#dropdown-panel button:not(:disabled)')?.focus();
       }, 0);
     }
   };
@@ -58,7 +54,7 @@ export const Tabs: React.FC<TabsProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginBottom: '24px'
+          marginBottom: '24px',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -92,19 +88,14 @@ export const Tabs: React.FC<TabsProps> = ({
         aria-labelledby="document-tabs-region-label"
         tabIndex={0}
         onKeyDown={handleRegionKeyDown}
-        style={{
-          display: 'flex',
-          gap: '8px',
-          width: '100%',
-          alignItems: 'start'
-        }}
+        style={{ display: 'flex', gap: '8px', width: '100%', alignItems: 'start' }}
       >
         <div style={{ flex: 1, minWidth: 0 }}>
           <TabButtons
             items={items.map((item) => ({
               id: item.id,
               label: item.label,
-              ariaLabel: `Document ${item.label}`
+              ariaLabel: `Document ${item.label}`,
             }))}
             activeTabIndex={activeTabIndex}
             handleTabSelection={handleTabSelection}
@@ -124,13 +115,9 @@ export const Tabs: React.FC<TabsProps> = ({
 
           return (
             <div
-              id={
-                index === activeTabIndex ? 'active-tab-panel' : `panel-${index}`
-              }
+              id={index === activeTabIndex ? 'active-tab-panel' : `panel-${index}`}
               aria-labelledby={
-                index === activeTabIndex
-                  ? 'document-panel-region-label'
-                  : `tab_${index}`
+                index === activeTabIndex ? 'document-panel-region-label' : `tab_${index}`
               }
               key={panelId}
               role="tabpanel"
@@ -141,10 +128,7 @@ export const Tabs: React.FC<TabsProps> = ({
               }  ${classes.contentArea}`}
             >
               {index === activeTabIndex && (
-                <span
-                  id="document-panel-region-label"
-                  className={classes.tabPanelRegionLabel}
-                >
+                <span id="document-panel-region-label" className={classes.tabPanelRegionLabel}>
                   Document view port
                 </span>
               )}

@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const cmsDocTypeSchema = z.object({
   documentTypeId: z.number(),
   documentType: z.string(),
-  documentCategory: z.string()
+  documentCategory: z.string(),
 });
 
 export const DocumentSchema = z.object({
@@ -16,10 +16,7 @@ export const DocumentSchema = z.object({
   cmsFileCreatedDate: z.string(),
   isOcrProcessed: z.boolean(),
   categoryListOrder: z.number(),
-  presentationFlags: z.object({
-    read: z.literal('Ok'),
-    write: z.literal('Ok')
-  }),
+  presentationFlags: z.object({ read: z.literal('Ok'), write: z.literal('Ok') }),
   parentDocumentId: z.string().nullable(),
   witnessId: z.number().nullable(),
   hasFailedAttachments: z.boolean(),
@@ -33,13 +30,13 @@ export const DocumentSchema = z.object({
   canReclassify: z.boolean(),
   canRename: z.boolean(),
   renameStatus: z.string(),
-  reference: z.string().nullable()
+  reference: z.string().nullable(),
 });
 
 export const SearchResultSchema = z.object({
   id: z.string(),
-  parentId: z.string(),
-  childId: z.string(),
+  documentId: z.string(),
+  versionId: z.number(),
   fileName: z.string(),
   pageIndex: z.number(),
   lineIndex: z.number(),
@@ -50,9 +47,9 @@ export const SearchResultSchema = z.object({
     z.object({
       boundingBox: z.array(z.number()).nullable(),
       text: z.string(),
-      matchType: z.array(z.string())
-    })
-  )
+      matchType: z.string(),
+    }),
+  ),
 });
 
 export const SearchTermResultSchema = z.object({
@@ -71,17 +68,17 @@ export const SearchTermResultSchema = z.object({
         z.object({
           boundingBox: z.array(z.number()).nullable(),
           text: z.string(),
-          matchType: z.array(z.string())
-        })
-      )
-    })
+          matchType: z.string(),
+        }),
+      ),
+    }),
   ),
   status: z.string(),
   isUnused: z.boolean(),
   presentationTitle: z.string(),
   cmsOriginalFileName: z.string(),
   conversionStatus: z.string(),
-  resultsPerDocumentCount: z.number().optional()
+  resultsPerDocumentCount: z.number().optional(),
 });
 export const documentListSchema = z.array(DocumentSchema);
 export type DocumentResultType = z.infer<typeof documentListSchema>;

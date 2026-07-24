@@ -6,7 +6,7 @@ export const BaseEditStatementSchema = z.object({
   statementDate: z.coerce.date().optional(),
   statementNumber: z.string({ message: 'Enter a statement number' }),
   used: z.boolean({ message: 'Choose a material status' }),
-  witnessId: z.coerce.number({ message: 'Choose a witness' })
+  witnessId: z.coerce.number({ message: 'Choose a witness' }),
 });
 
 export const EditExhibitSchema = z.object({
@@ -20,62 +20,54 @@ export const EditExhibitSchema = z.object({
   used: z.boolean({ message: 'Choose a material status' }),
   producedBy: z.string({ message: 'Enter produced by' }).optional(),
   existingproducerOrWitnessId: z.coerce.number().optional(),
-  newProducer: z.string().optional()
+  newProducer: z.string().optional(),
 });
 
-export const EditStatementSchema = BaseEditStatementSchema.superRefine(
-  (data, ctx) => {
-    if (data.hasStatementDate) {
-      const date = data.statementDate;
+export const EditStatementSchema = BaseEditStatementSchema.superRefine((data, ctx) => {
+  if (data.hasStatementDate) {
+    const date = data.statementDate;
 
-      // Missing or invalid date
-      if (!date || isNaN(date.getTime())) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Enter the statement date',
-          path: ['statementDate']
-        });
-        return;
-      }
+    // Missing or invalid date
+    if (!date || isNaN(date.getTime())) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Enter the statement date',
+        path: ['statementDate'],
+      });
+      return;
+    }
 
-      // Date in the future
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+    // Date in the future
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-      const input = new Date(date);
-      input.setHours(0, 0, 0, 0);
+    const input = new Date(date);
+    input.setHours(0, 0, 0, 0);
 
-      if (input > today) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Date cannot be in the future',
-          path: ['statementDate']
-        });
-      }
+    if (input > today) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Date cannot be in the future',
+        path: ['statementDate'],
+      });
     }
   }
-);
+});
 
 export const EditStatementRequestSchema = BaseEditStatementSchema.omit({
-  hasStatementDate: true
+  hasStatementDate: true,
 }).extend({ statementDate: z.string().nullable() });
 
 export const EditStatementResponseSchema = z.object({
-  updateStatement: z.object({ id: z.number() })
+  updateStatement: z.object({ id: z.number() }),
 });
 
-export const EditExhibitResponseSchema = z.object({
-  updateExhibit: z.object({ id: z.number() })
-});
+export const EditExhibitResponseSchema = z.object({ updateExhibit: z.object({ id: z.number() }) });
 
 export type EditStatementType = z.infer<typeof EditStatementSchema>;
 export type EditExhibitType = z.infer<typeof EditExhibitSchema>;
-export type EditStatementRequestType = z.infer<
-  typeof EditStatementRequestSchema
->;
-export type EditStatementResponseType = z.infer<
-  typeof EditStatementResponseSchema
->;
+export type EditStatementRequestType = z.infer<typeof EditStatementRequestSchema>;
+export type EditStatementResponseType = z.infer<typeof EditStatementResponseSchema>;
 
 export type EditExhibitRequestType = z.infer<typeof EditStatementRequestSchema>;
 

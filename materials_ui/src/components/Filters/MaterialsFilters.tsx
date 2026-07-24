@@ -12,14 +12,11 @@ export const MaterialsFilters = () => {
     shallowFilters,
     setCheckboxFilter,
     setSearch,
-    saveFiltersToContext
+    saveFiltersToContext,
   } = useFilters('materials');
   const hasAccess = useFeatureFlag();
 
-  const handleCheckboxChange = (
-    filterGroup: string,
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleCheckboxChange = (filterGroup: string, event: ChangeEvent<HTMLInputElement>) => {
     const { checked, value } = event.target;
 
     setCheckboxFilter(filterGroup, value, checked);
@@ -33,7 +30,6 @@ export const MaterialsFilters = () => {
     setSearch(searchTerm);
   };
 
-  const categories = materialsCategoryList;
   const statusList = ['Used', 'Unused'];
 
   return (
@@ -41,7 +37,7 @@ export const MaterialsFilters = () => {
       onSubmit={handleFiltersSubmit}
       onReset={resetFilters}
       onSearchChange={handleSearchChange}
-      searchLabel="Search materials"
+      searchLabel="Material name"
       defaultSearchValue={filters?.search || ''}
     >
       {hasAccess([2, 3, 4, 5]) && (
@@ -49,18 +45,12 @@ export const MaterialsFilters = () => {
           <div className="govuk-form-group">
             <fieldset className="govuk-fieldset">
               <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">
-                <h3 className="govuk-heading-s small-heading-spacing">
-                  New material
-                </h3>
+                <h3 className="govuk-heading-s small-heading-spacing">New material</h3>
               </legend>
               <Checkbox
                 id="readStatus"
                 label="Show only new material (unread)"
-                checked={
-                  shallowFilters?.filters?.readStatus?.includes(
-                    READ_STATUS.UNREAD
-                  ) || false
-                }
+                checked={shallowFilters?.filters?.readStatus?.includes(READ_STATUS.UNREAD) || false}
                 onChange={(event) => handleCheckboxChange('readStatus', event)}
                 value={READ_STATUS.UNREAD}
               />
@@ -74,13 +64,12 @@ export const MaterialsFilters = () => {
           <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">
             <h3 className="govuk-heading-s small-heading-spacing">Status</h3>
           </legend>
+
           {statusList.map((status) => (
             <Checkbox
               id={`status-${status}`}
               label={status}
-              checked={
-                shallowFilters?.filters?.status?.includes(status) || false
-              }
+              checked={shallowFilters?.filters?.status?.includes(status) || false}
               onChange={(event) => handleCheckboxChange('status', event)}
               value={status}
               key={status}
@@ -95,16 +84,14 @@ export const MaterialsFilters = () => {
             <h3 className="govuk-heading-s small-heading-spacing">Category</h3>
           </legend>
 
-          {categories.map((category) => (
+          {materialsCategoryList.map(({ value, label }) => (
             <Checkbox
-              id={`category-${category}`}
-              label={category}
-              checked={
-                shallowFilters?.filters?.category?.includes(category) || false
-              }
+              id={`category-${value}`}
+              label={label}
+              checked={shallowFilters?.filters?.category?.includes(value) ?? false}
               onChange={(event) => handleCheckboxChange('category', event)}
-              value={category}
-              key={category}
+              value={value}
+              key={value}
             />
           ))}
         </fieldset>

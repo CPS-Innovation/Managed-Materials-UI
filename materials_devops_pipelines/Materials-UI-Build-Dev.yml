@@ -26,6 +26,7 @@ variables:
     value: "materials_ui"
   - group: materials-global
   - group: materials-ui-spa-dev
+  - group: materials-kv-dev-terraform
 
 pool:
   name: $(dev-build-agent)
@@ -94,6 +95,9 @@ stages:
               VITE_GLOBAL_SCRIPT_URL: $(GLOBAL_SCRIPT_URL)
               VITE_REDACTION_LOG_URL: $(VITE_REDACTION_LOG_URL)
               VITE_REDACTION_LOG_SCOPE: $(VITE_REDACTION_LOG_SCOPE)
+              VITE_APPLICATIONINSIGHTS_CONNECTION_STRING: $(innovation-development-app-insights-connection-string)
+              VITE_APPLICATIONINSIGHTS_SAMPLING_PERCENTAGE: $(APPLICATIONINSIGHTS_SAMPLING_PERCENTAGE)
+              VITE_APPLICATIONINSIGHTS_CLOUD_ROLE: $(APPLICATIONINSIGHTS_CLOUD_ROLE)
 
           - task: replacetokens@5
             displayName: "Set environment specific CSP in serve.json"

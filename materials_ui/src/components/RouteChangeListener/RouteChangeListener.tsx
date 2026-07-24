@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 import { useBanner } from '../../hooks';
 import { useMaterialTags, useSelectedItemsStore } from '../../stores';
+import { trackPageView } from '../../telemetry/appInsights';
 
 // this component is a non rendering component to perform actions when the user
 // changes pages for example resetting banners, selected items, etc
@@ -25,6 +26,7 @@ export const RouteChangeListener = () => {
 
     clearSelectedItems();
     scrollToTop();
+    trackPageView(pathname);
   }, [pathname]);
 
   return null;

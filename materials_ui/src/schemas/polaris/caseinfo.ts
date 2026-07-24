@@ -1,15 +1,12 @@
 import { z } from 'zod';
 
-export const LeadDefendantDetailsSchema = z.object({
-  firstNames: z.string(),
-  surname: z.string()
-});
+export const LeadDefendantDetailsSchema = z.object({ firstNames: z.string(), surname: z.string() });
 
 export const CaseInfoSchema = z.strictObject({
   id: z.number(),
   uniqueReferenceNumber: z.string(),
   leadDefendantDetails: LeadDefendantDetailsSchema,
-  numberOfDefendants: z.number()
+  numberOfDefendants: z.number(),
 });
 
 export const CaseInfoRequestSchema = z.null();

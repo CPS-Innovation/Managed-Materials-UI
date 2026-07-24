@@ -5,7 +5,7 @@ import { PcdReviewCoreType } from '../constants/enum';
 const PcdReviewCoreTypeSchema = z.union([
   z.literal(PcdReviewCoreType.EarlyAdvice),
   z.literal(PcdReviewCoreType.InitialReview),
-  z.literal(PcdReviewCoreType.PreChargeDecisionAnalysis)
+  z.literal(PcdReviewCoreType.PreChargeDecisionAnalysis),
 ]);
 
 const nullableString = z.string().nullable();
@@ -16,16 +16,11 @@ const CurrentEventSchema = z.object({
   name: z.string(),
   date: z.string(),
   authorOrVenue: z.string(),
-  type: z.number()
+  type: z.number(),
 });
 
 const NextEventLinkSchema = z.array(
-  z.object({
-    id: z.number(),
-    href: z.string(),
-    rel: z.string(),
-    type: z.string()
-  })
+  z.object({ id: z.number(), href: z.string(), rel: z.string(), type: z.string() }),
 );
 
 const MonitoringCodesSchema = z.array(
@@ -34,8 +29,8 @@ const MonitoringCodesSchema = z.array(
     description: z.string(),
     type: nullableNumber,
     disabled: z.boolean(),
-    isAssigned: z.boolean()
-  })
+    isAssigned: z.boolean(),
+  }),
 );
 
 const DgAssessmentItemsSchema = z.array(
@@ -43,8 +38,8 @@ const DgAssessmentItemsSchema = z.array(
     itemName: nullableString,
     title: nullableString,
     description: nullableString,
-    comment: nullableString
-  })
+    comment: nullableString,
+  }),
 );
 
 const DgDetailsSchema = z.object({
@@ -54,7 +49,7 @@ const DgDetailsSchema = z.object({
   policeResponse: nullableString,
   principalOffenceCategory: nullableString,
   stageAssessmentCompleted: nullableString,
-  submissionDgCompliant: nullableString
+  submissionDgCompliant: nullableString,
 });
 
 const PCDInitialReviewSchema = z.object({
@@ -79,7 +74,7 @@ const PCDInitialReviewSchema = z.object({
   publicInterestAssessment: nullableString,
   reviewSummary: nullableString,
   trialStrategy: z.string(),
-  witnessOrVictimInformationAndActions: nullableString
+  witnessOrVictimInformationAndActions: nullableString,
 });
 
 const DefendantDecisionSchema = z.object({
@@ -95,7 +90,7 @@ const DefendantDecisionSchema = z.object({
   reason: z.string(),
   reasonCode: z.string(),
   returnBailDate: nullableString,
-  specifiedCharges: nullableString
+  specifiedCharges: nullableString,
 });
 
 const DefendantDecisionsSchema = z.array(DefendantDecisionSchema);
@@ -109,8 +104,8 @@ const PCDHistoryActionPlanSchema = z.array(
     entryDate: z.string(),
     policeCovidUrgency: nullableString,
     status: z.string(),
-    suspect: z.string()
-  })
+    suspect: z.string(),
+  }),
 );
 
 const PCDReviewSchema = z.object({
@@ -132,53 +127,42 @@ const PCDReviewSchema = z.object({
   nextEventLink: NextEventLinkSchema,
   pcdHistoryActionPlan: PCDHistoryActionPlanSchema,
   policeCovidUrgency: nullableString,
-  urn: nullableString
+  urn: nullableString,
 });
 
 export const PCDReviewCoreSchema = z.array(
-  z.object({
-    date: z.string(),
-    id: z.coerce.number(),
-    type: PcdReviewCoreTypeSchema
-  })
+  z.object({ date: z.string(), id: z.coerce.number(), type: PcdReviewCoreTypeSchema }),
 );
 
-const ChargeDetailSchema = z.object({
-  code: z.string(),
-  description: z.string()
-});
+const ChargeDetailSchema = z.object({ code: z.string(), description: z.string() });
 
 const PreChargeDefendantDecisionSchema = DefendantDecisionSchema.extend({
-  chargeDetails: z.array(ChargeDetailSchema)
+  chargeDetails: z.array(ChargeDetailSchema),
 });
 
 const LinkedCaseUrnSchema = z.object({
   urn: z.string(),
   asn: z.string(),
   pncId: nullableString,
-  policeCC: nullableString
+  policeCC: nullableString,
 });
 
 const PreChargeDecisionAnalysisOutcomeSchema = PCDInitialReviewSchema.extend({
   dppConsent: nullableString,
-  linkedCaseUrns: z.array(LinkedCaseUrnSchema)
+  linkedCaseUrns: z.array(LinkedCaseUrnSchema),
 });
 
 const PreChargeDecisionOutcomeDetailSchema = PCDReviewSchema.extend({
-  defendantDecisions: z.array(PreChargeDefendantDecisionSchema)
+  defendantDecisions: z.array(PreChargeDefendantDecisionSchema),
 });
 
 export const PCDReviewDetailsSchema = z.object({
   preChargeDecisionAnalysisOutcome: PreChargeDecisionAnalysisOutcomeSchema,
-  preChargeDecisionOutcome: PreChargeDecisionOutcomeDetailSchema
+  preChargeDecisionOutcome: PreChargeDecisionOutcomeDetailSchema,
 });
 
-export type PCDInitialReviewResponseType = z.infer<
-  typeof PCDInitialReviewSchema
->;
+export type PCDInitialReviewResponseType = z.infer<typeof PCDInitialReviewSchema>;
 export type PCDReviewResponseType = z.infer<typeof PCDReviewSchema>;
 export type CaseHistoryResponseType = z.infer<typeof CurrentEventSchema>;
 export type PCDReviewCoreResponseType = z.infer<typeof PCDReviewCoreSchema>;
-export type PCDReviewDetailsResponseType = z.infer<
-  typeof PCDReviewDetailsSchema
->;
+export type PCDReviewDetailsResponseType = z.infer<typeof PCDReviewDetailsSchema>;

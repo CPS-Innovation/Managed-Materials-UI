@@ -1,21 +1,14 @@
 export type NotesStatus = 'disabled' | 'newNotes' | 'none';
 
-export const NOTES_STATUS = {
-  DISABLED: 'disabled',
-  NEW_NOTES: 'newNotes',
-  NONE: 'none'
-} as const;
+export const NOTES_STATUS = { DISABLED: 'disabled', NEW_NOTES: 'newNotes', NONE: 'none' } as const;
 
 export const NOTES_ARIA_LABELS: Record<NotesStatus, string> = {
   disabled: 'Comments unavailable for this document type',
   newNotes: 'Comments with notifications',
-  none: 'Comments'
+  none: 'Comments',
 };
 
-export const NotesIcon = (p: {
-  width: number;
-  notesStatus: NotesStatus;
-}) => {
+export const NotesIcon = (p: { width: number; notesStatus: NotesStatus }) => {
   return (
     <div style={{ display: 'flex' }} aria-hidden="true">
       <svg
@@ -39,7 +32,7 @@ export const NotesIcon = (p: {
             height: '10px',
             width: '10px',
             background: '#1d70b8',
-            borderRadius: '5px'
+            borderRadius: '5px',
           }}
         />
       )}
