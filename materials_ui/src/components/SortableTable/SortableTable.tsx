@@ -1,10 +1,11 @@
-import { Fragment, ReactNode } from 'react';
+import { Fragment, ReactNode, useState } from 'react';
 import { Checkbox, DocumentActions, LoadingSpinner } from '..';
 import { FilterItem } from '../../context/FiltersContext/helpers/types';
 import { useAutoReclassify, useCaseMaterial, useFilters } from '../../hooks';
 import { CaseMaterialDataType, CaseMaterialsType } from '../../schemas';
 import { useSelectedItemsStore } from '../../stores';
 import { ColumnSortFn } from '../../utils/filtering';
+import { SortDirection, SortDirectionIcon } from './SortDirectionIcon';
 import './SortableTable.scss';
 
 export type Column<T> = {
@@ -47,8 +48,20 @@ const SortableTable = <T,>({
   const { isPending: isAutoReclassifyPending } = useAutoReclassify();
   const { setSort } = useFilters(dataName);
   const { selectedMaterialId, selectMaterial, deselectMaterial } = useCaseMaterial();
+  const [sortStatus, setSortStatus] = useState('');
 
   const materialType = isCommunications ? 'communications' : 'materials';
+
+  const handleSort = (key: string, heading: string | ReactNode) => {
+    const isSameColumn = filters?.sort?.column === key;
+    const nextDirection: SortDirection =
+      !isSameColumn || !filters?.sort?.direction || filters.sort.direction === 'descending'
+        ? 'ascending'
+        : 'descending';
+    const headingText = typeof heading === 'string' ? heading : key;
+    setSortStatus(`Sort by ${headingText} (${nextDirection})`);
+    setSort(key);
+  };
 
   const handleSelectItem = (material: CaseMaterialsType) => {
     const isSelected = selectedItems[materialType]?.some(
@@ -87,7 +100,9 @@ const SortableTable = <T,>({
       {!isAutoReclassifyPending && (
         <div className="table-container">
           <table className="govuk-table">
-            <caption className="govuk-visually-hidden">{caption}</caption>
+            <caption className="govuk-visually-hidden">
+              {caption} (column headers with buttons are sortable).
+            </caption>
             <thead className="govuk-table__head">
               <tr className="govuk-table__row">
                 {checkboxes && (
@@ -106,28 +121,26 @@ const SortableTable = <T,>({
                 )}
                 {columns.length &&
                   columns.map(({ key, heading, isSortable }) => {
-                    const isSortedColumn =
-                      filters?.sort?.column === key && !!filters?.sort?.direction;
-                    const ariaSortValue = isSortable
-                      ? isSortedColumn && filters?.sort?.direction
+                    const sortDirection: SortDirection =
+                      filters?.sort?.column === key && filters?.sort?.direction
                         ? filters.sort.direction
-                        : 'none'
-                      : undefined;
+                        : 'none';
 
                     return (
                       <th
                         key={key}
                         scope="col"
                         className="govuk-table__header"
-                        aria-sort={ariaSortValue}
+                        {...(isSortable ? { 'aria-sort': sortDirection } : {})}
                       >
                         {isSortable ? (
                           <button
                             type="button"
                             className="sortable-table-header-button"
-                            onClick={() => setSort(key)}
+                            onClick={() => handleSort(key, heading)}
                           >
                             {heading}
+                            <SortDirectionIcon direction={sortDirection} />
                           </button>
                         ) : (
                           heading
@@ -209,6 +222,14 @@ const SortableTable = <T,>({
               )}
             </tbody>
           </table>
+          <div
+            className="govuk-visually-hidden"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            {sortStatus}
+          </div>
         </div>
       )}
     </>
