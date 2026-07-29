@@ -1,6 +1,6 @@
 import DOMPurify from 'dompurify';
 import { Fragment, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useLocation, useParams } from 'react-router-dom';
 
 import {
   Accordion,
@@ -18,19 +18,14 @@ import { cleanString } from '../utils/string';
 
 export const PcdRequestPage = () => {
   const { pcdId } = useParams<{ pcdId?: string }>();
-  const navigate = useNavigate();
+  const location = useLocation();
   const { getRoute } = useAppRoute();
   const { data: pcdListData, isLoading: isPcdListLoading } = usePCDList();
-
-  if (!pcdId && pcdListData?.[0]) {
-    navigate(`${pcdListData[0].id}`);
-  }
+  const latestPcdId = !pcdId ? pcdListData?.[0]?.id : undefined;
+  const shouldAutoFocusPageContent = !(location.state as { focusTab?: boolean } | null)?.focusTab;
 
   const { data: pcdDetailsData, isLoading: isPcdDetailsLoading } = usePCD({
-    pcdId: (() => {
-      if (pcdId) return pcdId;
-      if (pcdListData?.[0]) return pcdListData[0].id;
-    })(),
+    pcdId: pcdId ?? latestPcdId,
   });
 
   const navLinks: NavListItem[] | undefined = pcdListData?.map((pcd, index) => ({
@@ -68,6 +63,10 @@ export const PcdRequestPage = () => {
     [pcdDetailsData],
   );
 
+  if (latestPcdId) {
+    return <Navigate to={`${latestPcdId}`} state={location.state} />;
+  }
+
   return (
     <Layout title="PCD Request">
       {/* converting '\n' to actual line breaks with CSS*/}
@@ -75,14 +74,22 @@ export const PcdRequestPage = () => {
         <LoadingSpinner isLoading={isPcdDetailsLoading || isPcdListLoading} />
         {!(isPcdDetailsLoading || isPcdListLoading) &&
           (navLinks?.length === 0 ? (
-            <p className="govuk-body" tabIndex={-1} ref={(el) => el?.focus()}>
+            <p
+              className="govuk-body"
+              tabIndex={-1}
+              ref={shouldAutoFocusPageContent ? (el) => el?.focus() : undefined}
+            >
               There are no PCD Requests to show.
             </p>
           ) : (
             <TwoCol sidebar={renderSidebar()}>
               {pcdDetailsData && (
                 <>
-                  <h1 className="govuk-heading-l" tabIndex={-1} ref={(el) => el?.focus()}>
+                  <h1
+                    className="govuk-heading-l"
+                    tabIndex={-1}
+                    ref={shouldAutoFocusPageContent ? (el) => el?.focus() : undefined}
+                  >
                     {isLatestPcd
                       ? 'Latest PCD Request'
                       : `${formatDate(pcdDetailsData?.decisionRequested)} PCD Request`}
