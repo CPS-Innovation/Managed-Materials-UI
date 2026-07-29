@@ -30,6 +30,7 @@ export { useBanner } from './ui/useBanner';
 export { useDebounce } from './ui/useDebounce';
 export { useFeatureFlag } from './ui/useFeatureFlag';
 export { useFilters } from './ui/useFilters';
+export { useLoadingAnnouncement } from './ui/useLoadingAnnouncement';
 export { useLogger } from './ui/useLogger';
 export { usePageColors } from './ui/usePageColors';
 export { usePager } from './ui/usePager';

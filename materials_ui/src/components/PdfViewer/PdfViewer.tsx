@@ -4,6 +4,7 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import { usePagination } from 'react-use-pagination';
+import { useLoadingAnnouncement } from '../../hooks/ui/useLoadingAnnouncement';
 import { usePageColors } from '../../hooks/ui/usePageColors';
 import { LoadingSpinner } from '../LoadingSpinner/LoadingSpinner.tsx';
 import { Pagination } from '../Pagination/Pagination.tsx';
@@ -23,6 +24,11 @@ export const PdfViewer = ({ file, fileName }: Props) => {
   });
   const pageColors = usePageColors();
 
+  const loadingMessage = `The document preview for ${fileName} is loading. Please wait.`;
+  const loadedMessage = `The document "${fileName}" has finished loading and is ready to view. Please use the arrow keys to navigate through the document.`;
+
+  useLoadingAnnouncement(isLoading, loadingMessage, loadedMessage);
+
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumItems(numPages);
     setIsLoading(false);
@@ -30,21 +36,12 @@ export const PdfViewer = ({ file, fileName }: Props) => {
 
   return (
     <div>
-      <div aria-live="polite" aria-atomic="true" className="govuk-visually-hidden">
-        {isLoading
-          ? `The document preview for ${fileName} is loading. Please wait.`
-          : `The document "${fileName}" has finished loading and is ready to view. Please use the arrow keys to navigate through the document.`}
-      </div>
       <Document
         className="pdf-page-container"
         file={file}
         onLoadSuccess={onDocumentLoadSuccess}
-        loading={<LoadingSpinner isLoading textContent="Loading preview..." />}
-        aria-label={
-          isLoading
-            ? `The document preview for ${fileName} is loading. Please wait.`
-            : `The document "${fileName}" has finished loading and is ready to view. Please use the arrow keys to navigate through the document.`
-        }
+        loading={<LoadingSpinner isLoading announce={false} textContent="Loading preview..." />}
+        aria-label={isLoading ? loadingMessage : loadedMessage}
       >
         <div className="pagination-wrapper">
           <Pagination
