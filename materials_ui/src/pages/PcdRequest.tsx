@@ -16,6 +16,9 @@ import { useAppRoute, usePCD, usePCDList } from '../hooks';
 import { formatDate } from '../utils/date';
 import { cleanString } from '../utils/string';
 
+const getPcdRequestTitle = (isLatestPcd: boolean, decisionRequested: string) =>
+  isLatestPcd ? 'Latest PCD Request' : `${formatDate(decisionRequested)} PCD Request`;
+
 export const PcdRequestPage = () => {
   const { pcdId } = useParams<{ pcdId?: string }>();
   const location = useLocation();
@@ -90,9 +93,7 @@ export const PcdRequestPage = () => {
                     tabIndex={-1}
                     ref={shouldAutoFocusPageContent ? (el) => el?.focus() : undefined}
                   >
-                    {isLatestPcd
-                      ? 'Latest PCD Request'
-                      : `${formatDate(pcdDetailsData?.decisionRequested)} PCD Request`}
+                    {getPcdRequestTitle(Boolean(isLatestPcd), pcdDetailsData.decisionRequested)}
                   </h1>
                   <DefinitionList
                     items={[
