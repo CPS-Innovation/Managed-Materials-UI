@@ -1,6 +1,6 @@
 import { useMsal } from '@azure/msal-react';
 import { useEffect } from 'react';
-import { RouteChangeListener } from './components';
+import { LoadingAnnouncer, RouteChangeListener } from './components';
 import { loginRequest } from './msalInstance';
 import { Routes } from './routes';
 import {
@@ -49,6 +49,7 @@ export const App = () => {
         <div className="header-container">
           <cps-global-header></cps-global-header>
         </div>
+        <LoadingAnnouncer />
         <RouteChangeListener />
         <Routes />
       </div>

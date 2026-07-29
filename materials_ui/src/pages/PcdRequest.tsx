@@ -41,13 +41,8 @@ export const PcdRequestPage = () => {
   const renderSidebar = () => {
     return (
       <>
-        <LoadingSpinner isLoading={isPcdListLoading} />
-        {!isPcdListLoading && (
-          <>
-            <h2 className="govuk-visually-hidden">PCD Request List</h2>
-            <NavList items={navLinks || []} />
-          </>
-        )}
+        <h2 className="govuk-visually-hidden">PCD Request List</h2>
+        <NavList items={navLinks || []} />
       </>
     );
   };
