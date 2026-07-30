@@ -1,4 +1,4 @@
-import { KeyboardEvent, MouseEvent } from 'react';
+import { KeyboardEvent, MouseEvent, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { isPathCurrentUrl } from '../../utils/url';
 import './Tabs.scss';
@@ -17,6 +17,23 @@ export const Tabs = ({ tabs }: Props) => {
   const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
+  const selectedTabIndex = tabs.findIndex(
+    (tab) => tab.active || isPathCurrentUrl(pathname, tab.href),
+  );
+  const activeTabIndex = selectedTabIndex === -1 ? 0 : selectedTabIndex;
+  const [focusedTabIndex, setFocusedTabIndex] = useState(activeTabIndex);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const shouldRestoreTabFocus = Boolean(
+    (location.state as { focusTab?: boolean } | null)?.focusTab,
+  );
+
+  useEffect(() => {
+    setFocusedTabIndex(activeTabIndex);
+
+    if (shouldRestoreTabFocus) {
+      tabRefs.current[activeTabIndex]?.focus();
+    }
+  }, [activeTabIndex, shouldRestoreTabFocus]);
 
   if (tabs.length <= 1) {
     return null;
@@ -25,27 +42,18 @@ export const Tabs = ({ tabs }: Props) => {
   const handleTabClick = (event: MouseEvent, tab: Tab) => {
     event.preventDefault();
 
-    navigate(tab.href, { state: { anchor: 'main-content' } });
+    navigate(tab.href, { state: { focusTab: true } });
   };
 
   const handleKeyboardPress = (event: KeyboardEvent, index: number) => {
-    const key = event.key;
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
 
-    if (key === 'ArrowLeft') {
-      if (index === 0) {
-        return document?.getElementById(`tab-${tabs.length - 1}`)?.focus();
-      } else {
-        return document?.getElementById(`tab-${index - 1}`)?.focus();
-      }
-    }
+    event.preventDefault();
+    const direction = event.key === 'ArrowLeft' ? -1 : 1;
+    const nextIndex = (index + direction + tabs.length) % tabs.length;
 
-    if (key === 'ArrowRight') {
-      if (index === tabs.length - 1) {
-        return document?.getElementById(`tab-0`)?.focus();
-      } else {
-        return document?.getElementById(`tab-${index + 1}`)?.focus();
-      }
-    }
+    setFocusedTabIndex(nextIndex);
+    tabRefs.current[nextIndex]?.focus();
   };
 
   return (
@@ -54,8 +62,7 @@ export const Tabs = ({ tabs }: Props) => {
       <div className="govuk-tabs__list" role="tablist">
         {tabs.map((tab: Tab, index: number) => {
           const { shouldBlockNavigationCheck = () => false } = tab;
-          const isCurrentPage = isPathCurrentUrl(pathname, tab.href);
-          const isActiveAndCurrent = tab.active || isCurrentPage;
+          const isActiveAndCurrent = index === activeTabIndex;
 
           return (
             <button
@@ -74,8 +81,13 @@ export const Tabs = ({ tabs }: Props) => {
               onKeyDown={(event) => {
                 handleKeyboardPress(event, index);
               }}
+              onFocus={() => setFocusedTabIndex(index)}
               role="tab"
               id={`tab-${index}`}
+              ref={(element) => {
+                tabRefs.current[index] = element;
+              }}
+              tabIndex={index === focusedTabIndex ? 0 : -1}
             >
               <span className="govuk-tabs__tab">{tab.name}</span>
             </button>
