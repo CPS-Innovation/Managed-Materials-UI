@@ -49,8 +49,8 @@ export const Tabs = ({ tabs }: Props) => {
     if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
 
     event.preventDefault();
-    const shift = event.key === 'ArrowLeft' ? -1 : 1;
-    const nextIndex = (index + shift + tabs.length) % tabs.length;
+    const direction = event.key === 'ArrowLeft' ? -1 : 1;
+    const nextIndex = (index + direction + tabs.length) % tabs.length;
 
     setFocusedTabIndex(nextIndex);
     tabRefs.current[nextIndex]?.focus();
