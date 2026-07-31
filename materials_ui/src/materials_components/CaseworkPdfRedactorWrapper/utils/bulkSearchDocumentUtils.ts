@@ -21,18 +21,28 @@ export type TBulkSearchResponse = {
 
 export type TBulkSearchResult = { status: number; data: TBulkSearchResponse | null };
 
-export const bulkSearchDocument = async (p: {
+const bulkSearchPath = (route: { caseId: number; materialId: string; documentId: number }) =>
+  `/api/cases/${route.caseId}/materials/${route.materialId}/documents/${route.documentId}/search`;
+
+export const initiateBulkSearch = (request: {
   axiosInstance: AxiosInstance;
-  urn: string;
   caseId: number;
-  versionId: number;
-  documentId: string;
+  materialId: string;
+  documentId: number;
+}) => request.axiosInstance.post(bulkSearchPath(request));
+
+export const bulkSearchDocument = async (request: {
+  axiosInstance: AxiosInstance;
+  caseId: number;
+  materialId: string;
+  documentId: number;
   searchText: string;
   signal?: AbortSignal;
 }): Promise<TBulkSearchResult> => {
-  const response = await p.axiosInstance.get<TBulkSearchResponse>(
-    `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.versionId}/search`,
-    { params: { SearchText: p.searchText }, signal: p.signal, validateStatus: () => true },
-  );
+  const response = await request.axiosInstance.get<TBulkSearchResponse>(bulkSearchPath(request), {
+    params: { SearchText: request.searchText },
+    signal: request.signal,
+    validateStatus: () => true,
+  });
   return { status: response.status, data: response.data ?? null };
 };

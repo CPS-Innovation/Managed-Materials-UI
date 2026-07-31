@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { convertSearchResponseToRedactions } from '../../PdfRedactor/utils/bulkRedactionUtils';
 import type { TRedaction } from '../../PdfRedactor/utils/coordUtils';
 import { bulkSearchDocument } from '../utils/bulkSearchDocumentUtils';
@@ -11,7 +11,6 @@ export type TBulkSearchInternalState =
   | { status: 'error' };
 
 const POLL_INTERVAL_MS = 3000;
-const MAX_SEARCH_ATTEMPTS = 5;
 
 const wait = (ms: number, signal: AbortSignal) =>
   new Promise<void>((resolve) => {
@@ -28,13 +27,14 @@ const wait = (ms: number, signal: AbortSignal) =>
 
 export const useBulkSearch = (p: {
   axiosInstance: AxiosInstance;
-  urn: string;
   caseId: number;
-  versionId: number;
-  documentId: string;
+  materialId: string;
+  documentId: number;
 }) => {
   const [state, setState] = useState<TBulkSearchInternalState>({ status: 'idle' });
   const abortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => () => abortRef.current?.abort(), []);
 
   const clear = useCallback(() => {
     abortRef.current?.abort();
@@ -50,12 +50,11 @@ export const useBulkSearch = (p: {
       setState({ status: 'loading' });
 
       try {
-        for (let attempt = 1; attempt <= MAX_SEARCH_ATTEMPTS; attempt++) {
+        while (!controller.signal.aborted) {
           const { status, data } = await bulkSearchDocument({
             axiosInstance: p.axiosInstance,
-            urn: p.urn,
             caseId: p.caseId,
-            versionId: p.versionId,
+            materialId: p.materialId,
             documentId: p.documentId,
             searchText,
             signal: controller.signal,
@@ -72,19 +71,15 @@ export const useBulkSearch = (p: {
             return candidates;
           }
 
-          const stillProcessing = status === 202 || status === 423;
+          const stillProcessing = status === 202;
           if (!stillProcessing) {
             setState({ status: 'error' });
             return undefined;
           }
 
-          if (attempt < MAX_SEARCH_ATTEMPTS) {
-            await wait(POLL_INTERVAL_MS, controller.signal);
-            if (controller.signal.aborted) return undefined;
-          }
+          await wait(POLL_INTERVAL_MS, controller.signal);
         }
 
-        setState({ status: 'error' });
         return undefined;
       } catch (err) {
         if (axios.isCancel(err)) return undefined;
@@ -92,7 +87,7 @@ export const useBulkSearch = (p: {
         return undefined;
       }
     },
-    [p.axiosInstance, p.urn, p.caseId, p.versionId, p.documentId],
+    [p.axiosInstance, p.caseId, p.materialId, p.documentId],
   );
 
   const nudge = (delta: number) =>
