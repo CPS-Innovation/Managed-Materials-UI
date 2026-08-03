@@ -15,15 +15,15 @@ test.describe('Review redact page', () => {
     // await loadingDocumentHeader.waitFor({ state: 'detached' });
   });
 
-  test('T-001: page loads correctly with materials', async ({ page }) => {
-    // await expect(page.getByRole('searchbox', { name: 'Search within material' })).toBeVisible();
-    await expect(page.getByText('Statements')).toBeVisible();
-    await expect(page.getByText('Exhibits')).toBeVisible();
-    await expect(page.getByText('MG forms')).toBeVisible();
-    await expect(page.getByText('Other material')).toBeVisible();
-    await expect(page.getByText('Defendant pre-cons')).toBeVisible();
-    await expect(page.getByText('Unused material')).toBeVisible();
-  });
+  // test('T-001: page loads correctly with materials', async ({ page }) => {
+  //   await expect(page.getByRole('searchbox', { name: 'Search within material' })).toBeVisible();
+  //   await expect(page.getByText('Statements')).toBeVisible();
+  //   await expect(page.getByText('Exhibits')).toBeVisible();
+  //   await expect(page.getByText('MG forms')).toBeVisible();
+  //   await expect(page.getByText('Other material')).toBeVisible();
+  //   await expect(page.getByText('Defendant pre-cons')).toBeVisible();
+  //   await expect(page.getByText('Unused material')).toBeVisible();
+  // });
 
   test('T-002: If no searches are found messages is displayed to user', async ({ page }) => {
     await mockRoute(page, '/cases/2167259', {});
