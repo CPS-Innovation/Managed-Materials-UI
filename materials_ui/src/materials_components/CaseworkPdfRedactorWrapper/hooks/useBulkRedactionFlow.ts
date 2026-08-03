@@ -11,7 +11,6 @@ import { useBulkSearch } from './useBulkSearch';
 
 export const useBulkRedactionFlow = (p: {
   axiosInstance: AxiosInstance;
-  urn: string;
   caseId: number;
   parentId: string;
   childId: number;
@@ -27,10 +26,9 @@ export const useBulkRedactionFlow = (p: {
 
   const bulkSearch = useBulkSearch({
     axiosInstance: p.axiosInstance,
-    urn: p.urn,
     caseId: p.caseId,
-    versionId: p.childId,
-    documentId: p.parentId,
+    materialId: p.parentId,
+    documentId: p.childId,
   });
 
   // pin the popover above whichever match is currently focused

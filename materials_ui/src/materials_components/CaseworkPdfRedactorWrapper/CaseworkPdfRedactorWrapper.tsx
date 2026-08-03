@@ -133,7 +133,6 @@ export const CaseworkPdfRedactorWrapper = (p: {
 
   const bulkFlow = useBulkRedactionFlow({
     axiosInstance,
-    urn: p.urn,
     caseId: p.caseId,
     childId: p.childId,
     parentId: p.parentId,
