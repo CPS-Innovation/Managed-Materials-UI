@@ -23,7 +23,9 @@ type AppRouteKey = keyof typeof APP_ROUTES;
 export const useAppRoute = () => {
   const match = useMatch('/:urn/:caseId/*');
   const urn = match?.params.urn;
-  const caseId = match?.params.caseId;
+  const initCaseId = match?.params.caseId;
+  const parsedCaseId = Number(initCaseId);
+  const caseId = isNaN(parsedCaseId) ? undefined : parsedCaseId;
 
   const getRoute = (routeName: AppRouteKey, prefix: boolean = true) => {
     const routePrefix = urn && caseId && prefix ? `/${urn}/${caseId}/` : '';
@@ -31,5 +33,5 @@ export const useAppRoute = () => {
     return `${routePrefix}${APP_ROUTES[routeName]}`;
   };
 
-  return { getRoute };
+  return { getRoute, urn, caseId };
 };

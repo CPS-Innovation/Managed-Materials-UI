@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useTriggerListener } from '../PdfRedactor/utils/useTriggger';
 import { DocumentSidebarAccordion } from './DocumentSidebarAccordion';
 import { DocumentSidebarNotes } from './DocumentSidebarNotes';
 import { TDocument, useGetDocumentList } from './getters/getDocumentList';
@@ -10,58 +9,49 @@ export const DocumentSidebar = (p: {
   openDocumentIds: string[];
   activeDocumentId: string | null | undefined;
   newVersionDocumentId: string | null | undefined;
-  onDocumentsChange: (doc: TDocument[] | null | undefined) => void;
+  onChangeSidebarModeView: (x: 'accordion' | 'notes') => void;
   onSetDocumentOpenIds: (docIds: string[]) => void;
-  reloadTriggerData: [] | undefined;
+  documentListState: ReturnType<typeof useGetDocumentList>['state'];
   onDocumentClick?: (docId: string) => void;
   ActionComponent?: (p: { document: TDocument }) => React.ReactNode;
 }) => {
   const { caseId, urn } = p;
-  const [status, setStatus] = useState<
-    { mode: 'accordion' } | { mode: 'notes'; documentId: string }
-  >({ mode: 'accordion' });
-
-  useTriggerListener({ triggerData: p.reloadTriggerData, fn: () => documentList.load() });
-
-  const documentList = useGetDocumentList({ urn, caseId });
-  useEffect(() => {
-    p.onDocumentsChange(documentList.data);
-  }, [documentList.data]);
+  const [mode, setMode] = useState<{ view: 'accordion' } | { view: 'notes'; documentId: string }>({
+    view: 'accordion',
+  });
 
   useEffect(() => {
-    if (status.mode === 'accordion') documentList.load();
-  }, [status]);
+    p.onChangeSidebarModeView(mode.view);
+  }, [mode]);
 
-  if (status.mode === 'accordion') {
-    if (documentList.data === null) return <div>error</div>;
-    if (documentList.data === undefined) return <></>; //loading state
+  if (mode.view === 'accordion' && p.documentListState.status === 'success') {
     return (
       <div>
         <DocumentSidebarAccordion
           caseId={caseId}
           urn={urn}
-          documentList={documentList.data}
+          documentList={p.documentListState.data}
           activeDocumentId={p.activeDocumentId}
           newVersionDocumentId={p.newVersionDocumentId}
           openDocumentIds={p.openDocumentIds}
           onSetActiveDocumentIds={(docIds) => p.onSetDocumentOpenIds(docIds)}
           onDocumentClick={p.onDocumentClick}
-          onNotesClick={(docId: string) => setStatus({ mode: 'notes', documentId: docId })}
+          onNotesClick={(docId: string) => setMode({ view: 'notes', documentId: docId })}
           ActionComponent={p.ActionComponent}
         />
       </div>
     );
   }
-  if (status.mode === 'notes') {
-    const documentId = status.documentId;
+  if (mode.view === 'notes') {
+    const documentId = mode.documentId;
 
     return (
       <DocumentSidebarNotes
         documentId={documentId}
         caseId={caseId}
         urn={urn}
-        onBackButtonClick={() => setStatus({ mode: 'accordion' })}
-        onNoteSavedSuccess={() => setStatus({ mode: 'accordion' })}
+        onBackButtonClick={() => setMode({ view: 'accordion' })}
+        onNoteSavedSuccess={() => setMode({ view: 'accordion' })}
       />
     );
   }
