@@ -85,10 +85,10 @@ export const createRedaction = (p: {
   scale: number;
 }): TRedaction => ({
   id: crypto.randomUUID(),
-  x1: p.coord1.x,
-  y1: p.coord1.y,
-  x2: p.coord2.x,
-  y2: p.coord2.y,
+  x1: Math.min(p.coord1.x, p.coord2.x),
+  y1: Math.min(p.coord1.y, p.coord2.y),
+  x2: Math.max(p.coord1.x, p.coord2.x),
+  y2: Math.max(p.coord1.y, p.coord2.y),
   pageNumber: p.pageNumber,
   pageHeight: p.pageRect.height / p.scale,
   pageWidth: p.pageRect.width / p.scale,
