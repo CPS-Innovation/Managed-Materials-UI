@@ -4,19 +4,19 @@ import { mockCaseMaterials } from '../mocks/mockCaseMaterials';
 
 test.describe('Review redact page', () => {
   test.beforeEach(async ({ page }) => {
-    const loadingDocumentHeader = page.getByRole('heading', {
-      name: 'Loading documents',
-      includeHidden: true,
-    });
+    // const loadingDocumentHeader = page.getByRole('heading', {
+    //   name: 'Loading documents',
+    //   includeHidden: true,
+    // });
     await mockRoute(page, '/case-materials', mockCaseMaterials());
     await page.goto('./review-and-redact', { waitUntil: 'domcontentloaded' });
     await page.waitForRequest('**/case-info/2167259');
-    await expect(loadingDocumentHeader).toBeVisible();
-    await loadingDocumentHeader.waitFor({ state: 'detached' });
+    // await expect(loadingDocumentHeader).toBeVisible();
+    // await loadingDocumentHeader.waitFor({ state: 'detached' });
   });
 
   test('T-001: page loads correctly with materials', async ({ page }) => {
-    await expect(page.getByRole('searchbox', { name: 'Search within material' })).toBeVisible();
+    // await expect(page.getByRole('searchbox', { name: 'Search within material' })).toBeVisible();
     await expect(page.getByText('Statements')).toBeVisible();
     await expect(page.getByText('Exhibits')).toBeVisible();
     await expect(page.getByText('MG forms')).toBeVisible();

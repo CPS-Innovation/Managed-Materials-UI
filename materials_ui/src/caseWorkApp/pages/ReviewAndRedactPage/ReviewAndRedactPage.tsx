@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   DocumentKeywordSearch,
   Layout,
@@ -7,11 +7,15 @@ import {
   RenameDrawer,
   TwoCol,
 } from '../../../components';
-import { useCaseInfoStore } from '../../../hooks';
+import { useAppRoute } from '../../../hooks';
 import { navigateToViewDocumentPageInNewTab } from '../../../hooks/ui/navigateToViewDocumentPageInNewTab';
 import { checkInDocumentFromAxiosInstance } from '../../../materials_components/CaseworkPdfRedactorWrapper/hooks/useDocumentCheckOutRequest';
 import { DocumentSidebar } from '../../../materials_components/DocumentSelectAccordion/DocumentSidebar';
-import { TDocument } from '../../../materials_components/DocumentSelectAccordion/getters/getDocumentList';
+import {
+  TDocument,
+  useGetDocumentList,
+} from '../../../materials_components/DocumentSelectAccordion/getters/getDocumentList';
+import { GovUkBanner } from '../../../materials_components/DocumentSelectAccordion/templates/GovUkBanner';
 import {
   clearOpenDocumentTabsFromLocalStorage,
   safeGetOpenDocumentTabsFromLocalStorage,
@@ -46,7 +50,14 @@ type PendingUnsavedAction =
 
 type UnsavedModal = { kind: 'blockNav'; href?: string } | { kind: 'closeAll' };
 
+const useReviewAndRedactRoute = () => {
+  const { caseId, urn } = useAppRoute();
+
+  return { caseId: caseId!, urn: urn! };
+};
+
 export const ReviewAndRedactPage = () => {
+  const { caseId, urn } = useReviewAndRedactRoute();
   const { state: locationState } = useLocation();
   const {
     docType: docTypeParam,
@@ -62,8 +73,7 @@ export const ReviewAndRedactPage = () => {
 
   const navigate = useNavigate();
 
-  const { caseInfo } = useCaseInfoStore();
-  const { id: caseId, urn } = caseInfo || {};
+  const documentList = useGetDocumentList({ populateOnMount: true, urn, caseId });
 
   const [selectedDocumentForRename, setSelectedDocumentForRename] = useState<
     (TDocument & { materialId?: number }) | null
@@ -77,7 +87,6 @@ export const ReviewAndRedactPage = () => {
     Record<string, DocSearchContext>
   >({});
 
-  const reloadSidebarTrigger = useTrigger();
   const checkInDocumentTrigger = useTrigger();
   useSwitchContentArea();
 
@@ -94,12 +103,6 @@ export const ReviewAndRedactPage = () => {
 
   const [unsavedModal, setUnsavedModal] = useState<UnsavedModal | null>(null);
   const [pendingUnsavedAction, setPendingUnsavedAction] = useState<PendingUnsavedAction>();
-  const [documents, setDocuments] = useState<TDocument[] | null | undefined>();
-  const documentsRef = useRef<TDocument[] | null | undefined>(undefined);
-
-  useEffect(() => {
-    documentsRef.current = documents;
-  }, [documents]);
 
   useEffect(() => {
     const onBeforeUnload = async () => checkInDocumentTrigger.fire();
@@ -114,7 +117,6 @@ export const ReviewAndRedactPage = () => {
   const { redactionLogAxios, axiosInstance } = useAxiosInstances();
 
   useEffect(() => {
-    if (!caseId) return;
     const saved = safeGetOpenDocumentTabsFromLocalStorage(caseId);
     if (saved && saved.openParentIds.length > 0) {
       setOpenParentIds(saved.openParentIds);
@@ -123,7 +125,6 @@ export const ReviewAndRedactPage = () => {
   }, [caseId]);
 
   useEffect(() => {
-    if (!caseId) return;
     if (openParentIds.length === 0) {
       clearOpenDocumentTabsFromLocalStorage(caseId);
     } else {
@@ -174,8 +175,12 @@ export const ReviewAndRedactPage = () => {
   };
 
   useEffect(() => {
-    if (docTypeParam && documents && documents.length > 0) {
-      const filteredDocs = documents.filter(
+    if (
+      docTypeParam &&
+      documentList.state.status === 'success' &&
+      documentList.state.data.length > 0
+    ) {
+      const filteredDocs = documentList.state.data.filter(
         (doc) =>
           doc.cmsDocType.documentType === docTypeParam && !openParentIds.includes(doc.parentId),
       );
@@ -186,12 +191,13 @@ export const ReviewAndRedactPage = () => {
         setOpenParentIds((prev) => [...prev, ...filteredDocs.map((doc) => doc.parentId)]);
       }
     }
-  }, [docTypeParam, documents]);
+  }, [docTypeParam, documentList.state]);
 
+  const documentListState = documentList.state; // required for ts compiler to narrow
   const openDocuments =
-    urn && caseId
+    documentListState.status === 'success'
       ? openParentIds
-          .map((parentId) => documents?.find((d) => d.parentId === parentId))
+          .map((parentId) => documentListState.data.find((d) => d.parentId === parentId))
           .filter((doc): doc is TDocument => doc !== undefined)
       : [];
 
@@ -207,8 +213,8 @@ export const ReviewAndRedactPage = () => {
           parentId={doc.parentId}
           childId={doc.childId}
           document={doc}
-          urn={urn!}
-          caseId={caseId!}
+          urn={urn}
+          caseId={caseId}
           mode={modeByParentId[doc.parentId] ?? 'disabled'}
           onModeChange={(newMode) => handleModeChange(doc.parentId, newMode)}
           onRedactionsChange={(redactions) => {
@@ -216,7 +222,7 @@ export const ReviewAndRedactPage = () => {
           }}
           onModification={(document) => {
             setNewVersionParentId(document.parentId);
-            reloadSidebarTrigger.fire();
+            documentList.load();
           }}
           initRedactions={redactionsIndexedOnParentId[doc.parentId]}
           onNumOfPagesChange={(numOfPages) =>
@@ -232,8 +238,10 @@ export const ReviewAndRedactPage = () => {
   }));
 
   const performCloseTab = (documentId: string | undefined) => {
-    const document = documents?.find((x) => x.parentId === documentId);
-    if (document && caseId && urn) {
+    if (documentListState.status !== 'success') return;
+
+    const document = documentListState.data.find((x) => x.parentId === documentId);
+    if (document) {
       checkInDocumentFromAxiosInstance({
         axiosInstance,
         caseId,
@@ -255,17 +263,15 @@ export const ReviewAndRedactPage = () => {
     (redactionsIndexedOnParentId[parentId]?.length ?? 0) > 0;
 
   const closeAllTabs = () => {
-    if (caseId && urn) {
-      openDocuments.forEach((document) => {
-        checkInDocumentFromAxiosInstance({
-          axiosInstance,
-          caseId,
-          urn,
-          parentId: document.parentId,
-          childId: document.childId,
-        });
+    openDocuments.forEach((document) => {
+      checkInDocumentFromAxiosInstance({
+        axiosInstance,
+        caseId,
+        urn,
+        parentId: document.parentId,
+        childId: document.childId,
       });
-    }
+    });
 
     setActiveParentId('');
     setOpenParentIds([]);
@@ -368,11 +374,40 @@ export const ReviewAndRedactPage = () => {
         return true;
       }}
     >
-      <LoadingSpinner isLoading={documents === undefined} textContent="Loading documents" />
-      {documents === null && <div>Error...</div>}
+      <LoadingSpinner
+        isLoading={documentListState.status === 'loading'}
+        textContent="Loading documents"
+      />
+      {documentListState.status === 'error' && (
+        <div>
+          <GovUkBanner
+            variant="error"
+            headerTitle="Error"
+            contentHeading="The materials could not be loaded"
+            contentBody={
+              <>
+                <p className="govuk-body">
+                  Please try again or <Link to="/case-search">search for another case</Link>
+                </p>
+                <p className="govuk-inset-text">
+                  {[...new Set(documentListState.errorMessages)].map((x, j, arr) => {
+                    const isLast = arr.length - 1 === j;
+                    return (
+                      <React.Fragment key={x}>
+                        {x}
+                        {!isLast && <br />}
+                      </React.Fragment>
+                    );
+                  })}
+                </p>
+              </>
+            }
+          />
+        </div>
+      )}
       {unsavedModal && (
         <UnsavedRedactionsModal
-          documents={documents ?? []}
+          documents={documentListState.status === 'success' ? documentListState.data : []}
           redactionsIndexedOnDocumentId={
             unsavedModal.kind === 'closeAll' ? openUnsavedRedactions : redactionsIndexedOnParentId
           }
@@ -402,15 +437,15 @@ export const ReviewAndRedactPage = () => {
             onCancel={() => setSelectedDocumentForRename(null)}
             onSuccess={() => {
               setSelectedDocumentForRename(null);
-              reloadSidebarTrigger.fire();
+              documentList.load();
             }}
           />
         )}
 
         {showRedactionLogModal && (
           <RedactionLogModal
-            urn={urn!}
-            caseId={caseId!}
+            urn={urn}
+            caseId={caseId}
             isOpen={showRedactionLogModal}
             onClose={() => setShowRedactionLogModal(false)}
             lookups={lookups}
@@ -421,9 +456,9 @@ export const ReviewAndRedactPage = () => {
 
         <TwoCol
           sidebar={
-            isSidebarVisible && caseId && urn ? (
+            isSidebarVisible ? (
               <>
-                {documents && (
+                {documentListState.status === 'success' && (
                   <DocumentKeywordSearch
                     modalOpen={searchModalOpen}
                     setModalOpen={setSearchModalOpen}
@@ -437,9 +472,9 @@ export const ReviewAndRedactPage = () => {
                   openDocumentIds={openParentIds}
                   onSetDocumentOpenIds={setOpenParentIds}
                   onDocumentClick={requestActiveTabChange}
-                  reloadTriggerData={reloadSidebarTrigger.data}
-                  onDocumentsChange={(docs) => {
-                    if (docs !== undefined) setDocuments(docs);
+                  documentListState={documentList.state}
+                  onChangeSidebarModeView={(mode) => {
+                    if (mode === 'accordion') documentList.load();
                   }}
                 />
               </>
@@ -462,7 +497,6 @@ export const ReviewAndRedactPage = () => {
                   onModeChange={(newMode) => handleModeChange(activeTabId, newMode)}
                   onRedactionLogClick={() => setShowRedactionLogModal(true)}
                   onViewInNewWindowClick={() => {
-                    if (!urn || !caseId) return;
                     trackAction('OpenedInNewWindow', { materialId: activeTabId });
                     navigateToViewDocumentPageInNewTab({ urn, caseId, materialId: activeTabId });
                   }}
