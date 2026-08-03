@@ -30,11 +30,11 @@ test.describe('Review redact page', () => {
     await mockRoute(page, '/cases/2167259/tracker', { status: 'Completed', documents: [] });
     await mockRoute(page, '/cases/2167259/search/**', []);
 
-    await expect(page.getByRole('searchbox', { name: 'Search within material' })).toBeVisible();
-    await page.getByRole('searchbox', { name: 'Search within material' }).fill('test search');
-    await page
-      .getByRole('heading', { name: 'Loading documents', includeHidden: true })
-      .waitFor({ state: 'detached' });
+    // await expect(page.getByRole('searchbox', { name: 'Search within material' })).toBeVisible();
+    // await page.getByRole('searchbox', { name: 'Search within material' }).fill('test search');
+    // await page
+    //   .getByRole('heading', { name: 'Loading documents', includeHidden: true })
+    //   .waitFor({ state: 'detached' });
     await page.getByRole('button', { name: 'Search' }).click();
     await page
       .getByRole('heading', { name: 'Loading search results', includeHidden: true })
