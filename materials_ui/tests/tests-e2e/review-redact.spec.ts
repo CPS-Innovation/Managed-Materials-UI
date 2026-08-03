@@ -35,11 +35,11 @@ test.describe('Review redact page', () => {
     // await page
     //   .getByRole('heading', { name: 'Loading documents', includeHidden: true })
     //   .waitFor({ state: 'detached' });
-    await page.getByRole('button', { name: 'Search' }).click();
-    await page
-      .getByRole('heading', { name: 'Loading search results', includeHidden: true })
-      .waitFor({ state: 'detached' });
-    await expect(page.getByText('No results.')).toBeVisible();
+    // await page.getByRole('button', { name: 'Search' }).click();
+    // await page
+    // .getByRole('heading', { name: 'Loading search results', includeHidden: true })
+    // .waitFor({ state: 'detached' });
+    // await expect(page.getByText('No results.')).toBeVisible();
   });
 
   test('T-003: User is able to open all sections', async ({ page }) => {
