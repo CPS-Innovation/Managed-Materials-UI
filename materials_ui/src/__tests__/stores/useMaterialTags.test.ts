@@ -1,7 +1,11 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { useMaterialTags } from '../../stores';
 
 describe('useMaterialTags Store', () => {
+  beforeEach(() => {
+    useMaterialTags.setState({ materialTags: [] });
+  });
+
   it('should initialize with an empty materialTags array', () => {
     const store = useMaterialTags.getState();
     expect(store.materialTags).toEqual([]);
@@ -93,14 +97,14 @@ describe('useMaterialTags Store', () => {
     expect(store.materialTags).toEqual([{ materialId: 3, tagName: 'tag3' }]);
   });
 
-  it('should not modify tags when clearTags is called with an empty array', () => {
+  it('should clear every tag when clearTags is called with an empty array', () => {
     const newTags = [
       { materialId: 1, tagName: 'tag1' },
       { materialId: 2, tagName: 'tag2' },
     ];
 
     useMaterialTags.getState().setTags(newTags);
-    useMaterialTags.getState().clearTags();
+    useMaterialTags.getState().clearTags([]);
 
     const store = useMaterialTags.getState();
     expect(store.materialTags).toEqual([]);

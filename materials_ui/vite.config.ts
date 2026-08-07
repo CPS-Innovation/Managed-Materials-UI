@@ -152,7 +152,16 @@ export default defineConfig(({ mode }) => {
       outputFile: { junit: './unit-test-results.xml' },
       setupFiles: './src/setupTests.ts',
       silent: true,
-      exclude: ['e2e', 'node_modules'],
+      include: ['src/**/*.{test,spec}.{ts,tsx}'],
+      exclude: ['**/node_modules/**', '**/build/**', 'tests/**'],
+      restoreMocks: true,
+      clearMocks: true,
+      coverage: {
+        provider: 'v8',
+        reporter: ['text', 'html'],
+        include: ['src/**/*.ts'],
+        exclude: ['src/**/*.d.ts', 'src/**/*.{test,spec}.ts', 'src/mocks/**', 'src/setupTests.ts'],
+      },
     },
   };
 });

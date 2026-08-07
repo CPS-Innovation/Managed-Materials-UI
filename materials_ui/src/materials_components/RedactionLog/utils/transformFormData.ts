@@ -4,6 +4,8 @@ import { TDocument } from '../../DocumentSelectAccordion/getters/getDocumentList
 import { TRedactionType } from '../../PdfRedactor/RedactionTypeSelect';
 import { RedactionLogFormInputs } from '../RedactionLogModal';
 
+export const LOOKUPS_REQUIRED_ERROR = 'Lookups data is required for form transformation';
+
 const normalizeToString = (value: string | number | undefined | null): string =>
   value === undefined || value === null ? '' : value.toString().trim();
 
@@ -100,7 +102,7 @@ export const transformFormDataToApiFormat = ({
   listModeRedactionTypes,
 }: TransformFormDataToApiFormatParams): RedactionLogData => {
   if (!lookups) {
-    throw new Error('Lookups data is required for form transformation');
+    throw new Error(LOOKUPS_REQUIRED_ERROR);
   }
 
   const { area, unit } = findAreaAndUnit(
