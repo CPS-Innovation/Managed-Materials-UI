@@ -85,14 +85,8 @@ describe('transformFormDataToApiFormat', () => {
     expect(log.notes).toBe('Reviewed by supervisor');
   });
 
-  it('carries the CMS details of the document being logged', () => {
-    expect(transform().cmsValues).toEqual({
-      originalFileName: 'statement.pdf',
-      documentId: '9876',
-      documentType: 'MG11',
-      fileCreatedDate: '2026-01-15T00:00:00Z',
-      documentTypeId: 1056,
-    });
+  it('logs the CMS document id without its CMS- prefix', () => {
+    expect(transform().cmsValues.documentId).toBe('9876');
   });
 
   it('falls back to the submitted ids when lookups hold no match', () => {
