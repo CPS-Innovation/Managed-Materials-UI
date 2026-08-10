@@ -363,7 +363,6 @@ export const RedactionLogModalBody = ({
                     </li>
                     <li>Avoid recording full names</li>
                     <li>Do not record sensitive personal data</li>
-                    <li>Supporting notes optional - 400 characters maximum</li>
                   </ul>
                 );
               }}
