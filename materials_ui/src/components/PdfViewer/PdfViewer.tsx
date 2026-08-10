@@ -39,6 +39,7 @@ export const PdfViewer = ({ file, fileName }: Props) => {
       <Document
         className="pdf-page-container"
         file={file}
+        externalLinkTarget="_blank"
         onLoadSuccess={onDocumentLoadSuccess}
         loading={<LoadingSpinner isLoading announce={false} textContent="Loading preview..." />}
         aria-label={isLoading ? loadingMessage : loadedMessage}
