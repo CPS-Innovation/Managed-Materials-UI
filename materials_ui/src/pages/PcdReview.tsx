@@ -187,7 +187,9 @@ const ChargingDecisionTable = ({ decision }: { decision: DecisionOutcome }) => {
               <td className="govuk-table__cell">{d.advice}</td>
               <td className="govuk-table__cell">{d.chargingCode === 'K' ? d.reason : '-'}</td>
               <td className="govuk-table__cell">
-                {PUBLIC_INTEREST_REASON_CODES.has(d.reasonCode) ? d.publicInterestCode : '-'}
+                {d.reasonCode && PUBLIC_INTEREST_REASON_CODES.has(d.reasonCode)
+                  ? d.publicInterestCode
+                  : '-'}
               </td>
             </tr>
           ))}

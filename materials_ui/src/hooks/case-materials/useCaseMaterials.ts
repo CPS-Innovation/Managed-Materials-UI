@@ -1,5 +1,5 @@
 import useSWR from 'swr';
-import { useCaseInfoStore, useRequest } from '..';
+import { useAppRoute, useRequest } from '..';
 import { QUERY_KEYS } from '../../constants/query';
 import { CaseMaterialDataType, CaseMaterialsResponseType } from '../../schemas';
 
@@ -8,14 +8,14 @@ type UseCaseMaterialsProps = { dataType: CaseMaterialDataType };
 export const useCaseMaterials = ({ dataType }: UseCaseMaterialsProps) => {
   const request = useRequest();
 
-  const { caseInfo } = useCaseInfoStore();
-  const { urn, id } = caseInfo || {};
+  const { urnPrefix: urn, caseId } = useAppRoute();
+  const caseInfo = urn && caseId ? { urn, caseId } : null;
 
-  const materialsKey = caseInfo ? [QUERY_KEYS.CASE_MATERIAL, id, urn] : null;
+  const materialsKey = caseInfo ? [QUERY_KEYS.CASE_MATERIAL, caseId, urn] : null;
 
   const getCaseMaterials = async () => {
     const response = await request.get<CaseMaterialsResponseType>(
-      `/urns/${urn}/cases/${id}/case-materials`,
+      `/urns/${urn}/cases/${caseId}/case-materials`,
     );
 
     if (response.status === 422 || response.status !== 200) {

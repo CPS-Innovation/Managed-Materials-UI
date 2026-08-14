@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { mockRoute, mockServerError } from '../helpers';
 import { mockPcdReviewCoreDataResponse } from '../mocks/pcd/mockPcdReviewCore';
-import { mockPcdReviewDetailsResponse } from '../mocks/pcd/mockPcdReviewDetails';
+import { PcdReviewDetailsDataResponseMock } from '../mocks/pcd/mockPcdReviewDetails';
 
 const CASE_ID = '2167259';
 const FIRST_REVIEW_HISTORY_ID = 4380514;
@@ -12,7 +12,7 @@ test.describe('PCD Review', () => {
     await mockRoute(
       page,
       `cases/${CASE_ID}/history/${FIRST_REVIEW_HISTORY_ID}/pcd-review-details`,
-      mockPcdReviewDetailsResponse(),
+      PcdReviewDetailsDataResponseMock,
     );
 
     await page.goto('./pcd-review', { waitUntil: 'domcontentloaded' });

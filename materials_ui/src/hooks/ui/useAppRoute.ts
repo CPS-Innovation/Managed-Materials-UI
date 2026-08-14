@@ -27,11 +27,14 @@ export const useAppRoute = () => {
   const parsedCaseId = Number(initCaseId);
   const caseId = isNaN(parsedCaseId) ? undefined : parsedCaseId;
 
+  // removes everything after the first non-alphanumeric character
+  const urnPrefix = urn?.match(/^[a-zA-Z0-9]+/)?.[0];
+
   const getRoute = (routeName: AppRouteKey, prefix: boolean = true) => {
     const routePrefix = urn && caseId && prefix ? `/${urn}/${caseId}/` : '';
 
     return `${routePrefix}${APP_ROUTES[routeName]}`;
   };
 
-  return { getRoute, urn, caseId };
+  return { getRoute, urn, caseId, urnPrefix };
 };
