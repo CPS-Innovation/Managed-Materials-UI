@@ -1,14 +1,14 @@
 import useSWR from 'swr';
-import { useCaseInfoStore, useRequest } from '../';
+import { useAppRoute, useRequest } from '../';
 import { QUERY_KEYS } from '../../constants/query';
 import { DocumentResultType } from '../../schemas/documents';
 
 export const useDocuments = () => {
   const request = useRequest();
-  const { caseInfo } = useCaseInfoStore();
+  const appRoute = useAppRoute();
 
-  const urn = caseInfo?.urn;
-  const caseId = caseInfo?.id.toString();
+  const urn = appRoute?.urnWithoutSlash;
+  const caseId = appRoute?.caseId?.toString();
 
   const getDocuments = () =>
     request

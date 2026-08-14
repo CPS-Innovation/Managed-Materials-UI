@@ -27,11 +27,13 @@ export const useAppRoute = () => {
   const parsedCaseId = Number(initCaseId);
   const caseId = isNaN(parsedCaseId) ? undefined : parsedCaseId;
 
+  const urnWithoutSlash = urn ? urn.slice(urn.indexOf(',') + 1) : urn;
+
   const getRoute = (routeName: AppRouteKey, prefix: boolean = true) => {
     const routePrefix = urn && caseId && prefix ? `/${urn}/${caseId}/` : '';
 
     return `${routePrefix}${APP_ROUTES[routeName]}`;
   };
 
-  return { getRoute, urn, caseId };
+  return { getRoute, urn, caseId, urnWithoutSlash };
 };

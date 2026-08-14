@@ -1,9 +1,4 @@
-import {
-  PCDReviewDetailsSchema,
-  type PCDReviewDetailsResponseType,
-} from '../../../src/schemas/pcdReview';
-
-const PcdReviewDetailsDataResponse: PCDReviewDetailsResponseType = {
+export const PcdReviewDetailsDataResponseMock = {
   preChargeDecisionAnalysisOutcome: {
     caseId: 2167259,
     allocation:
@@ -178,20 +173,3 @@ const PcdReviewDetailsDataResponse: PCDReviewDetailsResponseType = {
     ],
   },
 };
-
-PCDReviewDetailsSchema.parse(PcdReviewDetailsDataResponse);
-
-export const mockPcdReviewDetailsResponse = (
-  overwrite?: Partial<PCDReviewDetailsResponseType>,
-): PCDReviewDetailsResponseType => ({
-  ...PcdReviewDetailsDataResponse,
-  ...overwrite,
-  preChargeDecisionAnalysisOutcome: {
-    ...PcdReviewDetailsDataResponse.preChargeDecisionAnalysisOutcome,
-    ...overwrite?.preChargeDecisionAnalysisOutcome,
-  },
-  preChargeDecisionOutcome: {
-    ...PcdReviewDetailsDataResponse.preChargeDecisionOutcome,
-    ...overwrite?.preChargeDecisionOutcome,
-  },
-});

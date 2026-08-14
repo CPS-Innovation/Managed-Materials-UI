@@ -1,17 +1,21 @@
 import useSWR from 'swr';
-import { useCaseInfoStore, useRequest } from '..';
+import { useAppRoute, useRequest } from '..';
 import { QUERY_KEYS } from '../../constants/query';
 import { PCDListingResponseType, PCDListingType } from '../../schemas/pcd';
 
 export const usePCDList = () => {
   const request = useRequest();
-  const { caseInfo } = useCaseInfoStore();
+
+  const appRoute = useAppRoute();
+
+  const urn = appRoute?.urnWithoutSlash;
+  const caseId = appRoute?.caseId?.toString();
+
+  const caseInfo = urn && caseId ? { urn, caseId } : null;
 
   const getPCDList = async () =>
     await request
-      .get<PCDListingResponseType>(
-        `urns/${caseInfo?.urn}/cases/${caseInfo?.id}/pcds/${caseInfo?.id}/pcd-request-core`,
-      )
+      .get<PCDListingResponseType>(`urns/${urn}/cases/${caseId}/pcds/${caseId}/pcd-request-core`)
       .then((response) => response.data);
 
   const { data, error, isLoading, isValidating } = useSWR(

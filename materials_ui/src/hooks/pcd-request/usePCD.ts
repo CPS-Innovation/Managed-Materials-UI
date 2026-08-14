@@ -1,6 +1,6 @@
 import useSWR from 'swr';
 
-import { useCaseInfoStore, useRequest } from '..';
+import { useAppRoute, useRequest } from '..';
 import { QUERY_KEYS } from '../../constants/query';
 import { PCDDetailsResponseType } from '../../schemas/pcd';
 
@@ -8,13 +8,17 @@ type UsePCDProps = { pcdId?: string | number };
 
 export const usePCD = ({ pcdId }: UsePCDProps) => {
   const request = useRequest();
-  const { caseInfo } = useCaseInfoStore();
+
+  const appRoute = useAppRoute();
+
+  const urn = appRoute?.urnWithoutSlash;
+  const caseId = appRoute?.caseId?.toString();
+
+  const caseInfo = urn && caseId ? { urn, caseId } : null;
 
   const getPCDDetails = async () =>
     await request
-      .get<PCDDetailsResponseType>(
-        `urns/${caseInfo?.urn}/cases/${caseInfo?.id}/pcds/${pcdId}/pcd-request`,
-      )
+      .get<PCDDetailsResponseType>(`urns/${urn}/cases/${caseId}/pcds/${pcdId}/pcd-request`)
       .then((response) => response.data);
 
   const { data, error, isLoading, isValidating } = useSWR(
