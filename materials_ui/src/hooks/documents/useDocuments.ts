@@ -7,7 +7,7 @@ export const useDocuments = () => {
   const request = useRequest();
   const appRoute = useAppRoute();
 
-  const urn = appRoute?.urnWithoutSlash;
+  const urn = appRoute?.urnPrefix;
   const caseId = appRoute?.caseId?.toString();
 
   const getDocuments = () =>

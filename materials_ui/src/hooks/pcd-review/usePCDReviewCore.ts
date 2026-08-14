@@ -9,7 +9,7 @@ export const usePCDReviewCore = () => {
 
   const appRoute = useAppRoute();
 
-  const urn = appRoute?.urnWithoutSlash;
+  const urn = appRoute?.urnPrefix;
   const caseId = appRoute?.caseId?.toString();
 
   const caseInfo = urn && caseId ? { urn, caseId } : null;

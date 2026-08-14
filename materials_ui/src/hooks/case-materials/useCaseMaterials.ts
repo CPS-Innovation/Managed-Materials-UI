@@ -8,7 +8,7 @@ type UseCaseMaterialsProps = { dataType: CaseMaterialDataType };
 export const useCaseMaterials = ({ dataType }: UseCaseMaterialsProps) => {
   const request = useRequest();
 
-  const { urnWithoutSlash: urn, caseId } = useAppRoute();
+  const { urnPrefix: urn, caseId } = useAppRoute();
   const caseInfo = urn && caseId ? { urn, caseId } : null;
 
   const materialsKey = caseInfo ? [QUERY_KEYS.CASE_MATERIAL, caseId, urn] : null;
