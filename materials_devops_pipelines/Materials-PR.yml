@@ -211,7 +211,23 @@ stages:
               npx eslint .
             displayName: "ESLint – fail on errors only"
             workingDirectory: '$(workingDir)'
-          
+
+          - task: Npm@1
+            displayName: "Run Unit Tests"
+            inputs:
+              command: "custom"
+              workingDir: '$(workingDir)'
+              customCommand: "test -- --reporter=default --reporter=junit"
+
+          - task: PublishTestResults@2
+            displayName: 'Publish Unit Test Results (JUnit)'
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: '$(workingDir)/unit-test-results.xml'
+              testRunTitle: 'Unit Tests'
+              publishRunAttachments: false
+            condition: always()
+
           #Build the application
           - task: Npm@1
             displayName: "Build UI Package"
