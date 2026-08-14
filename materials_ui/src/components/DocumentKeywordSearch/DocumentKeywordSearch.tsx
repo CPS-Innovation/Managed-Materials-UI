@@ -125,7 +125,7 @@ export const DocumentKeywordSearch = ({ modalOpen, setModalOpen }: DocumentKeywo
         hideButton={false}
       />
 
-      <Modal open={modalOpen} onClose={handleModalClose}>
+      <Modal open={modalOpen} onClose={handleModalClose} ariaLabel="Search results">
         <LoadingSpinner isLoading={!trackerComplete} textContent="Loading search results" />
         {trackerComplete && (
           <TwoCol

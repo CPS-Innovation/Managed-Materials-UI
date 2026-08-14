@@ -11,7 +11,11 @@ export const CloseTabUnsavedRedactionsModal = (p: {
   const isPlural = p.redactions?.length !== 1;
 
   return (
-    <Modal onBackgroundClick={p.onIgnoreClick} onEscPress={p.onIgnoreClick}>
+    <Modal
+      ariaLabel="You have unsaved redactions"
+      onBackgroundClick={p.onReturnClick}
+      onEscPress={p.onReturnClick}
+    >
       <GovUkBanner
         variant="error"
         headerTitle="Error"
@@ -19,7 +23,7 @@ export const CloseTabUnsavedRedactionsModal = (p: {
         contentBody={
           <>
             <p className="govuk-body">
-              {`You have ${p.redactions?.length ?? 0} unsaved redaction ${isPlural ? 's' : ''}`}
+              {`You have ${p.redactions?.length ?? 0} unsaved redaction${isPlural ? 's' : ''}`}
             </p>
             <p className="govuk-body">Return to the document to save your redactions</p>
             <p className="govuk-body">If you select Ignore your redactions will not be applied.</p>

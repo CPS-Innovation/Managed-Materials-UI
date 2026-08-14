@@ -2,6 +2,7 @@ import { TDocument } from '../../../materials_components/DocumentSelectAccordion
 import { GovUkBanner } from '../../../materials_components/DocumentSelectAccordion/templates/GovUkBanner';
 import { TRedaction } from '../../../materials_components/PdfRedactor/utils/coordUtils';
 import { Button } from '../../components/button';
+import { LinkButton } from '../../components/LinkButton/LinkButton';
 import { Modal } from './Modal';
 
 export type UnsavedRedactionsModalProps = {
@@ -30,23 +31,21 @@ export const UnsavedRedactionsModal = ({
 
   const isPluralDocuments = documentsWithRedactions.length !== 1;
 
+  const heading = `You have ${documentsWithRedactions.length} document${isPluralDocuments ? 's' : ''} with unsaved redactions`;
+
   return (
-    <Modal onBackgroundClick={onIgnoreClick} onEscPress={onIgnoreClick}>
+    <Modal ariaLabel={heading} onBackgroundClick={onReturnClick} onEscPress={onReturnClick}>
       <GovUkBanner
         variant="error"
         headerTitle="Error"
-        contentHeading={`You have ${documentsWithRedactions.length} document${isPluralDocuments ? 's' : ''} with unsaved redactions `}
+        contentHeading={heading}
         contentBody={
           <>
             <div style={{ display: 'flex', gap: '4px', flexDirection: 'column' }}>
               {documentsWithRedactions.map((doc) => (
-                <a
-                  className="govuk-link"
-                  key={doc.parentId}
-                  onClick={() => onDocumentClick(doc.parentId)}
-                >
+                <LinkButton key={doc.parentId} onClick={() => onDocumentClick(doc.parentId)}>
                   {doc.presentationTitle}
-                </a>
+                </LinkButton>
               ))}
             </div>
             <br />

@@ -6,7 +6,11 @@ export const FileTooLargeToRedactModal = (p: { onReturnClick: () => void }) => {
   const MAX_REDACTABLE_FILE_SIZE = 15;
 
   return (
-    <Modal onBackgroundClick={p.onReturnClick} onEscPress={p.onReturnClick}>
+    <Modal
+      ariaLabel="File is too large for redaction"
+      onBackgroundClick={p.onReturnClick}
+      onEscPress={p.onReturnClick}
+    >
       <GovUkBanner
         variant="error"
         headerTitle="Error"
