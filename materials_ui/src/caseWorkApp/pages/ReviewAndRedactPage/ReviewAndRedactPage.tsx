@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   DocumentKeywordSearch,
@@ -393,10 +393,10 @@ export const ReviewAndRedactPage = () => {
                   {[...new Set(documentListState.errorMessages)].map((x, j, arr) => {
                     const isLast = arr.length - 1 === j;
                     return (
-                      <React.Fragment key={x}>
+                      <Fragment key={x}>
                         {x}
                         {!isLast && <br />}
-                      </React.Fragment>
+                      </Fragment>
                     );
                   })}
                 </p>
