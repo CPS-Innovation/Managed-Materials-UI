@@ -32,6 +32,7 @@ materials_ui/.env*
 # materials_ui specific ignores for playwright and test results
 materials_ui/tests/.auth/
 materials_ui/test-results/
+materials_ui/unit-test-results.xml
 materials_ui/playwright-report/
 materials_ui/blob-report/
 materials_ui/playwright/.cache/
