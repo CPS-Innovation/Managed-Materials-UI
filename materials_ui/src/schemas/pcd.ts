@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const PCDListingSchema = z.object({
+export const pcdRequestListingSchema = z.object({
   id: z.number(),
   type: z.string(),
   decisionRequiredBy: z.string(),
@@ -52,9 +52,9 @@ export const PCDDetailsSchema = z.object({
   materialProvided: z.array(PCDMaterialSchema),
 });
 
-export const PCDListingResponseSchema = z.array(PCDListingSchema);
+export const pcdRequestListingsSchema = z.array(pcdRequestListingSchema);
 export const pcdRequestSchema = PCDDetailsSchema;
 
-export type PCDListingType = z.infer<typeof PCDListingSchema>;
-export type PCDListingResponseType = z.infer<typeof PCDListingResponseSchema>;
+export type TPcdRequestListing = z.infer<typeof pcdRequestListingSchema>;
+export type TPcdRequestListings = z.infer<typeof pcdRequestListingsSchema>;
 export type TPcdRequest = z.infer<typeof pcdRequestSchema>;

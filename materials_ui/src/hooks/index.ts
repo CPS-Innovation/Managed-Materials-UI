@@ -21,7 +21,7 @@ export { useDocumentTypes } from './documents/useDocumentTypes';
 export { useExhibitProducers } from './exhibits/useExhibitProducers';
 export { useExhibits } from './exhibits/useExhibits';
 export { useGetPcdRequest } from './pcd-request/usePCD';
-export { usePcdRequestList } from './pcd-request/usePCDList';
+export { usePcdRequestListings } from './pcd-request/usePCDList';
 export { useCaseSearch } from './search/useCaseSearch';
 export { useDocumentSearch, useDocumentSearchResults } from './search/useDocumentSearch';
 export { useSearchTracker } from './search/useSearchTracker';

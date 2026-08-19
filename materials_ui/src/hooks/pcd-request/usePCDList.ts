@@ -1,10 +1,13 @@
 import { AxiosInstance } from 'axios';
 import { useEffect, useState } from 'react';
-import z from 'zod';
-import { PCDListingResponseSchema, PCDListingType } from '../../schemas/pcd';
+import {
+  pcdRequestListingsSchema,
+  TPcdRequestListing,
+  TPcdRequestListings,
+} from '../../schemas/pcd';
 import { useAxiosInstance } from '../ui/useRequest';
 
-const getPcdRequestList = async (p: {
+const getPcdRequestListings = async (p: {
   axiosInstance: AxiosInstance;
   caseId: number;
   urn: string;
@@ -15,32 +18,33 @@ const getPcdRequestList = async (p: {
   return resp.data;
 };
 
-const safeGetPcdRequestList = async (p: {
+const safeGetPcdRequestListings = async (p: {
   axiosInstance: AxiosInstance;
   caseId: number;
   urn: string;
 }) => {
-  const resp = await getPcdRequestList(p);
-  return PCDListingResponseSchema.safeParse(resp);
+  const resp = await getPcdRequestListings(p);
+  return pcdRequestListingsSchema.safeParse(resp);
 };
 
-export const usePcdRequestList = (p: { urn: string; caseId: number }) => {
+export const usePcdRequestListings = (p: { urn: string; caseId: number }) => {
   const axiosInstance = useAxiosInstance();
 
-  const [pcdRequestList, setPcdRequestList] = useState<
-    null | undefined | z.infer<typeof PCDListingResponseSchema>
+  const [pcdRequestListings, setPcdRequestListings] = useState<
+    null | undefined | TPcdRequestListings
   >(undefined);
+
   useEffect(() => {
     (async () => {
-      const resp = await safeGetPcdRequestList({ axiosInstance, ...p });
-      setPcdRequestList(resp.success ? resp.data : null);
+      const resp = await safeGetPcdRequestListings({ axiosInstance, ...p });
+      setPcdRequestListings(resp.success ? resp.data : null);
     })();
   }, []);
 
-  const sortByDate = (a: PCDListingType, b: PCDListingType) =>
+  const sortByDate = (a: TPcdRequestListing, b: TPcdRequestListing) =>
     Date.parse(b.decisionRequested) - Date.parse(a.decisionRequested);
 
-  return { data: pcdRequestList?.sort(sortByDate) };
+  return { data: pcdRequestListings?.sort(sortByDate) };
 };
 
 // export const usePCDList = (p:{urn: string; caseId: number, pcdId: number}) => {
