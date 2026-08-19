@@ -53,8 +53,8 @@ export const PCDDetailsSchema = z.object({
 });
 
 export const PCDListingResponseSchema = z.array(PCDListingSchema);
-export const PCDDetailsResponseSchema = PCDDetailsSchema;
+export const pcdRequestSchema = PCDDetailsSchema;
 
 export type PCDListingType = z.infer<typeof PCDListingSchema>;
 export type PCDListingResponseType = z.infer<typeof PCDListingResponseSchema>;
-export type PCDDetailsResponseType = z.infer<typeof PCDDetailsResponseSchema>;
+export type TPcdRequest = z.infer<typeof pcdRequestSchema>;
