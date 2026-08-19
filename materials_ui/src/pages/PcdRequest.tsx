@@ -29,23 +29,6 @@ const ShowPcdRequest = (p: {
     <>
       <LoadingSpinner isLoading={pcdRequest === undefined} />
 
-      {/* {pcdRequest === null && 'error'}
-      {pcdRequest === undefined && 'loading'}
-      {!!pcdRequest && 'success'}
-      <pre>{JSON.stringify({ p, pcdRequest }, null, 2)}</pre> */}
-
-      {pcdRequest && (
-        <div>
-          <h1
-            className="govuk-heading-l"
-            tabIndex={-1}
-            // ref={shouldAutoFocusPageContent ? (el) => el?.focus() : undefined}
-          >
-            {p.isFirstPcdRequest ? 'Latest PCD request' : formatDate(pcdRequest?.decisionRequested)}
-          </h1>
-        </div>
-      )}
-
       {pcdRequest && (
         <>
           <h1
