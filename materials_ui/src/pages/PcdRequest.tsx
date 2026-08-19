@@ -24,16 +24,30 @@ const usePcdRequestPageAppRoute = () => {
 export const PcdRequestPage = () => {
   const { urn, caseId, pcdId } = usePcdRequestPageAppRoute();
   const { data: pcdRequestList } = usePcdRequestList({ urn, caseId });
-  const latestPcdId = !pcdId ? pcdRequestList?.[0]?.id : undefined;
+  const firstPcdId = pcdRequestList?.[0]?.id;
   const [selectedPcdId, setSelectedPcdId] = useState<number | undefined>(undefined);
   useEffect(() => {
     setSelectedPcdId(undefined);
   }, []);
 
-  const actualPcdId = selectedPcdId ?? latestPcdId;
+  const actualPcdId = selectedPcdId ?? firstPcdId;
   return (
     <div>
-      <pre>{JSON.stringify({ urn, caseId, pcdId, pcdRequestList }, null, 2)}</pre>
+      <pre>
+        {JSON.stringify(
+          {
+            urn,
+            caseId,
+            pcdId,
+            pcdRequestList,
+            actualPcdId,
+            selectedPcdId: selectedPcdId ? selectedPcdId : `${selectedPcdId}`,
+            firstPcdId,
+          },
+          null,
+          2,
+        )}
+      </pre>
       <br />
       {actualPcdId && <ShowPcdId urn={urn} caseId={caseId} pcdId={actualPcdId} />}
     </div>

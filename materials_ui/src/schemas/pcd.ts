@@ -15,9 +15,9 @@ export const PCDCaseOutlineSchema = z.object({
 
 export const PCDPoliceContactSchema = z.object({
   role: z.string(),
-  rank: z.string(),
+  rank: z.string().nullish(),
   name: z.string(),
-  number: z.string(),
+  number: z.string().nullish(),
 });
 
 export const PCDMaterialSchema = z.object({ subject: z.string(), date: z.string() });
@@ -25,10 +25,10 @@ export const PCDMaterialSchema = z.object({ subject: z.string(), date: z.string(
 export const PCDSuspect = z.object({
   surname: z.string(),
   firstNames: z.string(),
-  dob: z.string(),
-  bailConditions: z.string(),
-  bailDate: z.string(),
-  remandStatus: z.string(),
+  dob: z.string().nullish(),
+  bailConditions: z.string().nullish(),
+  bailDate: z.string().nullish(),
+  remandStatus: z.string().nullish(),
   proposedCharges: z.array(
     z.object({
       charge: z.string(),
@@ -46,7 +46,7 @@ export const PCDDetailsSchema = z.object({
   decisionRequiredBy: z.string(),
   decisionRequested: z.string(),
   caseOutline: z.array(PCDCaseOutlineSchema),
-  comments: z.object({ text: z.string(), textWithCmsMarkup: z.string() }),
+  comments: z.object({ text: z.string().nullish(), textWithCmsMarkup: z.string().nullish() }),
   suspects: z.array(PCDSuspect),
   policeContactDetails: z.array(PCDPoliceContactSchema),
   materialProvided: z.array(PCDMaterialSchema),

@@ -1,8 +1,7 @@
 import { AxiosInstance } from 'axios';
 import { useEffect, useState } from 'react';
-import z from 'zod';
 import { useAxiosInstance } from '../../materials_components/DocumentSelectAccordion/getters/getAxiosInstance';
-import { pcdRequestSchema } from '../../schemas/pcd';
+import { pcdRequestSchema, TPcdRequest } from '../../schemas/pcd';
 
 const getPcdRequest = async (p: {
   axiosInstance: AxiosInstance;
@@ -11,7 +10,7 @@ const getPcdRequest = async (p: {
   urn: string;
 }) => {
   const resp = await p.axiosInstance.get<unknown>(
-    `urns/${p.urn}/cases/${p.caseId}/pcds/${p.pcdId}/pcd-request`,
+    `/api/urns/${p.urn}/cases/${p.caseId}/pcds/${p.pcdId}/pcd-request`,
   );
   return resp.data;
 };
@@ -22,14 +21,16 @@ const safeGetPcdRequest = async (p: {
   urn: string;
 }) => {
   const resp = await getPcdRequest(p);
-  return pcdRequestSchema.safeParse(resp);
+  const parsed = pcdRequestSchema.safeParse(resp);
+  if (!parsed.success) {
+    console.error(parsed.error);
+  }
+  return parsed;
 };
 
 export const useGetPcdRequest = (p: { pcdId: string | number; caseId: number; urn: string }) => {
   const axiosInstance = useAxiosInstance();
-  const [pcdRequest, setPcdRequest] = useState<null | undefined | z.infer<typeof pcdRequestSchema>>(
-    undefined,
-  );
+  const [pcdRequest, setPcdRequest] = useState<null | undefined | TPcdRequest>();
 
   useEffect(() => {
     (async () => {
