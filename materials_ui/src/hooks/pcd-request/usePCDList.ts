@@ -23,8 +23,12 @@ const safeGetPcdRequestListings = async (p: {
   caseId: number;
   urn: string;
 }) => {
-  const resp = await getPcdRequestListings(p);
-  return pcdRequestListingsSchema.safeParse(resp);
+  try {
+    const resp = await getPcdRequestListings(p);
+    return pcdRequestListingsSchema.safeParse(resp);
+  } catch (error) {
+    return { success: false, error } as const;
+  }
 };
 
 export const usePcdRequestListings = (p: { urn: string; caseId: number }) => {
@@ -44,7 +48,7 @@ export const usePcdRequestListings = (p: { urn: string; caseId: number }) => {
   const sortByDate = (a: TPcdRequestListing, b: TPcdRequestListing) =>
     Date.parse(b.decisionRequested) - Date.parse(a.decisionRequested);
 
-  return { data: pcdRequestListings?.sort(sortByDate) };
+  return { data: pcdRequestListings ? pcdRequestListings?.sort(sortByDate) : pcdRequestListings };
 };
 
 // export const usePCDList = (p:{urn: string; caseId: number, pcdId: number}) => {

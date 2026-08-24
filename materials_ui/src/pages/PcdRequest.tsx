@@ -285,7 +285,9 @@ export const PcdRequestPage = () => {
   const firstPcdId = pcdRequestList?.[0]?.id;
   const [selectedPcdId, setSelectedPcdId] = useState<number | undefined>(undefined);
 
-  if (pcdRequestList === null) return <NotAuthorisedPage />;
+  if (pcdRequestList === null) {
+    return <NotAuthorisedPage />;
+  }
 
   const actualPcdId = selectedPcdId ?? firstPcdId;
   return (
