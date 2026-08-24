@@ -1,11 +1,14 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { useAutoReclassify, useBanner, useCaseMaterials } from '../../hooks';
+import { useAppRoute, useAutoReclassify, useBanner, useCaseMaterials } from '../../hooks';
 import { useMaterialTags } from '../../stores';
 import { trackAction } from '../../telemetry/appInsights';
 
 export const AutoReclassifyButton = () => {
   const [errorCount, setErrorCount] = useState(0);
+  const { getRoute } = useAppRoute();
+  const navigate = useNavigate();
   const { resetBanner, setBanner } = useBanner();
   const { mutate: refreshMaterials } = useCaseMaterials({ dataType: 'materials' });
   const { setTags } = useMaterialTags();
@@ -60,6 +63,8 @@ export const AutoReclassifyButton = () => {
       });
 
       await refreshMaterials();
+
+      navigate(getRoute('MATERIALS'), { state: { persistBanner: true } });
     },
   });
 

@@ -1,18 +1,22 @@
 import useSWR from 'swr';
 
-import { useCaseInfoStore, useRequest } from '..';
+import { useAppRoute, useRequest } from '..';
 import { QUERY_KEYS } from '../../constants/query';
 import { PCDReviewCoreResponseType, PCDReviewCoreSchema } from '../../schemas/pcdReview';
 
 export const usePCDReviewCore = () => {
   const request = useRequest();
-  const { caseInfo } = useCaseInfoStore();
+
+  const appRoute = useAppRoute();
+
+  const urn = appRoute?.urnPrefix;
+  const caseId = appRoute?.caseId?.toString();
+
+  const caseInfo = urn && caseId ? { urn, caseId } : null;
 
   const getPCDReviewCore = async () => {
     try {
-      const response = await request.get(
-        `urns/${caseInfo?.urn}/cases/${caseInfo?.id}/pcd-review-core`,
-      );
+      const response = await request.get(`urns/${urn}/cases/${caseId}/pcd-review-core`);
 
       const parsedResponse = PCDReviewCoreSchema.safeParse(response.data);
 

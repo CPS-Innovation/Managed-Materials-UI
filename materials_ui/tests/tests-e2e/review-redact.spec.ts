@@ -5,7 +5,7 @@ import { mockCaseMaterials } from '../mocks/mockCaseMaterials';
 test.describe('Review redact page', () => {
   test.beforeEach(async ({ page }) => {
     const loadingDocumentHeader = page.getByRole('heading', {
-      name: 'Loading documents',
+      name: 'Loading Case',
       includeHidden: true,
     });
     await mockRoute(page, '/case-materials', mockCaseMaterials());
@@ -13,6 +13,7 @@ test.describe('Review redact page', () => {
     await page.waitForRequest('**/case-info/2167259');
     await expect(loadingDocumentHeader).toBeVisible();
     await loadingDocumentHeader.waitFor({ state: 'detached' });
+    await page.getByRole('heading', { name: 'Loading Document' }).waitFor({ state: 'detached' });
   });
 
   test('T-001: page loads correctly with materials', async ({ page }) => {
@@ -29,12 +30,10 @@ test.describe('Review redact page', () => {
     await mockRoute(page, '/cases/2167259', {});
     await mockRoute(page, '/cases/2167259/tracker', { status: 'Completed', documents: [] });
     await mockRoute(page, '/cases/2167259/search/**', []);
+    await page.getByRole('heading', { name: 'Loading Document' }).waitFor({ state: 'detached' });
 
     await expect(page.getByRole('searchbox', { name: 'Search within material' })).toBeVisible();
     await page.getByRole('searchbox', { name: 'Search within material' }).fill('test search');
-    await page
-      .getByRole('heading', { name: 'Loading documents', includeHidden: true })
-      .waitFor({ state: 'detached' });
     await page.getByRole('button', { name: 'Search' }).click();
     await page
       .getByRole('heading', { name: 'Loading search results', includeHidden: true })

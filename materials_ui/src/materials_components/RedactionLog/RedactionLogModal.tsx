@@ -8,6 +8,7 @@ import {
 import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
 import { ChargeStatusCode } from '../../constants/chargeStatus';
 import { useCaseDetails } from '../../hooks/search/useCaseSearch';
+import { useLoadingAnnouncement } from '../../hooks/ui/useLoadingAnnouncement';
 import { TDocument } from '../DocumentSelectAccordion/getters/getDocumentList';
 import { TRedactionType } from '../PdfRedactor/RedactionTypeSelect';
 import { TRedaction } from '../PdfRedactor/utils/coordUtils';
@@ -76,6 +77,12 @@ export const RedactionLogModal = ({
     null,
   );
   const { data: caseDetailsResponse } = useCaseDetails({ urn });
+
+  useLoadingAnnouncement(
+    redactionSaveStatus === 'saving',
+    'Saving redactions, please wait.',
+    redactionSaveStatus === 'saved' ? 'Redactions successfully saved.' : '',
+  );
 
   const chargeStatusFromCase = useMemo((): ChargeStatusCode | undefined => {
     if (!caseId || !caseDetailsResponse?.data) {

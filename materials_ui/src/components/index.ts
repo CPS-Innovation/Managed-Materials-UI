@@ -15,6 +15,7 @@ export { CommsFilters } from './Filters/CommsFilters';
 export { MaterialsFilters } from './Filters/MaterialsFilters';
 export { Layout } from './Layout/Layout';
 export { CPSLink } from './Link/Link';
+export { LoadingAnnouncer } from './LoadingAnnouncer/LoadingAnnouncer';
 export { LoadingSpinner } from './LoadingSpinner/LoadingSpinner';
 export { Modal } from './Modal/Modal';
 export { NavList } from './NavList/NavList';

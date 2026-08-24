@@ -13,33 +13,25 @@ export default function DocumentPreview({ row }: Props) {
     loading: caseDocumentLoading,
     error: caseDocumentError,
   } = useDocumentPreview({ materialId: row.materialId });
-
-  const errorTitle = caseDocumentError?.toString().includes('403')
-    ? 'This document is password protected'
-    : 'There is a problem';
-
-  const errorMessage = caseDocumentError?.toString().includes('403')
-    ? 'Ask the agency who supplied it to remove the password and resend the document.'
-    : 'This document cannot be shown. You can still view it in CMS.';
-
-  let content = null;
-
-  if (!caseDocumentLoading) {
-    if (caseDocumentError) {
-      content = caseDocumentError.toString().includes('403') ? (
-        <Banner type="error" header={errorTitle} content={errorMessage} />
-      ) : (
-        <ErrorSummary errorTitle={errorTitle} errorMessage={errorMessage} />
-      );
-    } else if (caseDocumentData) {
-      content = <PdfViewer file={caseDocumentData} fileName={row.subject} />;
-    }
-  }
+  const is403Error = caseDocumentError?.toString().includes('403');
 
   return (
     <>
       <LoadingSpinner isLoading={caseDocumentLoading} textContent="Loading preview..." />
-      {content}
+      {caseDocumentError && is403Error && (
+        <Banner
+          type="error"
+          header="This document is password protected"
+          content="Ask the agency who supplied it to remove the password and resend the document."
+        />
+      )}
+      {caseDocumentError && !is403Error && (
+        <ErrorSummary
+          errorTitle="There is a problem"
+          errorMessage="This document cannot be shown. You can still view it in CMS."
+        />
+      )}
+      {!caseDocumentError && <PdfViewer file={caseDocumentData} fileName={row.subject} />}
     </>
   );
 }

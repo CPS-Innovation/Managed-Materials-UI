@@ -1,4 +1,5 @@
-import { AxiosInstance } from 'axios';
+import axios, { AxiosInstance } from 'axios';
+import { wait } from '../../../utils/wait';
 
 export type TBulkRedactionDefinition = {
   pageIndex: number;
@@ -21,18 +22,62 @@ export type TBulkSearchResponse = {
 
 export type TBulkSearchResult = { status: number; data: TBulkSearchResponse | null };
 
-export const bulkSearchDocument = async (p: {
+const bulkSearchPath = (route: { caseId: number; materialId: string; documentId: number }) =>
+  `/api/cases/${route.caseId}/materials/${route.materialId}/documents/${route.documentId}/search`;
+
+export const initiateBulkSearch = (request: {
   axiosInstance: AxiosInstance;
-  urn: string;
   caseId: number;
-  versionId: number;
-  documentId: string;
+  materialId: string;
+  documentId: number;
+}) => request.axiosInstance.post(bulkSearchPath(request));
+
+export const bulkSearchDocument = async (request: {
+  axiosInstance: AxiosInstance;
+  caseId: number;
+  materialId: string;
+  documentId: number;
   searchText: string;
   signal?: AbortSignal;
 }): Promise<TBulkSearchResult> => {
-  const response = await p.axiosInstance.get<TBulkSearchResponse>(
-    `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.versionId}/search`,
-    { params: { SearchText: p.searchText }, signal: p.signal, validateStatus: () => true },
-  );
+  const response = await request.axiosInstance.get<TBulkSearchResponse>(bulkSearchPath(request), {
+    params: { SearchText: request.searchText },
+    signal: request.signal,
+    validateStatus: () => true,
+  });
   return { status: response.status, data: response.data ?? null };
+};
+
+const POLL_INTERVAL_MS = 3000;
+
+export type TBulkSearchOutcome =
+  | { outcome: 'success'; response: TBulkSearchResponse }
+  | { outcome: 'error' }
+  | { outcome: 'aborted' };
+
+export const pollBulkSearch = async (request: {
+  axiosInstance: AxiosInstance;
+  caseId: number;
+  materialId: string;
+  documentId: number;
+  searchText: string;
+  signal: AbortSignal;
+}): Promise<TBulkSearchOutcome> => {
+  try {
+    while (!request.signal.aborted) {
+      const { status, data } = await bulkSearchDocument(request);
+      if (request.signal.aborted) break;
+
+      if (status === 200) {
+        return !data ? { outcome: 'error' } : { outcome: 'success', response: data };
+      }
+
+      if (status !== 202) return { outcome: 'error' };
+      await wait(POLL_INTERVAL_MS, request.signal);
+    }
+    return { outcome: 'aborted' };
+  } catch (error) {
+    if (axios.isCancel(error) || request.signal.aborted) return { outcome: 'aborted' };
+    return { outcome: 'error' };
+  }
 };

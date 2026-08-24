@@ -9,7 +9,9 @@ import { FileTooLargeToRedactModal } from '../../caseWorkApp/pages/ReviewAndReda
 import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
 import { Banner } from '../../components';
 import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
+import { useUserGroupsFeatureFlag } from '../../hooks';
 import { CaseworkPdfRedactorWrapper } from '../CaseworkPdfRedactorWrapper/CaseworkPdfRedactorWrapper';
+import { initiateBulkSearch } from '../CaseworkPdfRedactorWrapper/utils/bulkSearchDocumentUtils';
 import { TDocument } from '../DocumentSelectAccordion/getters/getDocumentList';
 import { DocumentViewportArea } from '../documenViewportArea';
 import { TRedactionType } from '../PdfRedactor/RedactionTypeSelect';
@@ -69,6 +71,7 @@ export const DocumentTabPanel = ({
   checkInDocumentTriggerData,
 }: DocumentTabPanelProps) => {
   const { redactionLogAxios, axiosInstance } = useAxiosInstances();
+  const featureFlags = useUserGroupsFeatureFlag();
 
   const [pdfFileUrl, setPdfFileUrl] = useState<string>('');
   const [status, setStatus] = useState<LoadStatus>('loading');
@@ -176,6 +179,17 @@ export const DocumentTabPanel = ({
               if (isStartRedactingClick && isFileTooLarge) {
                 setShowFileTooLargeModal(true);
                 return;
+              }
+
+              if (isStartRedactingClick && featureFlags.bulkRedaction) {
+                initiateBulkSearch({
+                  axiosInstance,
+                  caseId,
+                  materialId: parentId,
+                  documentId: childId,
+                }).catch((error) =>
+                  console.error('Failed to initiate bulk search processing:', error),
+                );
               }
 
               onModeChange(newMode);

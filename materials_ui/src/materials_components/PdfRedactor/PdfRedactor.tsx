@@ -441,6 +441,7 @@ export const PdfRedactor = (p: {
         >
           <Document
             file={p.fileUrl}
+            externalLinkTarget="_blank"
             onLoadSuccess={async (pdf) => {
               const cachedRedactionsResp = getRedactionsFromCache(getKeyForAutosaveRedactions());
               const cachedRedactions = cachedRedactionsResp.data;

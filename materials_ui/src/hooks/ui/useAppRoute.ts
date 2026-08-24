@@ -23,7 +23,12 @@ type AppRouteKey = keyof typeof APP_ROUTES;
 export const useAppRoute = () => {
   const match = useMatch('/:urn/:caseId/*');
   const urn = match?.params.urn;
-  const caseId = match?.params.caseId;
+  const initCaseId = match?.params.caseId;
+  const parsedCaseId = Number(initCaseId);
+  const caseId = isNaN(parsedCaseId) ? undefined : parsedCaseId;
+
+  // removes everything after the first non-alphanumeric character
+  const urnPrefix = urn?.match(/^[a-zA-Z0-9]+/)?.[0];
 
   const getRoute = (routeName: AppRouteKey, prefix: boolean = true) => {
     const routePrefix = urn && caseId && prefix ? `/${urn}/${caseId}/` : '';
@@ -31,5 +36,5 @@ export const useAppRoute = () => {
     return `${routePrefix}${APP_ROUTES[routeName]}`;
   };
 
-  return { getRoute };
+  return { getRoute, urn, caseId, urnPrefix };
 };

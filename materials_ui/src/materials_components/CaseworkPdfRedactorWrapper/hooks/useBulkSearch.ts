@@ -1,8 +1,8 @@
-import axios, { AxiosInstance } from 'axios';
-import { useCallback, useRef, useState } from 'react';
+import { AxiosInstance } from 'axios';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { convertSearchResponseToRedactions } from '../../PdfRedactor/utils/bulkRedactionUtils';
 import type { TRedaction } from '../../PdfRedactor/utils/coordUtils';
-import { bulkSearchDocument } from '../utils/bulkSearchDocumentUtils';
+import { pollBulkSearch } from '../utils/bulkSearchDocumentUtils';
 
 export type TBulkSearchInternalState =
   | { status: 'idle' }
@@ -10,31 +10,16 @@ export type TBulkSearchInternalState =
   | { status: 'done'; candidates: TRedaction[]; focusedIndex: number }
   | { status: 'error' };
 
-const POLL_INTERVAL_MS = 3000;
-const MAX_SEARCH_ATTEMPTS = 5;
-
-const wait = (ms: number, signal: AbortSignal) =>
-  new Promise<void>((resolve) => {
-    const timeoutId = setTimeout(resolve, ms);
-    signal.addEventListener(
-      'abort',
-      () => {
-        clearTimeout(timeoutId);
-        resolve();
-      },
-      { once: true },
-    );
-  });
-
 export const useBulkSearch = (p: {
   axiosInstance: AxiosInstance;
-  urn: string;
   caseId: number;
-  versionId: number;
-  documentId: string;
+  materialId: string;
+  documentId: number;
 }) => {
   const [state, setState] = useState<TBulkSearchInternalState>({ status: 'idle' });
   const abortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => () => abortRef.current?.abort(), []);
 
   const clear = useCallback(() => {
     abortRef.current?.abort();
@@ -49,50 +34,26 @@ export const useBulkSearch = (p: {
       abortRef.current = controller;
       setState({ status: 'loading' });
 
-      try {
-        for (let attempt = 1; attempt <= MAX_SEARCH_ATTEMPTS; attempt++) {
-          const { status, data } = await bulkSearchDocument({
-            axiosInstance: p.axiosInstance,
-            urn: p.urn,
-            caseId: p.caseId,
-            versionId: p.versionId,
-            documentId: p.documentId,
-            searchText,
-            signal: controller.signal,
-          });
-          if (controller.signal.aborted) return undefined;
+      const result = await pollBulkSearch({
+        axiosInstance: p.axiosInstance,
+        caseId: p.caseId,
+        materialId: p.materialId,
+        documentId: p.documentId,
+        searchText,
+        signal: controller.signal,
+      });
+      if (controller.signal.aborted) return undefined;
 
-          if (status === 200) {
-            if (!data || data.isNotFound || data.failedReason) {
-              setState({ status: 'error' });
-              return undefined;
-            }
-            const candidates = convertSearchResponseToRedactions(data);
-            setState({ status: 'done', candidates, focusedIndex: 0 });
-            return candidates;
-          }
-
-          const stillProcessing = status === 202 || status === 423;
-          if (!stillProcessing) {
-            setState({ status: 'error' });
-            return undefined;
-          }
-
-          if (attempt < MAX_SEARCH_ATTEMPTS) {
-            await wait(POLL_INTERVAL_MS, controller.signal);
-            if (controller.signal.aborted) return undefined;
-          }
-        }
-
-        setState({ status: 'error' });
-        return undefined;
-      } catch (err) {
-        if (axios.isCancel(err)) return undefined;
-        setState({ status: 'error' });
+      if (result.outcome !== 'success') {
+        if (result.outcome === 'error') setState({ status: 'error' });
         return undefined;
       }
+
+      const candidates = convertSearchResponseToRedactions(result.response);
+      setState({ status: 'done', candidates, focusedIndex: 0 });
+      return candidates;
     },
-    [p.axiosInstance, p.urn, p.caseId, p.versionId, p.documentId],
+    [p.axiosInstance, p.caseId, p.materialId, p.documentId],
   );
 
   const nudge = (delta: number) =>

@@ -5,6 +5,8 @@
     "husky": "^9.1.7"
   },
   "scripts": {
-    "postinstall": "husky"
+    "postinstall": "husky",
+    "tsc": "cd materials_ui && npm run tsc",
+    "dev": "cd materials_ui && npm run dev"
   }
 }
