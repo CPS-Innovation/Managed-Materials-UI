@@ -13,6 +13,7 @@ import { useAppRoute, useGetPcdRequest, usePcdRequestListings } from '../hooks';
 import { TPcdRequestListings } from '../schemas/pcd';
 import { formatDate } from '../utils/date';
 import { cleanString } from '../utils/string';
+import { NotAuthorisedPage } from './NotAuthorisedPage';
 
 // const getPcdRequestTitle = (isLatestPcd: boolean, decisionRequested: string) =>
 //   isLatestPcd ? 'Latest PCD Request' : `${formatDate(decisionRequested)} PCD Request`;
@@ -283,6 +284,8 @@ export const PcdRequestPage = () => {
   const { data: pcdRequestList } = usePcdRequestListings({ urn, caseId });
   const firstPcdId = pcdRequestList?.[0]?.id;
   const [selectedPcdId, setSelectedPcdId] = useState<number | undefined>(undefined);
+
+  if (pcdRequestList === null) return <NotAuthorisedPage />;
 
   const actualPcdId = selectedPcdId ?? firstPcdId;
   return (
