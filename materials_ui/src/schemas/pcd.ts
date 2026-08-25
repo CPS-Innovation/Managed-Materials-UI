@@ -32,10 +32,10 @@ export const PCDSuspect = z.object({
   proposedCharges: z.array(
     z.object({
       charge: z.string(),
-      earlyDate: z.string(),
-      lateDate: z.string(),
-      location: z.string(),
-      category: z.string(),
+      earlyDate: z.string().nullish(),
+      lateDate: z.string().nullish(),
+      location: z.string().nullish(),
+      category: z.string().nullish(),
     }),
   ),
 });

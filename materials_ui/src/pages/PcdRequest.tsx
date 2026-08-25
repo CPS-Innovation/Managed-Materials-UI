@@ -66,7 +66,7 @@ const ShowPcdRequest = (p: {
               </thead>
               <tbody className="govuk-table__body">
                 {pcdRequest?.policeContactDetails?.map(({ name, number, role }, index) => (
-                  <tr className="govuk-table__row" key={index}>
+                  <tr className="govuk-table__row" key={`policeContactDetails-${index}`}>
                     <th scope="row" className="govuk-table__header">
                       {role}
                     </th>
@@ -82,7 +82,7 @@ const ShowPcdRequest = (p: {
 
           <h2 className="govuk-heading-l">Case outline</h2>
           {pcdRequest?.caseOutline.map(({ heading, textWithCmsMarkup }, index) => (
-            <Fragment key={index}>
+            <Fragment key={`caseoutlines-${index}`}>
               <h3 className="govuk-heading-m">{heading}</h3>
               <p
                 className="govuk-body"
@@ -132,7 +132,7 @@ const ShowPcdRequest = (p: {
                     suspect.proposedCharges.length > 1 ? suspect.proposedCharges.length : 1;
 
                   return suspect.proposedCharges.map((charge, chargeIndex) => (
-                    <tr className="govuk-table__row" key={i}>
+                    <tr className="govuk-table__row" key={`proposedCharges-${i}-${chargeIndex}`}>
                       {chargeIndex === 0 && (
                         <>
                           <th scope="row" className="govuk-table__cell" rowSpan={rowSpan}>
@@ -146,7 +146,9 @@ const ShowPcdRequest = (p: {
                       <td className="govuk-table__cell">{charge.category}</td>
                       <td className="govuk-table__cell">{charge.charge}</td>
                       <td className="govuk-table__cell">{charge.location}</td>
-                      <td className="govuk-table__cell">{formatDate(charge.earlyDate)}</td>
+                      <td className="govuk-table__cell">
+                        {charge.earlyDate ? formatDate(charge.earlyDate) : ''}
+                      </td>
                     </tr>
                   ));
                 })}
@@ -178,7 +180,7 @@ const ShowPcdRequest = (p: {
               </thead>
               <tbody className="govuk-table__body">
                 {pcdRequest?.suspects.map((suspect, index) => (
-                  <tr className="govuk-table__row" key={index}>
+                  <tr className="govuk-table__row" key={`suspects-${index}`}>
                     <th scope="row" className="govuk-table__cell">
                       {formatFullName(suspect.surname, suspect.firstNames)}
                     </th>
@@ -220,7 +222,7 @@ const ShowPcdRequest = (p: {
                         </thead>
                         <tbody className="govuk-table__body">
                           {pcdRequest.materialProvided.map(({ subject, date }, index) => (
-                            <tr className="govuk-table__row" key={index}>
+                            <tr className="govuk-table__row" key={`materialprovided-${index}`}>
                               <td className="govuk-table__header">{subject}</td>
                               <td className="govuk-table__cell">{date}</td>
                             </tr>
@@ -262,7 +264,7 @@ const ShowPcdRequestSidebarListings = (p: {
               key={pcdRequestListing.id}
               className={`moj-side-navigation__item${isSelected ? ' moj-side-navigation__item--active' : ''}`}
             >
-              <Link to="#" onClick={() => p.selectPcdRequestId(pcdRequestListing.id + 3)}>
+              <Link to="#" onClick={() => p.selectPcdRequestId(pcdRequestListing.id)}>
                 {i === 0 ? 'Latest PCD request' : formatDate(pcdRequestListing.decisionRequested)}
               </Link>
             </li>
