@@ -27,7 +27,7 @@ const ShowPcdRequest = (p: {
     <>
       <LoadingSpinner isLoading={pcdRequest === undefined} />
 
-      {pcdRequest === null && <>Unable to retriieve the pcd request with ID: {p.pcdId}</>}
+      {pcdRequest === null && <>Unable to retrieve the pcd request with ID: {p.pcdId}</>}
       {pcdRequest && (
         <>
           <h1 className="govuk-heading-l" tabIndex={-1} ref={(el) => el?.focus()}>
@@ -284,7 +284,6 @@ export const PcdRequestPage = () => {
   const actualPcdId = selectedPcdId ?? firstPcdId;
   return (
     <Layout title="PCD Request">
-      <pre>{JSON.stringify({ selectedPcdId }, null, 2)}</pre>
       <div className="govuk-main-wrapper" style={{ whiteSpace: 'pre-wrap' }}>
         <LoadingSpinner isLoading={pcdRequestList === undefined} />
 
