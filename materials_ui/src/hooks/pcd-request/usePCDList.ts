@@ -50,29 +50,3 @@ export const usePcdRequestListings = (p: { urn: string; caseId: number }) => {
 
   return { data: pcdRequestListings ? pcdRequestListings?.sort(sortByDate) : pcdRequestListings };
 };
-
-// export const usePCDList = (p:{urn: string; caseId: number, pcdId: number}) => {
-//   const request = useRequest();
-
-//   const appRoute = useAppRoute();
-
-//   const urn = appRoute?.urnPrefix;
-//   const caseId = appRoute?.caseId?.toString();
-
-//   const caseInfo = urn && caseId ? { urn, caseId } : null;
-
-//   const getPCDList = async () =>
-//     await request
-//       .get<PCDListingResponseType>(`urns/${urn}/cases/${caseId}/pcds/${caseId}/pcd-request-core`)
-//       .then((response) => response.data);
-
-//   const { data, error, isLoading, isValidating } = useSWR(
-//     caseInfo ? QUERY_KEYS.PCD_REQUESTS : null,
-//     getPCDList,
-//   );
-
-//   const sortByDate = (a: PCDListingType, b: PCDListingType) =>
-//     Date.parse(b.decisionRequested) - Date.parse(a.decisionRequested);
-
-//   return { data: data?.sort(sortByDate) || undefined, error, isLoading: isLoading || isValidating };
-// };

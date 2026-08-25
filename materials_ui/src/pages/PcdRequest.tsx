@@ -15,9 +15,6 @@ import { formatDate } from '../utils/date';
 import { cleanString } from '../utils/string';
 import { NotAuthorisedPage } from './NotAuthorisedPage';
 
-// const getPcdRequestTitle = (isLatestPcd: boolean, decisionRequested: string) =>
-//   isLatestPcd ? 'Latest PCD Request' : `${formatDate(decisionRequested)} PCD Request`;
-
 const ShowPcdRequest = (p: {
   urn: string;
   caseId: number;
@@ -30,13 +27,10 @@ const ShowPcdRequest = (p: {
     <>
       <LoadingSpinner isLoading={pcdRequest === undefined} />
 
+      {pcdRequest === null && <>Unable to retriieve the pcd request with ID: {p.pcdId}</>}
       {pcdRequest && (
         <>
-          <h1
-            className="govuk-heading-l"
-            tabIndex={-1}
-            // ref={shouldAutoFocusPageContent ? (el) => el?.focus() : undefined}
-          >
+          <h1 className="govuk-heading-l" tabIndex={-1} ref={(el) => el?.focus()}>
             {p.isFirstPcdRequest ? 'Latest PCD request' : formatDate(pcdRequest?.decisionRequested)}
           </h1>
           <DefinitionList
@@ -267,9 +261,8 @@ const ShowPcdRequestSidebarListings = (p: {
             <li
               key={pcdRequestListing.id}
               className={`moj-side-navigation__item${isSelected ? ' moj-side-navigation__item--active' : ''}`}
-              onClick={() => p.selectPcdRequestId(pcdRequestListing.id)}
             >
-              <Link to="#">
+              <Link to="#" onClick={() => p.selectPcdRequestId(pcdRequestListing.id + 3)}>
                 {i === 0 ? 'Latest PCD request' : formatDate(pcdRequestListing.decisionRequested)}
               </Link>
             </li>
@@ -279,28 +272,24 @@ const ShowPcdRequestSidebarListings = (p: {
     </div>
   );
 };
+
 export const PcdRequestPage = () => {
   const { urn, caseId } = usePcdRequestPageAppRoute();
   const { data: pcdRequestList } = usePcdRequestListings({ urn, caseId });
   const firstPcdId = pcdRequestList?.[0]?.id;
   const [selectedPcdId, setSelectedPcdId] = useState<number | undefined>(undefined);
 
-  if (pcdRequestList === null) {
-    return <NotAuthorisedPage />;
-  }
+  if (pcdRequestList === null) return <NotAuthorisedPage />;
 
   const actualPcdId = selectedPcdId ?? firstPcdId;
   return (
     <Layout title="PCD Request">
+      <pre>{JSON.stringify({ selectedPcdId }, null, 2)}</pre>
       <div className="govuk-main-wrapper" style={{ whiteSpace: 'pre-wrap' }}>
         <LoadingSpinner isLoading={pcdRequestList === undefined} />
 
         {pcdRequestList && pcdRequestList.length === 0 && (
-          <p
-            className="govuk-body"
-            tabIndex={-1}
-            // ref={shouldAutoFocusPageContent ? (el) => el?.focus() : undefined}
-          >
+          <p className="govuk-body" tabIndex={-1} ref={(el) => el?.focus()}>
             There are no PCD Requests to show.
           </p>
         )}

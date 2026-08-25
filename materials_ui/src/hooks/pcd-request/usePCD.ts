@@ -20,12 +20,15 @@ const safeGetPcdRequest = async (p: {
   caseId: number;
   urn: string;
 }) => {
-  const resp = await getPcdRequest(p);
-  const parsed = pcdRequestSchema.safeParse(resp);
-  if (!parsed.success) {
-    console.error(parsed.error);
+  try {
+    const resp = await getPcdRequest(p);
+    const parsed = pcdRequestSchema.safeParse(resp);
+    if (!parsed.success) console.error(parsed.error);
+
+    return parsed;
+  } catch (error) {
+    return { success: false, error } as const;
   }
-  return parsed;
 };
 
 export const useGetPcdRequest = (p: { pcdId: string | number; caseId: number; urn: string }) => {
@@ -33,11 +36,13 @@ export const useGetPcdRequest = (p: { pcdId: string | number; caseId: number; ur
   const [pcdRequest, setPcdRequest] = useState<null | undefined | TPcdRequest>();
 
   useEffect(() => {
+    setPcdRequest(undefined);
+
     (async () => {
       const resp = await safeGetPcdRequest({ axiosInstance, ...p });
       setPcdRequest(resp.success ? resp.data : null);
     })();
-  }, []);
+  }, [p.pcdId]);
 
   return { data: pcdRequest };
 };
