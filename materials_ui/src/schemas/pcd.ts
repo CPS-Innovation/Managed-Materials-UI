@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const PCDListingSchema = z.object({
+export const pcdRequestListingSchema = z.object({
   id: z.number(),
   type: z.string(),
   decisionRequiredBy: z.string(),
@@ -15,9 +15,9 @@ export const PCDCaseOutlineSchema = z.object({
 
 export const PCDPoliceContactSchema = z.object({
   role: z.string(),
-  rank: z.string(),
+  rank: z.string().nullish(),
   name: z.string(),
-  number: z.string(),
+  number: z.string().nullish(),
 });
 
 export const PCDMaterialSchema = z.object({ subject: z.string(), date: z.string() });
@@ -25,17 +25,17 @@ export const PCDMaterialSchema = z.object({ subject: z.string(), date: z.string(
 export const PCDSuspect = z.object({
   surname: z.string(),
   firstNames: z.string(),
-  dob: z.string(),
-  bailConditions: z.string(),
-  bailDate: z.string(),
-  remandStatus: z.string(),
+  dob: z.string().nullish(),
+  bailConditions: z.string().nullish(),
+  bailDate: z.string().nullish(),
+  remandStatus: z.string().nullish(),
   proposedCharges: z.array(
     z.object({
       charge: z.string(),
-      earlyDate: z.string(),
-      lateDate: z.string(),
-      location: z.string(),
-      category: z.string(),
+      earlyDate: z.string().nullish(),
+      lateDate: z.string().nullish(),
+      location: z.string().nullish(),
+      category: z.string().nullish(),
     }),
   ),
 });
@@ -46,15 +46,15 @@ export const PCDDetailsSchema = z.object({
   decisionRequiredBy: z.string(),
   decisionRequested: z.string(),
   caseOutline: z.array(PCDCaseOutlineSchema),
-  comments: z.object({ text: z.string(), textWithCmsMarkup: z.string() }),
+  comments: z.object({ text: z.string().nullish(), textWithCmsMarkup: z.string().nullish() }),
   suspects: z.array(PCDSuspect),
   policeContactDetails: z.array(PCDPoliceContactSchema),
   materialProvided: z.array(PCDMaterialSchema),
 });
 
-export const PCDListingResponseSchema = z.array(PCDListingSchema);
-export const PCDDetailsResponseSchema = PCDDetailsSchema;
+export const pcdRequestListingsSchema = z.array(pcdRequestListingSchema);
+export const pcdRequestSchema = PCDDetailsSchema;
 
-export type PCDListingType = z.infer<typeof PCDListingSchema>;
-export type PCDListingResponseType = z.infer<typeof PCDListingResponseSchema>;
-export type PCDDetailsResponseType = z.infer<typeof PCDDetailsResponseSchema>;
+export type TPcdRequestListing = z.infer<typeof pcdRequestListingSchema>;
+export type TPcdRequestListings = z.infer<typeof pcdRequestListingsSchema>;
+export type TPcdRequest = z.infer<typeof pcdRequestSchema>;
