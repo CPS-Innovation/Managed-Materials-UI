@@ -1,3 +1,12 @@
+type TKeyCombo = Pick<KeyboardEvent, 'ctrlKey' | 'shiftKey' | 'altKey' | 'code'>;
+
+const isCtrlComma = (e: TKeyCombo) => e.ctrlKey && e.code === 'Comma';
+
+export const isFocusNextWordKey = (e: TKeyCombo) => isCtrlComma(e) && !e.shiftKey && !e.altKey;
+export const isFocusPreviousWordKey = (e: TKeyCombo) => isCtrlComma(e) && !e.shiftKey && e.altKey;
+export const isExtendSelectionByWordKey = (e: TKeyCombo) =>
+  isCtrlComma(e) && e.shiftKey && !e.altKey;
+
 export const getWordStartingIndices = (sentence: string): number[] =>
   Array.from(sentence.matchAll(/\S+/g), (match) => match.index!);
 
