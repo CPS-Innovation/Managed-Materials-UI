@@ -1,7 +1,7 @@
 import { useMsal } from '@azure/msal-react';
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import { getAccessTokenFromMsalInstance } from '../../../materials_components/DocumentSelectAccordion/getters/getAccessTokenFromMsalInstance';
-import { RedactionLogData } from '../../types/redactionLog';
+import { MATERIALS_AND_COMMS_SOURCE_CLIENT_ID, RedactionLogData } from '../../types/redactionLog';
 
 export const useAxiosInstances = () => {
   const { instance: msalInstance } = useMsal();
@@ -92,7 +92,10 @@ export const postRedactionLog = async (p: {
   data: RedactionLogData;
 }) => {
   try {
-    const response = await p.axiosInstance.post('/api/redactionLogs', p.data);
+    const response = await p.axiosInstance.post('/api/redactionLogs', {
+      ...p.data,
+      sourceClientId: MATERIALS_AND_COMMS_SOURCE_CLIENT_ID,
+    });
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) console.error(`Error posting redaction log: ${error.message}`);
