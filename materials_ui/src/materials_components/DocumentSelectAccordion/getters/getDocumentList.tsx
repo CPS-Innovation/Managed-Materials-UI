@@ -69,7 +69,7 @@ export const getDocumentFromAxiosInstance = async (p: {
   versionId: number | undefined;
 }) => {
   const response = await p.axiosInstance.get(
-    `/api/cases/${p.caseId}/documents/${p.documentId}/documents/${p.versionId}`,
+    `/api/cases/${p.caseId}/materials/${p.documentId}/documents/${p.versionId}`,
   );
 
   return response.data;

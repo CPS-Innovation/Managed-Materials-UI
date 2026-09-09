@@ -18,7 +18,7 @@ export const saveDeletions = async (p: {
   };
 
   const response = await p.axiosInstance.put(
-    `/api/cases/${p.caseId}/documents/${p.parentId}/documents/${p.childId}/redact`,
+    `/api/cases/${p.caseId}/materials/${p.parentId}/documents/${p.childId}/redact`,
     payload,
   );
 
