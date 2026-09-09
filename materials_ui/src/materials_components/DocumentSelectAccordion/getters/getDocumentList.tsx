@@ -57,7 +57,7 @@ export const getDocumentListFromAxiosInstance = async (p: {
   urn: string | undefined;
   caseId: number | undefined;
 }) => {
-  const response = await p.axiosInstance.get(`/api/urns/${p.urn}/cases/${p.caseId}/documents`);
+  const response = await p.axiosInstance.get(`/api/cases/${p.caseId}/documents`);
 
   return response.data;
 };

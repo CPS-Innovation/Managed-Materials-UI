@@ -53,7 +53,7 @@ export const getPdfFiles = async (p: {
 }): Promise<{ blob: Blob; isFileTooLarge: boolean }> => {
   try {
     const response = await p.axiosInstance.get(
-      `/api/cases/${p.caseId}/documents/${p.parentId}/documents/${p.childId}/pdf`,
+      `/api/cases/${p.caseId}/materials/${p.parentId}/documents/${p.childId}/pdf`,
       { responseType: 'blob' },
     );
     const fileTooLargeHeader = response.headers['cps-file-too-large'] ?? null;
