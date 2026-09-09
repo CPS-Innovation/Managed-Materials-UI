@@ -11,7 +11,7 @@ const getDocumentBlobFromAxiosInstance = async (p: {
 }) => {
   try {
     const response = await p.axiosInstance.get(
-      `/urns/${p.urn}/cases/${p.caseId}/materials/${p.materialId}/document`,
+      `/cases/${p.caseId}/materials/${p.materialId}/document`,
       { responseType: 'blob' },
     );
 

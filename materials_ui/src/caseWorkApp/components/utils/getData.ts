@@ -37,7 +37,7 @@ export const getDocuments = async (p: {
   caseId: number | undefined;
 }) => {
   try {
-    const response = await p.axiosInstance.get(`/api/urns/${p.urn}/cases/${p.caseId}/documents`);
+    const response = await p.axiosInstance.get(`/api/cases/${p.caseId}/documents`);
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) console.error(`Error getting documents: ${error.message}`);

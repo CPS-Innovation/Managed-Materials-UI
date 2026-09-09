@@ -18,7 +18,7 @@ export const useRename = (
 
   const renameMaterialRequest = (_url: string, { arg: newSubject }: SwrPayload<string>) => {
     return request.patch<CaseMaterialRenameResponseType>(
-      `/urns/${caseInfo?.urn}/cases/${caseInfo?.id}/materials/${material?.materialId}/rename`,
+      `/cases/${caseInfo?.id}/materials/${material?.materialId}/rename`,
       { materialId: material?.materialId, subject: newSubject },
     );
   };

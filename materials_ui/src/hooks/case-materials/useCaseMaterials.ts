@@ -15,7 +15,7 @@ export const useCaseMaterials = ({ dataType }: UseCaseMaterialsProps) => {
 
   const getCaseMaterials = async () => {
     const response = await request.get<CaseMaterialsResponseType>(
-      `/urns/${urn}/cases/${caseId}/case-materials`,
+      `/cases/${caseId}/case-materials`,
     );
 
     if (response.status === 422 || response.status !== 200) {
