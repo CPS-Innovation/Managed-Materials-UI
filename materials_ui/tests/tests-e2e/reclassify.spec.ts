@@ -112,7 +112,7 @@ test.describe('validation', () => {
 
 test.describe('form submission', () => {
   test('reclassify MG forms', async ({ page }) => {
-    await mockRoute(page, 'material/8836399/reclassify-complete', mockOchestration());
+    await mockRoute(page, 'materials/8836399/reclassify-complete', mockOchestration());
 
     await page.getByRole('radio', { name: 'MG Forms' }).check();
     await page.getByLabel('What is the material').selectOption('1064');
@@ -126,7 +126,7 @@ test.describe('form submission', () => {
 
   test('statement reclassify with witness', async ({ page }) => {
     await mockRoute(page, 'case-witnesses?caseId=2167259', mockWitness());
-    await mockRoute(page, 'material/8836399/reclassify-complete', mockOchestration());
+    await mockRoute(page, 'materials/8836399/reclassify-complete', mockOchestration());
     await page.unroute('api/case-materials');
     await mockRoute(
       page,
@@ -158,7 +158,7 @@ test.describe('form submission', () => {
 
   test('reclassify exhibit', async ({ page }) => {
     await mockRoute(page, 'case-witnesses?caseId=2167259', mockWitness());
-    await mockRoute(page, 'api/material/8836399/reclassify-complete', mockOchestration());
+    await mockRoute(page, 'api/materials/8836399/reclassify-complete', mockOchestration());
 
     await page.unroute('api/case-materials');
 
@@ -189,7 +189,7 @@ test.describe('form submission', () => {
 
   test('reclassify other', async ({ page }) => {
     await mockRoute(page, 'case-witnesses?caseId=2167259', mockWitness());
-    await mockRoute(page, 'api/material/4242662/reclassify-complete', mockOchestration());
+    await mockRoute(page, 'api/materials/4242662/reclassify-complete', mockOchestration());
 
     await page.unroute('api/case-materials');
 
@@ -206,7 +206,7 @@ test.describe('form submission', () => {
         documentTypeId: 1062,
       }),
     );
-    await mockRoute(page, 'api/material/8836399/reclassify-complete', mockOchestration());
+    await mockRoute(page, 'api/materials/8836399/reclassify-complete', mockOchestration());
 
     await page.getByRole('radio', { name: 'Other' }).check();
     await page.getByLabel('What is the material classification type?').selectOption('1201');
