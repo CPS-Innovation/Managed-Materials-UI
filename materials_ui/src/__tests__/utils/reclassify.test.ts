@@ -14,7 +14,14 @@ const headersOf = (banners: ReturnType<typeof getBannerData>) =>
   banners.map((b) => [b.type, b.header]);
 
 describe('getBannerData for a statement', () => {
-  it('reports a single success when the witness and action plan both succeed', () => {
+  it('reports a single success when the reclassification succeeds', () => {
+    const banners = getBannerData(aResponse({}), 'STATEMENT', false);
+
+    expect(headersOf(banners)).toEqual([['success', 'Reclassification successful']]);
+    expect(banners[0]!.content).toBe('Material reclassified successfully.');
+  });
+
+  it('never reports a witness being added, even when the response carries witness results', () => {
     const banners = getBannerData(
       aResponse({ witnessResult: aResult(true), actionPlanResult: aResult(true) }),
       'STATEMENT',
@@ -22,31 +29,11 @@ describe('getBannerData for a statement', () => {
     );
 
     expect(headersOf(banners)).toEqual([['success', 'Reclassification successful']]);
+    expect(banners[0]!.content).toBe('Material reclassified successfully.');
   });
 
-  it('pairs a success with an error when only the action plan fails', () => {
-    const banners = getBannerData(
-      aResponse({ witnessResult: aResult(true), actionPlanResult: aResult(false) }),
-      'STATEMENT',
-      false,
-    );
-
-    expect(headersOf(banners)).toEqual([
-      ['success', 'Reclassification successful'],
-      ['error', 'Action plan creation failed'],
-    ]);
-  });
-
-  it('reports a single error when the whole reclassification fails', () => {
-    const banners = getBannerData(
-      aResponse({
-        status: 'Failed',
-        witnessResult: aResult(false),
-        actionPlanResult: aResult(false),
-      }),
-      'STATEMENT',
-      false,
-    );
+  it('reports a single error when the reclassification fails', () => {
+    const banners = getBannerData(aResponse({ status: 'Failed' }), 'STATEMENT', false);
 
     expect(headersOf(banners)).toEqual([['error', 'Reclassification failed']]);
   });

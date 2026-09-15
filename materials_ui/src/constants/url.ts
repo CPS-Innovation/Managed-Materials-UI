@@ -33,14 +33,12 @@ export const CASEWORK_APP_URL = import.meta.env.VITE_CWA_URL;
 export const API_ENDPOINTS = {
   AUTO_RECLASSIFY: '/uma-reclassify',
   CASE_INFO: '/case-info',
-  CASE_LOCK_STATUS: '/case-lock-info',
   CASE_MATERIALS: '/case-materials',
   CASE_MATERIAL_RENAME: '/material/rename',
   CASE_MATERIAL_READ_STATUS: '/material/read-status',
   CASE_MATERIAL_BULK_SET_UNUSED: '/case-materials/bulk-set-unused',
   CASE_MATERIAL_DOCUMENT_PREVIEW: '/case-materials/preview',
   CASE_MATERIAL_DISCARD: '/material/discard',
-  CASE_DEFENDANTS: '/case-defendants',
   PCD_REQUEST_LIST: '/case/{caseId}/pcd-requests/core',
   PCD_REQUEST_DETAILS: '/case/{caseId}/pcd-request/{pcdId}',
   CASE_MATERIAL_FULL_DOCUMENT: '/case-materials/document',
@@ -49,8 +47,6 @@ export const API_ENDPOINTS = {
   WITNESS_STATEMENTS: '/witnesses/{witnessId}/statements',
   RECLASSIFY: '/material/{materialId}/reclassify-complete',
   EXHIBIT_PRODUCERS: '/exhibit-producers',
-  CREATE_WITNESS: '/case-witnesses',
-  CREATE_ACTION_PLAN: '/action-plan',
 };
 
 export const AUTH_REDIRECT_URL = '{apiUrl}/init?caseId={caseId}&screen={screenPath}';

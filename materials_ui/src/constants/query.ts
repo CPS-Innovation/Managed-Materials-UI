@@ -1,6 +1,5 @@
 export const QUERY_KEYS = {
   CASE_INFO: 'caseInfo',
-  CASE_LOCK_STATUS: 'caseLockStatus',
   CASE_MATERIAL: 'caseMaterial',
   AUTO_RECLASSIFY: 'autoReclassify',
   RENAME_MATERIAL: 'renameMaterial',
@@ -11,7 +10,6 @@ export const QUERY_KEYS = {
   CASE_MATERIAL_DOCUMENT_PREVIEW: 'caseMaterialDocumentPreview',
   CASE_MATERIAL_DISCARD: 'caseMaterialDocumentPreview',
   CASE_MATERIAL_FULL_DOCUMENT: 'caseMaterialFullDocument',
-  CASE_DEFENDANTS: 'caseDefendants',
   DOCUMENT_TYPES: 'documentTypes',
   CASE_WITNESSES: 'caseWitnesses',
   RECLASSIFY: 'reclassify',
@@ -19,8 +17,6 @@ export const QUERY_KEYS = {
   EXHIBIT_PRODUCERS: 'exhibitProducers',
   PCD_REVIEW_CORE: 'pcdReviewCore',
   PCD_REVIEW_REVIEW_DETAILS: 'pcdReviewReviewDetails',
-  CREATE_WITNESS: 'createWitness',
-  CREATE_ACTION_PLAN: 'createActionPlan',
   RECLASSIFY_MATERIAL: 'reclassifyMaterial',
   CASE_SEARCH: 'caseSearch',
   DOCUMENT_SEARCH: 'documentSearch',

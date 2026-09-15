@@ -1,4 +1,3 @@
-export { AddWitness } from './AddWitness';
 export { Exhibit } from './Exhibit';
 export { MaterialName } from './MaterialName';
 export { MGForms } from './MGForms';
