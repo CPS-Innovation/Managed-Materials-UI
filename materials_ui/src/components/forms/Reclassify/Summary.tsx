@@ -66,54 +66,50 @@ export const Summary = ({ data, onChange, onSave }: Props) => {
       />
 
       {data?.classification === 'STATEMENT' && (
-        <>
-          <SummaryCard
-            action={() => handleChangeClick('classification')}
-            title={`${documentType?.name} details`}
-            content={[
-              { key: 'Who is the Witness', value: witnessName },
-              {
-                key: 'Does the statement have a date?',
-                value: data?.hasStatementDate ? 'Yes' : 'No',
-              },
-              ...(data?.hasStatementDate
-                ? [
-                    {
-                      key: 'What is the statement date?',
-                      value: data?.statementDate ? formatDate(data?.statementDate) : '',
-                    },
-                  ]
-                : []),
-              { key: 'Statement number', value: data?.statementNumber as number },
-              { key: 'What is the material status?', value: usedStatus },
-            ]}
-          />
-        </>
+        <SummaryCard
+          action={() => handleChangeClick('classification')}
+          title={`${documentType?.name} details`}
+          content={[
+            { key: 'Who is the Witness', value: witnessName },
+            {
+              key: 'Does the statement have a date?',
+              value: data?.hasStatementDate ? 'Yes' : 'No',
+            },
+            ...(data?.hasStatementDate
+              ? [
+                  {
+                    key: 'What is the statement date?',
+                    value: data?.statementDate ? formatDate(data?.statementDate) : '',
+                  },
+                ]
+              : []),
+            { key: 'Statement number', value: data?.statementNumber as number },
+            { key: 'What is the material status?', value: usedStatus },
+          ]}
+        />
       )}
 
       {data?.classification === 'EXHIBIT' && (
-        <>
-          <SummaryCard
-            action={() => handleChangeClick('classification')}
-            title={`${documentType?.name} details`}
-            content={[
-              { key: 'Item', value: data?.item },
-              { key: 'Exhibit name', value: data?.subject },
-              ...(data?.referenceNumber
-                ? [{ key: 'Exhibit reference', value: data?.referenceNumber }]
-                : []),
-              ...(data?.producedBy || exhibitProducer
-                ? [
-                    {
-                      key: 'Exhibit producer',
-                      value: exhibitProducer ? exhibitProducer?.producer : data?.producedBy,
-                    },
-                  ]
-                : []),
-              { key: 'What is the material status?', value: usedStatus },
-            ]}
-          />
-        </>
+        <SummaryCard
+          action={() => handleChangeClick('classification')}
+          title={`${documentType?.name} details`}
+          content={[
+            { key: 'Item', value: data?.item },
+            { key: 'Exhibit name', value: data?.subject },
+            ...(data?.referenceNumber
+              ? [{ key: 'Exhibit reference', value: data?.referenceNumber }]
+              : []),
+            ...(data?.producedBy || exhibitProducer
+              ? [
+                  {
+                    key: 'Exhibit producer',
+                    value: exhibitProducer ? exhibitProducer?.producer : data?.producedBy,
+                  },
+                ]
+              : []),
+            { key: 'What is the material status?', value: usedStatus },
+          ]}
+        />
       )}
 
       {['MG Form', 'OTHER'].includes(data.classification as string) && (
