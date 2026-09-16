@@ -16,7 +16,7 @@ export const usePCDReviewCore = () => {
 
   const getPCDReviewCore = async () => {
     try {
-      const response = await request.get(`urns/${urn}/cases/${caseId}/pcd-review-core`);
+      const response = await request.get(`cases/${caseId}/pcd-review-core`);
 
       const parsedResponse = PCDReviewCoreSchema.safeParse(response.data);
 

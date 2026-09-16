@@ -48,7 +48,7 @@ export const useReclassify = ({ materialId, onError, onSuccess }: UseReclassifyO
     { arg: data }: SwrPayload<Reclassify_Orchestrated_Request_Type>,
   ) => {
     return await request.post<Reclassify_Orchestrated_Response_Type>(
-      `/urns/${caseInfo?.urn}/cases/${caseInfo?.id}/materials/${materialId}/reclassify-complete`,
+      `/cases/${caseInfo?.id}/materials/${materialId}/reclassify-complete`,
       data,
     );
   };
