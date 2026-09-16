@@ -11,9 +11,7 @@ export const useDocuments = () => {
   const caseId = appRoute?.caseId?.toString();
 
   const getDocuments = () =>
-    request
-      .get<DocumentResultType>(`/urns/${urn}/cases/${caseId}/documents`)
-      .then((res) => res.data);
+    request.get<DocumentResultType>(`/cases/${caseId}/documents`).then((res) => res.data);
 
   const { data, isLoading } = useSWR<DocumentResultType>(
     urn && caseId ? [QUERY_KEYS.GET_ALL_DOCUMENTS, urn, caseId] : null,
