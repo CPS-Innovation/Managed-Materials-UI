@@ -16,7 +16,9 @@ export const useAutoReclassify = (options?: UseAutoReclassifyProps) => {
   const { caseInfo } = useCaseInfoStore();
 
   const postAutoReclassify = () =>
-    request.post<AutoReclassifyResponseType>(`cases/${caseInfo?.id}/uma-reclassify`);
+    request.post<AutoReclassifyResponseType>(
+      `urns/${caseInfo?.urn}/cases/${caseInfo?.id}/uma-reclassify`,
+    );
 
   const { trigger, isMutating, error } = useSWRMutation(
     caseInfo ? QUERY_KEYS.AUTO_RECLASSIFY : null,

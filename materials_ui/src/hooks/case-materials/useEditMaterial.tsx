@@ -26,7 +26,7 @@ export const useEditMaterial = ({ onError, onSuccess }: UseEditMaterialOptions) 
     { arg: data }: SwrPayload<EditStatementRequestType>,
   ): Promise<EditStatementResponseType> => {
     const response = await request.patch<EditStatementResponseType>(
-      `cases/${caseInfo?.id}/materials/${data?.materialId}/statement`,
+      `urns/${caseInfo?.urn}/cases/${caseInfo?.id}/materials/${data?.materialId}/statement`,
       data,
     );
 
@@ -38,7 +38,7 @@ export const useEditMaterial = ({ onError, onSuccess }: UseEditMaterialOptions) 
     { arg: data }: SwrPayload<EditExhibitType>,
   ): Promise<EditExhibitResponseType> => {
     const response = await request.patch<EditExhibitResponseType>(
-      `cases/${caseInfo?.id}/materials/${data?.materialId}/exhibit`,
+      `urns/${caseInfo?.urn}/cases/${caseInfo?.id}/materials/${data?.materialId}/exhibit`,
       {
         ...data,
         newProducer: data?.existingproducerOrWitnessId ? undefined : data?.producedBy,

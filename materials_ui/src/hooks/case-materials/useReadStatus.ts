@@ -19,7 +19,7 @@ export const useReadStatus = () => {
     { arg: data }: SwrPayload<CaseMaterialReadStatusRequestType>,
   ) => {
     return await request.patch<CaseMaterialReadStatusResponseType>(
-      `cases/${caseInfo?.id}/materials/${data?.materialId}/read-status`,
+      `urns/${caseInfo?.urn}/cases/${caseInfo?.id}/materials/${data?.materialId}/read-status`,
       data,
     );
   };

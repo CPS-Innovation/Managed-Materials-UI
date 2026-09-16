@@ -13,7 +13,7 @@ export const useDocumentPreview = ({ materialId }: Props) => {
   const getDocumentPreview = async () =>
     await request
       .get<CaseMaterialDocumentPreviewResponseType>(
-        `/cases/${caseInfo?.id}/materials/${materialId}/document`,
+        `/urns/${caseInfo?.urn}/cases/${caseInfo?.id}/materials/${materialId}/document`,
         { responseType: 'blob' },
       )
       .then((response) => response.data);

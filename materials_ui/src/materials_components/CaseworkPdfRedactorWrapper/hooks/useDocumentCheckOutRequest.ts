@@ -25,7 +25,7 @@ const checkOutDocumentFromAxiosInstance = async (p: {
 }) => {
   try {
     const response = await p.axiosInstance.post(
-      `/api/cases/${p.caseId}/materials/${p.parentId}/documents/${p.childId}/checkout`,
+      `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.parentId}/versions/${p.childId}/checkout`,
     );
 
     return { success: true, data: { response } } as const;
@@ -52,7 +52,7 @@ export const checkInDocumentFromAxiosInstance = async (p: {
 }) => {
   try {
     await p.axiosInstance.delete(
-      `/api/cases/${p.caseId}/materials/${p.parentId}/documents/${p.childId}/checkout`,
+      `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.parentId}/versions/${p.childId}/checkout`,
       { fetchOptions: { keepalive: true } },
     );
 
