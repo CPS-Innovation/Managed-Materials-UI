@@ -20,7 +20,10 @@ export const useFocusTrap = (id = '#modal') => {
 
       if ((e.code === 'Tab' || e.key === 'Tab') && tabbableElements) {
         if (e.shiftKey) {
-          if (document.activeElement === tabbableElements[0]) {
+          if (
+            document.activeElement === tabbableElements[0] ||
+            document.activeElement === document.querySelector(id)
+          ) {
             (tabbableElements[tabbableElements.length - 1] as HTMLElement).focus();
             e.preventDefault();
           }
@@ -34,7 +37,7 @@ export const useFocusTrap = (id = '#modal') => {
         }
       }
     },
-    [getTabbableElements],
+    [getTabbableElements, id],
   );
 
   useEffect(() => {
@@ -42,12 +45,13 @@ export const useFocusTrap = (id = '#modal') => {
       const tabbableElements = getTabbableElements();
       if (tabbableElements?.length) {
         setTimeout(() => {
+          if (document.querySelector(id)?.contains(document.activeElement)) return;
           (tabbableElements[0] as HTMLElement).focus();
         }, 10);
       }
     };
     setFirstElementFocus();
-  }, [getTabbableElements]);
+  }, [getTabbableElements, id]);
 
   useEffect(() => {
     window.addEventListener('keydown', keyDownHandler);

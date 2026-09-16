@@ -77,7 +77,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
     redactions: TRedaction[];
     selectedRedactionTypes: TRedactionType[];
   }) => void;
-  onRedactionSaveStatusChange: (status: 'saving' | 'saved' | undefined) => void;
+  onRedactionSaveStatusChange: (status: 'saving' | 'saved' | 'error' | undefined) => void;
   onNumOfPagesDocumentChange: (x: number) => void;
   searchHighlights?: TSearchHighlight[];
   focusedSearchIndex?: number;
@@ -149,6 +149,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
   const [redactionDisabledModalProps, setRedactionDisabledModalProps] = useState<{
     message: string;
   } | null>(null);
+  const [showSaveRedactionsErrorModal, setShowSaveRedactionsErrorModal] = useState(false);
 
   const [deleteReasonPopupProps, setDeleteReasonPopupProps] = useState<Omit<
     ComponentProps<typeof DeletionReasonForm> & TCoord,
@@ -273,6 +274,30 @@ export const CaseworkPdfRedactorWrapper = (p: {
             </PdfRedactorCenteredModal>
           );
         })()}
+      {showSaveRedactionsErrorModal &&
+        (() => {
+          const closeModal = () => setShowSaveRedactionsErrorModal(false);
+
+          return (
+            <PdfRedactorCenteredModal
+              onBackgroundClick={closeModal}
+              onEscPress={closeModal}
+              ariaLabel="Failed to save redactions"
+            >
+              <GovUkBanner
+                variant="error"
+                headerTitle="Error"
+                headerRight={
+                  <Button variant="red" autoFocus onClick={closeModal}>
+                    <CloseIcon color="white" />
+                  </Button>
+                }
+                contentHeading="Something went wrong!"
+                contentBody="Failed to save redactions, please try again."
+              />
+            </PdfRedactorCenteredModal>
+          );
+        })()}
       {documentIsCheckedOutPopupProps &&
         (() => {
           const closeModal = () => setDocumentIsCheckedOutPopupProps(null);
@@ -379,15 +404,15 @@ export const CaseworkPdfRedactorWrapper = (p: {
               redactions,
             });
             setRedactions([]);
+            setSelectedRedactionTypes([]);
             trackAction('Redacted', { materialId: p.parentId });
             p.onRedactionSaveStatusChange('saved');
             if (p.document) p.onModification(p.document);
             await documentCheckOutRequest.checkIn({ parentId: p.parentId, childId: p.childId });
           } catch (error) {
             console.error('Failed to save redactions:', error);
-            setRedactions([]);
-            setSelectedRedactionTypes([]);
-            p.onRedactionSaveStatusChange(undefined);
+            p.onRedactionSaveStatusChange('error');
+            setShowSaveRedactionsErrorModal(true);
           }
         }}
         onShowRedactionLogModal={(redactions) => {

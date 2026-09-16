@@ -4,12 +4,7 @@ import { Link } from 'react-router-dom';
 import { SummaryCard } from '../..';
 import { URL } from '../../../constants/url';
 import type { FormStep, ReclassifyFormData } from '../../../hooks';
-import {
-  useCaseDefendants,
-  useCaseWitnesses,
-  useDocumentTypes,
-  useExhibitProducers,
-} from '../../../hooks';
+import { useCaseWitnesses, useDocumentTypes, useExhibitProducers } from '../../../hooks';
 import type { Reclassify_ClassificationForm } from '../../../schemas/forms/reclassify';
 import { formatDate } from '../../../utils/date';
 import { mapBEClassificationToFE } from './constants/string';
@@ -23,7 +18,6 @@ type Props = {
 export const Summary = ({ data, onChange, onSave }: Props) => {
   const { getDocumentTypeById } = useDocumentTypes();
   const { getWitnessById, formatWitnessName } = useCaseWitnesses();
-  const { getDefendantById, formatDefendantName } = useCaseDefendants();
   const { getExhibitProducerById } = useExhibitProducers();
 
   console.log(data);
@@ -49,13 +43,6 @@ export const Summary = ({ data, onChange, onSave }: Props) => {
     data?.classification === 'STATEMENT'
       ? formatWitnessName(getWitnessById(data?.witnessId as number))
       : null;
-  const defendantName =
-    data?.classification === 'STATEMENT'
-      ? data?.witnessActionPlan?.defendantId === 0
-        ? 'All defendants'
-        : formatDefendantName(getDefendantById(data?.witnessActionPlan?.defendantId as number))
-      : null;
-
   const exhibitProducer =
     data?.classification === 'EXHIBIT' ? getExhibitProducerById(data?.producerId) : false;
 
@@ -79,88 +66,50 @@ export const Summary = ({ data, onChange, onSave }: Props) => {
       />
 
       {data?.classification === 'STATEMENT' && (
-        <>
-          <SummaryCard
-            action={() => handleChangeClick('classification')}
-            title={`${documentType?.name} details`}
-            content={[
-              { key: 'Who is the Witness', value: witnessName || 'New witness (see below)' },
-              {
-                key: 'Does the statement have a date?',
-                value: data?.hasStatementDate ? 'Yes' : 'No',
-              },
-              ...(data?.hasStatementDate
-                ? [
-                    {
-                      key: 'What is the statement date?',
-                      value: data?.statementDate ? formatDate(data?.statementDate) : '',
-                    },
-                  ]
-                : []),
-              { key: 'Statement number', value: data?.statementNumber as number },
-              { key: 'What is the material status?', value: usedStatus },
-            ]}
-          />
-
-          {data?.classification === 'STATEMENT' && data?.witnessId === 0 && (
-            <SummaryCard
-              action={() => handleChangeClick('addWitness')}
-              title="New witness and action plan request"
-              content={[
-                { key: 'Name', value: data?.witnessActionPlan?.firstName },
-                { key: 'Surname', value: data?.witnessActionPlan?.surname },
-                { key: 'Contested issue', value: data?.witnessActionPlan?.actionPointText },
-                {
-                  key: 'What do you want to request',
-                  value:
-                    data?.witnessActionPlan?.requestType === 'KWD'
-                      ? 'Key witness details'
-                      : 'Non-key witness details',
-                },
-                { key: 'Select the defendant the action plan relates to', value: defendantName },
-                { key: 'Describe the action plan', value: data?.witnessActionPlan?.actionPlan },
-                { key: 'Date needed', value: formatDate(data?.witnessActionPlan?.dateNeeded) },
-                {
-                  key: 'Do you want to add a follow up?',
-                  value: data?.witnessActionPlan?.followUp ? 'Yes' : 'No',
-                },
-                ...(data?.witnessActionPlan?.followUp
-                  ? [
-                      {
-                        key: 'Follow up date',
-                        value: formatDate(data?.witnessActionPlan?.followUpDate),
-                      },
-                    ]
-                  : []),
-              ]}
-            />
-          )}
-        </>
+        <SummaryCard
+          action={() => handleChangeClick('classification')}
+          title={`${documentType?.name} details`}
+          content={[
+            { key: 'Who is the Witness', value: witnessName },
+            {
+              key: 'Does the statement have a date?',
+              value: data?.hasStatementDate ? 'Yes' : 'No',
+            },
+            ...(data?.hasStatementDate
+              ? [
+                  {
+                    key: 'What is the statement date?',
+                    value: data?.statementDate ? formatDate(data?.statementDate) : '',
+                  },
+                ]
+              : []),
+            { key: 'Statement number', value: data?.statementNumber as number },
+            { key: 'What is the material status?', value: usedStatus },
+          ]}
+        />
       )}
 
       {data?.classification === 'EXHIBIT' && (
-        <>
-          <SummaryCard
-            action={() => handleChangeClick('classification')}
-            title={`${documentType?.name} details`}
-            content={[
-              { key: 'Item', value: data?.item },
-              { key: 'Exhibit name', value: data?.subject },
-              ...(data?.referenceNumber
-                ? [{ key: 'Exhibit reference', value: data?.referenceNumber }]
-                : []),
-              ...(data?.producedBy || exhibitProducer
-                ? [
-                    {
-                      key: 'Exhibit producer',
-                      value: exhibitProducer ? exhibitProducer?.producer : data?.producedBy,
-                    },
-                  ]
-                : []),
-              { key: 'What is the material status?', value: usedStatus },
-            ]}
-          />
-        </>
+        <SummaryCard
+          action={() => handleChangeClick('classification')}
+          title={`${documentType?.name} details`}
+          content={[
+            { key: 'Item', value: data?.item },
+            { key: 'Exhibit name', value: data?.subject },
+            ...(data?.referenceNumber
+              ? [{ key: 'Exhibit reference', value: data?.referenceNumber }]
+              : []),
+            ...(data?.producedBy || exhibitProducer
+              ? [
+                  {
+                    key: 'Exhibit producer',
+                    value: exhibitProducer ? exhibitProducer?.producer : data?.producedBy,
+                  },
+                ]
+              : []),
+            { key: 'What is the material status?', value: usedStatus },
+          ]}
+        />
       )}
 
       {['MG Form', 'OTHER'].includes(data.classification as string) && (

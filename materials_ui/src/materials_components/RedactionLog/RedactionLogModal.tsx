@@ -52,7 +52,7 @@ type RedactionLogModalProps = {
   mode: 'over-under' | 'list';
   redactions?: TRedaction[];
   selectedRedactionTypes?: TRedactionType[];
-  redactionSaveStatus?: 'saving' | 'saved';
+  redactionSaveStatus?: 'saving' | 'saved' | 'error';
 };
 
 const WhiteTickIcon = () => (
@@ -213,7 +213,7 @@ export const RedactionLogModal = ({
                 className="govuk-button"
                 data-module="govuk-button"
                 data-testid="saveChangesButton"
-                disabled={form.formState.isSubmitting}
+                disabled={form.formState.isSubmitting || redactionSaveStatus === 'saving'}
               >
                 Save and close
               </button>

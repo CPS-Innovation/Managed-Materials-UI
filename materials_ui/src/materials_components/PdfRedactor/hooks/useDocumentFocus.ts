@@ -1,5 +1,11 @@
 import { RefObject, useEffect, useRef } from 'react';
-import { getOrderedTextSpans, getWordStartingIndices } from './useDocumentFocusHelpers';
+import {
+  getOrderedTextSpans,
+  getWordStartingIndices,
+  isExtendSelectionByWordKey,
+  isFocusNextWordKey,
+  isFocusPreviousWordKey,
+} from './useDocumentFocusHelpers';
 
 type WordPosition = { span: Element; offset: number };
 
@@ -8,9 +14,10 @@ export const useDocumentFocus = (p: { containerRef: RefObject<HTMLElement | null
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      const isForward = e.ctrlKey && !e.shiftKey && !e.altKey && e.code === 'Comma';
-      const isBackward = e.ctrlKey && e.key === 'Shift' && !e.altKey;
-      if (!isForward && !isBackward) return;
+      const isForward = isFocusNextWordKey(e);
+      const isBackward = isFocusPreviousWordKey(e);
+      const isExtend = isExtendSelectionByWordKey(e);
+      if (!isForward && !isBackward && !isExtend) return;
 
       const container = p.containerRef.current;
       if (!container) return;
@@ -18,6 +25,11 @@ export const useDocumentFocus = (p: { containerRef: RefObject<HTMLElement | null
       if (window.getComputedStyle(container).visibility === 'hidden') return;
 
       e.preventDefault();
+
+      if (isExtend) {
+        extendSelectionByWord();
+        return;
+      }
 
       const words = collectWordPositions(container);
       if (!words.length) return;
@@ -57,6 +69,15 @@ const placeCaretAt = ({ span, offset }: WordPosition, container: HTMLElement) =>
   selection?.addRange(range);
 
   container.focus({ preventScroll: true });
+};
+
+const extendSelectionByWord = () => {
+  const selection = window.getSelection();
+  if (!selection) return;
+
+  selection.modify('extend', 'forward', 'word');
+
+  selection.focusNode?.parentElement?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 };
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(value, max));

@@ -38,6 +38,15 @@ export const CaseSearchPage = () => {
 
   const caseDetails = useCaseDetails({ urn: queryUrn });
 
+  const searchCompleteMessage = (() => {
+    if (caseDetails.error?.status === 403) return 'You do not have access to this case.';
+    if (caseDetails.error?.status === 500) return 'Something went wrong.';
+
+    const count = caseDetails.data?.data?.length ?? 0;
+
+    return `${count} ${count === 1 ? 'case' : 'cases'} found for ${queryUrn}.`;
+  })();
+
   useEffect(() => {
     clearCaseInfo();
     resetAllFilters();
@@ -91,7 +100,11 @@ export const CaseSearchPage = () => {
           </div>
         </div>
 
-        <LoadingSpinner isLoading={caseDetails.isLoading} textContent="Searching for a case..." />
+        <LoadingSpinner
+          isLoading={caseDetails.isLoading}
+          textContent="Searching for a case..."
+          completeMessage={searchCompleteMessage}
+        />
         {(() => {
           if (caseDetails.isLoading) return null;
 

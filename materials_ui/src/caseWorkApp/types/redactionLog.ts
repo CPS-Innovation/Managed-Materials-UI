@@ -30,3 +30,6 @@ export type RedactionLogData = {
   chargeStatus: number;
   cmsValues: CmsValues;
 };
+
+// the redaction log service's source client id for this app
+export const MATERIALS_AND_COMMS_SOURCE_CLIENT_ID = 2;

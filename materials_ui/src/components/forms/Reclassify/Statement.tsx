@@ -60,16 +60,10 @@ export const Statement = ({ control, data, errors }: Props) => {
                 ? [{ label: 'Loading...', value: '', id: '' }]
                 : [{ label: 'Select witness', value: '', id: '' }]),
               ...witnessOptions,
-              { label: 'Witness not on the list - add witness', value: '0', id: '0' },
             ]}
           />
         )}
       />
-      {data?.witnessId === 0 && (
-        <p style={{ margin: '-20px 0 20px' }}>
-          <strong>You will be asked to add a new witness on the next page.</strong>
-        </p>
-      )}
 
       <Controller
         name="hasStatementDate"

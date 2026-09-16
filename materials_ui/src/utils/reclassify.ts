@@ -14,31 +14,6 @@ export const getBannerData = (
   // STATEMENT HANDLING
   if (classificationType === 'STATEMENT') {
     if (response.status === 'Success') {
-      if (response.witnessResult?.success && response.actionPlanResult?.success === false) {
-        return [
-          {
-            type: 'success',
-            header: 'Reclassification successful',
-            content: 'Material reclassified and witness added successfully.',
-          },
-          {
-            type: 'error',
-            header: 'Action plan creation failed',
-            content: 'Unable to reclassify material, add witness and send action plan.',
-          },
-        ];
-      }
-
-      if (response.witnessResult?.success && response.actionPlanResult?.success) {
-        return [
-          {
-            type: bannerTypes.success,
-            header: 'Reclassification successful',
-            content: 'Material reclassified, witness added and action plan sent successfully.',
-          },
-        ];
-      }
-
       return [
         {
           type: bannerTypes.success,
@@ -46,78 +21,9 @@ export const getBannerData = (
           content: 'Material reclassified successfully.',
         },
       ];
-    } else if (response.status === 'PartialSuccess') {
-      if (
-        response.reclassificationResult?.success &&
-        response.actionPlanResult?.success === false
-      ) {
-        return [
-          {
-            type: 'success',
-            header: 'Reclassification successful',
-            content: 'Material reclassified and witness added successfully.',
-          },
-          {
-            type: 'error',
-            header: 'Action plan creation failed',
-            content: 'Unable to send action plan.',
-          },
-        ];
-      }
+    }
 
-      if (
-        response.reclassificationResult?.success === false &&
-        response.witnessResult?.success === false &&
-        response.actionPlanResult?.success
-      ) {
-        return [
-          {
-            type: 'success',
-            header: 'Action plan success',
-            content: 'Action plan sent successfully.',
-          },
-          {
-            type: 'error',
-            header: 'Reclassification failed',
-            content: 'Unable to reclassify material and add witness.',
-          },
-        ];
-      }
-
-      if (
-        response.reclassificationResult?.success === false &&
-        response.witnessResult?.success &&
-        response.actionPlanResult?.success
-      ) {
-        return [
-          {
-            type: 'success',
-            header: 'New witness and action plan success',
-            content: 'New witness added and action plan sent successfully.',
-          },
-          {
-            type: 'error',
-            header: 'Reclassification failed',
-            content: 'Unable to reclassify material.',
-          },
-        ];
-      }
-
-      return [];
-    } else {
-      if (
-        response.witnessResult?.success === false &&
-        response.actionPlanResult?.success === false
-      ) {
-        return [
-          {
-            type: bannerTypes.error,
-            header: 'Reclassification failed',
-            content: 'Unable to reclassify material, add witness and send action plan.',
-          },
-        ];
-      }
-
+    if (response.status === 'Failed') {
       return [
         {
           type: bannerTypes.error,
@@ -126,6 +32,8 @@ export const getBannerData = (
         },
       ];
     }
+
+    return [];
   }
 
   // reclassification success

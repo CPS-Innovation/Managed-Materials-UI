@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useFocusTrap } from '../../caseWorkApp/hooks/useFocusTrap';
 import { useLastFocus } from '../../caseWorkApp/hooks/useLastFocus';
@@ -8,13 +8,26 @@ type ModalProps = {
   open: boolean;
   onClose: () => void;
   ariaLabel: string;
+  ariaDescribedBy?: string;
   title?: string;
   children: React.ReactNode;
 };
 
-const ModalContent = ({ onClose, ariaLabel, title, children }: Omit<ModalProps, 'open'>) => {
+const ModalContent = ({
+  onClose,
+  ariaLabel,
+  ariaDescribedBy,
+  title,
+  children,
+}: Omit<ModalProps, 'open'>) => {
+  const dialogRef = useRef<HTMLDivElement>(null);
+
   useFocusTrap();
   useLastFocus();
+
+  useEffect(() => {
+    dialogRef.current?.focus();
+  }, []);
 
   useEffect(() => {
     const fn = (e: KeyboardEvent) => {
@@ -34,10 +47,13 @@ const ModalContent = ({ onClose, ariaLabel, title, children }: Omit<ModalProps, 
   return ReactDOM.createPortal(
     <div className="modal-overlay" role="presentation" onClick={onClose}>
       <div
+        ref={dialogRef}
         id="modal"
         role="dialog"
         aria-modal="true"
         aria-label={ariaLabel}
+        aria-describedby={ariaDescribedBy}
+        tabIndex={-1}
         className="modal-content"
         onClick={(e) => e.stopPropagation()}
       >

@@ -1,9 +1,12 @@
 import { RefObject, useEffect, useRef } from 'react';
 import { isRedactionEnabledMode, TMode } from '../utils/modeUtils';
+import { isExtendSelectionByWordKey } from './useDocumentFocusHelpers';
 
 const ARROW_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown']);
 
 const SELECTION_SETTLE_MS = 600;
+
+const isShiftArrowKey = (e: KeyboardEvent) => e.shiftKey && !e.altKey && ARROW_KEYS.has(e.key);
 
 export const useShiftReleaseRedactTrigger = (p: {
   modeRef: RefObject<TMode>;
@@ -37,10 +40,7 @@ export const useShiftReleaseRedactTrigger = (p: {
         return;
       }
       if (
-        e.shiftKey &&
-        !e.ctrlKey &&
-        !e.altKey &&
-        ARROW_KEYS.has(e.key) &&
+        (isShiftArrowKey(e) || isExtendSelectionByWordKey(e)) &&
         isRedactionEnabledMode(p.modeRef.current) &&
         isContainerVisible()
       ) {

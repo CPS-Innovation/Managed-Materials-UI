@@ -81,7 +81,7 @@ export const DocumentTabPanel = ({
   const blobUrlRef = useRef<string | null>(null);
 
   const [showRedactionLogModal, setShowRedactionLogModal] = useState(false);
-  const [redactionSaveStatus, setRedactionSaveStatus] = useState<'saving' | 'saved'>();
+  const [redactionSaveStatus, setRedactionSaveStatus] = useState<'saving' | 'saved' | 'error'>();
   const [redactionLogModalData, setRedactionLogModalData] = useState<RedactionLogModalData>();
   const [lookups, setLookups] = useState<TLookupsResponse>();
 
@@ -230,7 +230,10 @@ export const DocumentTabPanel = ({
               setRedactionLogModalData(data);
               setShowRedactionLogModal(true);
             }}
-            onRedactionSaveStatusChange={setRedactionSaveStatus}
+            onRedactionSaveStatusChange={(status) => {
+              setRedactionSaveStatus(status);
+              if (status === 'error') setShowRedactionLogModal(false);
+            }}
             onNumOfPagesDocumentChange={onNumOfPagesChange}
             searchHighlights={searchContext?.highlights}
             focusedSearchIndex={searchContext?.focusedIndex}

@@ -509,10 +509,7 @@ export const PdfRedactor = (p: {
             <RedactionsFooter
               redactions={p.redactions}
               onRemoveAllRedactionsClick={() => p.onRedactionsChange([])}
-              onSaveRedactionsClick={async () => {
-                await p.onSaveRedactions();
-                p.onRedactionsChange([]);
-              }}
+              onSaveRedactionsClick={() => p.onSaveRedactions()}
               onShowRedactionLogModal={p.onShowRedactionLogModal}
             />
           </div>

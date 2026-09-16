@@ -1,6 +1,12 @@
 import { useLoadingAnnouncement } from '../../hooks';
 
-type Props = { isLoading: boolean; textContent?: string; announce?: boolean };
+type Props = {
+  isLoading: boolean;
+  textContent?: string;
+  announce?: boolean;
+  completeMessage?: string;
+  captionId?: string;
+};
 
 const toLoadingMessage = (textContent: string) => {
   // remove trailing ellipses
@@ -17,8 +23,10 @@ export const LoadingSpinner = ({
   isLoading,
   textContent = 'Loading...',
   announce = true,
+  completeMessage,
+  captionId,
 }: Props) => {
-  useLoadingAnnouncement(announce && isLoading, toLoadingMessage(textContent));
+  useLoadingAnnouncement(announce && isLoading, toLoadingMessage(textContent), completeMessage);
 
   if (!isLoading) return null;
 
@@ -26,7 +34,9 @@ export const LoadingSpinner = ({
     <div className="hods-loading-spinner" aria-hidden="true">
       <div className="hods-loading-spinner__spinner"></div>
       <div className="hods-loading-spinner__content">
-        <h1 className="govuk-heading-m">{textContent}</h1>
+        <h1 id={captionId} className="govuk-heading-m">
+          {textContent}
+        </h1>
       </div>
     </div>
   );

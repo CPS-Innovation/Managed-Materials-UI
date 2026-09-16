@@ -5,23 +5,11 @@ import {
   Reclassify_TypeMGFormType,
   Reclassify_TypeOtherType,
   Reclassify_TypeStatementType,
-  Reclassify_WitnessAndActionPlanType,
 } from '../../schemas/forms/reclassify';
 
-export type FormStep = 'classification' | 'summary' | 'addWitness' | 'subject';
+export type FormStep = 'classification' | 'summary' | 'subject';
 
-type Reclassify_Statement_With_ActionPlan = {
-  witnessId: 0;
-  witnessActionPlan: Reclassify_WitnessAndActionPlanType;
-};
-
-type Reclassify_Statement_Without_ActionPlan = { witnessId: number; witnessActionPlan?: undefined };
-
-type Reclassify_Statement_Data = (
-  | Reclassify_Statement_With_ActionPlan
-  | Reclassify_Statement_Without_ActionPlan
-) &
-  Reclassify_TypeStatementType & { subject: string };
+type Reclassify_Statement_Data = Reclassify_TypeStatementType & { subject: string };
 
 export type ReclassifyFormData =
   | Reclassify_Statement_Data

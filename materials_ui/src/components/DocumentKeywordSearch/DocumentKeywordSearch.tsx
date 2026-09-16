@@ -85,6 +85,8 @@ export const DocumentKeywordSearch = ({ modalOpen, setModalOpen }: DocumentKeywo
       .sort(sortFn);
   }, [combinedSearchResults, filters?.filters?.category, filters?.filters?.status, selectedSort]);
 
+  const resultsMessage = `${filteredResults.length} results in ${documents?.length ?? 0} documents.`;
+
   const highlightExactMatches = (
     text: string,
     words: { boundingBox: number[] | null; text: string; matchType: string }[],
@@ -125,15 +127,29 @@ export const DocumentKeywordSearch = ({ modalOpen, setModalOpen }: DocumentKeywo
         hideButton={false}
       />
 
-      <Modal open={modalOpen} onClose={handleModalClose} ariaLabel="Search results">
-        <LoadingSpinner isLoading={!trackerComplete} textContent="Loading search results" />
+      <Modal
+        open={modalOpen}
+        onClose={handleModalClose}
+        ariaLabel="Search results"
+        ariaDescribedBy="search-results-loading"
+      >
+        <LoadingSpinner
+          isLoading={!trackerComplete}
+          textContent="Loading search results"
+          captionId="search-results-loading"
+        />
         {trackerComplete && (
           <TwoCol
             sidebar={
               <DocumentKeywordSearchFilters onSearchSubmit={(term) => setSearchTerm(term)} />
             }
           >
-            {loading && <p>Searching…</p>}
+            <LoadingSpinner
+              isLoading={loading}
+              textContent="Searching..."
+              completeMessage={resultsMessage}
+              captionId="search-results-loading"
+            />
 
             {!loading && filteredResults && (
               <div className="search-results-message">

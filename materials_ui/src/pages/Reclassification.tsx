@@ -6,15 +6,12 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ErrorSummary, LoadingSpinner, Radios } from '../components';
 import DocumentPreview from '../components/DocumentPreview/DocumentPreview';
 import type { ErrorSummaryItem } from '../components/ErrorSummary/ErrorSummary';
-import { AddWitness, MaterialName, Summary } from '../components/forms/Reclassify';
+import { MaterialName, Summary } from '../components/forms/Reclassify';
 import { categoryOptions } from '../components/forms/Reclassify/constants/options';
-import { generateMaterialName } from '../components/forms/Reclassify/utils/form';
 import {
-  FormStep,
   ReclassifyFormData,
   useAppRoute,
   useBanner,
-  useCaseLockCheck,
   useDocumentTypes,
   useExhibits,
   useReclassify,
@@ -25,11 +22,9 @@ import {
   Reclassify_ClassificationEnumType,
   Reclassify_ClassificationForm,
   Reclassify_ClassificationFormSchema,
-  Reclassify_WitnessAndActionPlanType,
 } from '../schemas/forms/reclassify';
 import { useMaterialTags } from '../stores';
 import { trackAction } from '../telemetry/appInsights';
-import { formatDate } from '../utils/date';
 import { getBannerData } from '../utils/reclassify';
 
 export const ReclassificationPage = () => {
@@ -41,7 +36,6 @@ export const ReclassificationPage = () => {
   const { getDocumentTypeById } = useDocumentTypes();
   const { resetBanner, setBanner } = useBanner();
   const { compareRefs } = useExhibits();
-  const { isLocked: isCaseLocked, name: caseLockName, refreshCaseLockStatus } = useCaseLockCheck();
 
   if (!material) {
     navigate(getRoute('MATERIALS'));
@@ -59,8 +53,6 @@ export const ReclassificationPage = () => {
       });
     },
     onSuccess: (response) => {
-      resetBanner('caselock');
-
       const isRenamed =
         formData.classification !== 'STATEMENT' &&
         material.subject.trim() !== formData?.subject?.trim();
@@ -141,45 +133,12 @@ export const ReclassificationPage = () => {
       }
     }
 
-    // no additional form steps for these classifications, head to the summary view
-    if (['EXHIBIT', 'MG Form', 'OTHER'].includes(data?.classification as string)) {
-      saveFormData(data);
-      changeFormStep('summary');
-    }
-
-    if (data.classification === 'STATEMENT') {
-      saveFormData(data);
-
-      // if user has selected to add new witness, show add witness form
-      if (data?.witnessId === 0) {
-        saveFormData(data);
-        changeFormStep('addWitness');
-      } else {
-        changeFormStep('summary');
-      }
-    } else {
-      changeFormStep('summary');
-    }
-  };
-
-  const handleMaterialNameFormSubmit = (data: Record<string, unknown>) => {
     saveFormData(data);
     changeFormStep('summary');
   };
 
-  const handleAddWitnessAndActionPlanFormSubmit = (data: Reclassify_WitnessAndActionPlanType) => {
-    if (formData?.classification === 'STATEMENT') {
-      saveFormData({
-        witnessActionPlan: data,
-        subject: generateMaterialName(
-          'MG11',
-          (data?.firstName as string) || '',
-          (data?.surname as string) || '',
-          formatDate(formData?.statementDate, '-', 'DD-MM-YYYY'),
-        ),
-      });
-    }
-
+  const handleMaterialNameFormSubmit = (data: Record<string, unknown>) => {
+    saveFormData(data);
     changeFormStep('summary');
   };
 
@@ -193,21 +152,13 @@ export const ReclassificationPage = () => {
 
   const renderBackLink = () => {
     if (currentStep !== 'classification') {
-      let goToStep: FormStep;
-
-      if (formData.classification === 'STATEMENT' && currentStep === 'subject') {
-        if (formData?.witnessId === 0) {
-          goToStep = 'addWitness';
-        }
-      }
-
       return (
         <a
           className="govuk-back-link"
           href="#"
           onClick={(event) => {
             event.preventDefault();
-            changeFormStep(goToStep || 'classification');
+            changeFormStep('classification');
           }}
         >
           Back
@@ -224,24 +175,7 @@ export const ReclassificationPage = () => {
   useEffect(() => {
     resetBanner();
     window.scrollTo(0, 0);
-
-    if (fieldValues.classification === 'STATEMENT') {
-      if (
-        fieldValues?.witnessId === 0 &&
-        isCaseLocked &&
-        (currentStep === 'addWitness' || currentStep === 'summary')
-      ) {
-        setBanner({
-          type: 'error',
-          header: `You cannot complete this action due to the case being in use by ${caseLockName}`,
-          content: 'To unlock, please contact the user and ask them to exit the case',
-          identifier: 'caselock',
-        });
-      } else {
-        resetBanner('caselock');
-      }
-    }
-  }, [currentStep, fieldValues.classification, isCaseLocked]);
+  }, [currentStep, fieldValues.classification]);
 
   useEffect(() => {
     clearErrors();
@@ -270,10 +204,6 @@ export const ReclassificationPage = () => {
     }
     // @ts-expect-error union type error, need to fix
   }, [fieldValues?.producerId, fieldValues?.producedBy]);
-
-  useEffect(() => {
-    refreshCaseLockStatus();
-  }, [currentStep]);
 
   return (
     <>
@@ -334,20 +264,6 @@ export const ReclassificationPage = () => {
                     </Link>
                   </div>
                 </form>
-              </>
-            )}
-
-            {formData.classification === 'STATEMENT' && currentStep === 'addWitness' && (
-              <>
-                <h2 className="govuk-caption-l hmrc-caption-l">
-                  <span className="govuk-visually-hidden">This section is </span>
-                  Reclassify
-                </h2>
-                <h1 className="govuk-heading-l">New witness and action plan request</h1>
-                <AddWitness
-                  data={formData?.witnessActionPlan as Reclassify_WitnessAndActionPlanType}
-                  onSave={handleAddWitnessAndActionPlanFormSubmit}
-                />
               </>
             )}
 
