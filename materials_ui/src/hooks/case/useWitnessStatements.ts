@@ -14,7 +14,7 @@ export const useWitnessStatements = () => {
   const getWitnessStatements = async () =>
     await request
       .get<WitnessStatementResponseType>(
-        `/cases/${caseInfo?.id}/witnesses/${witnessId}/witness-statements`,
+        `/urns/${caseInfo?.urn}/cases/${caseInfo?.id}/witnesses/${witnessId}/witness-statements`,
       )
       .then((response) => response.data);
 

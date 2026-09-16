@@ -22,7 +22,7 @@ export const useDiscard = (material?: CaseMaterialsType, options?: UseDiscardOpt
     { arg: data }: SwrPayload<CaseMaterialDiscardRequestType>,
   ) => {
     return await request.patch<CaseMaterialDiscardResponseType>(
-      `/cases/${caseInfo?.id}/materials/${material?.materialId}/discard`,
+      `urns/${caseInfo?.urn}/cases/${caseInfo?.id}/materials/${material?.materialId}/discard`,
       data,
     );
   };

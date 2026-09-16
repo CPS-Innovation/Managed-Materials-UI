@@ -20,6 +20,8 @@ export const Summary = ({ data, onChange, onSave }: Props) => {
   const { getWitnessById, formatWitnessName } = useCaseWitnesses();
   const { getExhibitProducerById } = useExhibitProducers();
 
+  console.log(data);
+
   const handleChangeClick = (step: FormStep) => {
     if (onChange) {
       onChange(step);
