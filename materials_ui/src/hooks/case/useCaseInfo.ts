@@ -13,7 +13,7 @@ export const useCaseInfo = ({ caseId, urn }: UseCaseInfoProps) => {
 
   const getCaseInfo = async () =>
     await request
-      .get<CaseInfoResponseType>(`/urns/${urn}/case-info/${caseId}`)
+      .get<CaseInfoResponseType>(`/case-info/${caseId}`)
       .then((response) => response.data);
 
   const { data, isLoading, isValidating, mutate } = useSWR(key, getCaseInfo);

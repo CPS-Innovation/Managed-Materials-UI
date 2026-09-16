@@ -57,7 +57,7 @@ export const getDocumentListFromAxiosInstance = async (p: {
   urn: string | undefined;
   caseId: number | undefined;
 }) => {
-  const response = await p.axiosInstance.get(`/api/urns/${p.urn}/cases/${p.caseId}/documents`);
+  const response = await p.axiosInstance.get(`/api/cases/${p.caseId}/documents`);
 
   return response.data;
 };
@@ -69,7 +69,7 @@ export const getDocumentFromAxiosInstance = async (p: {
   versionId: number | undefined;
 }) => {
   const response = await p.axiosInstance.get(
-    `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.documentId}/versions/${p.versionId}`,
+    `/api/cases/${p.caseId}/materials/${p.documentId}/documents/${p.versionId}`,
   );
 
   return response.data;

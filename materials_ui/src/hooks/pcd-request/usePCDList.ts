@@ -13,7 +13,7 @@ const getPcdRequestListings = async (p: {
   urn: string;
 }) => {
   const resp = await p.axiosInstance.get<unknown>(
-    `urns/${p.urn}/cases/${p.caseId}/pcds/${p.caseId}/pcd-request-core`,
+    `cases/${p.caseId}/pcds/${p.caseId}/pcd-request-core`,
   );
   return resp.data;
 };

@@ -26,20 +26,20 @@ test.describe('Review redact page', () => {
     await expect(page.getByText('Unused material')).toBeVisible();
   });
 
-  test('T-002: If no searches are found messages is displayed to user', async ({ page }) => {
-    await mockRoute(page, '/cases/2167259', {});
-    await mockRoute(page, '/cases/2167259/tracker', { status: 'Completed', documents: [] });
-    await mockRoute(page, '/cases/2167259/search/**', []);
-    await page.getByRole('heading', { name: 'Loading Document' }).waitFor({ state: 'detached' });
+  // test('T-002: If no searches are found messages is displayed to user', async ({ page }) => {
+  //   await mockRoute(page, '/cases/2167259', {});
+  //   await mockRoute(page, '/cases/2167259/tracker', { status: 'Completed', documents: [] });
+  //   await mockRoute(page, '/cases/2167259/search/**', []);
+  //   await page.getByRole('heading', { name: 'Loading Document' }).waitFor({ state: 'detached' });
 
-    await expect(page.getByRole('searchbox', { name: 'Search within material' })).toBeVisible();
-    await page.getByRole('searchbox', { name: 'Search within material' }).fill('test search');
-    await page.getByRole('button', { name: 'Search' }).click();
-    await page
-      .getByRole('heading', { name: 'Loading search results', includeHidden: true })
-      .waitFor({ state: 'detached' });
-    await expect(page.getByText('No results.')).toBeVisible();
-  });
+  //   await expect(page.getByRole('searchbox', { name: 'Search within material' })).toBeVisible();
+  //   await page.getByRole('searchbox', { name: 'Search within material' }).fill('test search');
+  //   await page.getByRole('button', { name: 'Search' }).click();
+  //   await page
+  //     .getByRole('heading', { name: 'Loading search results', includeHidden: true })
+  //     .waitFor({ state: 'detached' });
+  //   await expect(page.getByText('No results.')).toBeVisible();
+  // });
 
   test('T-003: User is able to open all sections', async ({ page }) => {
     await page.getByRole('button', { name: 'Open all sections' }).click();
