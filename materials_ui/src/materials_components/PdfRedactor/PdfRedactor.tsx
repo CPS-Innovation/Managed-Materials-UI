@@ -1,9 +1,9 @@
 import type { PDFDocumentProxy } from 'pdfjs-dist';
-import pdfWorker from 'pdfjs-dist/build/pdf.worker?url';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Document, pdfjs } from 'react-pdf';
+import { Document } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
+import { pdfDocumentOptions } from '../../utils/pdfjsSetup';
 import { safeJsonParse } from '../DocumentSelectAccordion/utils/generalUtils';
 import { useDocumentFocus } from './hooks/useDocumentFocus';
 import { useShiftReleaseRedactTrigger } from './hooks/useShiftReleaseRedactTrigger';
@@ -20,8 +20,6 @@ import styles from './utils/PdfRedactor.module.css';
 import { TIndexedRotation, TRotation } from './utils/rotationUtils';
 import type { THighlightLayer, TSearchHighlight } from './utils/searchHighlightUtils';
 import { useTrigger } from './utils/useTriggger';
-
-pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 const modeClassMap: { [x in TMode]: string | undefined } = {
   redact: styles.redact,
@@ -441,6 +439,7 @@ export const PdfRedactor = (p: {
         >
           <Document
             file={p.fileUrl}
+            options={pdfDocumentOptions}
             externalLinkTarget="_blank"
             onLoadSuccess={async (pdf) => {
               const cachedRedactionsResp = getRedactionsFromCache(getKeyForAutosaveRedactions());

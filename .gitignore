@@ -54,3 +54,4 @@ _backend.tf
 
 /.vite/
 materials_ui/public/assets/images
+materials_ui/public/pdfjs

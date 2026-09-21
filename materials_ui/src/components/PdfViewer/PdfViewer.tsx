@@ -1,16 +1,14 @@
-import pdfWorker from 'pdfjs-dist/build/pdf.worker?url';
 import { useState } from 'react';
-import { Document, Page, pdfjs } from 'react-pdf';
+import { Document, Page } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import { usePagination } from 'react-use-pagination';
 import { useLoadingAnnouncement } from '../../hooks/ui/useLoadingAnnouncement';
 import { usePageColors } from '../../hooks/ui/usePageColors';
+import { pdfDocumentOptions } from '../../utils/pdfjsSetup';
 import { LoadingSpinner } from '../LoadingSpinner/LoadingSpinner.tsx';
 import { Pagination } from '../Pagination/Pagination.tsx';
 import './PdfViewer.css';
-
-pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 // TODO: update 'file' type
 type Props = { file: any; fileName: string };
@@ -39,6 +37,7 @@ export const PdfViewer = ({ file, fileName }: Props) => {
       <Document
         className="pdf-page-container"
         file={file}
+        options={pdfDocumentOptions}
         externalLinkTarget="_blank"
         onLoadSuccess={onDocumentLoadSuccess}
         loading={<LoadingSpinner isLoading announce={false} textContent="Loading preview..." />}
