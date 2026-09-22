@@ -5,7 +5,7 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default [
-  { ignores: ['dist', 'build', '**/mockServiceWorker.js'] },
+  { ignores: ['dist', 'build', '**/mockServiceWorker.js', 'public/pdfjs'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
