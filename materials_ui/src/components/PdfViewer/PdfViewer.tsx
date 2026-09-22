@@ -6,6 +6,7 @@ import 'react-pdf/dist/Page/TextLayer.css';
 import { usePagination } from 'react-use-pagination';
 import { useLoadingAnnouncement } from '../../hooks/ui/useLoadingAnnouncement';
 import { usePageColors } from '../../hooks/ui/usePageColors';
+import { pdfjsDocumentOptions } from '../../utils/pdfjsDocumentOptions';
 import { LoadingSpinner } from '../LoadingSpinner/LoadingSpinner.tsx';
 import { Pagination } from '../Pagination/Pagination.tsx';
 import './PdfViewer.css';
@@ -39,6 +40,7 @@ export const PdfViewer = ({ file, fileName }: Props) => {
       <Document
         className="pdf-page-container"
         file={file}
+        options={pdfjsDocumentOptions}
         externalLinkTarget="_blank"
         onLoadSuccess={onDocumentLoadSuccess}
         loading={<LoadingSpinner isLoading announce={false} textContent="Loading preview..." />}
