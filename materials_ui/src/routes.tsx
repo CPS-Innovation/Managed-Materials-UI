@@ -45,7 +45,10 @@ export const Routes = () => {
       <Route path={getRoute('UNAUTHORISED', false)} element={<NotAuthorisedPage />} />
       <Route path={getRoute('SERVER_ERROR', false)} element={<ServerErrorPage />} />
       <Route path={getRoute('CASE_SEARCH', false)} element={<CaseSearchPage />} />
-      <Route path={'/:urn/:caseId/view-document/:documentId'} element={<ViewDocumentPage />} />
+      <Route
+        path={'/:urn/:caseId/view-document/:materialId/:documentId'}
+        element={<ViewDocumentPage />}
+      />
 
       <Route path={`:urn/:caseId`}>
         <Route path={getRoute('DISCARD', false)} element={<DiscardMaterialPage />} />

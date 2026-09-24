@@ -85,15 +85,19 @@ export const CommunicationsPage = () => {
 
   const handleViewInNewWindowClick = async () => {
     const materialId = row?.materialId;
+    const documentId = row?.id;
     const urn = caseInfo?.urn;
     const caseId = caseInfo?.id;
-    if (!materialId || !urn || !caseId) return;
+    if (!materialId || !urn || !caseId || !documentId) return;
+
+    // copy rowData to clipboard
+    navigator.clipboard.writeText(JSON.stringify(row));
 
     trackAction('OpenedInNewWindow', {
       materialId: row?.materialId?.toString(),
       category: row?.category,
     });
-    navigateToViewDocumentPageInNewTab({ urn, caseId, materialId });
+    navigateToViewDocumentPageInNewTab({ urn, caseId, materialId, documentId });
   };
 
   const menuItems = [
@@ -145,7 +149,7 @@ export const CommunicationsPage = () => {
       onClick: () => handleUnusedClick(selectedItems.communications, getRoute('COMMUNICATIONS')),
     },
     {
-      label: 'View in new window',
+      label: `View in new window`,
       onClick: handleViewInNewWindowClick,
       hide: selectedItems.communications?.length !== 1,
     },
