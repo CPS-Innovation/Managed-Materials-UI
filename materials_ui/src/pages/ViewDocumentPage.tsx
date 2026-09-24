@@ -1,6 +1,5 @@
-import pdfWorker from 'pdfjs-dist/build/pdf.worker?url';
 import { useEffect, useState } from 'react';
-import { Document, Page, pdfjs } from 'react-pdf';
+import { Document, Page } from 'react-pdf';
 import { useParams } from 'react-router-dom';
 import { LoadingSpinner } from '../components';
 import { useDocumentPdfUrl } from '../hooks/documents/useDocumentPdfUrl';
@@ -12,9 +11,8 @@ import {
 } from '../materials_components/DocumentSelectAccordion/getters/getDocumentList';
 import { GovUkBanner } from '../materials_components/DocumentSelectAccordion/templates/GovUkBanner';
 import { stripCmsPrefix } from '../utils/cmsStringTransform';
+import { pdfDocumentOptions } from '../utils/pdfjsSetup';
 import './ViewDocumentPage.scss';
-
-pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 const useDocumentListFromAxiosInstance = (p: { urn: string; caseId: number }) => {
   const axiosInstance = useAxiosInstance();
@@ -71,6 +69,7 @@ const LoadAndViewPdf = (p: { urn: string; caseId: number; materialId: string }) 
       {!!pdfUrl && (
         <Document
           file={pdfUrl}
+          options={pdfDocumentOptions}
           onLoadSuccess={(pdf) => setNumPages(pdf.numPages)}
           loading={<LoadingSpinner isLoading={true} textContent="Fetching document" />}
         >

@@ -45,6 +45,23 @@ export default defineConfig(({ mode }) => {
         },
       },
       {
+        name: 'copy-pdfjs-worker-assets',
+        buildStart() {
+          const dest = path.resolve(import.meta.dirname, 'public/pdfjs');
+          const pdfjsDist = path.resolve(import.meta.dirname, 'node_modules/pdfjs-dist');
+          fs.mkdirSync(dest, { recursive: true });
+          const files = [
+            ['build/pdf.worker.min.mjs', 'pdf.worker.min.mjs'],
+            ['wasm/openjpeg.wasm', 'openjpeg.wasm'],
+            ['wasm/openjpeg_nowasm_fallback.js', 'openjpeg_nowasm_fallback.js'],
+            ['wasm/qcms_bg.wasm', 'qcms_bg.wasm'],
+          ] as const;
+          for (const [from, to] of files) {
+            fs.copyFileSync(path.join(pdfjsDist, from), path.join(dest, to));
+          }
+        },
+      },
+      {
         name: 'copy-index-to-root',
         closeBundle() {
           const src = path.resolve(import.meta.dirname, 'build/materials-ui/index.html');
@@ -79,7 +96,7 @@ export default defineConfig(({ mode }) => {
           base-uri 'self';
           default-src 'self';
           img-src 'self' data:;
-            script-src 'self' 
+            script-src 'self' 'wasm-unsafe-eval'
               https://polaris-dev-notprod.cps.gov.uk/ 
               https://polaris-qa-notprod.cps.gov.uk/
               https://sacpsglobalcomponents.blob.core.windows.net/
