@@ -18,6 +18,7 @@ test.describe('Communications page', () => {
         category: 'Communication',
       }),
     );
+    mockRoute(page, '/documents', [{}]);
 
     await expect(page.getByText('MG7 SMITH Will (Redacted)', { exact: true })).toBeVisible();
   });
