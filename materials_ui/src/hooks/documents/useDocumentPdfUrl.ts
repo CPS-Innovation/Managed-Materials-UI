@@ -1,6 +1,5 @@
 import { AxiosInstance } from 'axios';
 import { useEffect, useState } from 'react';
-import { stripCmsPrefix } from '../../utils/cmsStringTransform';
 import { useAxiosInstance } from '../ui/useRequest';
 
 const getDocumentBlobFromAxiosInstance = async (p: {
@@ -8,10 +7,14 @@ const getDocumentBlobFromAxiosInstance = async (p: {
   urn: string;
   caseId: number;
   materialId: string;
+  documentId: string;
 }) => {
+  const hasCmsPrefix = p.materialId.startsWith('CMS-');
+  const cmsPrefix = hasCmsPrefix ? '' : 'CMS-';
+
   try {
     const response = await p.axiosInstance.get(
-      `/cases/${p.caseId}/materials/${p.materialId}/document`,
+      `/cases/${p.caseId}/materials/${cmsPrefix}${p.materialId}/documents/${p.documentId}/pdf`,
       { responseType: 'blob' },
     );
 
@@ -26,7 +29,12 @@ const getDocumentBlobFromAxiosInstance = async (p: {
   }
 };
 
-export const useDocumentPdfUrl = (p: { urn: string; caseId: number; materialId: string }) => {
+export const useDocumentPdfUrl = (p: {
+  urn: string;
+  caseId: number;
+  materialId: string;
+  documentId: string;
+}) => {
   const [pdfUrl, setPdfUrl] = useState<string | null | undefined>();
   const axiosInstance = useAxiosInstance();
 
@@ -36,7 +44,8 @@ export const useDocumentPdfUrl = (p: { urn: string; caseId: number; materialId: 
         axiosInstance,
         urn: p.urn,
         caseId: p.caseId,
-        materialId: stripCmsPrefix(p.materialId),
+        materialId: p.materialId,
+        documentId: p.documentId,
       });
 
       if (!resp.success) return setPdfUrl(null);

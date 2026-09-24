@@ -98,14 +98,18 @@ export const MaterialsPage = () => {
 
     for (const item of selectedItems.materials) {
       const materialId = item.materialId;
+      const documentId = item.id;
       const urn = caseInfo?.urn;
       const caseId = caseInfo?.id;
-      if (!urn || !caseId) return;
+      if (!urn || !caseId || !documentId) return;
+
+      navigator.clipboard.writeText(JSON.stringify(item));
+
       trackAction('OpenedInNewWindow', {
         materialId: materialId.toString(),
         category: item.category,
       });
-      navigateToViewDocumentPageInNewTab({ urn, caseId, materialId });
+      navigateToViewDocumentPageInNewTab({ urn, caseId, materialId, documentId });
     }
   };
 

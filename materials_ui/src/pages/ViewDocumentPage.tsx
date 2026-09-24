@@ -34,16 +34,20 @@ const useDocumentListFromAxiosInstance = (p: { urn: string; caseId: number }) =>
   return { data: documentList };
 };
 
-const LoadAndViewPdf = (p: { urn: string; caseId: number; materialId: string }) => {
+const LoadAndViewPdf = (p: {
+  urn: string;
+  caseId: number;
+  documentId: string;
+  materialId: string;
+}) => {
   const { data: pdfUrl } = useDocumentPdfUrl(p);
   const { data: documentList } = useDocumentListFromAxiosInstance(p);
   const [numPages, setNumPages] = useState<number>();
   const pageColors = usePageColors();
 
   useEffect(() => {
-    const cmsStrippedMaterialId = stripCmsPrefix(p.materialId);
     const documentPresentationTitle = documentList?.find(
-      (x) => stripCmsPrefix(x.parentId) === cmsStrippedMaterialId,
+      (x) => stripCmsPrefix(x.parentId) === stripCmsPrefix(p.materialId),
     )?.presentationTitle;
     const documentTitleSuffix = ' - Managed Materials';
     const documentTitlePrefix = (() => {
@@ -83,9 +87,20 @@ const LoadAndViewPdf = (p: { urn: string; caseId: number; materialId: string }) 
   );
 };
 
+const useViewDocumentRoute = () => {
+  const params = useParams();
+
+  // always exist - due to route pattern
+  const urn = params.urn!;
+  const caseId = params.caseId ? +params.caseId : 0;
+  const materialId = params.materialId!;
+  const documentId = params.documentId!;
+
+  return { urn, caseId, documentId, materialId };
+};
+
 export const ViewDocumentPage = () => {
-  const { urn, caseId: caseIdStr, documentId } = useParams();
-  const caseId = caseIdStr ? +caseIdStr : 0;
+  const { urn, caseId, documentId, materialId } = useViewDocumentRoute();
 
   useEffect(() => {
     window.document.body.classList.add('hide-header');
@@ -97,16 +112,17 @@ export const ViewDocumentPage = () => {
     };
   }, []);
 
-  if (!!urn && !!caseIdStr && caseId > 0 && !!documentId) {
-    return <LoadAndViewPdf urn={urn} caseId={caseId} materialId={documentId} />;
-  }
+  if (isNaN(caseId) || caseId === 0)
+    return (
+      <GovUkBanner
+        variant="info"
+        headerTitle="Error"
+        contentHeading="Incorrect values from url"
+        contentBody="It appears that the wrong values have been passed in the url"
+      />
+    );
 
   return (
-    <GovUkBanner
-      variant="info"
-      headerTitle="Error"
-      contentHeading="Incorrect values from url"
-      contentBody="It appears that the wrong values have been passed in the url"
-    />
+    <LoadAndViewPdf urn={urn} caseId={caseId} materialId={materialId} documentId={documentId} />
   );
 };
