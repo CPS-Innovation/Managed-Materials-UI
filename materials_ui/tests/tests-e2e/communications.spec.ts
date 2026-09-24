@@ -9,6 +9,7 @@ test.describe('Communications page', () => {
     await page.waitForRequest('**/case-info/2167259');
   });
   test('T-001: page loads list of Communications', async ({ page }) => {
+    mockRoute(page, '/documents', []);
     mockRoute(
       page,
       '/case-materials',
