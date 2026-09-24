@@ -17,6 +17,7 @@ test.describe('Review redact page', () => {
   });
 
   test('T-001: page loads correctly with materials', async ({ page }) => {
+    mockRoute(page, '/documents', []);
     await expect(page.getByRole('searchbox', { name: 'Search within material' })).toBeVisible();
     await expect(page.getByText('Statements')).toBeVisible();
     await expect(page.getByText('Exhibits')).toBeVisible();
