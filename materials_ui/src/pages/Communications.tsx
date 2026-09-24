@@ -87,13 +87,14 @@ export const CommunicationsPage = () => {
     const materialId = row?.materialId;
     const urn = caseInfo?.urn;
     const caseId = caseInfo?.id;
-    if (!materialId || !urn || !caseId) return;
+    const documentId = row?.documentId;
+    if (!materialId || !urn || !caseId || !documentId) return;
 
     trackAction('OpenedInNewWindow', {
       materialId: row?.materialId?.toString(),
       category: row?.category,
     });
-    navigateToViewDocumentPageInNewTab({ urn, caseId, materialId });
+    navigateToViewDocumentPageInNewTab({ urn, caseId, materialId, documentId });
   };
 
   const menuItems = [

@@ -93,19 +93,22 @@ export const MaterialsPage = () => {
 
   const row = selectedItems.materials?.[0];
 
-  const handleViewInNewWindowClick = async () => {
+  const handleViewInNewWindowClick = () => {
+    console.log(`Materials.tsx:${/*LL*/ 97}`, { selectedItems, row });
     if (!selectedItems.materials) return;
 
     for (const item of selectedItems.materials) {
+      console.log(`Materials.tsx:${/*LL*/ 101}`, { item });
       const materialId = item.materialId;
       const urn = caseInfo?.urn;
       const caseId = caseInfo?.id;
-      if (!urn || !caseId) return;
+      const documentId = item?.documentId;
+      if (!urn || !caseId || !documentId) return;
       trackAction('OpenedInNewWindow', {
         materialId: materialId.toString(),
         category: item.category,
       });
-      navigateToViewDocumentPageInNewTab({ urn, caseId, materialId });
+      navigateToViewDocumentPageInNewTab({ urn, caseId, materialId, documentId });
     }
   };
 
@@ -159,7 +162,7 @@ export const MaterialsPage = () => {
       onClick: () => handleUnusedClick(selectedItems.materials, URL.MATERIALS),
       hide: selectedItems.materials?.some((item) => item.status === 'Unused'),
     },
-    { label: 'View in new window', onClick: handleViewInNewWindowClick },
+    { label: `View in new window ${row?.documentId}`, onClick: handleViewInNewWindowClick },
   ];
 
   return (
@@ -176,6 +179,11 @@ export const MaterialsPage = () => {
             isLoading={caseMaterialsLoading || isReadStatusUpdating}
             textContent="Loading materials"
           />
+          <br />
+          <br />
+          {selectedItems.materials.map((item) => (
+            <div key={item.materialId}>{item.documentId}</div>
+          ))}
           {!(caseMaterialsLoading || isReadStatusUpdating) && (
             <>
               <TableActions

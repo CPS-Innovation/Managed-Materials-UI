@@ -497,8 +497,15 @@ export const ReviewAndRedactPage = () => {
                   onModeChange={(newMode) => handleModeChange(activeTabId, newMode)}
                   onRedactionLogClick={() => setShowRedactionLogModal(true)}
                   onViewInNewWindowClick={() => {
+                    const documentId = activeDocument?.childId;
+                    if (!documentId) return;
                     trackAction('OpenedInNewWindow', { materialId: activeTabId });
-                    navigateToViewDocumentPageInNewTab({ urn, caseId, materialId: activeTabId });
+                    navigateToViewDocumentPageInNewTab({
+                      urn,
+                      caseId,
+                      materialId: activeTabId,
+                      documentId,
+                    });
                   }}
                   numOfDocumentPages={numOfPagesByParentId[activeTabId] ?? 0}
                 />

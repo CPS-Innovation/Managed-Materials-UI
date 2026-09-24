@@ -1,11 +1,14 @@
 import { beforeEach, describe } from 'vitest';
 
-import { CaseMaterialsType } from '../../schemas';
+import { CaseMaterialsWithDocumentIdType } from '../../schemas/caseMaterials';
 import { useSelectedItemsStore } from '../../stores';
 
-function getMaterial(override?: Partial<CaseMaterialsType>): CaseMaterialsType {
+function getMaterial(
+  override?: Partial<CaseMaterialsWithDocumentIdType>,
+): CaseMaterialsWithDocumentIdType {
   return {
     id: 1,
+    documentId: 1,
     originalFileName: 'test0filename.pdf',
     subject: 'test subject',
     documentTypeId: 22,

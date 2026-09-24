@@ -2,7 +2,8 @@ import { Fragment, ReactNode, useState } from 'react';
 import { Checkbox, DocumentActions, LoadingSpinner } from '..';
 import { FilterItem } from '../../context/FiltersContext/helpers/types';
 import { useAutoReclassify, useCaseMaterial, useFilters } from '../../hooks';
-import { CaseMaterialDataType, CaseMaterialsType } from '../../schemas';
+import { CaseMaterialDataType } from '../../schemas';
+import { CaseMaterialsWithDocumentIdType } from '../../schemas/caseMaterials';
 import { useSelectedItemsStore } from '../../stores';
 import { ColumnSortFn } from '../../utils/filtering';
 import { SortDirection, SortDirectionIcon } from './SortDirectionIcon';
@@ -17,7 +18,7 @@ export type Column<T> = {
 };
 
 type SortableTableProps<T> = {
-  data: CaseMaterialsType[];
+  data: CaseMaterialsWithDocumentIdType[];
   caption: string;
   filters?: FilterItem;
   columns: Column<T>[];
@@ -63,7 +64,7 @@ const SortableTable = <T,>({
     setSort(key);
   };
 
-  const handleSelectItem = (material: CaseMaterialsType) => {
+  const handleSelectItem = (material: CaseMaterialsWithDocumentIdType) => {
     const isSelected = selectedItems[materialType]?.some(
       (m) => m.materialId === material.materialId,
     );

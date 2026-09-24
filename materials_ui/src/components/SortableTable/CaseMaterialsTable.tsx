@@ -13,6 +13,7 @@ import { READ_STATUS } from '../../constants';
 import { formatDate } from '../../utils/date';
 
 import { DocumentPreview, LoadingSpinner, Pagination, StatusTag } from '..';
+import { CaseMaterialsWithDocumentIdType } from '../../schemas/caseMaterials';
 import { useMaterialTags } from '../../stores';
 
 export const CaseMaterialsTable = () => {
@@ -74,14 +75,14 @@ export const CaseMaterialsTable = () => {
 
   const filteredSortedData = useMemo(() => {
     const sortFn = getSortFn(columns, filters?.sort, (sortConfig) =>
-      defaultSortFn<CaseMaterialsType>(sortConfig),
+      defaultSortFn<CaseMaterialsWithDocumentIdType>(sortConfig),
     );
-    const sortByStatusFn = defaultSortFn<CaseMaterialsType>({
+    const sortByStatusFn = defaultSortFn<CaseMaterialsWithDocumentIdType>({
       column: 'statusLabel',
       direction: 'descending',
     });
-    const filterFn = defaultFilterFn<CaseMaterialsType>(filters?.filters);
-    const searchFn = defaultSearchFn<CaseMaterialsType>('subject', filters?.search);
+    const filterFn = defaultFilterFn<CaseMaterialsWithDocumentIdType>(filters?.filters);
+    const searchFn = defaultSearchFn<CaseMaterialsWithDocumentIdType>('subject', filters?.search);
 
     return filteredData
       ?.map((material) => {
@@ -91,8 +92,8 @@ export const CaseMaterialsTable = () => {
 
         return materialTag ? { ...material, statusLabel: materialTag.tagName } : material;
       })
-      ?.filter(searchFn)
-      ?.filter(filterFn)
+      ?.filter((item) => searchFn(item as CaseMaterialsWithDocumentIdType))
+      ?.filter((item) => filterFn(item as CaseMaterialsWithDocumentIdType))
       ?.sort((a, b) => {
         if (a.readStatus === READ_STATUS.UNREAD && b.readStatus !== READ_STATUS.UNREAD) {
           return -1;
@@ -102,8 +103,12 @@ export const CaseMaterialsTable = () => {
         }
         return 0;
       })
-      ?.sort(sortFn)
-      ?.sort(sortByStatusFn);
+      ?.sort((a, b) =>
+        sortFn(a as CaseMaterialsWithDocumentIdType, b as CaseMaterialsWithDocumentIdType),
+      )
+      ?.sort((a, b) =>
+        sortByStatusFn(a as CaseMaterialsWithDocumentIdType, b as CaseMaterialsWithDocumentIdType),
+      );
   }, [filters, filteredData, materialTags]);
 
   const currentPageParam = queryParams?.get('page');
