@@ -11,6 +11,7 @@ import './App.scss';
 import { AppContextProvider } from './context/AppContext';
 import { FilterProvider } from './context/FiltersContext';
 import { msalConfig } from './msalInstance';
+import './styles/tailwind.css';
 import { initTelemetry } from './telemetry/appInsights';
 
 initTelemetry();
