@@ -45,6 +45,14 @@ export default defineConfig(({ mode }) => {
         },
       },
       {
+        name: 'copy-pdfjs-wasm',
+        buildStart() {
+          const src = path.resolve(import.meta.dirname, 'node_modules/pdfjs-dist/wasm');
+          const dest = path.resolve(import.meta.dirname, 'public/wasm');
+          fs.cpSync(src, dest, { recursive: true });
+        },
+      },
+      {
         name: 'copy-index-to-root',
         closeBundle() {
           const src = path.resolve(import.meta.dirname, 'build/materials-ui/index.html');
@@ -79,7 +87,7 @@ export default defineConfig(({ mode }) => {
           base-uri 'self';
           default-src 'self';
           img-src 'self' data:;
-            script-src 'self' 
+            script-src 'self' 'wasm-unsafe-eval' 
               https://polaris-dev-notprod.cps.gov.uk/ 
               https://polaris-qa-notprod.cps.gov.uk/
               https://sacpsglobalcomponents.blob.core.windows.net/

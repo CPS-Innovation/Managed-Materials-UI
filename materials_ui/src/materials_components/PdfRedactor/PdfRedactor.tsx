@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Document, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
+import { pdfjsDocumentOptions } from '../../utils/pdfjsDocumentOptions';
 import { safeJsonParse } from '../DocumentSelectAccordion/utils/generalUtils';
 import { useDocumentFocus } from './hooks/useDocumentFocus';
 import { useShiftReleaseRedactTrigger } from './hooks/useShiftReleaseRedactTrigger';
@@ -441,6 +442,7 @@ export const PdfRedactor = (p: {
         >
           <Document
             file={p.fileUrl}
+            options={pdfjsDocumentOptions}
             externalLinkTarget="_blank"
             onLoadSuccess={async (pdf) => {
               const cachedRedactionsResp = getRedactionsFromCache(getKeyForAutosaveRedactions());

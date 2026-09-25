@@ -12,6 +12,7 @@ import {
 } from '../materials_components/DocumentSelectAccordion/getters/getDocumentList';
 import { GovUkBanner } from '../materials_components/DocumentSelectAccordion/templates/GovUkBanner';
 import { stripCmsPrefix } from '../utils/cmsStringTransform';
+import { pdfjsDocumentOptions } from '../utils/pdfjsDocumentOptions';
 import './ViewDocumentPage.scss';
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
@@ -71,6 +72,7 @@ const LoadAndViewPdf = (p: { urn: string; caseId: number; materialId: string }) 
       {!!pdfUrl && (
         <Document
           file={pdfUrl}
+          options={pdfjsDocumentOptions}
           onLoadSuccess={(pdf) => setNumPages(pdf.numPages)}
           loading={<LoadingSpinner isLoading={true} textContent="Fetching document" />}
         >
