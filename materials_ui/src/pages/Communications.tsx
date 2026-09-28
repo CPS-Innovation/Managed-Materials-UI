@@ -90,9 +90,6 @@ export const CommunicationsPage = () => {
     const caseId = caseInfo?.id;
     if (!materialId || !urn || !caseId || !documentId) return;
 
-    // copy rowData to clipboard
-    navigator.clipboard.writeText(JSON.stringify(row));
-
     trackAction('OpenedInNewWindow', {
       materialId: row?.materialId?.toString(),
       category: row?.category,

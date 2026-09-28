@@ -101,9 +101,7 @@ export const MaterialsPage = () => {
       const documentId = item.id;
       const urn = caseInfo?.urn;
       const caseId = caseInfo?.id;
-      if (!urn || !caseId || !documentId) return;
-
-      navigator.clipboard.writeText(JSON.stringify(item));
+      if (!urn || !caseId || !materialId || !documentId) return;
 
       trackAction('OpenedInNewWindow', {
         materialId: materialId.toString(),
