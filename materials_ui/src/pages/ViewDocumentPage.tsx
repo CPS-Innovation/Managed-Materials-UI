@@ -1,8 +1,9 @@
 import pdfWorker from 'pdfjs-dist/build/pdf.worker?url';
 import { useEffect, useState } from 'react';
-import { Document, Page, pdfjs } from 'react-pdf';
+import { pdfjs } from 'react-pdf';
 import { useParams } from 'react-router-dom';
 import { LoadingSpinner } from '../components';
+import { MacDocument, MacPage } from '../components/MacReactPdf/MacReactPdf';
 import { useDocumentPdfUrl } from '../hooks/documents/useDocumentPdfUrl';
 import { usePageColors } from '../hooks/ui/usePageColors';
 import { useAxiosInstance } from '../materials_components/DocumentSelectAccordion/getters/getAxiosInstance';
@@ -69,15 +70,15 @@ const LoadAndViewPdf = (p: { urn: string; caseId: number; materialId: string }) 
         </div>
       )}
       {!!pdfUrl && (
-        <Document
+        <MacDocument
           file={pdfUrl}
           onLoadSuccess={(pdf) => setNumPages(pdf.numPages)}
           loading={<LoadingSpinner isLoading={true} textContent="Fetching document" />}
         >
           {[...Array(numPages)].map((_, j) => (
-            <Page key={j} pageNumber={j + 1} pageColors={pageColors} />
+            <MacPage key={j} pageNumber={j + 1} pageColors={pageColors} />
           ))}
-        </Document>
+        </MacDocument>
       )}
     </div>
   );
