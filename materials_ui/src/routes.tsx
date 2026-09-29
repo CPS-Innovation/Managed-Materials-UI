@@ -18,6 +18,7 @@ import {
   ServerErrorPage,
 } from './pages';
 import { CaseSearchPage } from './pages/CaseSearch';
+import { TwoTabsPage } from './pages/TwoTabsPage';
 import { ViewDocumentPage } from './pages/ViewDocumentPage';
 
 export const Routes = () => {
@@ -46,6 +47,7 @@ export const Routes = () => {
       <Route path={getRoute('SERVER_ERROR', false)} element={<ServerErrorPage />} />
       <Route path={getRoute('CASE_SEARCH', false)} element={<CaseSearchPage />} />
       <Route path={'/:urn/:caseId/view-document/:documentId'} element={<ViewDocumentPage />} />
+      <Route path={'/:urn/:caseId/two-tabs'} element={<TwoTabsPage />} />
 
       <Route path={`:urn/:caseId`}>
         <Route path={getRoute('DISCARD', false)} element={<DiscardMaterialPage />} />
