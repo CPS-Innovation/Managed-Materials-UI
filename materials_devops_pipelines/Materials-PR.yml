@@ -248,9 +248,18 @@ stages:
 
 # ---------- E2E TESTS (Playwright) ----------
 
+          - task: Cache@2
+            displayName: 'Cache Playwright browsers'
+            inputs:
+              key: 'playwright | "$(Agent.OS)" | materials_ui/package-lock.json'
+              restoreKeys: |
+                playwright | "$(Agent.OS)"
+              path: '$(Pipeline.Workspace)/.playwright'
+              cacheHitVar: 'PLAYWRIGHT_CACHE_RESTORED'
+
           - script: |
-              npx playwright install
-            displayName: 'Install Playwright browsers'
+              npx playwright install msedge
+            displayName: 'Install Microsoft Edge (Playwright channel browser)'
             condition: ne(variables['PLAYWRIGHT_CACHE_RESTORED'], 'true')
             workingDirectory: '$(workingDir)'
             env:
@@ -259,14 +268,6 @@ stages:
           - script: |
               npx playwright install-deps
             displayName: 'Install Playwright OS dependencies'
-            condition: and(eq(variables['Agent.OS'], 'Linux'), ne(variables['PLAYWRIGHT_CACHE_RESTORED'], 'true'))
-            workingDirectory: '$(workingDir)'
-            env:
-              PLAYWRIGHT_BROWSERS_PATH: '$(Pipeline.Workspace)/.playwright'
-
-          - script: |
-              npx playwright install msedge
-            displayName: 'Install Microsoft Edge (Playwright channel browser)'
             condition: eq(variables['Agent.OS'], 'Linux')
             workingDirectory: '$(workingDir)'
             env:
@@ -299,7 +300,7 @@ stages:
             displayName: 'Publish E2E Artifact'
             inputs:
               targetPath: '$(workingDir)/tests/playwright-report'
-              artifact: 'playwright-report'
+              artifact: 'playwright-report-$(System.JobAttempt)'
               publishLocation: 'pipeline'
             condition: succeededOrFailed() 
 
