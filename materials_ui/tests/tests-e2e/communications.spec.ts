@@ -100,7 +100,6 @@ test.describe('Communications page', () => {
       }),
     );
 
-    await page.getByTestId('type-Meeting').check();
     await page.getByTestId('applyFiltersButton').click();
     await expect(page.getByText('test 3', { exact: true })).toBeVisible();
   });
