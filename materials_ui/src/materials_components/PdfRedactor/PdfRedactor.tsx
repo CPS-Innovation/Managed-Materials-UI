@@ -1,9 +1,8 @@
 import type { PDFDocumentProxy } from 'pdfjs-dist';
 import pdfWorker from 'pdfjs-dist/build/pdf.worker?url';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Document, pdfjs } from 'react-pdf';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
+import { pdfjs } from 'react-pdf';
+import { MacDocument } from '../../components/MacReactPdf/MacReactPdf';
 import { safeJsonParse } from '../DocumentSelectAccordion/utils/generalUtils';
 import { useDocumentFocus } from './hooks/useDocumentFocus';
 import { useShiftReleaseRedactTrigger } from './hooks/useShiftReleaseRedactTrigger';
@@ -439,7 +438,7 @@ export const PdfRedactor = (p: {
             border: 'solid 1px black',
           }}
         >
-          <Document
+          <MacDocument
             file={p.fileUrl}
             externalLinkTarget="_blank"
             onLoadSuccess={async (pdf) => {
@@ -502,7 +501,7 @@ export const PdfRedactor = (p: {
                 }}
               />
             ))}
-          </Document>
+          </MacDocument>
         </div>
         {p.redactions.length > 0 && (
           <div style={{ position: 'absolute', bottom: '25px', left: 0, right: 0, zIndex: 800 }}>
