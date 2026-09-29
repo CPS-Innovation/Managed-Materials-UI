@@ -258,8 +258,8 @@ stages:
               cacheHitVar: 'PLAYWRIGHT_CACHE_RESTORED'
 
           - script: |
-              npx playwright install msedge
-            displayName: 'Install Microsoft Edge (Playwright channel browser)'
+              npx playwright install chromium msedge
+            displayName: 'Install Playwright browsers'
             condition: ne(variables['PLAYWRIGHT_CACHE_RESTORED'], 'true')
             workingDirectory: '$(workingDir)'
             env:
