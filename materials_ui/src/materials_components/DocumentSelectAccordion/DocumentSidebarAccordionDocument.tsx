@@ -90,7 +90,6 @@ export const DocumentSidebarAccordionDocument = (p: {
       showLeftBorder={p.activeDocumentId === p.document.parentId}
       showRightBorder={p.openDocumentIds.includes(p.document.parentId)}
       backgroundColor={p.readDocumentIds.includes(p.document.parentId) ? 'white' : 'blue'}
-      // backgroundColor="blue"
       notesStatus={(() => {
         if (
           p.document.cmsDocType.documentType === 'PCD' ||
