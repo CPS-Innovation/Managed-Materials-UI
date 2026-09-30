@@ -25,7 +25,7 @@ export const TwoTabsDocumentsDisplay = (p: {
             key={`${document.parentId}-${document.childId}`}
             className="flex gap-4 min-w-[300px]"
           >
-            <div
+            <button
               onClick={() => {
                 p.onDocumentSelect({ documentId: document.parentId });
                 p.onDocumentActive({ documentId: document.parentId });
@@ -33,9 +33,9 @@ export const TwoTabsDocumentsDisplay = (p: {
             >
               {document.parentId}, {document.childId}
               {p.activeDocumentId === document.parentId ? ' (active)' : ''}
-            </div>
+            </button>
             {p.openDocumentIds.includes(document.parentId) && (
-              <span
+              <button
                 onClick={() => {
                   p.onDocumentClose({ documentId: document.parentId });
                   const mostRecentOpenDocumentId = getMostRecentOpenDocumentId();
@@ -44,7 +44,7 @@ export const TwoTabsDocumentsDisplay = (p: {
                 }}
               >
                 X
-              </span>
+              </button>
             )}
           </div>
         ))}
