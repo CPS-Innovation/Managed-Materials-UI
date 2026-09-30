@@ -258,7 +258,7 @@ stages:
               cacheHitVar: 'PLAYWRIGHT_CACHE_RESTORED'
 
           - script: |
-              node ./node_modules/playwright/cli.js install chromium msedge
+              npx playwright install chromium msedge
             displayName: 'Install Playwright browsers'
             condition: ne(variables['PLAYWRIGHT_CACHE_RESTORED'], 'true')
             workingDirectory: '$(workingDir)'
@@ -266,7 +266,7 @@ stages:
               PLAYWRIGHT_BROWSERS_PATH: '$(Pipeline.Workspace)/.playwright'
 
           - script: |
-              node ./node_modules/playwright/cli.js install-deps
+              npx playwright install-deps
             displayName: 'Install Playwright OS dependencies'
             condition: eq(variables['Agent.OS'], 'Linux')
             workingDirectory: '$(workingDir)'
