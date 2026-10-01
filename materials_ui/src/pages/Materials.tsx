@@ -26,7 +26,13 @@ import { navigateToViewDocumentPageInNewTab } from '../hooks/ui/navigateToViewDo
 import { CaseMaterialsType } from '../schemas';
 import { trackAction } from '../telemetry/appInsights';
 
+const useMaterialsPageRoute = () => {
+  const { caseId } = useAppRoute();
+
+  return { caseId: caseId! };
+};
 export const MaterialsPage = () => {
+  const { caseId } = useMaterialsPageRoute();
   const { getRoute } = useAppRoute();
   const navigate = useNavigate();
   const [showFilter, setShowFilter] = useState(true);
@@ -186,7 +192,7 @@ export const MaterialsPage = () => {
                 selectedItems={selectedItems.materials}
               />
 
-              <CaseMaterialsTable />
+              <CaseMaterialsTable caseId={caseId} />
 
               <div className="action-on-selection-container">
                 <ButtonMenuComponent

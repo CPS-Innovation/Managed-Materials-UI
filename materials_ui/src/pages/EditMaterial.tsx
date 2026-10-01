@@ -16,7 +16,14 @@ import { trackAction } from '../telemetry/appInsights';
 type EditMaterialLocationState = { returnTo: string; row: CaseMaterialsType };
 type FormStep = 'form' | 'summary';
 
+const useEditMaterialPageRoute = () => {
+  const { caseId } = useAppRoute();
+
+  return { caseId: caseId! };
+};
+
 export const EditMaterialPage = () => {
+  const { caseId } = useEditMaterialPageRoute();
   const { getRoute } = useAppRoute();
   const { setTags } = useMaterialTags();
   const { setBanner } = useBanner();
@@ -185,7 +192,9 @@ export const EditMaterialPage = () => {
               />
             )}
           </div>
-          <div className="govuk-grid-column-one-half">{row && <DocumentPreview row={row} />}</div>
+          <div className="govuk-grid-column-one-half">
+            {row && <DocumentPreview row={row} caseId={caseId} />}
+          </div>
         </div>
       </div>
     </>

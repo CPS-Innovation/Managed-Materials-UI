@@ -47,14 +47,15 @@ export const getDocuments = async (p: {
 export const getPdfBlobFromAxiosInstance = (p: {
   axiosInstance: AxiosInstance;
   caseId: number | string;
-  materialId: string;
+  materialId: string | number;
   documentId: number | string;
 }) => {
-  const materialsPrefix = p.materialId.startsWith('CMS-') ? '' : 'CMS-';
-  return p.axiosInstance.get(
-    `/api/cases/${p.caseId}/materials/${materialsPrefix}${p.materialId}/documents/${p.documentId}/pdf`,
-    { responseType: 'blob' },
-  );
+  const materialsPrefix = `${p.materialId}`.startsWith('CMS-') ? '' : 'CMS-';
+  const materialId = `${materialsPrefix}${p.materialId}`;
+  const slicedMaterialId = materialId.slice(4);
+  return p.axiosInstance.get(`/api/cases/${p.caseId}/materials/${slicedMaterialId}/document`, {
+    responseType: 'blob',
+  });
 };
 
 export const getPdfFiles = async (p: {
