@@ -94,8 +94,8 @@ export const DocumentTabPanel = ({
           axiosInstance,
           urn,
           caseId,
-          parentId: parentId,
-          childId: childId,
+          materialId: parentId,
+          documentId: childId,
         });
         setIsFileTooLarge(isFileTooLarge);
 
