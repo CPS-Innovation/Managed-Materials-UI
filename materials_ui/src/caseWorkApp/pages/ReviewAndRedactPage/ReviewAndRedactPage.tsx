@@ -210,8 +210,8 @@ export const ReviewAndRedactPage = () => {
       children: (
         <DocumentTabPanel
           key={doc.parentId}
-          parentId={doc.parentId}
-          childId={doc.childId}
+          materialId={doc.parentId}
+          documentId={doc.childId}
           document={doc}
           urn={urn}
           caseId={caseId}
