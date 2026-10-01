@@ -7,6 +7,7 @@ import {
   TDocument,
 } from '../../materials_components/DocumentSelectAccordion/getters/getDocumentList';
 import { CaseMaterialDataType, CaseMaterialsResponseType } from '../../schemas';
+import { stripCmsPrefix } from '../../utils/cmsStringTransform';
 
 type UseCaseMaterialsProps = { dataType: CaseMaterialDataType };
 
@@ -40,7 +41,7 @@ export const useCaseMaterials = ({ dataType }: UseCaseMaterialsProps) => {
 
     const indexedDocumentsList: { [k: string]: TDocument } = {};
     documentsListResponse.data.forEach(
-      (document) => (indexedDocumentsList[document.parentId] = document),
+      (document) => (indexedDocumentsList[stripCmsPrefix(document.parentId)] = document),
     );
 
     const caseMaterials = caseMaterialsResponse.data.map((material) => ({

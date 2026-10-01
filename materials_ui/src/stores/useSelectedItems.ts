@@ -1,18 +1,18 @@
 import { create } from 'zustand';
 
-import { CaseMaterialsType } from '../schemas';
+import { CaseMaterialsWithDocumentIdType } from '../schemas/caseMaterials';
 
 type SelectedItemsDefaultState = {
-  communications: CaseMaterialsType[];
-  materials: CaseMaterialsType[];
+  communications: CaseMaterialsWithDocumentIdType[];
+  materials: CaseMaterialsWithDocumentIdType[];
 };
 
 type SelectedItemKeys = keyof SelectedItemsDefaultState;
 
 type SelectedItemsStore = {
   items: SelectedItemsDefaultState;
-  addItems: (items: CaseMaterialsType[], type: SelectedItemKeys) => void;
-  removeItems: (items: CaseMaterialsType[], type: SelectedItemKeys) => void;
+  addItems: (items: CaseMaterialsWithDocumentIdType[], type: SelectedItemKeys) => void;
+  removeItems: (items: CaseMaterialsWithDocumentIdType[], type: SelectedItemKeys) => void;
   clear: (type?: SelectedItemKeys) => void;
 };
 

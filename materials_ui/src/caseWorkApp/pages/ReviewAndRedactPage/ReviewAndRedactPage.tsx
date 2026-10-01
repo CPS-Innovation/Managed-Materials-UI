@@ -210,8 +210,8 @@ export const ReviewAndRedactPage = () => {
       children: (
         <DocumentTabPanel
           key={doc.parentId}
-          parentId={doc.parentId}
-          childId={doc.childId}
+          materialId={doc.parentId}
+          documentId={doc.childId}
           document={doc}
           urn={urn}
           caseId={caseId}
@@ -497,8 +497,15 @@ export const ReviewAndRedactPage = () => {
                   onModeChange={(newMode) => handleModeChange(activeTabId, newMode)}
                   onRedactionLogClick={() => setShowRedactionLogModal(true)}
                   onViewInNewWindowClick={() => {
-                    trackAction('OpenedInNewWindow', { materialId: activeTabId });
-                    navigateToViewDocumentPageInNewTab({ urn, caseId, materialId: activeTabId });
+                    const documentId = activeDocument?.childId;
+
+                    trackAction('OpenedInNewWindow', { materialId: activeTabId, documentId });
+                    navigateToViewDocumentPageInNewTab({
+                      urn,
+                      caseId,
+                      materialId: activeTabId,
+                      documentId,
+                    });
                   }}
                   numOfDocumentPages={numOfPagesByParentId[activeTabId] ?? 0}
                 />
