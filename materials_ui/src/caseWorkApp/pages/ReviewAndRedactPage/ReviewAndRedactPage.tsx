@@ -504,7 +504,7 @@ export const ReviewAndRedactPage = () => {
                       urn,
                       caseId,
                       materialId: activeTabId,
-                      documentId: documentId ? documentId : 'undefined',
+                      documentId,
                     });
                   }}
                   numOfDocumentPages={numOfPagesByParentId[activeTabId] ?? 0}
