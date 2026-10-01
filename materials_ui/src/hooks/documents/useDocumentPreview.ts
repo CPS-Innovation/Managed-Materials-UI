@@ -1,25 +1,27 @@
 import useSWR from 'swr';
+import {
+  getPdfBlobFromAxiosInstance,
+  useAxiosInstances,
+} from '../../caseWorkApp/components/utils/getData';
 import { QUERY_KEYS } from '../../constants/query';
-import { CaseMaterialDocumentPreviewResponseType } from '../../schemas/caseMaterials';
-import { useCaseInfoStore } from '../../stores';
-import { useAxiosInstance } from '../ui/useRequest';
 
-type Props = { materialId: number };
-
-export const useDocumentPreview = ({ materialId }: Props) => {
-  const request = useAxiosInstance();
-  const { caseInfo } = useCaseInfoStore();
+export const useDocumentPreview = (p: {
+  materialId: string | number;
+  caseId: string | number;
+  documentId?: string | number;
+}) => {
+  const { axiosInstance } = useAxiosInstances();
 
   const getDocumentPreview = async () =>
-    await request
-      .get<CaseMaterialDocumentPreviewResponseType>(
-        `/cases/${caseInfo?.id}/materials/${materialId}/document`,
-        { responseType: 'blob' },
-      )
-      .then((response) => response.data);
+    getPdfBlobFromAxiosInstance({
+      axiosInstance,
+      caseId: p.caseId,
+      materialId: p.materialId,
+      documentId: p.documentId ?? '',
+    });
 
   const { data, error, isLoading } = useSWR(
-    caseInfo ? `${QUERY_KEYS.CASE_MATERIAL_FULL_DOCUMENT}/${materialId}` : null,
+    `${QUERY_KEYS.CASE_MATERIAL_FULL_DOCUMENT}-${p.caseId}-${p.materialId}-${p.documentId}`,
     getDocumentPreview,
   );
 

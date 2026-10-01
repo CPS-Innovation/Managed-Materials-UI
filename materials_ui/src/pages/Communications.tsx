@@ -23,7 +23,14 @@ import { CaseMaterialsType } from '../schemas';
 import { useCaseInfoStore, useMaterialTags, useSelectedItemsStore } from '../stores';
 import { trackAction } from '../telemetry/appInsights';
 
+const useCommunicationsPageRoute = () => {
+  const { caseId } = useAppRoute();
+
+  return { caseId: caseId! };
+};
+
 export const CommunicationsPage = () => {
+  const { caseId } = useCommunicationsPageRoute();
   const [selectedMaterial, setSelectedMaterial] = useState<CaseMaterialsType | null>(null);
   const { setBanner, resetBanner } = useBanner();
   const { loading: caseMaterialsLoading, mutate: refreshCommunications } = useCaseMaterials({
@@ -186,7 +193,7 @@ export const CommunicationsPage = () => {
                 selectedItems={selectedItems.communications}
               />
 
-              <CommunicationsTable />
+              <CommunicationsTable caseId={caseId} />
 
               <div className="action-on-selection-container">
                 <ButtonMenuComponent

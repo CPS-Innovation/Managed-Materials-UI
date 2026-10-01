@@ -27,7 +27,14 @@ import { useMaterialTags } from '../stores';
 import { trackAction } from '../telemetry/appInsights';
 import { getBannerData } from '../utils/reclassify';
 
+const useReclassificationPageRoute = () => {
+  const { caseId } = useAppRoute();
+
+  return { caseId: caseId! };
+};
+
 export const ReclassificationPage = () => {
+  const { caseId } = useReclassificationPageRoute();
   const { getRoute } = useAppRoute();
   const { setTags } = useMaterialTags();
   const navigate = useNavigate();
@@ -289,7 +296,7 @@ export const ReclassificationPage = () => {
           </div>
 
           <div className="govuk-grid-column-one-half">
-            {material && <DocumentPreview row={material} />}
+            {material && <DocumentPreview row={material} caseId={caseId} />}
           </div>
         </div>
       </div>
