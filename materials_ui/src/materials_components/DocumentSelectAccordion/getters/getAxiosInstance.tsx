@@ -1,5 +1,6 @@
 import { useMsal } from '@azure/msal-react';
 import axios from 'axios';
+import { addCmsReauthInterceptor } from '../../../auth/cmsReauth';
 import { getAccessTokenFromMsalInstance } from './getAccessTokenFromMsalInstance';
 
 export const useAxiosInstance = () => {
@@ -19,5 +20,5 @@ export const useAxiosInstance = () => {
     return config;
   });
 
-  return axiosInstance;
+  return addCmsReauthInterceptor(axiosInstance);
 };
