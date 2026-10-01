@@ -1,3 +1,4 @@
+import pdfWorker from 'pdfjs-dist/build/pdf.worker?url';
 import { useMemo } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
@@ -7,7 +8,7 @@ const pdfjsDirPath = `${import.meta.env.BASE_URL}pdfjs/`;
 const wasmUrl =
   typeof window === 'undefined' ? pdfjsDirPath : new URL(pdfjsDirPath, window.location.origin).href;
 
-pdfjs.GlobalWorkerOptions.workerSrc = `${wasmUrl}pdf.worker.min.mjs`;
+pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 export const MacDocument = (p: React.ComponentProps<typeof Document>) => {
   const { children, options: propOptions, ...rest } = p;

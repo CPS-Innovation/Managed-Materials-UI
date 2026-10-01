@@ -102,7 +102,3 @@ export const postRedactionLog = async (p: {
     throw error;
   }
 };
-
-export const GetDataFromAxios = () => {
-  return { useAxiosInstance, getDocuments, getPdfFiles, getLookups, postRedactionLog };
-};

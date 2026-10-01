@@ -100,12 +100,13 @@ export const MaterialsPage = () => {
       const materialId = item.materialId;
       const urn = caseInfo?.urn;
       const caseId = caseInfo?.id;
-      if (!urn || !caseId) return;
+      const documentId = item.documentId;
+      if (!urn || !caseId || !documentId) return;
       trackAction('OpenedInNewWindow', {
         materialId: materialId.toString(),
         category: item.category,
       });
-      navigateToViewDocumentPageInNewTab({ urn, caseId, materialId });
+      navigateToViewDocumentPageInNewTab({ urn, caseId, materialId, documentId });
     }
   };
 

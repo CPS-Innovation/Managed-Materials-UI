@@ -1,7 +1,5 @@
 import type { PDFDocumentProxy } from 'pdfjs-dist';
-import pdfWorker from 'pdfjs-dist/build/pdf.worker?url';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { pdfjs } from 'react-pdf';
 import { MacDocument } from '../../components/MacReactPdf/MacReactPdf';
 import { safeJsonParse } from '../DocumentSelectAccordion/utils/generalUtils';
 import { useDocumentFocus } from './hooks/useDocumentFocus';
@@ -19,8 +17,6 @@ import styles from './utils/PdfRedactor.module.css';
 import { TIndexedRotation, TRotation } from './utils/rotationUtils';
 import type { THighlightLayer, TSearchHighlight } from './utils/searchHighlightUtils';
 import { useTrigger } from './utils/useTriggger';
-
-pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 const modeClassMap: { [x in TMode]: string | undefined } = {
   redact: styles.redact,
