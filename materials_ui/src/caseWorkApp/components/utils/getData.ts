@@ -44,7 +44,7 @@ export const getDocuments = async (p: {
   }
 };
 
-export const getPdfBlobFromAxiosInstance = async (p: {
+export const getPdfBlobFromAxiosInstance = (p: {
   axiosInstance: AxiosInstance;
   caseId: number | string;
   materialId: string;
