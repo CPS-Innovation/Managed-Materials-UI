@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Layout, TwoCol } from '../../components';
+import { TwoCol } from '../../components';
+import { Layout2 } from '../../components/Layout/Layout';
 import { useGetDocumentList } from '../../materials_components/DocumentSelectAccordion/getters/getDocumentList';
 import { TwoTabsDocumentsDisplay } from './TwoTabsDocumentsDisplay';
 
-export const TwoTabsPageContent = (p: { urn: string; caseId: number }) => {
+export const TwoTabsPageContent = (p: { caseId: number }) => {
   const { state: documentListState } = useGetDocumentList({
     populateOnMount: true,
-    urn: p.urn,
     caseId: p.caseId,
   });
 
@@ -24,7 +24,7 @@ export const TwoTabsPageContent = (p: { urn: string; caseId: number }) => {
       : [];
 
   return (
-    <Layout title="Two Tabs">
+    <Layout2 isLoading={false} title="Two Tabs" caseId={p.caseId}>
       <TwoCol sidebar={<div>blah</div>}>
         {documentListState.status === 'success' && (
           <div className="flex gap-16">
@@ -61,6 +61,6 @@ export const TwoTabsPageContent = (p: { urn: string; caseId: number }) => {
           )}
         </pre>
       </TwoCol>
-    </Layout>
+    </Layout2>
   );
 };

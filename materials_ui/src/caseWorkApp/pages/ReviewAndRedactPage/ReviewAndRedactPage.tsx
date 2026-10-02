@@ -73,7 +73,7 @@ export const ReviewAndRedactPage = () => {
 
   const navigate = useNavigate();
 
-  const documentList = useGetDocumentList({ populateOnMount: true, urn, caseId });
+  const documentList = useGetDocumentList({ populateOnMount: true, caseId });
 
   const [selectedDocumentForRename, setSelectedDocumentForRename] = useState<
     (TDocument & { materialId?: number }) | null

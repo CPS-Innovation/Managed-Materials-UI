@@ -25,11 +25,7 @@ export const useCaseMaterials = ({ dataType }: UseCaseMaterialsProps) => {
       `/cases/${caseId}/case-materials`,
     );
 
-    const documentsListPromise = safeGetDocumentListFromAxiosInstance({
-      axiosInstance,
-      urn,
-      caseId,
-    });
+    const documentsListPromise = safeGetDocumentListFromAxiosInstance({ axiosInstance, caseId });
 
     const [caseMaterialsResponse, documentsListResponse] = await Promise.all([
       caseMaterialsPromise,

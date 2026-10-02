@@ -20,6 +20,23 @@ export const APP_ROUTES = {
 
 type AppRouteKey = keyof typeof APP_ROUTES;
 
+// Moving away from this function
+export const getRouteWithUrnPrefix = (p: {
+  urn: string;
+  caseId: number | string;
+  routeName: AppRouteKey;
+}) => {
+  const routePrefix = `/${p.urn}/${p.caseId}/`;
+
+  return `${routePrefix}${APP_ROUTES[p.routeName]}`;
+};
+
+export const getRoute = (p: { caseId: number | string; routeName: AppRouteKey }) => {
+  const routePrefix = `/${p.caseId}/`;
+
+  return `${routePrefix}${APP_ROUTES[p.routeName]}`;
+};
+
 export const useAppRoute = () => {
   const match = useMatch('/:urn/:caseId/*');
   const urn = match?.params.urn;
