@@ -1,6 +1,7 @@
 import { useMsal } from '@azure/msal-react';
 import { useEffect } from 'react';
-import { LoadingAnnouncer, RouteChangeListener } from './components';
+import { Banner, LoadingAnnouncer, RouteChangeListener } from './components';
+import { useBanner } from './hooks';
 import { loginRequest } from './msalInstance';
 import { Routes } from './routes';
 import {
@@ -22,6 +23,8 @@ export const App = () => {
 
   const account = instance.getActiveAccount() || accounts[0];
   const role = (account?.idTokenClaims?.roles as string[] | undefined)?.join(',');
+
+  const { banners } = useBanner();
 
   useEffect(() => {
     if (role) setTelemetryUserRole(role);
@@ -49,6 +52,7 @@ export const App = () => {
         <div className="header-container">
           <cps-global-header></cps-global-header>
         </div>
+        <div>{banners && banners.map((banner, index) => <Banner key={index} {...banner} />)}</div>
         <LoadingAnnouncer />
         <RouteChangeListener />
         <Routes />

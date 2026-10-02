@@ -24,9 +24,9 @@ import { ViewDocumentPage } from './pages/ViewDocumentPage';
 export const Routes = () => {
   const { getRoute } = useAppRoute();
   const match = useMatch('/:urn/:caseId/*');
-  const { caseId, urn } = match?.params || {};
+  const { caseId } = match?.params || {};
 
-  const { caseInfo, loading: caseInfoLoading } = useCaseInfo({ caseId, urn });
+  const { caseInfo, loading: caseInfoLoading } = useCaseInfo({ caseId });
   const { setCaseInfo, setIsLoading } = useCaseInfoStore();
 
   useEffect(() => {
@@ -47,10 +47,10 @@ export const Routes = () => {
       <Route path={getRoute('SERVER_ERROR', false)} element={<ServerErrorPage />} />
       <Route path={getRoute('CASE_SEARCH', false)} element={<CaseSearchPage />} />
       <Route
-        path={'/:urn/:caseId/view-document/:materialId/:documentId'}
+        path={'/:caseId/view-document/:materialId/:documentId'}
         element={<ViewDocumentPage />}
       />
-      <Route path={'/:urn/:caseId/two-tabs'} element={<TwoTabsPage />} />
+      <Route path={'/:caseId/two-tabs'} element={<TwoTabsPage />} />
 
       <Route path={`:urn/:caseId`}>
         <Route path={getRoute('DISCARD', false)} element={<DiscardMaterialPage />} />

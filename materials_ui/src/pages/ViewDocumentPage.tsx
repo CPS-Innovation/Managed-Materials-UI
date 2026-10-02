@@ -13,7 +13,7 @@ import { GovUkBanner } from '../materials_components/DocumentSelectAccordion/tem
 import { stripCmsPrefix } from '../utils/cmsStringTransform';
 import './ViewDocumentPage.scss';
 
-const useDocumentListFromAxiosInstance = (p: { urn: string; caseId: number }) => {
+const useDocumentListFromAxiosInstance = (p: { caseId: number }) => {
   const axiosInstance = useAxiosInstance();
   const [documentList, setDocumentList] = useState<TDocumentList | null | undefined>(undefined);
 
@@ -21,7 +21,6 @@ const useDocumentListFromAxiosInstance = (p: { urn: string; caseId: number }) =>
     (async () => {
       const documentListResp = await safeGetDocumentListFromAxiosInstance({
         axiosInstance,
-        urn: p.urn,
         caseId: p.caseId,
       });
       setDocumentList(documentListResp.success ? documentListResp.data : null);
@@ -31,12 +30,7 @@ const useDocumentListFromAxiosInstance = (p: { urn: string; caseId: number }) =>
   return { data: documentList };
 };
 
-const LoadAndViewPdf = (p: {
-  urn: string;
-  caseId: number;
-  materialId: string;
-  documentId: string | number;
-}) => {
+const LoadAndViewPdf = (p: { caseId: number; materialId: string; documentId: string | number }) => {
   const { data: pdfUrl } = useDocumentPdfUrl(p);
   const { data: documentList } = useDocumentListFromAxiosInstance(p);
   const [numPages, setNumPages] = useState<number>();
@@ -89,16 +83,15 @@ const useViewDocumentRoute = () => {
   const params = useParams();
 
   // always exist - due to route pattern
-  const urn = params.urn!;
   const caseId = params.caseId ? +params.caseId : 0;
   const materialId = params.materialId!;
   const documentId = params.documentId!;
 
-  return { urn, caseId, documentId, materialId };
+  return { caseId, documentId, materialId };
 };
 
 export const ViewDocumentPage = () => {
-  const { urn, caseId, documentId, materialId } = useViewDocumentRoute();
+  const { caseId, documentId, materialId } = useViewDocumentRoute();
 
   useEffect(() => {
     window.document.body.classList.add('hide-header');
@@ -120,7 +113,5 @@ export const ViewDocumentPage = () => {
       />
     );
 
-  return (
-    <LoadAndViewPdf urn={urn} caseId={caseId} materialId={materialId} documentId={documentId} />
-  );
+  return <LoadAndViewPdf caseId={caseId} materialId={materialId} documentId={documentId} />;
 };
