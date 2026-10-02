@@ -22,7 +22,7 @@ export const postDocumentNotesFromAxiosInstance = async (p: {
   text: string;
 }) => {
   const response = await p.axiosInstance.post(
-    `/api/cases/${p.caseId}/documents/${p.documentId}/notes`,
+    `/cases/${p.caseId}/documents/${p.documentId}/notes`,
     { Text: p.text },
   );
 
@@ -35,9 +35,7 @@ export const getDocumentNotesFromAxiosInstance = async (p: {
   documentId: string | undefined;
   caseId: number | undefined;
 }) => {
-  const response = await p.axiosInstance.get(
-    `/api/cases/${p.caseId}/materials/${p.documentId}/notes`,
-  );
+  const response = await p.axiosInstance.get(`/cases/${p.caseId}/materials/${p.documentId}/notes`);
 
   return response.data;
 };

@@ -23,7 +23,7 @@ export type TBulkSearchResponse = {
 export type TBulkSearchResult = { status: number; data: TBulkSearchResponse | null };
 
 const bulkSearchPath = (route: { caseId: number; materialId: string; documentId: number }) =>
-  `/api/cases/${route.caseId}/materials/${route.materialId}/documents/${route.documentId}/search`;
+  `/cases/${route.caseId}/materials/${route.materialId}/documents/${route.documentId}/search`;
 
 export const initiateBulkSearch = (request: {
   axiosInstance: AxiosInstance;

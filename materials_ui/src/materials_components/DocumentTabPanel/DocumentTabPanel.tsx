@@ -36,8 +36,8 @@ type RedactionLogModalData = {
 };
 
 export type DocumentTabPanelProps = {
-  parentId: string;
-  childId: number;
+  materialId: string;
+  documentId: number;
   document: TDocument;
   urn: string;
   caseId: number;
@@ -54,8 +54,8 @@ export type DocumentTabPanelProps = {
 };
 
 export const DocumentTabPanel = ({
-  parentId,
-  childId,
+  materialId,
+  documentId,
   document,
   urn,
   caseId,
@@ -94,8 +94,8 @@ export const DocumentTabPanel = ({
           axiosInstance,
           urn,
           caseId,
-          parentId: parentId,
-          childId: childId,
+          materialId: materialId,
+          documentId: documentId,
         });
         setIsFileTooLarge(isFileTooLarge);
 
@@ -120,7 +120,7 @@ export const DocumentTabPanel = ({
         URL.revokeObjectURL(blobUrlRef.current);
       }
     };
-  }, [parentId, childId, urn, caseId]);
+  }, [materialId, documentId, urn, caseId]);
 
   useEffect(() => {
     const loadLookups = async () => {
@@ -185,8 +185,8 @@ export const DocumentTabPanel = ({
                 initiateBulkSearch({
                   axiosInstance,
                   caseId,
-                  materialId: parentId,
-                  documentId: childId,
+                  materialId: materialId,
+                  documentId: documentId,
                 }).catch((error) =>
                   console.error('Failed to initiate bulk search processing:', error),
                 );
@@ -221,8 +221,8 @@ export const DocumentTabPanel = ({
             onModification={onModification}
             urn={urn}
             caseId={caseId}
-            childId={childId}
-            parentId={parentId}
+            childId={documentId}
+            parentId={materialId}
             document={document}
             onRedactionsChange={onRedactionsChange}
             initRedactions={initRedactions ?? []}

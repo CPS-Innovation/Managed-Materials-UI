@@ -1,19 +1,24 @@
 import { AxiosInstance } from 'axios';
 import { useEffect, useState } from 'react';
+import {
+  getPdfBlobFromAxiosInstance,
+  useAxiosInstances,
+} from '../../caseWorkApp/components/utils/getData';
 import { stripCmsPrefix } from '../../utils/cmsStringTransform';
-import { useAxiosInstance } from '../ui/useRequest';
 
 const getDocumentBlobFromAxiosInstance = async (p: {
   axiosInstance: AxiosInstance;
-  urn: string;
   caseId: number;
   materialId: string;
+  documentId: string | number;
 }) => {
   try {
-    const response = await p.axiosInstance.get(
-      `/cases/${p.caseId}/materials/${p.materialId}/document`,
-      { responseType: 'blob' },
-    );
+    const response = await getPdfBlobFromAxiosInstance({
+      axiosInstance: p.axiosInstance,
+      caseId: p.caseId,
+      materialId: p.materialId,
+      documentId: p.documentId,
+    });
 
     const blob = response.data;
     if (!(blob instanceof Blob)) {
@@ -26,17 +31,21 @@ const getDocumentBlobFromAxiosInstance = async (p: {
   }
 };
 
-export const useDocumentPdfUrl = (p: { urn: string; caseId: number; materialId: string }) => {
+export const useDocumentPdfUrl = (p: {
+  caseId: number;
+  materialId: string;
+  documentId: string | number;
+}) => {
   const [pdfUrl, setPdfUrl] = useState<string | null | undefined>();
-  const axiosInstance = useAxiosInstance();
+  const { axiosInstance } = useAxiosInstances();
 
   useEffect(() => {
     (async () => {
       const resp = await getDocumentBlobFromAxiosInstance({
         axiosInstance,
-        urn: p.urn,
         caseId: p.caseId,
         materialId: stripCmsPrefix(p.materialId),
+        documentId: p.documentId,
       });
 
       if (!resp.success) return setPdfUrl(null);

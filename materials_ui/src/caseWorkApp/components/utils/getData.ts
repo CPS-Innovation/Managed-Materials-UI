@@ -23,7 +23,7 @@ export const useAxiosInstances = () => {
 
   return {
     axiosInstance: addCmsReauthInterceptor(
-      createInstance(import.meta.env.VITE_POLARIS_GATEWAY_URL),
+      createInstance(import.meta.env.VITE_POLARIS_GATEWAY_URL + '/api/'),
     ),
     redactionLogAxios: createInstance(
       import.meta.env.VITE_REDACTION_LOG_URL,
@@ -40,25 +40,35 @@ export const getDocuments = async (p: {
   caseId: number | undefined;
 }) => {
   try {
-    const response = await p.axiosInstance.get(`/api/cases/${p.caseId}/documents`);
+    const response = await p.axiosInstance.get(`/cases/${p.caseId}/documents`);
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) console.error(`Error getting documents: ${error.message}`);
   }
 };
 
+export const getPdfBlobFromAxiosInstance = (p: {
+  axiosInstance: AxiosInstance;
+  caseId: number | string;
+  materialId: string;
+  documentId: number | string;
+}) => {
+  const materialsPrefix = p.materialId.startsWith('CMS-') ? '' : 'CMS-';
+  return p.axiosInstance.get(
+    `/cases/${p.caseId}/materials/${materialsPrefix}${p.materialId}/documents/${p.documentId}/pdf`,
+    { responseType: 'blob' },
+  );
+};
+
 export const getPdfFiles = async (p: {
   axiosInstance: AxiosInstance;
   urn: string;
   caseId: number | string;
-  parentId: number | string;
-  childId?: number | string;
+  materialId: string;
+  documentId: number | string;
 }): Promise<{ blob: Blob; isFileTooLarge: boolean }> => {
   try {
-    const response = await p.axiosInstance.get(
-      `/api/cases/${p.caseId}/materials/${p.parentId}/documents/${p.childId}/pdf`,
-      { responseType: 'blob' },
-    );
+    const response = await getPdfBlobFromAxiosInstance(p);
     const fileTooLargeHeader = response.headers['cps-file-too-large'] ?? null;
     const isFileTooLarge = fileTooLargeHeader === 'true';
 
@@ -104,8 +114,4 @@ export const postRedactionLog = async (p: {
     if (error instanceof AxiosError) console.error(`Error posting redaction log: ${error.message}`);
     throw error;
   }
-};
-
-export const GetDataFromAxios = () => {
-  return { useAxiosInstance, getDocuments, getPdfFiles, getLookups, postRedactionLog };
 };

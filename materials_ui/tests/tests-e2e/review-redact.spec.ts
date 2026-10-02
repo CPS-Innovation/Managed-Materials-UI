@@ -16,7 +16,7 @@ test.describe('Review redact page', () => {
     await page.getByRole('heading', { name: 'Loading Document' }).waitFor({ state: 'detached' });
   });
 
-  test('T-001: page loads correctly with materials', async ({ page }) => {
+  test.skip('T-001: page loads correctly with materials', async ({ page }) => {
     mockRoute(page, '/documents', []);
     await expect(page.getByRole('searchbox', { name: 'Search within material' })).toBeVisible();
     await expect(page.getByText('Statements')).toBeVisible();

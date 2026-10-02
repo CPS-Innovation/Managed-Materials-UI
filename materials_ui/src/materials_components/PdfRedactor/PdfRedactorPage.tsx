@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from 'react';
-import { Page } from 'react-pdf';
 import { usePageColors } from '../../hooks/ui/usePageColors';
 import { DocumentIcon } from './icons/DocumentIcon';
 import { RotateIcon } from './icons/RotateIcon';
@@ -12,6 +11,7 @@ import {
 
 import './PdfRedactorPage.scss';
 
+import { MacPage } from '../../components/MacReactPdf/MacReactPdf';
 import { DeleteIcon } from './icons/DeleteIcon';
 import { GovUkButton } from './templates/GovUkButton';
 import {
@@ -432,7 +432,7 @@ export const PdfRedactorPage = (p: {
             className={`react-pdf-page-wrapper${isAreaDragging ? ' area-dragging' : ''}`}
             onMouseUp={finishAreaRedactionDrag}
           >
-            <Page
+            <MacPage
               pageNumber={p.pageNumber}
               pageColors={pageColors}
               onRenderSuccess={() => {
