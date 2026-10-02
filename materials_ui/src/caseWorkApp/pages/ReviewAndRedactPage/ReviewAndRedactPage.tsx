@@ -364,6 +364,8 @@ export const ReviewAndRedactPage = () => {
   return (
     <Layout
       title="Review and Redact"
+      urn={urn}
+      caseId={caseId}
       shouldBlockNavigationCheck={(tab) => {
         const shouldBlock = Object.values(redactionsIndexedOnParentId).some(
           (redacts) => redacts.length > 0,

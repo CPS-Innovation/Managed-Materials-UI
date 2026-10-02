@@ -24,7 +24,7 @@ export const TwoTabsPageContent = (p: { urn: string; caseId: number }) => {
       : [];
 
   return (
-    <Layout title="Two Tabs">
+    <Layout title="Two Tabs" urn={p.urn} caseId={p.caseId}>
       <TwoCol sidebar={<div>blah</div>}>
         {documentListState.status === 'success' && (
           <div className="flex gap-16">

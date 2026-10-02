@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 
-import { Layout, StatusTag } from '../components';
+import { StatusTag } from '../components';
+import { PlainLayout } from '../components/Layout/Layout';
 import { QUERY_KEYS } from '../constants/query';
 import { useAppRoute, useBanner, useBulkSetUnused, useFilters, useLogger } from '../hooks';
 import { CaseMaterialsType } from '../schemas';
@@ -82,7 +83,7 @@ export const ReclassifyToUnusedPage = () => {
   }, [materials.length]);
 
   return (
-    <Layout plain title="Reclassify to Unused">
+    <PlainLayout title="Reclassify to Unused">
       <Link to={returnToMaterialsUrl} className="govuk-back-link">
         Back
       </Link>
@@ -168,6 +169,6 @@ export const ReclassifyToUnusedPage = () => {
           </Link>
         </div>
       </div>
-    </Layout>
+    </PlainLayout>
   );
 };
