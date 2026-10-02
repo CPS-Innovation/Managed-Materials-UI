@@ -6,7 +6,7 @@ export const useAxiosInstance = () => {
   const { instance: msalInstance } = useMsal();
 
   const axiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_POLARIS_GATEWAY_URL,
+    baseURL: import.meta.env.VITE_POLARIS_GATEWAY_URL + '/api/',
     withCredentials: true,
   });
 

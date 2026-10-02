@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { saveRedactions } from '../../materials_components/CaseworkPdfRedactorWrapper/utils/saveRedactionsUtils';
 import type { TRedaction } from '../../materials_components/PdfRedactor/utils/coordUtils';
 
-const REDACT_URL = '/api/cases/12345/materials/CMS-987/documents/2/redact';
+const REDACT_URL = '/cases/12345/materials/CMS-987/documents/2/redact';
 
 const stubAxios = () => {
   const put = vi.fn().mockResolvedValue({ data: {} });
