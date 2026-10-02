@@ -23,11 +23,12 @@ const loadCmsReauth = async (
   return import('../../auth/cmsReauth');
 };
 
-const createGateway = (cmsReauth: CmsReauth, window: Window) => {
+const createGateway = (cmsReauth: CmsReauth, window: Window, beforeRespond?: () => void) => {
   let status = 200;
   const instance = cmsReauth.addCmsReauthInterceptor(
     axios.create({
       adapter: async (config) => {
+        beforeRespond?.();
         const response = { status, statusText: '', headers: {}, config, data: {} };
         if (status >= 400) {
           throw new AxiosError('Request failed', 'ERR_BAD_REQUEST', config, null, response);
@@ -120,6 +121,20 @@ describe('cmsReauth', () => {
 
       expect(parseRedirect(window).terminationUrl).toBe(
         `${PAGE_URL}&auth-refresh=0&fail-correlation-id=corr-2`,
+      );
+    });
+
+    it('returns the user to the page the request was made from, even if the app has moved on before the 401 arrives', async () => {
+      const window = mockWindow(PAGE_URL);
+      const gateway = createGateway(cmsReauth, window, () => {
+        window.location.href = 'https://polaris.cps.gov.uk/materials-ui/unauthorized';
+      });
+      gateway.respondWith(401);
+
+      await settledState(gateway.get('corr-1'));
+
+      expect(parseRedirect(window).terminationUrl).toBe(
+        `${PAGE_URL}&auth-refresh=0&fail-correlation-id=corr-1`,
       );
     });
   });

@@ -9,6 +9,13 @@ const AUTH_FAIL_REASON_QUERY_PARAM = 'auth-fail-reason';
 const CORRELATION_ID = 'Correlation-Id';
 const UNAUTHORISED = 401;
 
+declare module 'axios' {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+  interface AxiosRequestConfig<D = any> {
+    pageUrl?: string;
+  }
+}
+
 const removeHandoffParams = (existingUrl: string) => {
   const url = new URL(existingUrl);
   url.searchParams.delete(HANDOFF_ATTEMPT_INDEX_QUERY_PARAM);
@@ -18,7 +25,7 @@ const removeHandoffParams = (existingUrl: string) => {
 };
 
 const buildRedirectUrl = (
-  window: Window,
+  pageUrl: string,
   outboundUrlIndex: number,
   correlationId: string | null,
 ) => {
@@ -31,7 +38,7 @@ const buildRedirectUrl = (
   }
 
   // used to send the browser back to where it started
-  const terminationUrl = new URL(removeHandoffParams(window.location.href));
+  const terminationUrl = new URL(removeHandoffParams(pageUrl));
 
   terminationUrl.searchParams.set(HANDOFF_ATTEMPT_INDEX_QUERY_PARAM, String(outboundUrlIndex));
   terminationUrl.searchParams.set(FAIL_CORRELATION_ID_QUERY_PARAM, String(correlationId));
@@ -59,6 +66,13 @@ export const addCmsReauthInterceptor = (
   axiosInstance: AxiosInstance,
   window: Window = globalThis.window,
 ) => {
+  // record the page a request is sent from rather than what page we're on when the 401 returns
+  // to prevent race conditions
+  axiosInstance.interceptors.request.use((config) => {
+    config.pageUrl = window.location.href;
+    return config;
+  });
+
   axiosInstance.interceptors.response.use(
     (response) => {
       justReturnedFromHandoff = false;
@@ -73,7 +87,8 @@ export const addCmsReauthInterceptor = (
       }
 
       const correlationId = error.config?.headers?.[CORRELATION_ID] ?? null;
-      return navigateAndStopExecution(window, buildRedirectUrl(window, 0, correlationId)!);
+      const pageUrl = error.config?.pageUrl ?? window.location.href;
+      return navigateAndStopExecution(window, buildRedirectUrl(pageUrl, 0, correlationId)!);
     },
   );
 
@@ -101,7 +116,11 @@ export const handleAuthRelatedReload = (window: Window) => {
   const attemptIndex = urlParams.get(HANDOFF_ATTEMPT_INDEX_QUERY_PARAM);
   const correlationId = urlParams.get(FAIL_CORRELATION_ID_QUERY_PARAM);
 
-  const nextRedirectUrl = buildRedirectUrl(window, Number(attemptIndex) + 1, correlationId);
+  const nextRedirectUrl = buildRedirectUrl(
+    window.location.href,
+    Number(attemptIndex) + 1,
+    correlationId,
+  );
 
   if (nextRedirectUrl) {
     return navigateAndStopExecution(window, nextRedirectUrl);
