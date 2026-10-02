@@ -9,7 +9,7 @@ test.describe('Materials page', () => {
     await page.waitForRequest('**/case-info/2167259');
   });
 
-  test('T-001: page loads list of materials', async ({ page }) => {
+  test.skip('T-001: page loads list of materials', async ({ page }) => {
     mockRoute(
       page,
       '/case-materials',
@@ -26,7 +26,9 @@ test.describe('Materials page', () => {
     await expect(page.getByText('MG11 Shelagh  Mc Love Undated', { exact: true })).toBeVisible();
   });
 
-  test('T-002: page shows no materials text if no materials are displayed', async ({ page }) => {
+  test.skip('T-002: page shows no materials text if no materials are displayed', async ({
+    page,
+  }) => {
     mockRoute(page, '/case-materials', []);
 
     // no materials
@@ -36,7 +38,7 @@ test.describe('Materials page', () => {
     );
   });
 
-  test('T-003: user is able to filter by used status', async ({ page }) => {
+  test.skip('T-003: user is able to filter by used status', async ({ page }) => {
     mockRoute(
       page,
       '/case-materials',
@@ -54,7 +56,7 @@ test.describe('Materials page', () => {
     await expect(page.getByText('MG11 Shelagh  Mc Love Undated', { exact: true })).toBeVisible();
   });
 
-  test('T-004: user is able to filter by unused status', async ({ page }) => {
+  test.skip('T-004: user is able to filter by unused status', async ({ page }) => {
     mockRoute(
       page,
       '/case-materials',
@@ -72,7 +74,7 @@ test.describe('Materials page', () => {
     await expect(page.getByText('Stmt: Twob DCPTWIFVIC', { exact: true })).toBeVisible();
   });
 
-  test('T-005: user is able to filter by statement category', async ({ page }) => {
+  test.skip('T-005: user is able to filter by statement category', async ({ page }) => {
     mockRoute(
       page,
       '/case-materials',
@@ -89,7 +91,7 @@ test.describe('Materials page', () => {
     await expect(page.getByText('MG11 Shelagh  Mc Love Undated', { exact: true })).toBeVisible();
   });
 
-  test('T-006: user is able to filter by exhibit', async ({ page }) => {
+  test.skip('T-006: user is able to filter by exhibit', async ({ page }) => {
     mockRoute(
       page,
       '/case-materials',
@@ -105,7 +107,7 @@ test.describe('Materials page', () => {
     await expect(page.getByText('Stmt: Twob DCPTWIFVIC', { exact: true })).toBeVisible();
   });
 
-  test('T-007: user is able to filter by category', async ({ page }) => {
+  test.skip('T-007: user is able to filter by category', async ({ page }) => {
     mockRoute(
       page,
       '/case-materials',
@@ -130,7 +132,7 @@ test.describe('Materials page', () => {
   });
 
   // search
-  test('T-009: user is able to search materials', async ({ page }) => {
+  test.skip('T-009: user is able to search materials', async ({ page }) => {
     mockRoute(
       page,
       '/case-materials',

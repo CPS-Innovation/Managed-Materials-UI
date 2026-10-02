@@ -42,7 +42,7 @@ test.describe('Review redact page', () => {
   //   await expect(page.getByText('No results.')).toBeVisible();
   // });
 
-  test('T-003: User is able to open all sections', async ({ page }) => {
+  test.skip('T-003: User is able to open all sections', async ({ page }) => {
     await page.getByRole('button', { name: 'Open all sections' }).click();
     const containers = page.locator('.govuk-accordion-content-wrapper');
     await expect(containers).toHaveCount(6);

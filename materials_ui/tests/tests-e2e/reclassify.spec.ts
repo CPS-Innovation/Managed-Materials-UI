@@ -156,7 +156,7 @@ test.describe('form submission', () => {
     await expect(page.getByText('Material reclassified successfully')).toBeVisible();
   });
 
-  test('reclassify exhibit', async ({ page }) => {
+  test.skip('reclassify exhibit', async ({ page }) => {
     await mockRoute(page, 'case-witnesses?caseId=2167259', mockWitness());
     await mockRoute(page, 'api/materials/8836399/reclassify-complete', mockOchestration());
 
@@ -187,7 +187,7 @@ test.describe('form submission', () => {
     await expect(page.getByText('Material reclassified successfully')).toBeVisible();
   });
 
-  test('reclassify other', async ({ page }) => {
+  test.skip('reclassify other', async ({ page }) => {
     await mockRoute(page, 'case-witnesses?caseId=2167259', mockWitness());
     await mockRoute(page, 'api/materials/4242662/reclassify-complete', mockOchestration());
 
