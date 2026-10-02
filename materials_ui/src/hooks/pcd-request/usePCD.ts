@@ -9,9 +9,7 @@ const getPcdRequest = async (p: {
   caseId: number;
   urn: string;
 }) => {
-  const resp = await p.axiosInstance.get<unknown>(
-    `/api/cases/${p.caseId}/pcds/${p.pcdId}/pcd-request`,
-  );
+  const resp = await p.axiosInstance.get<unknown>(`/cases/${p.caseId}/pcds/${p.pcdId}/pcd-request`);
   return resp.data;
 };
 const safeGetPcdRequest = async (p: {

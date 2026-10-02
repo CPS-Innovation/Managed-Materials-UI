@@ -21,7 +21,7 @@ export const useAxiosInstances = () => {
   const redactionLogScope = import.meta.env.VITE_REDACTION_LOG_SCOPE;
 
   return {
-    axiosInstance: createInstance(import.meta.env.VITE_POLARIS_GATEWAY_URL),
+    axiosInstance: createInstance(import.meta.env.VITE_POLARIS_GATEWAY_URL + '/api/'),
     redactionLogAxios: createInstance(
       import.meta.env.VITE_REDACTION_LOG_URL,
       redactionLogScope ? [redactionLogScope] : undefined,
@@ -37,7 +37,7 @@ export const getDocuments = async (p: {
   caseId: number | undefined;
 }) => {
   try {
-    const response = await p.axiosInstance.get(`/api/cases/${p.caseId}/documents`);
+    const response = await p.axiosInstance.get(`/cases/${p.caseId}/documents`);
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) console.error(`Error getting documents: ${error.message}`);
@@ -52,7 +52,7 @@ export const getPdfBlobFromAxiosInstance = (p: {
 }) => {
   const materialsPrefix = p.materialId.startsWith('CMS-') ? '' : 'CMS-';
   return p.axiosInstance.get(
-    `/api/cases/${p.caseId}/materials/${materialsPrefix}${p.materialId}/documents/${p.documentId}/pdf`,
+    `/cases/${p.caseId}/materials/${materialsPrefix}${p.materialId}/documents/${p.documentId}/pdf`,
     { responseType: 'blob' },
   );
 };
