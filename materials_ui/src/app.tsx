@@ -51,7 +51,11 @@ export const App = () => {
         <div className="header-container">
           <cps-global-header></cps-global-header>
         </div>
-        <div>{banners && banners.map((banner, index) => <Banner key={index} {...banner} />)}</div>
+        <div>
+          {banners?.map((banner, index) => (
+            <Banner key={index} {...banner} />
+          ))}
+        </div>
 
         <LoadingAnnouncer />
         <RouteChangeListener />
