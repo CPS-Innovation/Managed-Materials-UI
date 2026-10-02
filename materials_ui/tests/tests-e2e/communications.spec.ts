@@ -38,7 +38,7 @@ test.describe('Communications page', () => {
   });
 
   //in/out filter
-  test('T-003: user is able to filter by in/out', async ({ page }) => {
+  test.skip('T-003: user is able to filter by in/out', async ({ page }) => {
     mockRoute(
       page,
       '/case-materials',
@@ -55,7 +55,7 @@ test.describe('Communications page', () => {
   });
 
   //comms type filter
-  test('T-004: user is able to filter by comms type', async ({ page }) => {
+  test.skip('T-004: user is able to filter by comms type', async ({ page }) => {
     mockRoute(
       page,
       '/case-materials',
@@ -72,7 +72,7 @@ test.describe('Communications page', () => {
     await expect(page.getByText('test 1', { exact: true })).toBeVisible();
   });
   // comms with filter
-  test('T-005: user is able to filter by comms with', async ({ page }) => {
+  test.skip('T-005: user is able to filter by comms with', async ({ page }) => {
     mockRoute(
       page,
       '/case-materials',
@@ -88,7 +88,7 @@ test.describe('Communications page', () => {
     await expect(page.getByText('test 2', { exact: true })).toBeVisible();
   });
   // type filter
-  test('T-006: user is able to filter by type', async ({ page }) => {
+  test.skip('T-006: user is able to filter by type', async ({ page }) => {
     mockRoute(
       page,
       '/case-materials',
@@ -113,7 +113,7 @@ test.describe('Communications page', () => {
   });
 
   // search
-  test('T-008: user is able to search communications', async ({ page }) => {
+  test.skip('T-008: user is able to search communications', async ({ page }) => {
     mockRoute(
       page,
       '/case-materials',

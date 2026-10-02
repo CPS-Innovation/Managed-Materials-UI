@@ -243,11 +243,6 @@ const ShowPcdRequest = (p: {
   );
 };
 
-const usePcdRequestPageAppRoute = () => {
-  const { caseId, urn } = useAppRoute();
-  return { caseId: caseId!, urn: urn! };
-};
-
 const ShowPcdRequestSidebarListings = (p: {
   firstPcdId?: number;
   selectPcdRequestId: (x: number) => void;
@@ -275,6 +270,11 @@ const ShowPcdRequestSidebarListings = (p: {
   );
 };
 
+const usePcdRequestPageAppRoute = () => {
+  const { urn, caseId } = useAppRoute();
+  return { urn: urn!, caseId: caseId! };
+};
+
 export const PcdRequestPage = () => {
   const { urn, caseId } = usePcdRequestPageAppRoute();
   const { data: pcdRequestList } = usePcdRequestListings({ urn, caseId });
@@ -285,7 +285,7 @@ export const PcdRequestPage = () => {
 
   const actualPcdId = selectedPcdId ?? firstPcdId;
   return (
-    <Layout title="PCD Request">
+    <Layout urn={urn} caseId={caseId} title="PCD Request">
       <div className="govuk-main-wrapper" style={{ whiteSpace: 'pre-wrap' }}>
         <LoadingSpinner isLoading={pcdRequestList === undefined} />
 

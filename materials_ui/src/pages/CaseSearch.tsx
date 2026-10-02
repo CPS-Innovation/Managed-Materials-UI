@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom';
 import {
   DefinitionList,
   ErrorSummary,
-  Layout,
   LoadingSpinner,
   SectionBreak,
   StatusTag,
 } from '../components';
+import { PlainLayout } from '../components/Layout/Layout';
 import { FilterContext, FiltersContext } from '../context/FiltersContext';
 import { useCaseInfoStore } from '../hooks';
 import { useCaseDetails } from '../hooks/search/useCaseSearch';
@@ -53,7 +53,7 @@ export const CaseSearchPage = () => {
   }, []);
 
   return (
-    <Layout plain title="Case Search">
+    <PlainLayout title="Case Search">
       <div className="govuk-main-wrapper govuk-main-wrapper--auto-spacing">
         <div className="govuk-grid-row govuk-grid-row--case-search">
           <div className="govuk-grid-column-two-thirds">
@@ -231,6 +231,6 @@ export const CaseSearchPage = () => {
           );
         })()}
       </div>
-    </Layout>
+    </PlainLayout>
   );
 };

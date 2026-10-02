@@ -20,13 +20,21 @@ import {
 } from '../hooks';
 import { useCaseInfoStore, useMaterialTags, useSelectedItemsStore } from '../stores';
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { URL } from '../constants/url';
 import { navigateToViewDocumentPageInNewTab } from '../hooks/ui/navigateToViewDocumentPageInNewTab';
 import { CaseMaterialsType } from '../schemas';
 import { trackAction } from '../telemetry/appInsights';
 
+const useMaterialsPageAppRoute = () => {
+  const { urn, caseId } = useParams();
+
+  return { urn: urn!, caseId: caseId! };
+};
+
 export const MaterialsPage = () => {
+  const { urn, caseId } = useMaterialsPageAppRoute();
+
   const { getRoute } = useAppRoute();
   const navigate = useNavigate();
   const [showFilter, setShowFilter] = useState(true);
@@ -164,7 +172,7 @@ export const MaterialsPage = () => {
   ];
 
   return (
-    <Layout title="Case Materials">
+    <Layout title="Case Materials" urn={urn} caseId={caseId}>
       <div className="govuk-main-wrapper">
         <RenameDrawer
           material={selectedMaterial}
