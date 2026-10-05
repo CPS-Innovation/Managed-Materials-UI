@@ -224,12 +224,12 @@ const FurtherActionDetails = ({ decision }: { decision: DecisionOutcome }) => {
 };
 
 const usePcdReviewPageAppRoute = () => {
-  const { urn, caseId } = useParams();
-  return { urn: urn!, caseId: caseId! };
+  const { caseId } = useParams();
+  return { caseId: caseId! };
 };
 
 export const PcdReviewPage = () => {
-  const { urn, caseId } = usePcdReviewPageAppRoute();
+  const { caseId } = usePcdReviewPageAppRoute();
 
   const { reviewHistoryId: reviewHistoryIdParam } = useParams<{ reviewHistoryId?: string }>();
   const { caseInfo } = useCaseInfoStore();
@@ -310,7 +310,7 @@ export const PcdReviewPage = () => {
   };
 
   return (
-    <Layout urn={urn} caseId={caseId} title="Reviews">
+    <Layout caseId={caseId} title="Reviews">
       <LoadingSpinner isLoading={isLoadingPage} />
       {renderBody()}
     </Layout>

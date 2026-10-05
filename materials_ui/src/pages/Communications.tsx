@@ -25,13 +25,13 @@ import { useCaseInfoStore, useMaterialTags, useSelectedItemsStore } from '../sto
 import { trackAction } from '../telemetry/appInsights';
 
 const useCommunicationsPageAppRoute = () => {
-  const { urn, caseId } = useParams();
+  const { caseId } = useParams();
 
-  return { urn: urn!, caseId: caseId! };
+  return { caseId: caseId! };
 };
 
 export const CommunicationsPage = () => {
-  const { urn, caseId } = useCommunicationsPageAppRoute();
+  const { caseId } = useCommunicationsPageAppRoute();
 
   const [selectedMaterial, setSelectedMaterial] = useState<CaseMaterialsType | null>(null);
   const { setBanner, resetBanner } = useBanner();
@@ -173,7 +173,7 @@ export const CommunicationsPage = () => {
   }, []);
 
   return (
-    <Layout title="Communications" urn={urn} caseId={caseId}>
+    <Layout title="Communications" caseId={caseId}>
       <div className="govuk-main-wrapper">
         <RenameDrawer
           material={selectedMaterial}

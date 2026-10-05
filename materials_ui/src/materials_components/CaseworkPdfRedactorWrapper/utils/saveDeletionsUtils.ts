@@ -3,8 +3,7 @@ import { TDeletion } from '../../PdfRedactor/utils/deletionUtils';
 
 export const saveDeletions = async (p: {
   axiosInstance: AxiosInstance;
-  urn: string;
-  caseId: number;
+  caseId: string | number;
   childId: number;
   parentId: string;
   deletions: TDeletion[];

@@ -9,13 +9,12 @@ import { APP_ROUTES } from '../../hooks/ui/useAppRoute';
 import './Layout.scss';
 
 const getRoute = (p: {
-  urn: string;
   caseId: number | string;
   routeName: keyof typeof APP_ROUTES;
   prefix: boolean;
 }) => {
-  const { urn, caseId, routeName, prefix } = p;
-  const routePrefix = urn && caseId && prefix ? `/${urn}/${caseId}/` : '';
+  const { caseId, routeName, prefix } = p;
+  const routePrefix = caseId && prefix ? `/${caseId}/` : '';
 
   return `${routePrefix}${APP_ROUTES[routeName]}`;
 };
@@ -28,20 +27,20 @@ export const PlainLayout = (p: { children: React.ReactNode; title?: string }) =>
   return <main className="main-container">{p.children}</main>;
 };
 
-const createTabs = (p: { urn: string; caseId: number | string; currentPath: string }): Tab[] => {
-  const { urn, caseId, currentPath } = p;
+const createTabs = (p: { caseId: number | string; currentPath: string }): Tab[] => {
+  const { caseId, currentPath } = p;
 
   return [
     (() => {
-      const route = getRoute({ urn, caseId, routeName: 'PCD_REQUEST', prefix: true });
+      const route = getRoute({ caseId, routeName: 'PCD_REQUEST', prefix: true });
       return { id: 'pcd-request', name: 'PCD Request', href: route, active: currentPath === route };
     })(),
     (() => {
-      const route = getRoute({ urn, caseId, routeName: 'MATERIALS', prefix: true });
+      const route = getRoute({ caseId, routeName: 'MATERIALS', prefix: true });
       return { id: 'materials', name: 'Materials', href: route, active: currentPath === route };
     })(),
     (() => {
-      const route = getRoute({ urn, caseId, routeName: 'REVIEW_REDACT', prefix: true });
+      const route = getRoute({ caseId, routeName: 'REVIEW_REDACT', prefix: true });
       return {
         id: 'review-redact',
         name: 'Review and Redact',
@@ -50,7 +49,7 @@ const createTabs = (p: { urn: string; caseId: number | string; currentPath: stri
       };
     })(),
     (() => {
-      const route = getRoute({ urn, caseId, routeName: 'COMMUNICATIONS', prefix: true });
+      const route = getRoute({ caseId, routeName: 'COMMUNICATIONS', prefix: true });
       return {
         id: 'communications',
         name: 'Communications',
@@ -59,7 +58,7 @@ const createTabs = (p: { urn: string; caseId: number | string; currentPath: stri
       };
     })(),
     (() => {
-      const route = getRoute({ urn, caseId, routeName: 'PCD_REVIEW', prefix: true });
+      const route = getRoute({ caseId, routeName: 'PCD_REVIEW', prefix: true });
       return { id: 'pcd-review', name: 'Reviews', href: route, active: currentPath === route };
     })(),
   ];
@@ -67,18 +66,17 @@ const createTabs = (p: { urn: string; caseId: number | string; currentPath: stri
 
 export const Layout = (p: {
   children: React.ReactNode;
-  urn: string;
   caseId: number | string;
   title?: string;
   shouldBlockNavigationCheck?: (tab: Tab) => boolean;
 }) => {
-  const { children, title, urn, caseId, shouldBlockNavigationCheck } = p;
+  const { children, title, caseId, shouldBlockNavigationCheck } = p;
 
   const location = useLocation();
 
-  const { caseInfo, loading: caseInfoLoading } = useCaseInfo({ caseId, urn });
+  const { caseInfo, loading: caseInfoLoading } = useCaseInfo({ caseId });
 
-  const tabs = createTabs({ urn, caseId, currentPath: location.pathname }).map((tab) => ({
+  const tabs = createTabs({ caseId, currentPath: location.pathname }).map((tab) => ({
     ...tab,
     shouldBlockNavigationCheck,
   }));

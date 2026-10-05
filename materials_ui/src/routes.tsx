@@ -1,9 +1,8 @@
-import { useEffect } from 'react';
 import { Route, Routes as Router } from 'react-router';
-import { Navigate, useMatch } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 import { ReviewAndRedactPage } from './caseWorkApp/pages/ReviewAndRedactPage/ReviewAndRedactPage';
-import { useAppRoute, useCaseInfo, useCaseInfoStore } from './hooks';
+import { useAppRoute } from './hooks';
 import {
   CommunicationsPage,
   DiscardMaterialPage,
@@ -23,21 +22,6 @@ import { ViewDocumentPage } from './pages/ViewDocumentPage';
 
 export const Routes = () => {
   const { getRoute } = useAppRoute();
-  const match = useMatch('/:urn/:caseId/*');
-  const { caseId, urn } = match?.params || {};
-
-  const { caseInfo, loading: caseInfoLoading } = useCaseInfo({ caseId, urn });
-  const { setCaseInfo, setIsLoading } = useCaseInfoStore();
-
-  useEffect(() => {
-    if (caseInfo) {
-      setCaseInfo(caseInfo);
-    }
-  }, [caseInfo]);
-
-  useEffect(() => {
-    setIsLoading(caseInfoLoading);
-  }, [caseInfoLoading]);
 
   return (
     <Router>
@@ -47,12 +31,12 @@ export const Routes = () => {
       <Route path={getRoute('SERVER_ERROR', false)} element={<ServerErrorPage />} />
       <Route path={getRoute('CASE_SEARCH', false)} element={<CaseSearchPage />} />
       <Route
-        path={'/:urn/:caseId/view-document/:materialId/:documentId'}
+        path={'/:caseId/view-document/:materialId/:documentId'}
         element={<ViewDocumentPage />}
       />
-      <Route path={'/:urn/:caseId/two-tabs'} element={<TwoTabsPage />} />
+      <Route path={'/:caseId/two-tabs'} element={<TwoTabsPage />} />
 
-      <Route path={`:urn/:caseId`}>
+      <Route path={`:caseId`}>
         <Route path={getRoute('DISCARD', false)} element={<DiscardMaterialPage />} />
         <Route path={`${getRoute('PCD_REQUEST', false)}/:pcdId?`} element={<PcdRequestPage />} />
         <Route

@@ -5,9 +5,11 @@ const openTabsSchema = z.object({ openParentIds: z.array(z.string()), activePare
 
 type OpenTabsState = z.infer<typeof openTabsSchema>;
 
-export const createOpenDocumentTabsKey = (caseId: number) => `openDocumentTabs-${caseId}`;
+export const createOpenDocumentTabsKey = (caseId: string | number) => `openDocumentTabs-${caseId}`;
 
-export const safeGetOpenDocumentTabsFromLocalStorage = (caseId: number): OpenTabsState | null => {
+export const safeGetOpenDocumentTabsFromLocalStorage = (
+  caseId: string | number,
+): OpenTabsState | null => {
   const key = createOpenDocumentTabsKey(caseId);
   const parsed = safeJsonParse(window.localStorage.getItem(key));
   const validated = openTabsSchema.safeParse(parsed.data);
@@ -15,7 +17,7 @@ export const safeGetOpenDocumentTabsFromLocalStorage = (caseId: number): OpenTab
 };
 
 export const safeSetOpenDocumentTabsFromLocalStorage = (p: {
-  caseId: number;
+  caseId: string | number;
   openParentIds: string[];
   activeParentId: string;
 }) => {
@@ -26,7 +28,7 @@ export const safeSetOpenDocumentTabsFromLocalStorage = (p: {
   );
 };
 
-export const clearOpenDocumentTabsFromLocalStorage = (caseId: number) => {
+export const clearOpenDocumentTabsFromLocalStorage = (caseId: string | number) => {
   const key = createOpenDocumentTabsKey(caseId);
   window.localStorage.removeItem(key);
 };

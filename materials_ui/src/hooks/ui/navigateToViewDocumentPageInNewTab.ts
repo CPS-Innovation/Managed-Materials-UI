@@ -1,6 +1,6 @@
 export const navigateToViewDocumentPageInNewTab = (p: {
   urn: string;
-  caseId: number;
+  caseId: string | number;
   materialId: string | number;
   documentId?: string | number;
 }) => {

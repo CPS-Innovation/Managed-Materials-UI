@@ -27,13 +27,13 @@ import { CaseMaterialsType } from '../schemas';
 import { trackAction } from '../telemetry/appInsights';
 
 const useMaterialsPageAppRoute = () => {
-  const { urn, caseId } = useParams();
+  const { caseId } = useParams();
 
-  return { urn: urn!, caseId: caseId! };
+  return { caseId: caseId! };
 };
 
 export const MaterialsPage = () => {
-  const { urn, caseId } = useMaterialsPageAppRoute();
+  const { caseId } = useMaterialsPageAppRoute();
 
   const { getRoute } = useAppRoute();
   const navigate = useNavigate();
@@ -172,7 +172,7 @@ export const MaterialsPage = () => {
   ];
 
   return (
-    <Layout title="Case Materials" urn={urn} caseId={caseId}>
+    <Layout title="Case Materials" caseId={caseId}>
       <div className="govuk-main-wrapper">
         <RenameDrawer
           material={selectedMaterial}

@@ -4,8 +4,6 @@ import { z } from 'zod';
 
 import { useAxiosInstance } from '../../../caseWorkApp/components/utils/getData';
 
-type UseDocumentCheckoutOptions = { caseId?: number; urn?: string };
-
 const extractReadableMessageFromError = (error: unknown) => {
   const errorSchema = z.object({ response: z.object({ data: z.object({ Error: z.string() }) }) });
   const parsed = errorSchema.safeParse(error);
@@ -18,7 +16,7 @@ const extractReadableMessageFromError = (error: unknown) => {
 
 const checkOutDocumentFromAxiosInstance = async (p: {
   axiosInstance: AxiosInstance;
-  caseId: number;
+  caseId: string | number;
   urn: string;
   parentId: string;
   childId: number | string;
@@ -45,8 +43,7 @@ const checkOutDocumentFromAxiosInstance = async (p: {
 
 export const checkInDocumentFromAxiosInstance = async (p: {
   axiosInstance: AxiosInstance;
-  caseId: number;
-  urn: string;
+  caseId: string | number;
   parentId: string;
   childId: number | string;
 }) => {
@@ -64,7 +61,13 @@ export const checkInDocumentFromAxiosInstance = async (p: {
   }
 };
 
-export const useDocumentCheckOutRequest = ({ caseId, urn }: UseDocumentCheckoutOptions) => {
+export const useDocumentCheckOutRequest = ({
+  caseId,
+  urn,
+}: {
+  caseId?: string | number;
+  urn?: string;
+}) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const axiosInstance = useAxiosInstance();
 
@@ -92,7 +95,6 @@ export const useDocumentCheckOutRequest = ({ caseId, urn }: UseDocumentCheckoutO
     setIsLoading(true);
     const resp = await checkInDocumentFromAxiosInstance({
       axiosInstance,
-      urn,
       caseId,
       parentId: fnProps.parentId,
       childId: fnProps.childId,

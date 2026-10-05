@@ -4,16 +4,15 @@ import { useRequest } from '../';
 import { QUERY_KEYS } from '../../constants/query';
 import { CaseInfoResponseType } from '../../schemas/caseinfo';
 
-type UseCaseInfoProps = { caseId?: number | string; urn?: string };
-
-export const useCaseInfo = ({ caseId, urn }: UseCaseInfoProps) => {
+export const useCaseInfo = (p: { caseId: string | number }) => {
   const request = useRequest();
+  console.log(`useCaseInfo.ts:${/*LL*/ 11}`, p);
 
-  const key = caseId && urn ? QUERY_KEYS.CASE_INFO : null;
+  const key = `${QUERY_KEYS.CASE_INFO}-${p.caseId}`;
 
   const getCaseInfo = async () =>
     await request
-      .get<CaseInfoResponseType>(`/case-info/${caseId}`)
+      .get<CaseInfoResponseType>(`/case-info/${p.caseId}`)
       .then((response) => response.data);
 
   const { data, isLoading, isValidating, mutate } = useSWR(key, getCaseInfo);

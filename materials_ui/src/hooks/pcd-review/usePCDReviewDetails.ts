@@ -9,15 +9,14 @@ export const usePCDReviewDetails = (historyId: number | undefined) => {
 
   const appRoute = useAppRoute();
 
-  const urn = appRoute?.urnPrefix;
   const caseId = appRoute?.caseId?.toString();
 
-  const caseInfo = urn && caseId ? { urn, caseId } : null;
+  const caseInfo = caseId ? { caseId } : null;
 
   const getPCDReviewDetails = async ([, requestedHistoryId]: readonly [string, number]) => {
     try {
       const response = await request.get(
-        `urns/${urn}/cases/${caseId}/history/${requestedHistoryId}/pcd-review-details`,
+        `cases/${caseId}/history/${requestedHistoryId}/pcd-review-details`,
       );
       const parsedResponse = PCDReviewDetailsSchema.safeParse(response.data);
 

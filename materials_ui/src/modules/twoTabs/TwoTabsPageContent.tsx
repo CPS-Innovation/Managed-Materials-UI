@@ -6,7 +6,6 @@ import { TwoTabsDocumentsDisplay } from './TwoTabsDocumentsDisplay';
 export const TwoTabsPageContent = (p: { urn: string; caseId: number }) => {
   const { state: documentListState } = useGetDocumentList({
     populateOnMount: true,
-    urn: p.urn,
     caseId: p.caseId,
   });
 
@@ -24,7 +23,7 @@ export const TwoTabsPageContent = (p: { urn: string; caseId: number }) => {
       : [];
 
   return (
-    <Layout title="Two Tabs" urn={p.urn} caseId={p.caseId}>
+    <Layout title="Two Tabs" caseId={p.caseId}>
       <TwoCol sidebar={<div>blah</div>}>
         {documentListState.status === 'success' && (
           <div className="flex gap-16">

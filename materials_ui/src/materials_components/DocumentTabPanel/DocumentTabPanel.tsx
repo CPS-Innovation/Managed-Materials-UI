@@ -39,8 +39,7 @@ export type DocumentTabPanelProps = {
   materialId: string;
   documentId: number;
   document: TDocument;
-  urn: string;
-  caseId: number;
+  caseId: string | number;
   mode: TMode;
   onModeChange: (mode: TMode) => void;
   onRedactionsChange: (redactions: TRedaction[]) => void;
@@ -57,7 +56,6 @@ export const DocumentTabPanel = ({
   materialId,
   documentId,
   document,
-  urn,
   caseId,
   mode,
   onModeChange,
@@ -92,7 +90,6 @@ export const DocumentTabPanel = ({
       try {
         const { blob, isFileTooLarge } = await getPdfFiles({
           axiosInstance,
-          urn,
           caseId,
           materialId: materialId,
           documentId: documentId,
@@ -120,7 +117,7 @@ export const DocumentTabPanel = ({
         URL.revokeObjectURL(blobUrlRef.current);
       }
     };
-  }, [materialId, documentId, urn, caseId]);
+  }, [materialId, documentId, caseId]);
 
   useEffect(() => {
     const loadLookups = async () => {
@@ -136,7 +133,9 @@ export const DocumentTabPanel = ({
     <div>
       {showRedactionLogModal && redactionLogModalData && (
         <RedactionLogModal
-          urn={urn}
+          // don't merge before resolving this error
+          // @ts-expect-error - caseDetails is not used
+          caseDetails={caseDetails}
           caseId={caseId}
           isOpen={showRedactionLogModal}
           onClose={() => {
@@ -219,7 +218,6 @@ export const DocumentTabPanel = ({
             mode={mode}
             onModeChange={onModeChange}
             onModification={onModification}
-            urn={urn}
             caseId={caseId}
             childId={documentId}
             parentId={materialId}

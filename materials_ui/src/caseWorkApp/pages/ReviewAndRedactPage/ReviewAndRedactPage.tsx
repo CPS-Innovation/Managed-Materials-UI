@@ -51,13 +51,13 @@ type PendingUnsavedAction =
 type UnsavedModal = { kind: 'blockNav'; href?: string } | { kind: 'closeAll' };
 
 const useReviewAndRedactRoute = () => {
-  const { caseId, urn } = useAppRoute();
+  const { caseId } = useAppRoute();
 
-  return { caseId: caseId!, urn: urn! };
+  return { caseId: caseId! };
 };
 
 export const ReviewAndRedactPage = () => {
-  const { caseId, urn } = useReviewAndRedactRoute();
+  const { caseId } = useReviewAndRedactRoute();
   const { state: locationState } = useLocation();
   const {
     docType: docTypeParam,
@@ -73,7 +73,7 @@ export const ReviewAndRedactPage = () => {
 
   const navigate = useNavigate();
 
-  const documentList = useGetDocumentList({ populateOnMount: true, urn, caseId });
+  const documentList = useGetDocumentList({ populateOnMount: true, caseId });
 
   const [selectedDocumentForRename, setSelectedDocumentForRename] = useState<
     (TDocument & { materialId?: number }) | null
@@ -213,7 +213,6 @@ export const ReviewAndRedactPage = () => {
           materialId={doc.parentId}
           documentId={doc.childId}
           document={doc}
-          urn={urn}
           caseId={caseId}
           mode={modeByParentId[doc.parentId] ?? 'disabled'}
           onModeChange={(newMode) => handleModeChange(doc.parentId, newMode)}
@@ -245,7 +244,6 @@ export const ReviewAndRedactPage = () => {
       checkInDocumentFromAxiosInstance({
         axiosInstance,
         caseId,
-        urn,
         parentId: document.parentId,
         childId: document.childId,
       });
@@ -267,7 +265,6 @@ export const ReviewAndRedactPage = () => {
       checkInDocumentFromAxiosInstance({
         axiosInstance,
         caseId,
-        urn,
         parentId: document.parentId,
         childId: document.childId,
       });
@@ -364,7 +361,6 @@ export const ReviewAndRedactPage = () => {
   return (
     <Layout
       title="Review and Redact"
-      urn={urn}
       caseId={caseId}
       shouldBlockNavigationCheck={(tab) => {
         const shouldBlock = Object.values(redactionsIndexedOnParentId).some(
@@ -446,13 +442,14 @@ export const ReviewAndRedactPage = () => {
 
         {showRedactionLogModal && (
           <RedactionLogModal
-            urn={urn}
             caseId={caseId}
             isOpen={showRedactionLogModal}
             onClose={() => setShowRedactionLogModal(false)}
             lookups={lookups}
             activeDocument={activeDocument}
             mode="over-under"
+            // @ts-expect-error - caseDetails is not used
+            caseDetails={caseDetails}
           />
         )}
 
@@ -467,7 +464,6 @@ export const ReviewAndRedactPage = () => {
                   />
                 )}
                 <DocumentSidebar
-                  urn={urn}
                   caseId={caseId}
                   activeDocumentId={activeTabId}
                   newVersionDocumentId={newVersionParentId}
@@ -503,7 +499,9 @@ export const ReviewAndRedactPage = () => {
 
                     trackAction('OpenedInNewWindow', { materialId: activeTabId, documentId });
                     navigateToViewDocumentPageInNewTab({
-                      urn,
+                      //  do not merge before resolving this error
+                      // @ts-expect-error - urn is not used
+                      urn: urn!,
                       caseId,
                       materialId: activeTabId,
                       documentId,

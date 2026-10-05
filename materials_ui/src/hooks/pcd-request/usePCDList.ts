@@ -9,8 +9,7 @@ import { useAxiosInstance } from '../ui/useRequest';
 
 const getPcdRequestListings = async (p: {
   axiosInstance: AxiosInstance;
-  caseId: number;
-  urn: string;
+  caseId: string | number;
 }) => {
   const resp = await p.axiosInstance.get<unknown>(
     `cases/${p.caseId}/pcds/${p.caseId}/pcd-request-core`,
@@ -20,8 +19,7 @@ const getPcdRequestListings = async (p: {
 
 const safeGetPcdRequestListings = async (p: {
   axiosInstance: AxiosInstance;
-  caseId: number;
-  urn: string;
+  caseId: string | number;
 }) => {
   try {
     const resp = await getPcdRequestListings(p);
@@ -31,7 +29,7 @@ const safeGetPcdRequestListings = async (p: {
   }
 };
 
-export const usePcdRequestListings = (p: { urn: string; caseId: number }) => {
+export const usePcdRequestListings = (p: { caseId: string | number }) => {
   const axiosInstance = useAxiosInstance();
 
   const [pcdRequestListings, setPcdRequestListings] = useState<

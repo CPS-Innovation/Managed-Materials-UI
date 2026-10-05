@@ -16,12 +16,11 @@ import { cleanString } from '../utils/string';
 import { NotAuthorisedPage } from './NotAuthorisedPage';
 
 const ShowPcdRequest = (p: {
-  urn: string;
-  caseId: number;
+  caseId: string | number;
   pcdId: number;
   isFirstPcdRequest: boolean;
 }) => {
-  const { data: pcdRequest } = useGetPcdRequest({ urn: p.urn, caseId: p.caseId, pcdId: p.pcdId });
+  const { data: pcdRequest } = useGetPcdRequest({ caseId: p.caseId, pcdId: p.pcdId });
 
   return (
     <>
@@ -271,13 +270,13 @@ const ShowPcdRequestSidebarListings = (p: {
 };
 
 const usePcdRequestPageAppRoute = () => {
-  const { urn, caseId } = useAppRoute();
-  return { urn: urn!, caseId: caseId! };
+  const { caseId } = useAppRoute();
+  return { caseId: caseId! };
 };
 
 export const PcdRequestPage = () => {
-  const { urn, caseId } = usePcdRequestPageAppRoute();
-  const { data: pcdRequestList } = usePcdRequestListings({ urn, caseId });
+  const { caseId } = usePcdRequestPageAppRoute();
+  const { data: pcdRequestList } = usePcdRequestListings({ caseId });
   const firstPcdId = pcdRequestList?.[0]?.id;
   const [selectedPcdId, setSelectedPcdId] = useState<number | undefined>(undefined);
 
@@ -285,7 +284,7 @@ export const PcdRequestPage = () => {
 
   const actualPcdId = selectedPcdId ?? firstPcdId;
   return (
-    <Layout urn={urn} caseId={caseId} title="PCD Request">
+    <Layout caseId={caseId} title="PCD Request">
       <div className="govuk-main-wrapper" style={{ whiteSpace: 'pre-wrap' }}>
         <LoadingSpinner isLoading={pcdRequestList === undefined} />
 
@@ -311,7 +310,6 @@ export const PcdRequestPage = () => {
           >
             {actualPcdId && (
               <ShowPcdRequest
-                urn={urn}
                 caseId={caseId}
                 pcdId={actualPcdId}
                 isFirstPcdRequest={firstPcdId === actualPcdId}
