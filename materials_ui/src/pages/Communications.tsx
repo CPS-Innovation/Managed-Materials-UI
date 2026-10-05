@@ -11,6 +11,7 @@ import {
   TwoCol,
 } from '../components';
 
+import { useParams } from 'react-router-dom';
 import {
   useAppRoute,
   useBanner,
@@ -23,7 +24,15 @@ import { CaseMaterialsType } from '../schemas';
 import { useCaseInfoStore, useMaterialTags, useSelectedItemsStore } from '../stores';
 import { trackAction } from '../telemetry/appInsights';
 
+const useCommunicationsPageAppRoute = () => {
+  const { urn, caseId } = useParams();
+
+  return { urn: urn!, caseId: caseId! };
+};
+
 export const CommunicationsPage = () => {
+  const { urn, caseId } = useCommunicationsPageAppRoute();
+
   const [selectedMaterial, setSelectedMaterial] = useState<CaseMaterialsType | null>(null);
   const { setBanner, resetBanner } = useBanner();
   const { loading: caseMaterialsLoading, mutate: refreshCommunications } = useCaseMaterials({
@@ -164,7 +173,7 @@ export const CommunicationsPage = () => {
   }, []);
 
   return (
-    <Layout title="Communications">
+    <Layout title="Communications" urn={urn} caseId={caseId}>
       <div className="govuk-main-wrapper">
         <RenameDrawer
           material={selectedMaterial}
