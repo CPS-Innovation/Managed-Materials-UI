@@ -4,20 +4,19 @@ import { useAppRoute, useRequest } from '..';
 import { QUERY_KEYS } from '../../constants/query';
 import { PCDReviewDetailsResponseType, PCDReviewDetailsSchema } from '../../schemas/pcdReview';
 
-export const usePCDReviewDetails = (historyId: number | undefined) => {
+export const usePCDReviewDetails = (historyId: string | number | undefined) => {
   const request = useRequest();
 
   const appRoute = useAppRoute();
 
-  const urn = appRoute?.urnPrefix;
   const caseId = appRoute?.caseId?.toString();
 
-  const caseInfo = urn && caseId ? { urn, caseId } : null;
+  const caseInfo = caseId ? { caseId } : null;
 
   const getPCDReviewDetails = async ([, requestedHistoryId]: readonly [string, number]) => {
     try {
       const response = await request.get(
-        `urns/${urn}/cases/${caseId}/history/${requestedHistoryId}/pcd-review-details`,
+        `cases/${caseId}/history/${requestedHistoryId}/pcd-review-details`,
       );
       const parsedResponse = PCDReviewDetailsSchema.safeParse(response.data);
 

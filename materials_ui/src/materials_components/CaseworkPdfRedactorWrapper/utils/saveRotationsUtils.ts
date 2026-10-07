@@ -3,8 +3,7 @@ import { TRotation } from '../../PdfRedactor/utils/rotationUtils';
 
 export const saveRotations = async (p: {
   axiosInstance: AxiosInstance;
-  urn: string;
-  caseId: number;
+  caseId: string | number;
   childId: number;
   parentId: string;
   rotations: TRotation[];

@@ -167,7 +167,7 @@ export const CaseSearchPage = () => {
                         <h2>
                           <Link
                             className="govuk-link govuk-!-margin-bottom-0"
-                            to={`/${queryUrn}/${caseItem.id}/materials`}
+                            to={`/${caseItem.id}/materials`}
                           >
                             {caseItem.uniqueReferenceNumber}
                           </Link>

@@ -21,7 +21,6 @@ export type CmsValues = {
 };
 
 export type RedactionLogData = {
-  urn: string;
   unit: Unit;
   investigatingAgency: InvestigatingAgency;
   documentType: DocumentType;

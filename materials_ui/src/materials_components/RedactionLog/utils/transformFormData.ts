@@ -84,23 +84,14 @@ const createListModeRedactions = (types: TRedactionType[]): RedactionLogData['re
     returnedToInvestigativeAuthority: false,
   }));
 
-type TransformFormDataToApiFormatParams = {
+export const transformFormDataToApiFormat = (p: {
   formData: RedactionLogFormInputs;
-  urn: string;
   activeDocument: TDocument | null | undefined;
   lookups: TLookupsResponse | undefined;
   mode: 'over-under' | 'list';
   listModeRedactionTypes: TRedactionType[];
-};
-
-export const transformFormDataToApiFormat = ({
-  formData,
-  urn,
-  activeDocument,
-  lookups,
-  mode,
-  listModeRedactionTypes,
-}: TransformFormDataToApiFormatParams): RedactionLogData => {
+}): RedactionLogData => {
+  const { formData, activeDocument, lookups, mode, listModeRedactionTypes } = p;
   if (!lookups) {
     throw new Error(LOOKUPS_REQUIRED_ERROR);
   }
@@ -132,7 +123,6 @@ export const transformFormDataToApiFormat = ({
         );
 
   return {
-    urn,
     unit: {
       id:
         area && unit

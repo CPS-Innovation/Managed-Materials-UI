@@ -21,7 +21,6 @@ const useDocumentListFromAxiosInstance = (p: { urn: string; caseId: number }) =>
     (async () => {
       const documentListResp = await safeGetDocumentListFromAxiosInstance({
         axiosInstance,
-        urn: p.urn,
         caseId: p.caseId,
       });
       setDocumentList(documentListResp.success ? documentListResp.data : null);

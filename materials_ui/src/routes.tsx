@@ -1,9 +1,8 @@
-import { useEffect } from 'react';
 import { Route, Routes as Router } from 'react-router';
-import { Navigate, useMatch } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 import { ReviewAndRedactPage } from './caseWorkApp/pages/ReviewAndRedactPage/ReviewAndRedactPage';
-import { useAppRoute, useCaseInfo, useCaseInfoStore } from './hooks';
+import { APP_ROUTES } from './hooks/ui/useAppRoute';
 import {
   CommunicationsPage,
   DiscardMaterialPage,
@@ -22,52 +21,29 @@ import { TwoTabsPage } from './pages/TwoTabsPage';
 import { ViewDocumentPage } from './pages/ViewDocumentPage';
 
 export const Routes = () => {
-  const { getRoute } = useAppRoute();
-  const match = useMatch('/:urn/:caseId/*');
-  const { caseId, urn } = match?.params || {};
-
-  const { caseInfo, loading: caseInfoLoading } = useCaseInfo({ caseId, urn });
-  const { setCaseInfo, setIsLoading } = useCaseInfoStore();
-
-  useEffect(() => {
-    if (caseInfo) {
-      setCaseInfo(caseInfo);
-    }
-  }, [caseInfo]);
-
-  useEffect(() => {
-    setIsLoading(caseInfoLoading);
-  }, [caseInfoLoading]);
-
   return (
     <Router>
-      <Route path="/" element={<Navigate to={getRoute('CASE_SEARCH', false)} replace />} />
+      <Route path="/" element={<Navigate to={`/${APP_ROUTES.CASE_SEARCH}`} replace />} />
 
-      <Route path={getRoute('UNAUTHORISED', false)} element={<NotAuthorisedPage />} />
-      <Route path={getRoute('SERVER_ERROR', false)} element={<ServerErrorPage />} />
-      <Route path={getRoute('CASE_SEARCH', false)} element={<CaseSearchPage />} />
-      <Route
-        path={'/:urn/:caseId/view-document/:materialId/:documentId'}
-        element={<ViewDocumentPage />}
-      />
-      <Route path={'/:urn/:caseId/two-tabs'} element={<TwoTabsPage />} />
+      <Route path={`/${APP_ROUTES.UNAUTHORISED}`} element={<NotAuthorisedPage />} />
+      <Route path={`/${APP_ROUTES.SERVER_ERROR}`} element={<ServerErrorPage />} />
+      <Route path={`/${APP_ROUTES.CASE_SEARCH}`} element={<CaseSearchPage />} />
 
-      <Route path={`:urn/:caseId`}>
-        <Route path={getRoute('DISCARD', false)} element={<DiscardMaterialPage />} />
-        <Route path={`${getRoute('PCD_REQUEST', false)}/:pcdId?`} element={<PcdRequestPage />} />
+      <Route path={`:caseId/`}>
         <Route
-          path={`${getRoute('PCD_REVIEW', false)}/:reviewHistoryId?`}
-          element={<PcdReviewPage />}
+          path={`${APP_ROUTES.VIEW_DOCUMENT}/:materialId/:documentId`}
+          element={<ViewDocumentPage />}
         />
-        <Route path={getRoute('MATERIALS', false)} element={<MaterialsPage />} />
-        <Route path={getRoute('COMMUNICATIONS', false)} element={<CommunicationsPage />} />
-        <Route path={getRoute('REVIEW_REDACT', false)} element={<ReviewAndRedactPage />} />
-        <Route
-          path={getRoute('RECLASSIFY_TO_UNUSED', false)}
-          element={<ReclassifyToUnusedPage />}
-        />
-        <Route path={getRoute('RECLASSIFICATION', false)} element={<ReclassificationPage />} />
-        <Route path={getRoute('UPDATE_MATERIAL', false)} element={<EditMaterialPage />} />
+        <Route path={`${APP_ROUTES.TWO_TABS}`} element={<TwoTabsPage />} />
+        <Route path={`${APP_ROUTES.DISCARD}`} element={<DiscardMaterialPage />} />
+        <Route path={`${APP_ROUTES.PCD_REQUEST}/:pcdId?`} element={<PcdRequestPage />} />
+        <Route path={`${APP_ROUTES.PCD_REVIEW}/:reviewHistoryId?`} element={<PcdReviewPage />} />
+        <Route path={`${APP_ROUTES.MATERIALS}`} element={<MaterialsPage />} />
+        <Route path={`${APP_ROUTES.COMMUNICATIONS}`} element={<CommunicationsPage />} />
+        <Route path={`${APP_ROUTES.REVIEW_REDACT}`} element={<ReviewAndRedactPage />} />
+        <Route path={`${APP_ROUTES.RECLASSIFY_TO_UNUSED}`} element={<ReclassifyToUnusedPage />} />
+        <Route path={`${APP_ROUTES.RECLASSIFICATION}`} element={<ReclassificationPage />} />
+        <Route path={`${APP_ROUTES.UPDATE_MATERIAL}`} element={<EditMaterialPage />} />
       </Route>
 
       <Route path="*" element={<NotFoundPage />} />

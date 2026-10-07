@@ -11,7 +11,7 @@ import { useBulkSearch } from './useBulkSearch';
 
 export const useBulkRedactionFlow = (p: {
   axiosInstance: AxiosInstance;
-  caseId: number;
+  caseId: string | number;
   parentId: string;
   childId: number;
   setRedactions: Dispatch<SetStateAction<TRedaction[]>>;

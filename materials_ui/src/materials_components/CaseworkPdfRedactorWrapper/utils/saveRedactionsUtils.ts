@@ -3,8 +3,7 @@ import { TRedaction } from '../../PdfRedactor/utils/coordUtils';
 
 export const saveRedactions = async (p: {
   axiosInstance: AxiosInstance;
-  urn: string;
-  caseId: number;
+  caseId: string | number;
   childId: number;
   parentId: string;
   redactions: TRedaction[];

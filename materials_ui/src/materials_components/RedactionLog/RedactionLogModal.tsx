@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import {
   getDocumentTypeMappings,
@@ -7,8 +7,8 @@ import {
 } from '../../caseWorkApp/components/utils/getData';
 import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
 import { ChargeStatusCode } from '../../constants/chargeStatus';
-import { useCaseDetails } from '../../hooks/search/useCaseSearch';
 import { useLoadingAnnouncement } from '../../hooks/ui/useLoadingAnnouncement';
+import { CaseType } from '../../schemas/caseDetails';
 import { TDocument } from '../DocumentSelectAccordion/getters/getDocumentList';
 import { TRedactionType } from '../PdfRedactor/RedactionTypeSelect';
 import { TRedaction } from '../PdfRedactor/utils/coordUtils';
@@ -41,9 +41,13 @@ export type RedactionLogFormInputs = {
   supportingNotes: string;
 };
 
-type RedactionLogModalProps = {
-  urn: string;
-  caseId?: number;
+const WhiteTickIcon = () => (
+  <svg className={styles.whiteTickIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    <path d="M369.2,174.8c7.8,7.8,7.8,20.5,0,28.3L235,337.2c-7.8,7.8-20.5,7.8-28.3,0l-63.9-63.9c-7.8-7.8-7.8-20.5,0-28.3c7.8-7.8,20.5-7.8,28.3,0l49.7,49.7l120-120C348.7,167,361.4,167,369.2,174.8z M512,256c0,141.5-114.5,256-256,256C114.5,512,0,397.5,0,256C0,114.5,114.5,0,256,0C397.5,0,512,114.5,512,256z M472,256c0-119.4-96.6-216-216-216C136.6,40,40,136.6,40,256c0,119.4,96.6,216,216,216C375.4,472,472,375.4,472,256z" />
+  </svg>
+);
+
+export const RedactionLogModal = (p: {
   activeDocument?: TDocument | null;
   isOpen: boolean;
   onClose: () => void;
@@ -53,30 +57,21 @@ type RedactionLogModalProps = {
   redactions?: TRedaction[];
   selectedRedactionTypes?: TRedactionType[];
   redactionSaveStatus?: 'saving' | 'saved' | 'error';
-};
-
-const WhiteTickIcon = () => (
-  <svg className={styles.whiteTickIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-    <path d="M369.2,174.8c7.8,7.8,7.8,20.5,0,28.3L235,337.2c-7.8,7.8-20.5,7.8-28.3,0l-63.9-63.9c-7.8-7.8-7.8-20.5,0-28.3c7.8-7.8,20.5-7.8,28.3,0l49.7,49.7l120-120C348.7,167,361.4,167,369.2,174.8z M512,256c0,141.5-114.5,256-256,256C114.5,512,0,397.5,0,256C0,114.5,114.5,0,256,0C397.5,0,512,114.5,512,256z M472,256c0-119.4-96.6-216-216-216C136.6,40,40,136.6,40,256c0,119.4,96.6,216,216,216C375.4,472,472,375.4,472,256z" />
-  </svg>
-);
-
-export const RedactionLogModal = ({
-  urn,
-  activeDocument,
-  isOpen,
-  caseId,
-  onClose,
-  lookups,
-  mode,
-  redactions,
-  selectedRedactionTypes = [],
-  redactionSaveStatus,
-}: RedactionLogModalProps) => {
+  case: CaseType;
+}) => {
+  const {
+    activeDocument,
+    isOpen,
+    onClose,
+    lookups,
+    mode,
+    redactions,
+    selectedRedactionTypes = [],
+    redactionSaveStatus,
+  } = p;
   const [documentTypeMappings, setDocumentTypeMappings] = useState<RedactionLogMappingData | null>(
     null,
   );
-  const { data: caseDetailsResponse } = useCaseDetails({ urn });
 
   useLoadingAnnouncement(
     redactionSaveStatus === 'saving',
@@ -84,21 +79,11 @@ export const RedactionLogModal = ({
     redactionSaveStatus === 'saved' ? 'Redactions successfully saved.' : '',
   );
 
-  const chargeStatusFromCase = useMemo((): ChargeStatusCode | undefined => {
-    if (!caseId || !caseDetailsResponse?.data) {
-      return undefined;
-    }
+  const chargeStatusFromCase = p.case.isCaseCharged
+    ? ChargeStatusCode.PostCharge
+    : ChargeStatusCode.PreCharge;
 
-    const row = caseDetailsResponse.data.find(({ id }) => id === caseId);
-
-    if (!row) {
-      return undefined;
-    }
-
-    return row.isCaseCharged ? ChargeStatusCode.PostCharge : ChargeStatusCode.PreCharge;
-  }, [caseId, caseDetailsResponse]);
-
-  const policeCode = urn.substring(0, 2);
+  const policeCode = p.case.uniqueReferenceNumber.substring(0, 2);
 
   const existingInvestigatingAgencyId = lookups?.ouCodeMapping.find(
     (ia) => ia.ouCode === policeCode,
@@ -161,7 +146,6 @@ export const RedactionLogModal = ({
     try {
       const apiData = transformFormDataToApiFormat({
         formData: values,
-        urn,
         activeDocument,
         lookups,
         mode,
@@ -179,7 +163,7 @@ export const RedactionLogModal = ({
   if (!isOpen) return null;
 
   return (
-    <Modal onClose={onClose} ariaLabel={`${urn} - Redaction Log`}>
+    <Modal onClose={onClose} ariaLabel={`${p.case.id} - Redaction Log`}>
       <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} noValidate>
           {redactionSaveStatus === 'saving' && (
@@ -196,7 +180,7 @@ export const RedactionLogModal = ({
             </div>
           )}
 
-          <RedactionLogModalHeader urn={urn} lookups={lookups} />
+          <RedactionLogModalHeader lookups={lookups} />
 
           <RedactionLogModalBody
             activeDocument={activeDocument}

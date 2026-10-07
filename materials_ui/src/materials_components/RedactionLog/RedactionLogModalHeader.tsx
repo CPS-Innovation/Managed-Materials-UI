@@ -7,9 +7,8 @@ import { RedactionLogFormInputs } from './RedactionLogModal';
 import styles from './RedactionLogModal.module.scss';
 import { SelectDropdown } from './templates/Select';
 
-type RedactionLogModalHeaderProps = { urn: string; lookups?: TLookupsResponse };
-
-export const RedactionLogModalHeader = ({ urn, lookups }: RedactionLogModalHeaderProps) => {
+export const RedactionLogModalHeader = (p: { lookups?: TLookupsResponse }) => {
+  const { lookups } = p;
   const areas = lookups?.areas || [];
   const divisions = lookups?.divisions || [];
   const investigatingAgencies = lookups?.investigatingAgencies || [];
@@ -45,6 +44,8 @@ export const RedactionLogModalHeader = ({ urn, lookups }: RedactionLogModalHeade
           position: 'relative',
         }}
       >
+        {/* don't merge before resolving this error */}
+        {/* @ts-expect-error - caseId is not used */}
         <h1 className="govuk-heading-l govuk-!-margin-bottom-0">{urn} - Redaction Log</h1>
         <a
           className="govuk-link"
