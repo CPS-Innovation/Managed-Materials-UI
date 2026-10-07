@@ -31,19 +31,6 @@ export const useAxiosInstances = () => {
 
 export const useAxiosInstance = () => useAxiosInstances().axiosInstance;
 
-export const getDocuments = async (p: {
-  axiosInstance: AxiosInstance;
-  urn: string | undefined;
-  caseId: number | undefined;
-}) => {
-  try {
-    const response = await p.axiosInstance.get(`/cases/${p.caseId}/documents`);
-    return response.data;
-  } catch (error) {
-    if (error instanceof AxiosError) console.error(`Error getting documents: ${error.message}`);
-  }
-};
-
 export const getPdfBlobFromAxiosInstance = (p: {
   axiosInstance: AxiosInstance;
   caseId: number | string;
