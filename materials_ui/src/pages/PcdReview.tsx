@@ -15,7 +15,7 @@ import {
 } from '../components';
 
 import { PcdReviewCoreType, PcdReviewTypeLabel } from '../constants/enum.ts';
-import { useAppRoute, useCaseInfoStore } from '../hooks/';
+import { useAppRoute } from '../hooks/';
 import { usePCDReviewCore } from '../hooks/pcd-review/usePCDReviewCore.ts';
 import { usePCDReviewDetails } from '../hooks/pcd-review/usePCDReviewDetails.ts';
 import type { PCDReviewCoreResponseType, PCDReviewDetailsResponseType } from '../schemas/pcdReview';
@@ -224,30 +224,26 @@ const FurtherActionDetails = ({ decision }: { decision: DecisionOutcome }) => {
 };
 
 const usePcdReviewPageAppRoute = () => {
-  const { caseId } = useParams();
-  return { caseId: caseId! };
+  const { caseId, reviewHistoryId } = useParams();
+  return { caseId: caseId!, reviewHistoryId: reviewHistoryId! };
 };
 
 export const PcdReviewPage = () => {
-  const { caseId } = usePcdReviewPageAppRoute();
-
-  const { reviewHistoryId: reviewHistoryIdParam } = useParams<{ reviewHistoryId?: string }>();
-  const { caseInfo } = useCaseInfoStore();
+  const { caseId, reviewHistoryId } = usePcdReviewPageAppRoute();
 
   const { data: pcdReviewCoreData, isLoading: pcdReviewCoreLoading } = usePCDReviewCore();
+  const isLoadingPage = pcdReviewCoreLoading;
 
-  const reviewHistoryId = Number(reviewHistoryIdParam);
   const firstPcdReviewCoreHistoryId = pcdReviewCoreData?.[0]?.id;
   const resolvedReviewHistoryId = Number.isFinite(reviewHistoryId)
     ? reviewHistoryId
     : firstPcdReviewCoreHistoryId;
   const shouldRedirectToFirstReview =
-    !reviewHistoryIdParam && !pcdReviewCoreLoading && firstPcdReviewCoreHistoryId !== undefined;
+    !reviewHistoryId && !pcdReviewCoreLoading && firstPcdReviewCoreHistoryId !== undefined;
 
   const { isLoading: pcdReviewDetailsLoading, data: pcdReviewDetailsData } =
     usePCDReviewDetails(resolvedReviewHistoryId);
 
-  const isLoadingPage = !caseInfo || pcdReviewCoreLoading;
   const noReviewCompleted =
     !pcdReviewCoreLoading && Array.isArray(pcdReviewCoreData) && pcdReviewCoreData.length === 0;
 

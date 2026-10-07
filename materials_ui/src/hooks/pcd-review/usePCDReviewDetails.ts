@@ -4,7 +4,7 @@ import { useAppRoute, useRequest } from '..';
 import { QUERY_KEYS } from '../../constants/query';
 import { PCDReviewDetailsResponseType, PCDReviewDetailsSchema } from '../../schemas/pcdReview';
 
-export const usePCDReviewDetails = (historyId: number | undefined) => {
+export const usePCDReviewDetails = (historyId: string | number | undefined) => {
   const request = useRequest();
 
   const appRoute = useAppRoute();

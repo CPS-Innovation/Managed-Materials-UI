@@ -6,6 +6,7 @@ import type { Tab } from '../Tabs/Tabs';
 
 import { useCaseInfo } from '../../hooks';
 import { APP_ROUTES } from '../../hooks/ui/useAppRoute';
+import { CaseInfoResponseType } from '../../schemas/caseinfo';
 import './Layout.scss';
 
 const getRoute = (p: {
@@ -94,6 +95,40 @@ export const Layout = (p: {
           </div>
         </>
       )}
+    </PlainLayout>
+  );
+};
+
+export const LayoutLoadingTemplate = (p: { title: string }) => {
+  return (
+    <PlainLayout title={p.title}>
+      <LoadingSpinner isLoading textContent="Loading case" />
+    </PlainLayout>
+  );
+};
+export const LayoutLoadedTemplate = (p: {
+  children: React.ReactNode;
+  caseInfo: CaseInfoResponseType;
+  title: string;
+  shouldBlockNavigationCheck?: (tab: Tab) => boolean;
+}) => {
+  const { children, caseInfo, title, shouldBlockNavigationCheck } = p;
+
+  const location = useLocation();
+
+  const tabs = createTabs({ caseId: caseInfo.id, currentPath: location.pathname }).map((tab) => ({
+    ...tab,
+    shouldBlockNavigationCheck,
+  }));
+
+  return (
+    <PlainLayout title={title}>
+      <CaseInfo caseInfo={caseInfo} />
+      <Tabs tabs={tabs} />
+      <div id="main-content">
+        <Outlet />
+        {children}
+      </div>
     </PlainLayout>
   );
 };

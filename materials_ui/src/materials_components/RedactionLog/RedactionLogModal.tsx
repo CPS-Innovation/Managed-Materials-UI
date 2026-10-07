@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import {
   getDocumentTypeMappings,
@@ -8,7 +8,7 @@ import {
 import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
 import { ChargeStatusCode } from '../../constants/chargeStatus';
 import { useLoadingAnnouncement } from '../../hooks/ui/useLoadingAnnouncement';
-import { CaseDetailsType } from '../../schemas/caseDetails';
+import { CaseType } from '../../schemas/caseDetails';
 import { TDocument } from '../DocumentSelectAccordion/getters/getDocumentList';
 import { TRedactionType } from '../PdfRedactor/RedactionTypeSelect';
 import { TRedaction } from '../PdfRedactor/utils/coordUtils';
@@ -48,7 +48,6 @@ const WhiteTickIcon = () => (
 );
 
 export const RedactionLogModal = (p: {
-  caseId: string | number;
   activeDocument?: TDocument | null;
   isOpen: boolean;
   onClose: () => void;
@@ -58,19 +57,17 @@ export const RedactionLogModal = (p: {
   redactions?: TRedaction[];
   selectedRedactionTypes?: TRedactionType[];
   redactionSaveStatus?: 'saving' | 'saved' | 'error';
-  caseDetails: CaseDetailsType;
+  case: CaseType;
 }) => {
   const {
     activeDocument,
     isOpen,
-    caseId,
     onClose,
     lookups,
     mode,
     redactions,
     selectedRedactionTypes = [],
     redactionSaveStatus,
-    caseDetails,
   } = p;
   const [documentTypeMappings, setDocumentTypeMappings] = useState<RedactionLogMappingData | null>(
     null,
@@ -82,21 +79,11 @@ export const RedactionLogModal = (p: {
     redactionSaveStatus === 'saved' ? 'Redactions successfully saved.' : '',
   );
 
-  const chargeStatusFromCase = useMemo((): ChargeStatusCode | undefined => {
-    if (!caseId || !caseDetails) {
-      return undefined;
-    }
+  const chargeStatusFromCase = p.case.isCaseCharged
+    ? ChargeStatusCode.PostCharge
+    : ChargeStatusCode.PreCharge;
 
-    const row = caseDetails.find(({ id }) => id === caseId);
-
-    if (!row) {
-      return undefined;
-    }
-
-    return row.isCaseCharged ? ChargeStatusCode.PostCharge : ChargeStatusCode.PreCharge;
-  }, [caseId, caseDetails]);
-
-  const policeCode = caseDetails[0]!.uniqueReferenceNumber.substring(0, 2);
+  const policeCode = p.case.uniqueReferenceNumber.substring(0, 2);
 
   const existingInvestigatingAgencyId = lookups?.ouCodeMapping.find(
     (ia) => ia.ouCode === policeCode,
@@ -176,7 +163,7 @@ export const RedactionLogModal = (p: {
   if (!isOpen) return null;
 
   return (
-    <Modal onClose={onClose} ariaLabel={`${caseId} - Redaction Log`}>
+    <Modal onClose={onClose} ariaLabel={`${p.case.id} - Redaction Log`}>
       <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} noValidate>
           {redactionSaveStatus === 'saving' && (

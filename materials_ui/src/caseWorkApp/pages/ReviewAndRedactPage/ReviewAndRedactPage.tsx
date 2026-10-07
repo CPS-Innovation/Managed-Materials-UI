@@ -1,13 +1,9 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import {
-  DocumentKeywordSearch,
-  Layout,
-  LoadingSpinner,
-  RenameDrawer,
-  TwoCol,
-} from '../../../components';
-import { useAppRoute } from '../../../hooks';
+import { DocumentKeywordSearch, LoadingSpinner, RenameDrawer, TwoCol } from '../../../components';
+import { LayoutLoadedTemplate, LayoutLoadingTemplate } from '../../../components/Layout/Layout';
+import { useAppRoute, useBanner, useCaseInfo } from '../../../hooks';
+import { useSafeCase } from '../../../hooks/case/useCase';
 import { navigateToViewDocumentPageInNewTab } from '../../../hooks/ui/navigateToViewDocumentPageInNewTab';
 import { checkInDocumentFromAxiosInstance } from '../../../materials_components/CaseworkPdfRedactorWrapper/hooks/useDocumentCheckOutRequest';
 import { DocumentSidebar } from '../../../materials_components/DocumentSelectAccordion/DocumentSidebar';
@@ -59,6 +55,9 @@ const useReviewAndRedactRoute = () => {
 export const ReviewAndRedactPage = () => {
   const { caseId } = useReviewAndRedactRoute();
   const { state: locationState } = useLocation();
+  const { data: caseData, isLoading: caseLoading } = useSafeCase({ caseId });
+  const { caseInfo, loading: caseInfoLoading } = useCaseInfo({ caseId });
+
   const {
     docType: docTypeParam,
     materialId: materialIdParam,
@@ -89,6 +88,7 @@ export const ReviewAndRedactPage = () => {
 
   const checkInDocumentTrigger = useTrigger();
   useSwitchContentArea();
+  const banner = useBanner();
 
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [openParentIds, setOpenParentIds] = useState<string[]>([]);
@@ -358,10 +358,22 @@ export const ReviewAndRedactPage = () => {
     }
   }, [showRedactionLogModal]);
 
+  useEffect(() => {
+    if (caseInfo === null || (caseData && !caseData.success)) {
+      console.error('Case not found', { caseInfo, caseData });
+      banner.setBanner({ header: 'Case not found', type: 'error' });
+    }
+  }, [caseInfo, caseData]);
+
+  if (caseInfoLoading || caseInfo === undefined || caseLoading || caseData === undefined)
+    return <LayoutLoadingTemplate title="Review and Redact" />;
+
+  if (caseInfo === null || (caseData && !caseData.success)) return <></>;
+
   return (
-    <Layout
+    <LayoutLoadedTemplate
       title="Review and Redact"
-      caseId={caseId}
+      caseInfo={caseInfo}
       shouldBlockNavigationCheck={(tab) => {
         const shouldBlock = Object.values(redactionsIndexedOnParentId).some(
           (redacts) => redacts.length > 0,
@@ -442,14 +454,12 @@ export const ReviewAndRedactPage = () => {
 
         {showRedactionLogModal && (
           <RedactionLogModal
-            caseId={caseId}
             isOpen={showRedactionLogModal}
             onClose={() => setShowRedactionLogModal(false)}
             lookups={lookups}
             activeDocument={activeDocument}
             mode="over-under"
-            // @ts-expect-error - caseDetails is not used
-            caseDetails={caseDetails}
+            case={caseData.data}
           />
         )}
 
@@ -499,9 +509,7 @@ export const ReviewAndRedactPage = () => {
 
                     trackAction('OpenedInNewWindow', { materialId: activeTabId, documentId });
                     navigateToViewDocumentPageInNewTab({
-                      //  do not merge before resolving this error
-                      // @ts-expect-error - urn is not used
-                      urn: urn!,
+                      urn: caseInfo.urn,
                       caseId,
                       materialId: activeTabId,
                       documentId,
@@ -514,6 +522,6 @@ export const ReviewAndRedactPage = () => {
           )}
         </TwoCol>
       </div>
-    </Layout>
+    </LayoutLoadedTemplate>
   );
 };

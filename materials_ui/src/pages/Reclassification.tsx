@@ -187,23 +187,22 @@ export const ReclassificationPage = () => {
     }
   }, [fieldValues.classification]);
 
+  const hasStatementDate = 'hasStatementDate' in fieldValues && fieldValues?.hasStatementDate;
   useEffect(() => {
-    // @ts-expect-error union type error, need to fix
-    if (fieldValues?.hasStatementDate === false) {
+    if (hasStatementDate === false) {
       resetField('statementDate');
     }
-    // @ts-expect-error union type error, need to fix
-  }, [fieldValues?.hasStatementDate]);
+  }, [hasStatementDate]);
 
+  const producerId = 'producerId' in fieldValues && fieldValues?.producerId;
+  const producedBy = 'producedBy' in fieldValues && fieldValues?.producedBy;
   useEffect(() => {
-    // @ts-expect-error union type error, need to fix
-    if (fieldValues?.producerId) {
+    if (producerId) {
       clearErrors('producedBy');
     } else {
       clearErrors('producerId');
     }
-    // @ts-expect-error union type error, need to fix
-  }, [fieldValues?.producerId, fieldValues?.producedBy]);
+  }, [producerId, producedBy]);
 
   return (
     <>
