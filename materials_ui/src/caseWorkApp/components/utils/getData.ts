@@ -1,5 +1,6 @@
 import { useMsal } from '@azure/msal-react';
 import axios, { AxiosError, AxiosInstance } from 'axios';
+import { addCmsReauthInterceptor } from '../../../auth/cmsReauth';
 import { getAccessTokenFromMsalInstance } from '../../../materials_components/DocumentSelectAccordion/getters/getAccessTokenFromMsalInstance';
 import { MATERIALS_AND_COMMS_SOURCE_CLIENT_ID, RedactionLogData } from '../../types/redactionLog';
 
@@ -21,7 +22,9 @@ export const useAxiosInstances = () => {
   const redactionLogScope = import.meta.env.VITE_REDACTION_LOG_SCOPE;
 
   return {
-    axiosInstance: createInstance(import.meta.env.VITE_POLARIS_GATEWAY_URL + '/api/'),
+    axiosInstance: addCmsReauthInterceptor(
+      createInstance(import.meta.env.VITE_POLARIS_GATEWAY_URL + '/api/'),
+    ),
     redactionLogAxios: createInstance(
       import.meta.env.VITE_REDACTION_LOG_URL,
       redactionLogScope ? [redactionLogScope] : undefined,

@@ -8,6 +8,7 @@ import { App } from './app';
 import { PublicClientApplication } from '@azure/msal-browser';
 import { MsalProvider } from '@azure/msal-react';
 import './App.scss';
+import { handleAuthRelatedReload } from './auth/cmsReauth';
 import { AppContextProvider } from './context/AppContext';
 import { FilterProvider } from './context/FiltersContext';
 import { msalConfig } from './msalInstance';
@@ -15,6 +16,9 @@ import './styles/tailwind.css';
 import { initTelemetry } from './telemetry/appInsights';
 
 initTelemetry();
+
+// never resolves if a cookie handoff has begun to prevent app from starting
+await handleAuthRelatedReload(window);
 
 if (import.meta.env.DEV && !import.meta.env.VITE_E2E) {
   const { worker } = await import('./mocks/browser');

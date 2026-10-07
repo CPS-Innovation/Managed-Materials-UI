@@ -8,7 +8,6 @@ export const URL = {
   RECLASSIFY: '/reclassify',
   HOME: '/home',
   ROOT: '/',
-  INIT: '/init',
   PCD_REQUEST: '/pcd-request',
   PCD_REQUEST_DETAILS: '/pcd-request/:pcdId',
   MATERIALS: '/materials',
@@ -20,13 +19,14 @@ export const URL = {
 
 export const APP_DEFAULT_PAGE = URL.ROOT;
 
-export const BE_URL = import.meta.env.VITE_HOUSEKEEPING_BACKEND_URL;
-
 export const POLARIS_GATEWAY_URL = import.meta.env.VITE_POLARIS_GATEWAY_URL;
 export const POLARIS_GATEWAY_SCOPE = import.meta.env.VITE_POLARIS_GATEWAY_SCOPE;
 
-export const API_URL = `${BE_URL}/api`;
-export const AUTH_URL = `${API_URL}/init`;
+export const REAUTH_REDIRECT_URLS_OUTBOUND = (
+  import.meta.env.VITE_REAUTH_REDIRECT_URL_OUTBOUND || '/auth-refresh-outbound,/polaris'
+).split(',');
+export const REAUTH_REDIRECT_URL_INBOUND =
+  import.meta.env.VITE_REAUTH_REDIRECT_URL_INBOUND || '/auth-refresh-inbound';
 
 export const CASEWORK_APP_URL = import.meta.env.VITE_CWA_URL;
 
@@ -48,5 +48,3 @@ export const API_ENDPOINTS = {
   RECLASSIFY: '/material/{materialId}/reclassify-complete',
   EXHIBIT_PRODUCERS: '/exhibit-producers',
 };
-
-export const AUTH_REDIRECT_URL = '{apiUrl}/init?caseId={caseId}&screen={screenPath}';
