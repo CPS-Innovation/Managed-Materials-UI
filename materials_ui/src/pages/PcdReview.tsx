@@ -5,7 +5,6 @@ import { Navigate, useParams } from 'react-router-dom';
 
 import {
   DefinitionList,
-  Layout,
   LoadingSpinner,
   NavList,
   type NavListItem,
@@ -14,8 +13,13 @@ import {
   TwoCol,
 } from '../components';
 
+import {
+  LayoutErrorTemplate,
+  LayoutLoadedTemplate,
+  LayoutLoadingTemplate,
+} from '../components/Layout/Layout.tsx';
 import { PcdReviewCoreType, PcdReviewTypeLabel } from '../constants/enum.ts';
-import { useAppRoute } from '../hooks/';
+import { useAppRoute, useCaseInfo } from '../hooks/';
 import { usePCDReviewCore } from '../hooks/pcd-review/usePCDReviewCore.ts';
 import { usePCDReviewDetails } from '../hooks/pcd-review/usePCDReviewDetails.ts';
 import type { PCDReviewCoreResponseType, PCDReviewDetailsResponseType } from '../schemas/pcdReview';
@@ -230,6 +234,7 @@ const usePcdReviewPageAppRoute = () => {
 
 export const PcdReviewPage = () => {
   const { caseId, reviewHistoryId } = usePcdReviewPageAppRoute();
+  const { caseInfo } = useCaseInfo({ caseId });
 
   const { data: pcdReviewCoreData, isLoading: pcdReviewCoreLoading } = usePCDReviewCore();
   const isLoadingPage = pcdReviewCoreLoading;
@@ -305,10 +310,17 @@ export const PcdReviewPage = () => {
     );
   };
 
+  if (pcdReviewCoreLoading || pcdReviewDetailsLoading || caseInfo === undefined)
+    return <LayoutLoadingTemplate title="Reviews" />;
+  if (caseInfo === null)
+    return (
+      <LayoutErrorTemplate bannerError={{ header: 'Error loading case info', type: 'error' }} />
+    );
+
   return (
-    <Layout caseId={caseId} title="Reviews">
+    <LayoutLoadedTemplate title="Reviews" caseInfo={caseInfo}>
       <LoadingSpinner isLoading={isLoadingPage} />
       {renderBody()}
-    </Layout>
+    </LayoutLoadedTemplate>
   );
 };

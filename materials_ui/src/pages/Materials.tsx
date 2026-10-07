@@ -3,7 +3,6 @@ import '../App.scss';
 import {
   ButtonMenuComponent,
   CaseMaterialsTable,
-  Layout,
   LoadingSpinner,
   MaterialsFilters,
   RenameDrawer,
@@ -14,13 +13,19 @@ import {
 import {
   useAppRoute,
   useBanner,
+  useCaseInfo,
   useCaseMaterial,
   useCaseMaterials,
   useTableActions,
 } from '../hooks';
-import { useCaseInfoStore, useMaterialTags, useSelectedItemsStore } from '../stores';
+import { useMaterialTags, useSelectedItemsStore } from '../stores';
 
 import { useNavigate, useParams } from 'react-router-dom';
+import {
+  LayoutErrorTemplate,
+  LayoutLoadedTemplate,
+  LayoutLoadingTemplate,
+} from '../components/Layout/Layout';
 import { URL } from '../constants/url';
 import { navigateToViewDocumentPageInNewTab } from '../hooks/ui/navigateToViewDocumentPageInNewTab';
 import { CaseMaterialsType } from '../schemas';
@@ -34,12 +39,12 @@ const useMaterialsPageAppRoute = () => {
 
 export const MaterialsPage = () => {
   const { caseId } = useMaterialsPageAppRoute();
+  const { caseInfo } = useCaseInfo({ caseId });
 
   const { getRoute } = useAppRoute();
   const navigate = useNavigate();
   const [showFilter, setShowFilter] = useState(true);
   const [selectedMaterial, setSelectedMaterial] = useState<CaseMaterialsType | null>(null);
-  const { caseInfo } = useCaseInfoStore();
 
   const { mutate: refreshCaseMaterials, loading: caseMaterialsLoading } = useCaseMaterials({
     dataType: 'materials',
@@ -170,9 +175,15 @@ export const MaterialsPage = () => {
     },
     { label: 'View in new window', onClick: handleViewInNewWindowClick },
   ];
+  if (caseMaterialsLoading || caseInfo === undefined)
+    return <LayoutLoadingTemplate title="Case Materials" />;
+  if (caseInfo === null)
+    return (
+      <LayoutErrorTemplate bannerError={{ header: 'Error loading case info', type: 'error' }} />
+    );
 
   return (
-    <Layout title="Case Materials" caseId={caseId}>
+    <LayoutLoadedTemplate title="Case Materials" caseInfo={caseInfo}>
       <div className="govuk-main-wrapper">
         <RenameDrawer
           material={selectedMaterial}
@@ -207,6 +218,6 @@ export const MaterialsPage = () => {
           )}
         </TwoCol>
       </div>
-    </Layout>
+    </LayoutLoadedTemplate>
   );
 };

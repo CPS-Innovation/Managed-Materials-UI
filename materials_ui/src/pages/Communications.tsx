@@ -4,7 +4,6 @@ import {
   ButtonMenuComponent,
   CommsFilters,
   CommunicationsTable,
-  Layout,
   LoadingSpinner,
   RenameDrawer,
   TableActions,
@@ -13,15 +12,21 @@ import {
 
 import { useParams } from 'react-router-dom';
 import {
+  LayoutErrorTemplate,
+  LayoutLoadedTemplate,
+  LayoutLoadingTemplate,
+} from '../components/Layout/Layout';
+import {
   useAppRoute,
   useBanner,
+  useCaseInfo,
   useCaseMaterial,
   useCaseMaterials,
   useTableActions,
 } from '../hooks';
 import { navigateToViewDocumentPageInNewTab } from '../hooks/ui/navigateToViewDocumentPageInNewTab';
 import { CaseMaterialsType } from '../schemas';
-import { useCaseInfoStore, useMaterialTags, useSelectedItemsStore } from '../stores';
+import { useMaterialTags, useSelectedItemsStore } from '../stores';
 import { trackAction } from '../telemetry/appInsights';
 
 const useCommunicationsPageAppRoute = () => {
@@ -32,6 +37,7 @@ const useCommunicationsPageAppRoute = () => {
 
 export const CommunicationsPage = () => {
   const { caseId } = useCommunicationsPageAppRoute();
+  const { caseInfo } = useCaseInfo({ caseId });
 
   const [selectedMaterial, setSelectedMaterial] = useState<CaseMaterialsType | null>(null);
   const { setBanner, resetBanner } = useBanner();
@@ -44,7 +50,6 @@ export const CommunicationsPage = () => {
 
   const [showFilter, setShowFilter] = useState(true);
   const { items: selectedItems, clear: clearSelectedItems } = useSelectedItemsStore();
-  const { caseInfo } = useCaseInfoStore();
 
   const {
     handleEditClick,
@@ -172,8 +177,16 @@ export const CommunicationsPage = () => {
     clearSelectedItems('communications');
   }, []);
 
+  if (caseMaterialsLoading || caseInfo === undefined)
+    return <LayoutLoadingTemplate title="Communications" />;
+
+  if (caseInfo === null)
+    return (
+      <LayoutErrorTemplate bannerError={{ header: 'Error loading case info', type: 'error' }} />
+    );
+
   return (
-    <Layout title="Communications" caseId={caseId}>
+    <LayoutLoadedTemplate title="Communications" caseInfo={caseInfo}>
       <div className="govuk-main-wrapper">
         <RenameDrawer
           material={selectedMaterial}
@@ -208,6 +221,6 @@ export const CommunicationsPage = () => {
           )}
         </TwoCol>
       </div>
-    </Layout>
+    </LayoutLoadedTemplate>
   );
 };

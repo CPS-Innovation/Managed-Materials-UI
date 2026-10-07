@@ -4,8 +4,9 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { CaseInfo, LoadingSpinner, Tabs } from '..';
 import type { Tab } from '../Tabs/Tabs';
 
-import { useCaseInfo } from '../../hooks';
+import { useBanner, useCaseInfo } from '../../hooks';
 import { APP_ROUTES } from '../../hooks/ui/useAppRoute';
+import { BannerType } from '../../schemas';
 import { CaseInfoResponseType } from '../../schemas/caseinfo';
 import './Layout.scss';
 
@@ -106,6 +107,18 @@ export const LayoutLoadingTemplate = (p: { title: string }) => {
     </PlainLayout>
   );
 };
+
+export const LayoutErrorTemplate = (p: { bannerError: BannerType }) => {
+  const banner = useBanner();
+  useEffect(() => {
+    banner.setBanner(p.bannerError);
+    return () => {
+      banner.resetBanner();
+    };
+  }, [p.bannerError]);
+  return <></>;
+};
+
 export const LayoutLoadedTemplate = (p: {
   children: React.ReactNode;
   caseInfo: CaseInfoResponseType;
