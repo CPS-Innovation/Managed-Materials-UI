@@ -365,7 +365,6 @@ export const CaseworkPdfRedactorWrapper = (p: {
               <DeletionReasonForm
                 pageNumber={deleteReasonPopupProps.pageNumber}
                 documentId={deleteReasonPopupProps.documentId}
-                urn={deleteReasonPopupProps.urn}
                 caseId={deleteReasonPopupProps.caseId}
                 onCancelClick={() => {
                   undeletePage(deleteReasonPopupProps.pageNumber);
@@ -458,7 +457,6 @@ export const CaseworkPdfRedactorWrapper = (p: {
             y: mousePos.current.y,
             pageNumber: add.pageNumber,
             documentId: 'This document does not exist',
-            urn: 'This URN does not exist',
             caseId: 'This case does not exist',
           }));
         }}

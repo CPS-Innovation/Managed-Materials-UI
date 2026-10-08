@@ -9,7 +9,7 @@ import { useCaseInfo } from '../../hooks';
 import { useGetDocumentList } from '../../materials_components/DocumentSelectAccordion/getters/getDocumentList';
 import { TwoTabsDocumentsDisplay } from './TwoTabsDocumentsDisplay';
 
-export const TwoTabsPageContent = (p: { urn: string; caseId: number }) => {
+export const TwoTabsPageContent = (p: { caseId: number }) => {
   const { caseInfo } = useCaseInfo({ caseId: p.caseId });
   const { state: documentListState } = useGetDocumentList({
     populateOnMount: true,

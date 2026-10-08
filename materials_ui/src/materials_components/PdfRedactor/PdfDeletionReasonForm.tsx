@@ -44,7 +44,6 @@ const DeletionReasonSelect = (p: {
 export const DeletionReasonForm = (p: {
   pageNumber: number;
   documentId: string;
-  urn: string;
   caseId: string;
   onCancelClick: () => void;
   onSaveSuccess: () => void;

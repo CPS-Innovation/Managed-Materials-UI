@@ -9,7 +9,7 @@ const useTwoTabsRoute = () => {
 };
 
 export const TwoTabsPage = () => {
-  const { urn, caseId } = useTwoTabsRoute();
+  const { caseId } = useTwoTabsRoute();
 
-  return <TwoTabsPageContent urn={urn} caseId={caseId} />;
+  return <TwoTabsPageContent caseId={caseId} />;
 };

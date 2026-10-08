@@ -229,7 +229,7 @@ const FurtherActionDetails = ({ decision }: { decision: DecisionOutcome }) => {
 
 const usePcdReviewPageAppRoute = () => {
   const { caseId, reviewHistoryId } = useParams();
-  return { caseId: caseId!, reviewHistoryId: reviewHistoryId! };
+  return { caseId: caseId!, reviewHistoryId };
 };
 
 export const PcdReviewPage = () => {

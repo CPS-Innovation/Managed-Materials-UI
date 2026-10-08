@@ -10,6 +10,7 @@ import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
 import { Banner } from '../../components';
 import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
 import { useUserGroupsFeatureFlag } from '../../hooks';
+import { useSafeCase } from '../../hooks/case/useCase';
 import { CaseworkPdfRedactorWrapper } from '../CaseworkPdfRedactorWrapper/CaseworkPdfRedactorWrapper';
 import { initiateBulkSearch } from '../CaseworkPdfRedactorWrapper/utils/bulkSearchDocumentUtils';
 import { TDocument } from '../DocumentSelectAccordion/getters/getDocumentList';
@@ -70,6 +71,7 @@ export const DocumentTabPanel = ({
 }: DocumentTabPanelProps) => {
   const { redactionLogAxios, axiosInstance } = useAxiosInstances();
   const featureFlags = useUserGroupsFeatureFlag();
+  const { data: caseResponse } = useSafeCase({ caseId });
 
   const [pdfFileUrl, setPdfFileUrl] = useState<string>('');
   const [status, setStatus] = useState<LoadStatus>('loading');
@@ -131,12 +133,9 @@ export const DocumentTabPanel = ({
 
   return (
     <div>
-      {showRedactionLogModal && redactionLogModalData && (
+      {showRedactionLogModal && redactionLogModalData && caseResponse?.success && (
         <RedactionLogModal
-          // don't merge before resolving this error
-          // @ts-expect-error - caseDetails is not used
-          caseDetails={caseDetails}
-          caseId={caseId}
+          case={caseResponse.data}
           isOpen={showRedactionLogModal}
           onClose={() => {
             setShowRedactionLogModal(false);

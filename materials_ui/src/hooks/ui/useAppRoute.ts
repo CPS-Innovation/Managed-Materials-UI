@@ -22,7 +22,7 @@ export const APP_ROUTES = {
 type AppRouteKey = keyof typeof APP_ROUTES;
 
 export const getRoute = (p: { routeName: AppRouteKey; prefix?: string }) => {
-  const routePrefix = p.prefix ? `/${p.prefix}/` : '';
+  const routePrefix = p.prefix ? `/${p.prefix}` : '';
 
   return `${routePrefix}${APP_ROUTES[p.routeName]}`;
 };

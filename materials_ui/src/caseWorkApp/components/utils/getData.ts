@@ -33,8 +33,7 @@ export const useAxiosInstance = () => useAxiosInstances().axiosInstance;
 
 export const getDocuments = async (p: {
   axiosInstance: AxiosInstance;
-  urn: string | undefined;
-  caseId: number | undefined;
+  caseId: number | string;
 }) => {
   try {
     const response = await p.axiosInstance.get(`/cases/${p.caseId}/documents`);

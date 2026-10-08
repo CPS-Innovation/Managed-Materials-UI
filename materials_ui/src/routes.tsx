@@ -1,7 +1,9 @@
-import { Route, Routes as Router } from 'react-router';
+import { useEffect } from 'react';
+import { Route, Routes as Router, useParams } from 'react-router';
 import { Navigate } from 'react-router-dom';
 
 import { ReviewAndRedactPage } from './caseWorkApp/pages/ReviewAndRedactPage/ReviewAndRedactPage';
+import { useCaseInfo, useCaseInfoStore } from './hooks';
 import { APP_ROUTES } from './hooks/ui/useAppRoute';
 import {
   CommunicationsPage,
@@ -21,6 +23,21 @@ import { TwoTabsPage } from './pages/TwoTabsPage';
 import { ViewDocumentPage } from './pages/ViewDocumentPage';
 
 export const Routes = () => {
+  const params = useParams();
+  const { caseId } = params;
+
+  const { caseInfo, loading: caseInfoLoading } = useCaseInfo({ caseId: caseId! });
+  const { setCaseInfo, setIsLoading } = useCaseInfoStore();
+
+  useEffect(() => {
+    if (caseInfo) {
+      setCaseInfo(caseInfo);
+    }
+  }, [caseInfo]);
+
+  useEffect(() => {
+    setIsLoading(caseInfoLoading);
+  }, [caseInfoLoading]);
   return (
     <Router>
       <Route path="/" element={<Navigate to={`/${APP_ROUTES.CASE_SEARCH}`} replace />} />

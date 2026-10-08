@@ -509,7 +509,6 @@ export const ReviewAndRedactPage = () => {
 
                     trackAction('OpenedInNewWindow', { materialId: activeTabId, documentId });
                     navigateToViewDocumentPageInNewTab({
-                      urn: caseInfo.urn,
                       caseId,
                       materialId: activeTabId,
                       documentId,

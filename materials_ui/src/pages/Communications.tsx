@@ -99,17 +99,16 @@ export const CommunicationsPage = () => {
 
   const handleViewInNewWindowClick = async () => {
     const materialId = row?.materialId;
-    const urn = caseInfo?.urn;
     const caseId = caseInfo?.id;
 
     const documentId = row?.documentId;
-    if (!materialId || !urn || !caseId || !documentId) return;
+    if (!materialId || !caseId) return;
 
     trackAction('OpenedInNewWindow', {
       materialId: row?.materialId?.toString(),
       category: row?.category,
     });
-    navigateToViewDocumentPageInNewTab({ urn, caseId, materialId, documentId });
+    navigateToViewDocumentPageInNewTab({ caseId, materialId, documentId });
   };
 
   const menuItems = [

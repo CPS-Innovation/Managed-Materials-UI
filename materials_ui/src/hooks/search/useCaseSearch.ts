@@ -7,7 +7,7 @@ import { caseDetailsSchema, CaseDetailsType } from '../../schemas/caseDetails';
 import { getSafeCaseInfo } from '../case/useCaseInfo';
 import { useAxiosInstance } from '../ui/useRequest';
 
-export const useCaseSearch = (urn: string | undefined) => {
+export const useCaseSearch = (urn: string) => {
   const request = useRequest();
   const { resetBanner, setBanner } = useBanner();
 
@@ -19,21 +19,17 @@ export const useCaseSearch = (urn: string | undefined) => {
       .then((response) => response.data);
   };
 
-  const { data, isLoading, isValidating, mutate } = useSWR(
-    urn ? [QUERY_KEYS.CASE_SEARCH, urn] : null,
-    getCase,
-    {
-      onError: (error) => {
-        if (error.status === 500) {
-          setBanner({
-            type: 'error',
-            header: 'Something went wrong',
-            content: 'There was a problem with the server when searching for a case.',
-          });
-        }
-      },
+  const { data, isLoading, isValidating, mutate } = useSWR([QUERY_KEYS.CASE_SEARCH, urn], getCase, {
+    onError: (error) => {
+      if (error.status === 500) {
+        setBanner({
+          type: 'error',
+          header: 'Something went wrong',
+          content: 'There was a problem with the server when searching for a case.',
+        });
+      }
     },
-  );
+  });
 
   return { caseDetails: data ?? null, loading: isLoading || isValidating, refresh: mutate };
 };
@@ -45,7 +41,7 @@ export const getCaseDetails = async (p: { axiosInstance: AxiosInstance; urn: str
 const getCaseDetailsKey = (p: { urn: string }) => `getCaseDetails-${p.urn}`;
 export const useCaseDetails = (p: { urn: string }) => {
   const axiosInstance = useAxiosInstance();
-  const rtn = useSWR(p.urn ? getCaseDetailsKey({ urn: p.urn }) : null, () =>
+  const rtn = useSWR(getCaseDetailsKey({ urn: p.urn }), () =>
     getCaseDetails({ axiosInstance, urn: p.urn }),
   );
 

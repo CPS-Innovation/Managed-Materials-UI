@@ -17,7 +17,6 @@ const extractReadableMessageFromError = (error: unknown) => {
 const checkOutDocumentFromAxiosInstance = async (p: {
   axiosInstance: AxiosInstance;
   caseId: string | number;
-  urn: string;
   parentId: string;
   childId: number | string;
 }) => {
@@ -61,24 +60,16 @@ export const checkInDocumentFromAxiosInstance = async (p: {
   }
 };
 
-export const useDocumentCheckOutRequest = ({
-  caseId,
-  urn,
-}: {
-  caseId?: string | number;
-  urn?: string;
-}) => {
+export const useDocumentCheckOutRequest = ({ caseId }: { caseId: string | number }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const axiosInstance = useAxiosInstance();
 
   const checkOut = async (fnProps: { parentId: string; childId: number | string }) => {
-    if (!urn) return { success: false, message: 'no urn provided' } as const;
     if (!caseId) return { success: false, message: 'no caseId provided' } as const;
 
     setIsLoading(true);
     const resp = await checkOutDocumentFromAxiosInstance({
       axiosInstance,
-      urn,
       caseId,
       parentId: fnProps.parentId,
       childId: fnProps.childId,
@@ -89,7 +80,6 @@ export const useDocumentCheckOutRequest = ({
   };
 
   const checkIn = async (fnProps: { parentId: string; childId: number }) => {
-    if (!urn) return { success: false, message: 'no urn provided' } as const;
     if (!caseId) return { success: false, message: 'no caseId provided' } as const;
 
     setIsLoading(true);

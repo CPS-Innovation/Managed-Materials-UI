@@ -61,7 +61,6 @@ export const getDocumentListFromAxiosInstance = async (p: {
 };
 export const getDocumentFromAxiosInstance = async (p: {
   axiosInstance: AxiosInstance;
-  urn: string | undefined;
   caseId: number | undefined;
   documentId: string | undefined;
   versionId: number | undefined;

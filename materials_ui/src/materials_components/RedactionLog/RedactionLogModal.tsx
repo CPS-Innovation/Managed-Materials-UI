@@ -180,7 +180,7 @@ export const RedactionLogModal = (p: {
             </div>
           )}
 
-          <RedactionLogModalHeader lookups={lookups} />
+          <RedactionLogModalHeader lookups={lookups} case={p.case} />
 
           <RedactionLogModalBody
             activeDocument={activeDocument}

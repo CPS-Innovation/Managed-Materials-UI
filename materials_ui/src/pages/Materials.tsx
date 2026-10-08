@@ -111,15 +111,14 @@ export const MaterialsPage = () => {
 
     for (const item of selectedItems.materials) {
       const materialId = item.materialId;
-      const urn = caseInfo?.urn;
       const caseId = caseInfo?.id;
       const documentId = item.documentId;
-      if (!urn || !caseId || !documentId) return;
+      if (!caseId || !documentId) return;
       trackAction('OpenedInNewWindow', {
         materialId: materialId.toString(),
         category: item.category,
       });
-      navigateToViewDocumentPageInNewTab({ urn, caseId, materialId, documentId });
+      navigateToViewDocumentPageInNewTab({ caseId, materialId, documentId });
     }
   };
 
