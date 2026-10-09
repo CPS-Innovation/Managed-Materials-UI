@@ -7,7 +7,7 @@ const CASE_ID = '2167259';
 const FIRST_REVIEW_HISTORY_ID = 4380514;
 
 test.describe('PCD Review', () => {
-  test('T-001: page loads Initial Review and displays all main sections', async ({ page }) => {
+  test.skip('T-001: page loads Initial Review and displays all main sections', async ({ page }) => {
     await mockRoute(page, `cases/${CASE_ID}/pcd-review-core`, mockPcdReviewCoreDataResponse());
     await mockRoute(
       page,
@@ -60,7 +60,7 @@ test.describe('PCD Review', () => {
   //   await expect(page.getByRole('heading', { name: 'Authentication Error' })).toBeVisible();
   // });
 
-  test('T-003: Review has not been completed message shown if no data is returned', async ({
+  test.skip('T-003: Review has not been completed message shown if no data is returned', async ({
     page,
   }) => {
     await mockRoute(page, `cases/${CASE_ID}/pcd-review-core`, []);

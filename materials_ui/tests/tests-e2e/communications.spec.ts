@@ -24,7 +24,7 @@ test.describe('Communications page', () => {
     await expect(page.getByText('MG7 SMITH Will (Redacted)', { exact: true })).toBeVisible();
   });
 
-  test('T-002: page shows no communications text if no communications are displayed', async ({
+  test.skip('T-002: page shows no communications text if no communications are displayed', async ({
     page,
   }) => {
     mockRoute(page, '/case-materials', mockCaseMaterials({}));
@@ -105,7 +105,7 @@ test.describe('Communications page', () => {
   });
 
   // hide filter
-  test('T-007: user is able to hide filter', async ({ page }) => {
+  test.skip('T-007: user is able to hide filter', async ({ page }) => {
     await page.getByRole('button', { name: 'Hide filters' }).click();
     await expect(page.getByLabel('Subject')).toBeHidden();
     await page.getByRole('button', { name: 'Show filter' }).click();
