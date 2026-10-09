@@ -55,8 +55,8 @@ const useReviewAndRedactRoute = () => {
 export const ReviewAndRedactPage = () => {
   const { caseId } = useReviewAndRedactRoute();
   const { state: locationState } = useLocation();
-  const { data: caseData, isLoading: caseLoading } = useSafeCase({ caseId });
-  const { caseInfo, loading: caseInfoLoading } = useCaseInfo({ caseId });
+  const { data: caseData } = useSafeCase({ caseId });
+  const { caseInfo } = useCaseInfo({ caseId });
 
   const {
     docType: docTypeParam,
@@ -365,7 +365,7 @@ export const ReviewAndRedactPage = () => {
     }
   }, [caseInfo, caseData]);
 
-  if (caseInfoLoading || caseInfo === undefined || caseLoading || caseData === undefined)
+  if (caseInfo === undefined || caseData === undefined)
     return <LayoutLoadingTemplate title="Review and Redact" />;
 
   if (caseInfo === null || (caseData && !caseData.success)) return <></>;
