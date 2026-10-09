@@ -64,8 +64,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
   fileUrl: string;
   mode: TMode;
   onModeChange: (x: TMode) => void;
-  urn: string;
-  caseId: number;
+  caseId: string | number;
   childId: number;
   parentId: string;
   onModification: (x: TDocument) => void;
@@ -86,7 +85,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
   const [isDocumentCheckedOut, setIsDocumentCheckedOut] = useState(false);
   const [selectedRedactionTypes, setSelectedRedactionTypes] = useState<TRedactionType[]>([]);
 
-  const documentCheckOutRequest = useDocumentCheckOutRequest({ caseId: p.caseId, urn: p.urn });
+  const documentCheckOutRequest = useDocumentCheckOutRequest({ caseId: p.caseId });
   const checkInDocument = async () => {
     if (!isDocumentCheckedOut) return;
     const resp = await documentCheckOutRequest.checkIn({
@@ -366,7 +365,6 @@ export const CaseworkPdfRedactorWrapper = (p: {
               <DeletionReasonForm
                 pageNumber={deleteReasonPopupProps.pageNumber}
                 documentId={deleteReasonPopupProps.documentId}
-                urn={deleteReasonPopupProps.urn}
                 caseId={deleteReasonPopupProps.caseId}
                 onCancelClick={() => {
                   undeletePage(deleteReasonPopupProps.pageNumber);
@@ -397,7 +395,6 @@ export const CaseworkPdfRedactorWrapper = (p: {
           try {
             await saveRedactions({
               axiosInstance,
-              urn: p.urn,
               caseId: p.caseId,
               childId: p.childId,
               parentId: p.parentId,
@@ -460,7 +457,6 @@ export const CaseworkPdfRedactorWrapper = (p: {
             y: mousePos.current.y,
             pageNumber: add.pageNumber,
             documentId: 'This document does not exist',
-            urn: 'This URN does not exist',
             caseId: 'This case does not exist',
           }));
         }}
@@ -473,7 +469,6 @@ export const CaseworkPdfRedactorWrapper = (p: {
 
           await saveDeletions({
             axiosInstance,
-            urn: p.urn,
             caseId: p.caseId,
             childId: p.childId,
             parentId: p.parentId,
@@ -496,7 +491,6 @@ export const CaseworkPdfRedactorWrapper = (p: {
 
           await saveRotations({
             axiosInstance,
-            urn: p.urn,
             caseId: p.caseId,
             childId: p.childId,
             parentId: p.parentId,

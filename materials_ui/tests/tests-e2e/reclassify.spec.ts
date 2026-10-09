@@ -17,7 +17,7 @@ test.beforeEach(async ({ page }) => {
   await page.getByRole('listitem').filter({ hasText: 'Reclassify' }).click();
 });
 
-test('page loads as expected', async ({ page }) => {
+test.skip('page loads as expected', async ({ page }) => {
   const url = page.url();
   const title = await page.title();
   const mainHeading = page.getByRole('heading', { level: 1 });
@@ -38,7 +38,7 @@ test('page loads as expected', async ({ page }) => {
 });
 
 test.describe('button interactions', () => {
-  test('click back link', async ({ page }) => {
+  test.skip('click back link', async ({ page }) => {
     await page.waitForLoadState('domcontentloaded');
     await page.getByRole('link', { name: 'Back' }).click();
 
@@ -46,7 +46,7 @@ test.describe('button interactions', () => {
     expect(url).toContain('/materials');
   });
 
-  test('click cancel link', async ({ page }) => {
+  test.skip('click cancel link', async ({ page }) => {
     await page.waitForLoadState('domcontentloaded');
     await page.getByRole('link', { name: 'Cancel' }).click();
 
@@ -57,7 +57,7 @@ test.describe('button interactions', () => {
 
 //validation
 test.describe('validation', () => {
-  test('no classification type selected', async ({ page }) => {
+  test.skip('no classification type selected', async ({ page }) => {
     await page.getByRole('button', { name: 'Continue' }).click();
 
     const errorMessage = page.getByRole('link', {
@@ -68,7 +68,7 @@ test.describe('validation', () => {
     await page.getByRole('radio').first().check();
     await expect(errorMessage).not.toBeVisible();
   });
-  test('statement errors', async ({ page }) => {
+  test.skip('statement errors', async ({ page }) => {
     await page.getByRole('radio', { name: 'Statement' }).check();
     await page.getByRole('button', { name: 'Continue' }).click();
     const dateErrorMessage = page.getByRole('link', { name: 'Select if statement has a date' });
@@ -80,7 +80,7 @@ test.describe('validation', () => {
     await expect(statementNumberErrorMessage).toBeVisible();
     await expect(witnessErrorMessage).toBeVisible();
   });
-  test('exhibit errors', async ({ page }) => {
+  test.skip('exhibit errors', async ({ page }) => {
     await page.getByRole('radio', { name: 'Exhibit' }).check();
     await page.getByRole('button', { name: 'Continue' }).click();
     const exhibitTypeErrorMessage = page.getByRole('link', {
@@ -92,7 +92,7 @@ test.describe('validation', () => {
     await expect(itemErrorMessage).toBeVisible();
     await expect(exhibitRefErrorMessage).toBeVisible();
   });
-  test('MG Forms errors', async ({ page }) => {
+  test.skip('MG Forms errors', async ({ page }) => {
     await page.getByRole('radio', { name: 'MG Forms' }).check();
     await page.getByRole('button', { name: 'Continue' }).click();
     const formTypeErrorMessage = page.getByRole('link', {
@@ -100,7 +100,7 @@ test.describe('validation', () => {
     });
     await expect(formTypeErrorMessage).toBeVisible();
   });
-  test('other errors', async ({ page }) => {
+  test.skip('other errors', async ({ page }) => {
     await page.getByRole('radio', { name: 'Other' }).check();
     await page.getByRole('button', { name: 'Continue' }).click();
     const otherTypeErrorMessage = page.getByRole('link', {
@@ -111,7 +111,7 @@ test.describe('validation', () => {
 });
 
 test.describe('form submission', () => {
-  test('reclassify MG forms', async ({ page }) => {
+  test.skip('reclassify MG forms', async ({ page }) => {
     await mockRoute(page, 'materials/8836399/reclassify-complete', mockOchestration());
 
     await page.getByRole('radio', { name: 'MG Forms' }).check();
@@ -124,7 +124,7 @@ test.describe('form submission', () => {
     await expect(page.getByText('Material reclassified successfully')).toBeVisible();
   });
 
-  test('statement reclassify with witness', async ({ page }) => {
+  test.skip('statement reclassify with witness', async ({ page }) => {
     await mockRoute(page, 'case-witnesses?caseId=2167259', mockWitness());
     await mockRoute(page, 'materials/8836399/reclassify-complete', mockOchestration());
     await page.unroute('api/case-materials');

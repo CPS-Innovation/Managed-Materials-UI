@@ -1,13 +1,9 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import {
-  DocumentKeywordSearch,
-  Layout,
-  LoadingSpinner,
-  RenameDrawer,
-  TwoCol,
-} from '../../../components';
-import { useAppRoute } from '../../../hooks';
+import { DocumentKeywordSearch, LoadingSpinner, RenameDrawer, TwoCol } from '../../../components';
+import { LayoutLoadedTemplate, LayoutLoadingTemplate } from '../../../components/Layout/Layout';
+import { useAppRoute, useBanner, useCaseInfo } from '../../../hooks';
+import { useSafeCase } from '../../../hooks/case/useCase';
 import { navigateToViewDocumentPageInNewTab } from '../../../hooks/ui/navigateToViewDocumentPageInNewTab';
 import { checkInDocumentFromAxiosInstance } from '../../../materials_components/CaseworkPdfRedactorWrapper/hooks/useDocumentCheckOutRequest';
 import { DocumentSidebar } from '../../../materials_components/DocumentSelectAccordion/DocumentSidebar';
@@ -51,14 +47,17 @@ type PendingUnsavedAction =
 type UnsavedModal = { kind: 'blockNav'; href?: string } | { kind: 'closeAll' };
 
 const useReviewAndRedactRoute = () => {
-  const { caseId, urn } = useAppRoute();
+  const { caseId } = useAppRoute();
 
-  return { caseId: caseId!, urn: urn! };
+  return { caseId: caseId! };
 };
 
 export const ReviewAndRedactPage = () => {
-  const { caseId, urn } = useReviewAndRedactRoute();
+  const { caseId } = useReviewAndRedactRoute();
   const { state: locationState } = useLocation();
+  const { data: caseData } = useSafeCase({ caseId });
+  const { caseInfo } = useCaseInfo({ caseId });
+
   const {
     docType: docTypeParam,
     materialId: materialIdParam,
@@ -73,7 +72,7 @@ export const ReviewAndRedactPage = () => {
 
   const navigate = useNavigate();
 
-  const documentList = useGetDocumentList({ populateOnMount: true, urn, caseId });
+  const documentList = useGetDocumentList({ populateOnMount: true, caseId });
 
   const [selectedDocumentForRename, setSelectedDocumentForRename] = useState<
     (TDocument & { materialId?: number }) | null
@@ -89,6 +88,7 @@ export const ReviewAndRedactPage = () => {
 
   const checkInDocumentTrigger = useTrigger();
   useSwitchContentArea();
+  const banner = useBanner();
 
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [openParentIds, setOpenParentIds] = useState<string[]>([]);
@@ -213,7 +213,6 @@ export const ReviewAndRedactPage = () => {
           materialId={doc.parentId}
           documentId={doc.childId}
           document={doc}
-          urn={urn}
           caseId={caseId}
           mode={modeByParentId[doc.parentId] ?? 'disabled'}
           onModeChange={(newMode) => handleModeChange(doc.parentId, newMode)}
@@ -245,7 +244,6 @@ export const ReviewAndRedactPage = () => {
       checkInDocumentFromAxiosInstance({
         axiosInstance,
         caseId,
-        urn,
         parentId: document.parentId,
         childId: document.childId,
       });
@@ -267,7 +265,6 @@ export const ReviewAndRedactPage = () => {
       checkInDocumentFromAxiosInstance({
         axiosInstance,
         caseId,
-        urn,
         parentId: document.parentId,
         childId: document.childId,
       });
@@ -361,11 +358,22 @@ export const ReviewAndRedactPage = () => {
     }
   }, [showRedactionLogModal]);
 
+  useEffect(() => {
+    if (caseInfo === null || (caseData && !caseData.success)) {
+      console.error('Case not found', { caseInfo, caseData });
+      banner.setBanner({ header: 'Case not found', type: 'error' });
+    }
+  }, [caseInfo, caseData]);
+
+  if (caseInfo === undefined || caseData === undefined)
+    return <LayoutLoadingTemplate title="Review and Redact" />;
+
+  if (caseInfo === null || (caseData && !caseData.success)) return <></>;
+
   return (
-    <Layout
+    <LayoutLoadedTemplate
       title="Review and Redact"
-      urn={urn}
-      caseId={caseId}
+      caseInfo={caseInfo}
       shouldBlockNavigationCheck={(tab) => {
         const shouldBlock = Object.values(redactionsIndexedOnParentId).some(
           (redacts) => redacts.length > 0,
@@ -446,13 +454,12 @@ export const ReviewAndRedactPage = () => {
 
         {showRedactionLogModal && (
           <RedactionLogModal
-            urn={urn}
-            caseId={caseId}
             isOpen={showRedactionLogModal}
             onClose={() => setShowRedactionLogModal(false)}
             lookups={lookups}
             activeDocument={activeDocument}
             mode="over-under"
+            case={caseData.data}
           />
         )}
 
@@ -467,7 +474,6 @@ export const ReviewAndRedactPage = () => {
                   />
                 )}
                 <DocumentSidebar
-                  urn={urn}
                   caseId={caseId}
                   activeDocumentId={activeTabId}
                   newVersionDocumentId={newVersionParentId}
@@ -503,7 +509,6 @@ export const ReviewAndRedactPage = () => {
 
                     trackAction('OpenedInNewWindow', { materialId: activeTabId, documentId });
                     navigateToViewDocumentPageInNewTab({
-                      urn,
                       caseId,
                       materialId: activeTabId,
                       documentId,
@@ -516,6 +521,6 @@ export const ReviewAndRedactPage = () => {
           )}
         </TwoCol>
       </div>
-    </Layout>
+    </LayoutLoadedTemplate>
   );
 };

@@ -10,6 +10,7 @@ import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
 import { Banner } from '../../components';
 import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
 import { useUserGroupsFeatureFlag } from '../../hooks';
+import { useSafeCase } from '../../hooks/case/useCase';
 import { CaseworkPdfRedactorWrapper } from '../CaseworkPdfRedactorWrapper/CaseworkPdfRedactorWrapper';
 import { initiateBulkSearch } from '../CaseworkPdfRedactorWrapper/utils/bulkSearchDocumentUtils';
 import { TDocument } from '../DocumentSelectAccordion/getters/getDocumentList';
@@ -39,8 +40,7 @@ export type DocumentTabPanelProps = {
   materialId: string;
   documentId: number;
   document: TDocument;
-  urn: string;
-  caseId: number;
+  caseId: string | number;
   mode: TMode;
   onModeChange: (mode: TMode) => void;
   onRedactionsChange: (redactions: TRedaction[]) => void;
@@ -57,7 +57,6 @@ export const DocumentTabPanel = ({
   materialId,
   documentId,
   document,
-  urn,
   caseId,
   mode,
   onModeChange,
@@ -72,6 +71,7 @@ export const DocumentTabPanel = ({
 }: DocumentTabPanelProps) => {
   const { redactionLogAxios, axiosInstance } = useAxiosInstances();
   const featureFlags = useUserGroupsFeatureFlag();
+  const { data: caseResponse } = useSafeCase({ caseId });
 
   const [pdfFileUrl, setPdfFileUrl] = useState<string>('');
   const [status, setStatus] = useState<LoadStatus>('loading');
@@ -92,7 +92,6 @@ export const DocumentTabPanel = ({
       try {
         const { blob, isFileTooLarge } = await getPdfFiles({
           axiosInstance,
-          urn,
           caseId,
           materialId: materialId,
           documentId: documentId,
@@ -120,7 +119,7 @@ export const DocumentTabPanel = ({
         URL.revokeObjectURL(blobUrlRef.current);
       }
     };
-  }, [materialId, documentId, urn, caseId]);
+  }, [materialId, documentId, caseId]);
 
   useEffect(() => {
     const loadLookups = async () => {
@@ -134,10 +133,9 @@ export const DocumentTabPanel = ({
 
   return (
     <div>
-      {showRedactionLogModal && redactionLogModalData && (
+      {showRedactionLogModal && redactionLogModalData && caseResponse?.success && (
         <RedactionLogModal
-          urn={urn}
-          caseId={caseId}
+          case={caseResponse.data}
           isOpen={showRedactionLogModal}
           onClose={() => {
             setShowRedactionLogModal(false);
@@ -219,7 +217,6 @@ export const DocumentTabPanel = ({
             mode={mode}
             onModeChange={onModeChange}
             onModification={onModification}
-            urn={urn}
             caseId={caseId}
             childId={documentId}
             parentId={materialId}

@@ -1,27 +1,23 @@
 import DOMPurify from 'dompurify';
 import { Fragment, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Accordion, DefinitionList, LoadingSpinner, SectionBreak, TwoCol } from '../components';
 import {
-  Accordion,
-  DefinitionList,
-  Layout,
-  LoadingSpinner,
-  SectionBreak,
-  TwoCol,
-} from '../components';
-import { useAppRoute, useGetPcdRequest, usePcdRequestListings } from '../hooks';
+  LayoutErrorTemplate,
+  LayoutLoadedTemplate,
+  LayoutLoadingTemplate,
+} from '../components/Layout/Layout';
+import { useAppRoute, useCaseInfo, useGetPcdRequest, usePcdRequestListings } from '../hooks';
 import { TPcdRequestListings } from '../schemas/pcd';
 import { formatDate } from '../utils/date';
 import { cleanString } from '../utils/string';
-import { NotAuthorisedPage } from './NotAuthorisedPage';
 
 const ShowPcdRequest = (p: {
-  urn: string;
-  caseId: number;
+  caseId: string | number;
   pcdId: number;
   isFirstPcdRequest: boolean;
 }) => {
-  const { data: pcdRequest } = useGetPcdRequest({ urn: p.urn, caseId: p.caseId, pcdId: p.pcdId });
+  const { data: pcdRequest } = useGetPcdRequest({ caseId: p.caseId, pcdId: p.pcdId });
 
   return (
     <>
@@ -271,21 +267,31 @@ const ShowPcdRequestSidebarListings = (p: {
 };
 
 const usePcdRequestPageAppRoute = () => {
-  const { urn, caseId } = useAppRoute();
-  return { urn: urn!, caseId: caseId! };
+  const { caseId } = useAppRoute();
+  return { caseId: caseId! };
 };
 
 export const PcdRequestPage = () => {
-  const { urn, caseId } = usePcdRequestPageAppRoute();
-  const { data: pcdRequestList } = usePcdRequestListings({ urn, caseId });
+  const { caseId } = usePcdRequestPageAppRoute();
+  const { data: pcdRequestList } = usePcdRequestListings({ caseId });
+  const { caseInfo } = useCaseInfo({ caseId });
+
   const firstPcdId = pcdRequestList?.[0]?.id;
   const [selectedPcdId, setSelectedPcdId] = useState<number | undefined>(undefined);
 
-  if (pcdRequestList === null) return <NotAuthorisedPage />;
+  if (pcdRequestList === undefined || caseInfo === undefined)
+    return <LayoutLoadingTemplate title="PCD Request" />;
+  if (pcdRequestList === null || caseInfo === null)
+    return (
+      <LayoutErrorTemplate
+        bannerError={{ header: 'Error loading PCD request list', type: 'error' }}
+      />
+    );
 
   const actualPcdId = selectedPcdId ?? firstPcdId;
+
   return (
-    <Layout urn={urn} caseId={caseId} title="PCD Request">
+    <LayoutLoadedTemplate title="PCD Request" caseInfo={caseInfo}>
       <div className="govuk-main-wrapper" style={{ whiteSpace: 'pre-wrap' }}>
         <LoadingSpinner isLoading={pcdRequestList === undefined} />
 
@@ -311,7 +317,6 @@ export const PcdRequestPage = () => {
           >
             {actualPcdId && (
               <ShowPcdRequest
-                urn={urn}
                 caseId={caseId}
                 pcdId={actualPcdId}
                 isFirstPcdRequest={firstPcdId === actualPcdId}
@@ -320,7 +325,7 @@ export const PcdRequestPage = () => {
           </TwoCol>
         )}
       </div>
-    </Layout>
+    </LayoutLoadedTemplate>
   );
 };
 

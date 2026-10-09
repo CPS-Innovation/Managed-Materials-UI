@@ -7,9 +7,8 @@ import { CaseInfoType } from '../../schemas';
 
 import './CaseInfo.scss';
 
-type Props = { caseInfo: CaseInfoType | null };
-
-export const CaseInfo = ({ caseInfo }: Props) => {
+export const CaseInfo = (p: { caseInfo: CaseInfoType | null }) => {
+  const { caseInfo } = p;
   const { getRoute } = useAppRoute();
   const navigate = useNavigate();
 

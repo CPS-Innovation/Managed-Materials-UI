@@ -5,7 +5,6 @@ import { Navigate, useParams } from 'react-router-dom';
 
 import {
   DefinitionList,
-  Layout,
   LoadingSpinner,
   NavList,
   type NavListItem,
@@ -14,8 +13,13 @@ import {
   TwoCol,
 } from '../components';
 
+import {
+  LayoutErrorTemplate,
+  LayoutLoadedTemplate,
+  LayoutLoadingTemplate,
+} from '../components/Layout/Layout.tsx';
 import { PcdReviewCoreType, PcdReviewTypeLabel } from '../constants/enum.ts';
-import { useAppRoute, useCaseInfoStore } from '../hooks/';
+import { useAppRoute, useCaseInfo } from '../hooks/';
 import { usePCDReviewCore } from '../hooks/pcd-review/usePCDReviewCore.ts';
 import { usePCDReviewDetails } from '../hooks/pcd-review/usePCDReviewDetails.ts';
 import type { PCDReviewCoreResponseType, PCDReviewDetailsResponseType } from '../schemas/pcdReview';
@@ -224,30 +228,28 @@ const FurtherActionDetails = ({ decision }: { decision: DecisionOutcome }) => {
 };
 
 const usePcdReviewPageAppRoute = () => {
-  const { urn, caseId } = useParams();
-  return { urn: urn!, caseId: caseId! };
+  const { caseId, reviewHistoryId } = useParams();
+  return { caseId: caseId!, reviewHistoryId };
 };
 
 export const PcdReviewPage = () => {
-  const { urn, caseId } = usePcdReviewPageAppRoute();
-
-  const { reviewHistoryId: reviewHistoryIdParam } = useParams<{ reviewHistoryId?: string }>();
-  const { caseInfo } = useCaseInfoStore();
+  const { caseId, reviewHistoryId } = usePcdReviewPageAppRoute();
+  const { caseInfo } = useCaseInfo({ caseId });
 
   const { data: pcdReviewCoreData, isLoading: pcdReviewCoreLoading } = usePCDReviewCore();
+  const isLoadingPage = pcdReviewCoreLoading;
 
-  const reviewHistoryId = Number(reviewHistoryIdParam);
   const firstPcdReviewCoreHistoryId = pcdReviewCoreData?.[0]?.id;
-  const resolvedReviewHistoryId = Number.isFinite(reviewHistoryId)
-    ? reviewHistoryId
+  const reviewHistoryIdNumber = Number(reviewHistoryId);
+  const resolvedReviewHistoryId = Number.isFinite(reviewHistoryIdNumber)
+    ? reviewHistoryIdNumber
     : firstPcdReviewCoreHistoryId;
   const shouldRedirectToFirstReview =
-    !reviewHistoryIdParam && !pcdReviewCoreLoading && firstPcdReviewCoreHistoryId !== undefined;
+    !reviewHistoryId && !pcdReviewCoreLoading && firstPcdReviewCoreHistoryId !== undefined;
 
   const { isLoading: pcdReviewDetailsLoading, data: pcdReviewDetailsData } =
     usePCDReviewDetails(resolvedReviewHistoryId);
 
-  const isLoadingPage = !caseInfo || pcdReviewCoreLoading;
   const noReviewCompleted =
     !pcdReviewCoreLoading && Array.isArray(pcdReviewCoreData) && pcdReviewCoreData.length === 0;
 
@@ -309,10 +311,17 @@ export const PcdReviewPage = () => {
     );
   };
 
+  if (pcdReviewCoreLoading || pcdReviewDetailsLoading || caseInfo === undefined)
+    return <LayoutLoadingTemplate title="Reviews" />;
+  if (caseInfo === null)
+    return (
+      <LayoutErrorTemplate bannerError={{ header: 'Error loading case info', type: 'error' }} />
+    );
+
   return (
-    <Layout urn={urn} caseId={caseId} title="Reviews">
+    <LayoutLoadedTemplate title="Reviews" caseInfo={caseInfo}>
       <LoadingSpinner isLoading={isLoadingPage} />
       {renderBody()}
-    </Layout>
+    </LayoutLoadedTemplate>
   );
 };

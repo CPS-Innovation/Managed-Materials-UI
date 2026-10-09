@@ -52,8 +52,7 @@ const Tooltip = (p: { text: string }) => {
 };
 
 export const DocumentSidebarAccordionDocument = (p: {
-  urn: string;
-  caseId: number;
+  caseId: string | number;
   document: TDocument;
   activeDocumentId: string | null | undefined;
   newVersionDocumentId: string | null | undefined;
@@ -64,7 +63,6 @@ export const DocumentSidebarAccordionDocument = (p: {
   ActionComponent?: React.ReactNode;
 }) => {
   const documentNotes = useGetDocumentNotes({
-    urn: p.urn,
     caseId: p.caseId,
     documentId: p.document.parentId,
     revalidateOnMount: false,

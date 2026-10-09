@@ -15,21 +15,17 @@ export const useCaseMaterials = ({ dataType }: UseCaseMaterialsProps) => {
   const request = useRequest();
   const axiosInstance = useAxiosInstance();
 
-  const { urnPrefix: urn, caseId } = useAppRoute();
-  const caseInfo = urn && caseId ? { urn, caseId } : null;
+  const { caseId } = useAppRoute();
+  const caseInfo = caseId ? { caseId } : null;
 
-  const materialsKey = caseInfo ? [QUERY_KEYS.CASE_MATERIAL, caseId, urn] : null;
+  const materialsKey = caseInfo ? [QUERY_KEYS.CASE_MATERIAL, caseId] : null;
 
   const getCaseMaterials = async () => {
     const caseMaterialsPromise = request.get<CaseMaterialsResponseType>(
       `/cases/${caseId}/case-materials`,
     );
 
-    const documentsListPromise = safeGetDocumentListFromAxiosInstance({
-      axiosInstance,
-      urn,
-      caseId,
-    });
+    const documentsListPromise = safeGetDocumentListFromAxiosInstance({ axiosInstance, caseId });
 
     const [caseMaterialsResponse, documentsListResponse] = await Promise.all([
       caseMaterialsPromise,

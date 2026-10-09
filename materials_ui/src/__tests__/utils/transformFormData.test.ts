@@ -10,8 +10,6 @@ import {
   transformFormDataToApiFormat,
 } from '../../materials_components/RedactionLog/utils/transformFormData';
 
-const URN = '45CD0303421';
-
 const lookups = {
   areas: [
     { id: '3', name: 'CPS London North', children: [{ id: '12', name: 'Magistrates Unit' }] },
@@ -57,7 +55,6 @@ const transform = (
 ) =>
   transformFormDataToApiFormat({
     formData,
-    urn: URN,
     activeDocument,
     lookups,
     mode: 'over-under',
@@ -73,7 +70,6 @@ describe('transformFormDataToApiFormat', () => {
   it('resolves the unit, agency and document type names from lookups', () => {
     const log = transform();
 
-    expect(log.urn).toBe(URN);
     expect(log.unit).toEqual({
       id: '3-12',
       type: 'Area',

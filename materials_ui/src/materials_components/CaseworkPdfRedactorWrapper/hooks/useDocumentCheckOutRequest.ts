@@ -4,8 +4,6 @@ import { z } from 'zod';
 
 import { useAxiosInstance } from '../../../caseWorkApp/components/utils/getData';
 
-type UseDocumentCheckoutOptions = { caseId?: number; urn?: string };
-
 const extractReadableMessageFromError = (error: unknown) => {
   const errorSchema = z.object({ response: z.object({ data: z.object({ Error: z.string() }) }) });
   const parsed = errorSchema.safeParse(error);
@@ -18,8 +16,7 @@ const extractReadableMessageFromError = (error: unknown) => {
 
 const checkOutDocumentFromAxiosInstance = async (p: {
   axiosInstance: AxiosInstance;
-  caseId: number;
-  urn: string;
+  caseId: string | number;
   parentId: string;
   childId: number | string;
 }) => {
@@ -45,8 +42,7 @@ const checkOutDocumentFromAxiosInstance = async (p: {
 
 export const checkInDocumentFromAxiosInstance = async (p: {
   axiosInstance: AxiosInstance;
-  caseId: number;
-  urn: string;
+  caseId: string | number;
   parentId: string;
   childId: number | string;
 }) => {
@@ -64,18 +60,16 @@ export const checkInDocumentFromAxiosInstance = async (p: {
   }
 };
 
-export const useDocumentCheckOutRequest = ({ caseId, urn }: UseDocumentCheckoutOptions) => {
+export const useDocumentCheckOutRequest = ({ caseId }: { caseId: string | number }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const axiosInstance = useAxiosInstance();
 
   const checkOut = async (fnProps: { parentId: string; childId: number | string }) => {
-    if (!urn) return { success: false, message: 'no urn provided' } as const;
     if (!caseId) return { success: false, message: 'no caseId provided' } as const;
 
     setIsLoading(true);
     const resp = await checkOutDocumentFromAxiosInstance({
       axiosInstance,
-      urn,
       caseId,
       parentId: fnProps.parentId,
       childId: fnProps.childId,
@@ -86,13 +80,11 @@ export const useDocumentCheckOutRequest = ({ caseId, urn }: UseDocumentCheckoutO
   };
 
   const checkIn = async (fnProps: { parentId: string; childId: number }) => {
-    if (!urn) return { success: false, message: 'no urn provided' } as const;
     if (!caseId) return { success: false, message: 'no caseId provided' } as const;
 
     setIsLoading(true);
     const resp = await checkInDocumentFromAxiosInstance({
       axiosInstance,
-      urn,
       caseId,
       parentId: fnProps.parentId,
       childId: fnProps.childId,

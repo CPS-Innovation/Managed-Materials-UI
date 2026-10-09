@@ -22,19 +22,22 @@ export type TBulkSearchResponse = {
 
 export type TBulkSearchResult = { status: number; data: TBulkSearchResponse | null };
 
-const bulkSearchPath = (route: { caseId: number; materialId: string; documentId: number }) =>
-  `/cases/${route.caseId}/materials/${route.materialId}/documents/${route.documentId}/search`;
+const bulkSearchPath = (route: {
+  caseId: string | number;
+  materialId: string;
+  documentId: number;
+}) => `/cases/${route.caseId}/materials/${route.materialId}/documents/${route.documentId}/search`;
 
 export const initiateBulkSearch = (request: {
   axiosInstance: AxiosInstance;
-  caseId: number;
+  caseId: string | number;
   materialId: string;
   documentId: number;
 }) => request.axiosInstance.post(bulkSearchPath(request));
 
 export const bulkSearchDocument = async (request: {
   axiosInstance: AxiosInstance;
-  caseId: number;
+  caseId: string | number;
   materialId: string;
   documentId: number;
   searchText: string;
@@ -57,7 +60,7 @@ export type TBulkSearchOutcome =
 
 export const pollBulkSearch = async (request: {
   axiosInstance: AxiosInstance;
-  caseId: number;
+  caseId: string | number;
   materialId: string;
   documentId: number;
   searchText: string;

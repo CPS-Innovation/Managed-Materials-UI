@@ -1,12 +1,18 @@
 import { useState } from 'react';
-import { Layout, TwoCol } from '../../components';
+import { TwoCol } from '../../components';
+import {
+  LayoutErrorTemplate,
+  LayoutLoadedTemplate,
+  LayoutLoadingTemplate,
+} from '../../components/Layout/Layout';
+import { useCaseInfo } from '../../hooks';
 import { useGetDocumentList } from '../../materials_components/DocumentSelectAccordion/getters/getDocumentList';
 import { TwoTabsDocumentsDisplay } from './TwoTabsDocumentsDisplay';
 
-export const TwoTabsPageContent = (p: { urn: string; caseId: number }) => {
+export const TwoTabsPageContent = (p: { caseId: number }) => {
+  const { caseInfo } = useCaseInfo({ caseId: p.caseId });
   const { state: documentListState } = useGetDocumentList({
     populateOnMount: true,
-    urn: p.urn,
     caseId: p.caseId,
   });
 
@@ -23,8 +29,25 @@ export const TwoTabsPageContent = (p: { urn: string; caseId: number }) => {
       ? documentListState.data?.filter((doc) => openDocumentIds.includes(doc.parentId))
       : [];
 
+  if (documentListState.status === 'loading' || caseInfo === undefined)
+    return <LayoutLoadingTemplate title="Two Tabs" />;
+  if (documentListState.status === 'error' || caseInfo === null)
+    return (
+      <LayoutErrorTemplate
+        bannerError={{
+          header: 'Error loading documents',
+          type: 'error',
+          content: (() => {
+            if (documentListState.status === 'error')
+              return documentListState.errorMessages.join(', ');
+            return 'Case info not found';
+          })(),
+        }}
+      />
+    );
+
   return (
-    <Layout title="Two Tabs" urn={p.urn} caseId={p.caseId}>
+    <LayoutLoadedTemplate title="Two Tabs" caseInfo={caseInfo}>
       <TwoCol sidebar={<div>blah</div>}>
         {documentListState.status === 'success' && (
           <div className="flex gap-16">
@@ -61,6 +84,6 @@ export const TwoTabsPageContent = (p: { urn: string; caseId: number }) => {
           )}
         </pre>
       </TwoCol>
-    </Layout>
+    </LayoutLoadedTemplate>
   );
 };

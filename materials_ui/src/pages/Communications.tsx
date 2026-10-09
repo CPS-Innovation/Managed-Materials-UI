@@ -4,7 +4,6 @@ import {
   ButtonMenuComponent,
   CommsFilters,
   CommunicationsTable,
-  Layout,
   LoadingSpinner,
   RenameDrawer,
   TableActions,
@@ -13,25 +12,32 @@ import {
 
 import { useParams } from 'react-router-dom';
 import {
+  LayoutErrorTemplate,
+  LayoutLoadedTemplate,
+  LayoutLoadingTemplate,
+} from '../components/Layout/Layout';
+import {
   useAppRoute,
   useBanner,
+  useCaseInfo,
   useCaseMaterial,
   useCaseMaterials,
   useTableActions,
 } from '../hooks';
 import { navigateToViewDocumentPageInNewTab } from '../hooks/ui/navigateToViewDocumentPageInNewTab';
 import { CaseMaterialsType } from '../schemas';
-import { useCaseInfoStore, useMaterialTags, useSelectedItemsStore } from '../stores';
+import { useMaterialTags, useSelectedItemsStore } from '../stores';
 import { trackAction } from '../telemetry/appInsights';
 
 const useCommunicationsPageAppRoute = () => {
-  const { urn, caseId } = useParams();
+  const { caseId } = useParams();
 
-  return { urn: urn!, caseId: caseId! };
+  return { caseId: caseId! };
 };
 
 export const CommunicationsPage = () => {
-  const { urn, caseId } = useCommunicationsPageAppRoute();
+  const { caseId } = useCommunicationsPageAppRoute();
+  const { caseInfo } = useCaseInfo({ caseId });
 
   const [selectedMaterial, setSelectedMaterial] = useState<CaseMaterialsType | null>(null);
   const { setBanner, resetBanner } = useBanner();
@@ -44,7 +50,6 @@ export const CommunicationsPage = () => {
 
   const [showFilter, setShowFilter] = useState(true);
   const { items: selectedItems, clear: clearSelectedItems } = useSelectedItemsStore();
-  const { caseInfo } = useCaseInfoStore();
 
   const {
     handleEditClick,
@@ -94,17 +99,16 @@ export const CommunicationsPage = () => {
 
   const handleViewInNewWindowClick = async () => {
     const materialId = row?.materialId;
-    const urn = caseInfo?.urn;
     const caseId = caseInfo?.id;
 
     const documentId = row?.documentId;
-    if (!materialId || !urn || !caseId || !documentId) return;
+    if (!materialId || !caseId) return;
 
     trackAction('OpenedInNewWindow', {
       materialId: row?.materialId?.toString(),
       category: row?.category,
     });
-    navigateToViewDocumentPageInNewTab({ urn, caseId, materialId, documentId });
+    navigateToViewDocumentPageInNewTab({ caseId, materialId, documentId });
   };
 
   const menuItems = [
@@ -172,8 +176,16 @@ export const CommunicationsPage = () => {
     clearSelectedItems('communications');
   }, []);
 
+  if (caseMaterialsLoading || caseInfo === undefined)
+    return <LayoutLoadingTemplate title="Communications" />;
+
+  if (caseInfo === null)
+    return (
+      <LayoutErrorTemplate bannerError={{ header: 'Error loading case info', type: 'error' }} />
+    );
+
   return (
-    <Layout title="Communications" urn={urn} caseId={caseId}>
+    <LayoutLoadedTemplate title="Communications" caseInfo={caseInfo}>
       <div className="govuk-main-wrapper">
         <RenameDrawer
           material={selectedMaterial}
@@ -208,6 +220,6 @@ export const CommunicationsPage = () => {
           )}
         </TwoCol>
       </div>
-    </Layout>
+    </LayoutLoadedTemplate>
   );
 };

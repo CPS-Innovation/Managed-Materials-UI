@@ -11,8 +11,7 @@ const safeGetDocumentListFromAxiosInstanceWithRetries = async (p: {
   attempts: number;
   retryDelayMs: number;
   axiosInstance: AxiosInstance;
-  urn: string | undefined;
-  caseId: number | undefined;
+  caseId: string | number | undefined;
 }) => {
   const {
     attempts = DOCUMENT_LIST_RELOAD_ATTEMPTS,
@@ -54,8 +53,7 @@ export type TDocumentList = TDocument[];
 
 export const getDocumentListFromAxiosInstance = async (p: {
   axiosInstance: AxiosInstance;
-  urn: string | undefined;
-  caseId: number | undefined;
+  caseId: string | number | undefined;
 }) => {
   const response = await p.axiosInstance.get(`/cases/${p.caseId}/documents`);
 
@@ -63,7 +61,6 @@ export const getDocumentListFromAxiosInstance = async (p: {
 };
 export const getDocumentFromAxiosInstance = async (p: {
   axiosInstance: AxiosInstance;
-  urn: string | undefined;
   caseId: number | undefined;
   documentId: string | undefined;
   versionId: number | undefined;
@@ -77,15 +74,13 @@ export const getDocumentFromAxiosInstance = async (p: {
 
 export const safeGetDocumentListFromAxiosInstance = async (p: {
   axiosInstance: AxiosInstance;
-  urn: string | undefined;
-  caseId: number | undefined;
+  caseId: string | number | undefined;
 }): Promise<
   | { success: true; data: z.infer<typeof documentListSchema> }
   | { success: false; errorMessage: string }
 > => {
   try {
     const resp = await getDocumentListFromAxiosInstance({
-      urn: p.urn,
       caseId: p.caseId,
       axiosInstance: p.axiosInstance,
     });
@@ -108,12 +103,9 @@ export const safeGetDocumentListFromAxiosInstance = async (p: {
   }
 };
 
-export const safeGetDocumentListFromLocalStorage = (p: {
-  urn: string | undefined;
-  caseId: number | undefined;
-}) => {
+export const safeGetDocumentListFromLocalStorage = (p: { caseId: string | number | undefined }) => {
   try {
-    const key = `documentList-${p.urn}-${p.caseId}`;
+    const key = `documentList-${p.caseId}`;
     const initResp = localStorage.getItem(key);
     const resp = JSON.parse(initResp!); // assert with !, any errors caught
 
@@ -130,8 +122,7 @@ export const safeGetDocumentListFromLocalStorage = (p: {
 
 export const useGetDocumentList = (p: {
   populateOnMount: boolean;
-  urn: string | undefined;
-  caseId: number | undefined;
+  caseId: string | number | undefined;
 }) => {
   const axiosInstance = useAxiosInstance();
 
@@ -141,13 +132,13 @@ export const useGetDocumentList = (p: {
     | { status: 'loading' }
   >({ status: 'loading' });
   useEffect(() => {
-    const key = `documentList-${p.urn}-${p.caseId}`;
+    const key = `documentList-${p.caseId}`;
     if (documentListState) localStorage.setItem(key, JSON.stringify(documentListState));
     if (documentListState === null) localStorage.removeItem(key);
   }, [documentListState]);
 
   const loadFromLocalStorage = () => {
-    const resp = safeGetDocumentListFromLocalStorage({ urn: p.urn, caseId: p.caseId });
+    const resp = safeGetDocumentListFromLocalStorage({ caseId: p.caseId });
 
     if (resp.success) setDocumentListState({ status: 'success', data: resp.data });
   };
@@ -157,7 +148,6 @@ export const useGetDocumentList = (p: {
       attempts: DOCUMENT_LIST_RELOAD_ATTEMPTS,
       retryDelayMs: DOCUMENT_LIST_RELOAD_RETRY_DELAY_MS,
       axiosInstance,
-      urn: p.urn,
       caseId: p.caseId,
     });
 
