@@ -22,7 +22,7 @@ export const APP_ROUTES = {
 type AppRouteKey = keyof typeof APP_ROUTES;
 
 export const getRoute = (p: { routeName: AppRouteKey; prefix?: string }) => {
-  const routePrefix = p.prefix ? `/${p.prefix}` : '';
+  const routePrefix = p.prefix ? `/${p.prefix}/` : '';
 
   return `${routePrefix}${APP_ROUTES[p.routeName]}`;
 };
@@ -32,7 +32,7 @@ export const useAppRoute = () => {
   const caseId = params.caseId;
 
   const getRouteMethod = (routeName: AppRouteKey, prefix: boolean = true) =>
-    getRoute({ routeName, prefix: prefix && caseId ? `/${caseId}` : '' });
+    getRoute({ routeName, prefix: prefix && caseId ? caseId : '' });
 
   return { getRoute: getRouteMethod, caseId };
 };

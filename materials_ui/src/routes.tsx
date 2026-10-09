@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Route, Routes as Router, useParams } from 'react-router';
+import { Outlet, Route, Routes as Router, useParams } from 'react-router';
 import { Navigate } from 'react-router-dom';
 
 import { ReviewAndRedactPage } from './caseWorkApp/pages/ReviewAndRedactPage/ReviewAndRedactPage';
@@ -22,9 +22,8 @@ import { CaseSearchPage } from './pages/CaseSearch';
 import { TwoTabsPage } from './pages/TwoTabsPage';
 import { ViewDocumentPage } from './pages/ViewDocumentPage';
 
-export const Routes = () => {
-  const params = useParams();
-  const { caseId } = params;
+const CaseRoute = () => {
+  const { caseId } = useParams();
 
   const { caseInfo, loading: caseInfoLoading } = useCaseInfo({ caseId: caseId! });
   const { setCaseInfo, setIsLoading } = useCaseInfoStore();
@@ -38,6 +37,11 @@ export const Routes = () => {
   useEffect(() => {
     setIsLoading(caseInfoLoading);
   }, [caseInfoLoading]);
+
+  return <Outlet />;
+};
+
+export const Routes = () => {
   return (
     <Router>
       <Route path="/" element={<Navigate to={`/${APP_ROUTES.CASE_SEARCH}`} replace />} />
@@ -46,7 +50,7 @@ export const Routes = () => {
       <Route path={`/${APP_ROUTES.SERVER_ERROR}`} element={<ServerErrorPage />} />
       <Route path={`/${APP_ROUTES.CASE_SEARCH}`} element={<CaseSearchPage />} />
 
-      <Route path={`:caseId/`}>
+      <Route path={`:caseId/`} element={<CaseRoute />}>
         <Route
           path={`${APP_ROUTES.VIEW_DOCUMENT}/:materialId/:documentId`}
           element={<ViewDocumentPage />}

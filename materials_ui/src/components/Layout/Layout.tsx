@@ -109,13 +109,15 @@ export const LayoutLoadingTemplate = (p: { title: string }) => {
 };
 
 export const LayoutErrorTemplate = (p: { bannerError: BannerType }) => {
-  const banner = useBanner();
+  const { setBanner, resetBanner } = useBanner();
+  const { type, header, content, identifier } = p.bannerError;
+
   useEffect(() => {
-    banner.setBanner(p.bannerError);
+    setBanner({ type, header, content, identifier });
     return () => {
-      banner.resetBanner();
+      resetBanner();
     };
-  }, [p.bannerError]);
+  }, [type, header, content, identifier]);
   return <></>;
 };
 

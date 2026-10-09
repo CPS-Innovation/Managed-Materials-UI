@@ -240,8 +240,9 @@ export const PcdReviewPage = () => {
   const isLoadingPage = pcdReviewCoreLoading;
 
   const firstPcdReviewCoreHistoryId = pcdReviewCoreData?.[0]?.id;
-  const resolvedReviewHistoryId = Number.isFinite(reviewHistoryId)
-    ? reviewHistoryId
+  const reviewHistoryIdNumber = Number(reviewHistoryId);
+  const resolvedReviewHistoryId = Number.isFinite(reviewHistoryIdNumber)
+    ? reviewHistoryIdNumber
     : firstPcdReviewCoreHistoryId;
   const shouldRedirectToFirstReview =
     !reviewHistoryId && !pcdReviewCoreLoading && firstPcdReviewCoreHistoryId !== undefined;
