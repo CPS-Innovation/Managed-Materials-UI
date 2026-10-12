@@ -146,6 +146,7 @@ export const RedactionLogModal = (p: {
     try {
       const apiData = transformFormDataToApiFormat({
         formData: values,
+        urn: p.case.uniqueReferenceNumber,
         activeDocument,
         lookups,
         mode,
