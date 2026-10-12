@@ -29,7 +29,7 @@ const CustodyTimeLimitSchema = z.object({
 const ChargesSchema = z.array(
   z.object({
     id: z.number(),
-    listOrder: z.number(),
+    listOrder: z.number().nullable(),
     isCharged: z.boolean(),
     nextHearingDate: z.string().nullable(),
     earlyDate: z.string().nullable(),
