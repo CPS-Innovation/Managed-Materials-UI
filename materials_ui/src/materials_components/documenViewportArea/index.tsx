@@ -27,6 +27,7 @@ type DocumentViewportAreaProps = {
   documentName: string;
   mode: TMode;
   onModeChange: (mode: TMode) => void;
+  canRedact: boolean;
   searchMode?: SearchModeProps;
 };
 
@@ -34,6 +35,7 @@ export const DocumentViewportArea = ({
   documentName,
   mode,
   onModeChange,
+  canRedact,
   searchMode,
 }: DocumentViewportAreaProps) => {
   return (
@@ -118,15 +120,17 @@ export const DocumentViewportArea = ({
               )}
             </div>
           )}
-          <button
-            type="button"
-            id="btn-toggle-redaction"
-            aria-pressed={isRedactionEnabledMode(mode)}
-            onClick={() => onModeChange(isRedactionEnabledMode(mode) ? 'disabled' : 'redact')}
-            style={linkButtonStyle}
-          >
-            {isRedactionEnabledMode(mode) ? 'Stop redacting' : 'Start redacting'}
-          </button>
+          {canRedact && (
+            <button
+              type="button"
+              id="btn-toggle-redaction"
+              aria-pressed={isRedactionEnabledMode(mode)}
+              onClick={() => onModeChange(isRedactionEnabledMode(mode) ? 'disabled' : 'redact')}
+              style={linkButtonStyle}
+            >
+              {isRedactionEnabledMode(mode) ? 'Stop redacting' : 'Start redacting'}
+            </button>
+          )}
         </div>
       </div>
     </div>

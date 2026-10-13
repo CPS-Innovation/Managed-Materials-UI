@@ -11,6 +11,7 @@ import { Banner } from '../../components';
 import { LoadingSpinner } from '../../components/LoadingSpinner/LoadingSpinner';
 import { useUserGroupsFeatureFlag } from '../../hooks';
 import { useSafeCase } from '../../hooks/case/useCase';
+import { isRedactionPermitted } from '../../utils/redactionEligibility';
 import { CaseworkPdfRedactorWrapper } from '../CaseworkPdfRedactorWrapper/CaseworkPdfRedactorWrapper';
 import { initiateBulkSearch } from '../CaseworkPdfRedactorWrapper/utils/bulkSearchDocumentUtils';
 import { TDocument } from '../DocumentSelectAccordion/getters/getDocumentList';
@@ -170,6 +171,7 @@ export const DocumentTabPanel = ({
         <>
           <DocumentViewportArea
             documentName={document.presentationTitle}
+            canRedact={isRedactionPermitted(materialId)}
             mode={mode}
             onModeChange={(newMode) => {
               const isStartRedactingClick = newMode === 'redact' && !isRedactionEnabledMode(mode);

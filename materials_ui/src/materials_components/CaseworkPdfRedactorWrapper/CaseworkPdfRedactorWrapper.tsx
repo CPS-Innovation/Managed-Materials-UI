@@ -1,6 +1,7 @@
 import { ComponentProps, useEffect, useState } from 'react';
 import { Button } from '../../caseWorkApp/components/button';
 import { trackAction } from '../../telemetry/appInsights';
+import { isRedactionPermitted } from '../../utils/redactionEligibility';
 import { useAxiosInstance } from '../DocumentSelectAccordion/getters/getAxiosInstance';
 import { TDocument } from '../DocumentSelectAccordion/getters/getDocumentList';
 import { GovUkBanner } from '../DocumentSelectAccordion/templates/GovUkBanner';
@@ -110,8 +111,9 @@ export const CaseworkPdfRedactorWrapper = (p: {
 
   const documentCategory = p.document ? categoriseDocument(p.document) : undefined;
   const isUnredactableDocumentCategory =
-    documentCategory &&
-    (['review', 'defendantPreCons'] as TCategoryName[]).includes(documentCategory);
+    !isRedactionPermitted(p.parentId) ||
+    (documentCategory &&
+      (['review', 'defendantPreCons'] as TCategoryName[]).includes(documentCategory));
   const isDocumentDispatched = p.document?.presentationFlags?.write === 'IsDispatched';
 
   const cleanupDeletionDetails = () => {
