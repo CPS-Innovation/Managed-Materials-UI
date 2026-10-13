@@ -52,7 +52,8 @@ export const getPdfBlobFromAxiosInstance = (p: {
   materialId: string;
   documentId: number | string;
 }) => {
-  const materialsPrefix = p.materialId.startsWith('CMS-') ? '' : 'CMS-';
+  // sned ids with an existing 3 letter prefix as is, otherwise add 'CMS-'
+  const materialsPrefix = /^[A-Z]{3}-/i.test(p.materialId) ? '' : 'CMS-';
   return p.axiosInstance.get(
     `/cases/${p.caseId}/materials/${materialsPrefix}${p.materialId}/documents/${p.documentId}/pdf`,
     { responseType: 'blob' },
