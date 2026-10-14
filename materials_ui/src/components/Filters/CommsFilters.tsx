@@ -1,9 +1,5 @@
 import { ChangeEvent } from 'react';
-import {
-  communicationsCategoryList,
-  communicationsWithList,
-  typeList,
-} from '../../constants/categoryList';
+import { communicationsCategoryList, communicationsWithList } from '../../constants/categoryList';
 import { READ_STATUS } from '../../constants/readStatus';
 import { useFeatureFlag, useFilters } from '../../hooks';
 import Checkbox from '../Checkbox/Checkbox';
@@ -38,7 +34,7 @@ export const CommsFilters = () => {
     { heading: 'In/Out', data: ['Incoming', 'Outgoing'], filterGroup: 'direction' },
     { heading: 'Comms type', data: communicationsCategoryList, filterGroup: 'method' },
     { heading: 'Comms with', data: communicationsWithList, filterGroup: 'party' },
-    { heading: 'Type', data: typeList, filterGroup: 'type' },
+    // { heading: 'Type', data: typeList, filterGroup: 'type' },
   ];
 
   return (

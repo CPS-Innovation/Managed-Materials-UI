@@ -16,8 +16,7 @@ import { formatDate } from './utils/dateUtils';
 const NOTES_CHAR_COUNT_MAX_LENGTH = 500;
 
 export const DocumentSidebarNotes = (p: {
-  urn: string;
-  caseId: number;
+  caseId: string | number;
   documentId: string;
   onBackButtonClick: () => void;
   onNoteSavedSuccess: () => void;
@@ -27,11 +26,7 @@ export const DocumentSidebarNotes = (p: {
   const remainingCharacters = NOTES_CHAR_COUNT_MAX_LENGTH - text.length;
 
   const axiosInstance = useAxiosInstance();
-  const documentNotes = useGetDocumentNotes({
-    urn: p.urn,
-    caseId: p.caseId,
-    documentId: p.documentId,
-  });
+  const documentNotes = useGetDocumentNotes({ caseId: p.caseId, documentId: p.documentId });
 
   return (
     <DocumentSidebarWrapper>
@@ -74,7 +69,6 @@ export const DocumentSidebarNotes = (p: {
               onClick={async () => {
                 await postDocumentNotesFromAxiosInstance({
                   axiosInstance,
-                  urn: p.urn,
                   documentId: p.documentId,
                   caseId: p.caseId,
                   text,

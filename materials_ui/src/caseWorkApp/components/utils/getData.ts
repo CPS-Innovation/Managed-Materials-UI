@@ -1,5 +1,6 @@
 import { useMsal } from '@azure/msal-react';
 import axios, { AxiosError, AxiosInstance } from 'axios';
+import { addCmsReauthInterceptor } from '../../../auth/cmsReauth';
 import { getAccessTokenFromMsalInstance } from '../../../materials_components/DocumentSelectAccordion/getters/getAccessTokenFromMsalInstance';
 import { MATERIALS_AND_COMMS_SOURCE_CLIENT_ID, RedactionLogData } from '../../types/redactionLog';
 
@@ -21,7 +22,9 @@ export const useAxiosInstances = () => {
   const redactionLogScope = import.meta.env.VITE_REDACTION_LOG_SCOPE;
 
   return {
-    axiosInstance: createInstance(import.meta.env.VITE_POLARIS_GATEWAY_URL),
+    axiosInstance: addCmsReauthInterceptor(
+      createInstance(import.meta.env.VITE_POLARIS_GATEWAY_URL + '/api/'),
+    ),
     redactionLogAxios: createInstance(
       import.meta.env.VITE_REDACTION_LOG_URL,
       redactionLogScope ? [redactionLogScope] : undefined,
@@ -33,29 +36,38 @@ export const useAxiosInstance = () => useAxiosInstances().axiosInstance;
 
 export const getDocuments = async (p: {
   axiosInstance: AxiosInstance;
-  urn: string | undefined;
-  caseId: number | undefined;
+  caseId: number | string;
 }) => {
   try {
-    const response = await p.axiosInstance.get(`/api/urns/${p.urn}/cases/${p.caseId}/documents`);
+    const response = await p.axiosInstance.get(`/cases/${p.caseId}/documents`);
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) console.error(`Error getting documents: ${error.message}`);
   }
 };
 
+export const getPdfBlobFromAxiosInstance = (p: {
+  axiosInstance: AxiosInstance;
+  caseId: number | string;
+  materialId: string;
+  documentId: number | string;
+}) => {
+  // send ids with an existing 3 letter prefix as is, otherwise add 'CMS-'
+  const materialsPrefix = /^[A-Z]{3}-/i.test(p.materialId) ? '' : 'CMS-';
+  return p.axiosInstance.get(
+    `/cases/${p.caseId}/materials/${materialsPrefix}${p.materialId}/documents/${p.documentId}/pdf`,
+    { responseType: 'blob' },
+  );
+};
+
 export const getPdfFiles = async (p: {
   axiosInstance: AxiosInstance;
-  urn: string;
   caseId: number | string;
-  parentId: number | string;
-  childId?: number | string;
+  materialId: string;
+  documentId: number | string;
 }): Promise<{ blob: Blob; isFileTooLarge: boolean }> => {
   try {
-    const response = await p.axiosInstance.get(
-      `/api/urns/${p.urn}/cases/${p.caseId}/documents/${p.parentId}/versions/${p.childId}/pdf`,
-      { responseType: 'blob' },
-    );
+    const response = await getPdfBlobFromAxiosInstance(p);
     const fileTooLargeHeader = response.headers['cps-file-too-large'] ?? null;
     const isFileTooLarge = fileTooLargeHeader === 'true';
 
@@ -101,8 +113,4 @@ export const postRedactionLog = async (p: {
     if (error instanceof AxiosError) console.error(`Error posting redaction log: ${error.message}`);
     throw error;
   }
-};
-
-export const GetDataFromAxios = () => {
-  return { useAxiosInstance, getDocuments, getPdfFiles, getLookups, postRedactionLog };
 };

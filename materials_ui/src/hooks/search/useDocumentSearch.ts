@@ -18,7 +18,7 @@ export const useDocumentSearch = (searchTerm: string | null, trackerComplete: bo
     request
       .get<
         SearchResultType[]
-      >(`/urns/${urn}/cases/${caseId}/search/?query=${encodeURIComponent(searchTerm ?? '')}`)
+      >(`/cases/${caseId}/search/?query=${encodeURIComponent(searchTerm ?? '')}`)
       .then((res) => res.data);
 
   const { data, isLoading } = useSWR(

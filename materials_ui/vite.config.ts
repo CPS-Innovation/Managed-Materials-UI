@@ -1,4 +1,5 @@
 /// <reference types="vitest" />
+import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import fs from 'fs';
 import path from 'path';
@@ -14,6 +15,7 @@ export default defineConfig(({ mode }) => {
     base: '/materials-ui/',
     define: { __MAINTENANCE_MODE__: JSON.stringify(env.VITE_MAINTENANCE_MODE === 'true') },
     plugins: [
+      tailwindcss(),
       svgr(),
       react(),
       viteCompression({ algorithm: 'brotliCompress' }),
@@ -42,6 +44,14 @@ export default defineConfig(({ mode }) => {
           for (const file of fs.readdirSync(src)) {
             fs.copyFileSync(path.join(src, file), path.join(dest, file));
           }
+        },
+      },
+      {
+        name: 'copy-pdfjs-wasm',
+        buildStart() {
+          const src = path.resolve(import.meta.dirname, 'node_modules/pdfjs-dist/wasm');
+          const dest = path.resolve(import.meta.dirname, 'public/wasm');
+          fs.cpSync(src, dest, { recursive: true });
         },
       },
       {
@@ -79,7 +89,7 @@ export default defineConfig(({ mode }) => {
           base-uri 'self';
           default-src 'self';
           img-src 'self' data:;
-            script-src 'self' 
+            script-src 'self' 'wasm-unsafe-eval'
               https://polaris-dev-notprod.cps.gov.uk/ 
               https://polaris-qa-notprod.cps.gov.uk/
               https://sacpsglobalcomponents.blob.core.windows.net/

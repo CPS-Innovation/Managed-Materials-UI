@@ -12,7 +12,7 @@ export const useCaseWitnesses = () => {
 
   const getCaseWitnesses = async () =>
     await request
-      .get<WitnessListResponseType>(`urns/${caseInfo?.urn}/cases/${caseInfo?.id}/case-witnesses`, {
+      .get<WitnessListResponseType>(`/cases/${caseInfo?.id}/case-witnesses`, {
         params: { caseId: caseInfo?.id },
       })
       .then((response) => response.data);

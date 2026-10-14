@@ -41,6 +41,7 @@ export const CaseMaterialRenameResponseSchema = z.object({
 });
 
 export type CaseMaterialsType = z.infer<typeof CaseMaterialsSchema>;
+export type CaseMaterialsWithDocumentIdType = CaseMaterialsType & { documentId?: number };
 export type CaseMaterialsRequestType = z.infer<typeof CaseMaterialsRequestSchema>;
 export type CaseMaterialsResponseType = z.infer<typeof CaseMaterialsResponseSchema>;
 export type CaseMaterialRenameType = z.infer<typeof CaseMaterialRenameSchema>;

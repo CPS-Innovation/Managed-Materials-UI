@@ -1,16 +1,11 @@
-import pdfWorker from 'pdfjs-dist/build/pdf.worker?url';
 import { useState } from 'react';
-import { Document, Page, pdfjs } from 'react-pdf';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
 import { usePagination } from 'react-use-pagination';
 import { useLoadingAnnouncement } from '../../hooks/ui/useLoadingAnnouncement';
 import { usePageColors } from '../../hooks/ui/usePageColors';
 import { LoadingSpinner } from '../LoadingSpinner/LoadingSpinner.tsx';
+import { MacDocument, MacPage } from '../MacReactPdf/MacReactPdf.tsx';
 import { Pagination } from '../Pagination/Pagination.tsx';
 import './PdfViewer.css';
-
-pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 // TODO: update 'file' type
 type Props = { file: any; fileName: string };
@@ -36,7 +31,7 @@ export const PdfViewer = ({ file, fileName }: Props) => {
 
   return (
     <div>
-      <Document
+      <MacDocument
         className="pdf-page-container"
         file={file}
         externalLinkTarget="_blank"
@@ -53,7 +48,7 @@ export const PdfViewer = ({ file, fileName }: Props) => {
             currentPage={currentPage}
           />
         </div>
-        <Page
+        <MacPage
           pageNumber={currentPage + 1}
           renderTextLayer={true}
           renderAnnotationLayer={true}
@@ -68,7 +63,7 @@ export const PdfViewer = ({ file, fileName }: Props) => {
             currentPage={currentPage}
           />
         </div>
-      </Document>
+      </MacDocument>
     </div>
   );
 };

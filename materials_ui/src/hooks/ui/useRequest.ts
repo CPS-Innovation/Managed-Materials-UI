@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 import { useAppRoute } from '..';
+import { addCmsReauthInterceptor } from '../../auth/cmsReauth';
 import { POLARIS_GATEWAY_URL } from '../../constants/url';
 import { loginRequest } from '../../msalInstance';
 
@@ -28,6 +29,10 @@ export const useRequest = () => {
 
     return config;
   });
+
+  // Registered first so a 401 starts the CMS cookie handoff. A 401 only reaches the handler below
+  //  when the loop guard has stopped a repeat handoff, and then shows the auth error page.
+  addCmsReauthInterceptor(axiosInstance);
 
   axiosInstance.interceptors.response.use(
     (response) => response,
@@ -81,5 +86,5 @@ export const useAxiosInstance = () => {
     return config;
   });
 
-  return axiosInstance;
+  return addCmsReauthInterceptor(axiosInstance);
 };

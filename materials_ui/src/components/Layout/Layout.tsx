@@ -1,95 +1,149 @@
-import { PropsWithChildren, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
-import { Banner, CaseInfo, LoadingSpinner, Tabs } from '..';
-import { useAppRoute, useBanner } from '../../hooks';
+import { CaseInfo, LoadingSpinner, Tabs } from '..';
 import type { Tab } from '../Tabs/Tabs';
 
-import { useCaseInfoStore } from '../../stores';
-
+import { useBanner, useCaseInfo } from '../../hooks';
+import { APP_ROUTES } from '../../hooks/ui/useAppRoute';
+import { BannerType } from '../../schemas';
+import { CaseInfoResponseType } from '../../schemas/caseinfo';
 import './Layout.scss';
 
-type Props = {
-  plain?: boolean;
-  title?: string;
-  shouldBlockNavigationCheck?: (tab: Tab) => boolean;
+const getRoute = (p: {
+  caseId: number | string;
+  routeName: keyof typeof APP_ROUTES;
+  prefix: boolean;
+}) => {
+  const { caseId, routeName, prefix } = p;
+  const routePrefix = caseId && prefix ? `/${caseId}/` : '';
+
+  return `${routePrefix}${APP_ROUTES[routeName]}`;
 };
 
-export const Layout = ({
-  children,
-  plain = false,
-  title,
-  shouldBlockNavigationCheck,
-}: PropsWithChildren<Props>) => {
-  const { banners } = useBanner();
-  const { caseInfo, isLoading: caseInfoLoading } = useCaseInfoStore();
-  const location = useLocation();
-  const { getRoute } = useAppRoute();
-
-  const initTabs: Tab[] = [
-    {
-      id: 'pcd-request',
-      name: 'PCD Request',
-      href: getRoute('PCD_REQUEST'),
-      active: location.pathname === '/' || location.pathname.includes(getRoute('PCD_REQUEST')),
-    },
-    {
-      id: 'materials',
-      name: 'Materials',
-      href: getRoute('MATERIALS'),
-      active: location.pathname === getRoute('MATERIALS'),
-    },
-    {
-      id: 'review-redact',
-      name: 'Review and Redact',
-      href: getRoute('REVIEW_REDACT'),
-      active: location.pathname === getRoute('REVIEW_REDACT'),
-    },
-    {
-      id: 'communications',
-      name: 'Communications',
-      href: getRoute('COMMUNICATIONS'),
-      active: location.pathname === getRoute('COMMUNICATIONS'),
-    },
-    {
-      id: 'pcd-review',
-      name: 'Reviews',
-      href: getRoute('PCD_REVIEW'),
-      active: location.pathname === '/' || location.pathname.includes(getRoute('PCD_REVIEW')),
-    },
-  ];
-
-  const tabs = initTabs.map((tab) => ({ ...tab, shouldBlockNavigationCheck }));
-
+export const PlainLayout = (p: { children: React.ReactNode; title?: string }) => {
   useEffect(() => {
-    if (title) {
-      document.title = title + ' - Manage Materials and Communications';
-    }
-  }, [location, title]);
+    if (p.title) document.title = p.title + ' - Manage Materials and Communications';
+  }, [p.title]);
+
+  return <main className="main-container">{p.children}</main>;
+};
+
+const createTabs = (p: { caseId: number | string; currentPath: string }): Tab[] => {
+  const { caseId, currentPath } = p;
+
+  return [
+    (() => {
+      const route = getRoute({ caseId, routeName: 'PCD_REQUEST', prefix: true });
+      return { id: 'pcd-request', name: 'PCD Request', href: route, active: currentPath === route };
+    })(),
+    (() => {
+      const route = getRoute({ caseId, routeName: 'MATERIALS', prefix: true });
+      return { id: 'materials', name: 'Materials', href: route, active: currentPath === route };
+    })(),
+    (() => {
+      const route = getRoute({ caseId, routeName: 'REVIEW_REDACT', prefix: true });
+      return {
+        id: 'review-redact',
+        name: 'Review and Redact',
+        href: route,
+        active: currentPath === route,
+      };
+    })(),
+    (() => {
+      const route = getRoute({ caseId, routeName: 'COMMUNICATIONS', prefix: true });
+      return {
+        id: 'communications',
+        name: 'Communications',
+        href: route,
+        active: currentPath === route,
+      };
+    })(),
+    (() => {
+      const route = getRoute({ caseId, routeName: 'PCD_REVIEW', prefix: true });
+      return { id: 'pcd-review', name: 'Reviews', href: route, active: currentPath === route };
+    })(),
+  ];
+};
+
+export const Layout = (p: {
+  children: React.ReactNode;
+  caseId: number | string;
+  title?: string;
+  shouldBlockNavigationCheck?: (tab: Tab) => boolean;
+}) => {
+  const { children, title, caseId, shouldBlockNavigationCheck } = p;
+
+  const location = useLocation();
+
+  const { caseInfo, loading: caseInfoLoading } = useCaseInfo({ caseId });
+
+  const tabs = createTabs({ caseId, currentPath: location.pathname }).map((tab) => ({
+    ...tab,
+    shouldBlockNavigationCheck,
+  }));
 
   return (
-    <>
-      <main className="main-container">
-        <div>{banners && banners.map((banner, index) => <Banner key={index} {...banner} />)}</div>
+    <PlainLayout title={title}>
+      <LoadingSpinner isLoading={caseInfoLoading || !caseInfo} textContent="Loading case" />
+      {!caseInfoLoading && caseInfo && (
+        <>
+          <CaseInfo caseInfo={caseInfo} />
+          <Tabs tabs={tabs} />
+          <div id="main-content">
+            <Outlet />
+            {children}
+          </div>
+        </>
+      )}
+    </PlainLayout>
+  );
+};
 
-        {!plain ? (
-          <>
-            <LoadingSpinner isLoading={caseInfoLoading || !caseInfo} textContent="Loading case" />
-            {!caseInfoLoading && caseInfo && (
-              <>
-                <CaseInfo caseInfo={caseInfo} />
-                <Tabs tabs={tabs} />
-                <div id="main-content">
-                  <Outlet />
-                  {children}
-                </div>
-              </>
-            )}
-          </>
-        ) : (
-          children
-        )}
-      </main>
-    </>
+export const LayoutLoadingTemplate = (p: { title: string }) => {
+  return (
+    <PlainLayout title={p.title}>
+      <LoadingSpinner isLoading textContent="Loading case" />
+    </PlainLayout>
+  );
+};
+
+export const LayoutErrorTemplate = (p: { bannerError: BannerType }) => {
+  const { setBanner, resetBanner } = useBanner();
+  const { type, header, content, identifier } = p.bannerError;
+
+  useEffect(() => {
+    setBanner({ type, header, content, identifier });
+    return () => {
+      resetBanner();
+    };
+  }, [type, header, content, identifier]);
+  return <></>;
+};
+
+export const LayoutLoadedTemplate = (p: {
+  children: React.ReactNode;
+  caseInfo: CaseInfoResponseType;
+  title: string;
+  shouldBlockNavigationCheck?: (tab: Tab) => boolean;
+}) => {
+  const { children, caseInfo, title, shouldBlockNavigationCheck } = p;
+
+  const location = useLocation();
+
+  const tabs = createTabs({ caseId: caseInfo.id, currentPath: location.pathname }).map((tab) => ({
+    ...tab,
+    shouldBlockNavigationCheck,
+  }));
+
+  return (
+    <PlainLayout title={title}>
+      <CaseInfo caseInfo={caseInfo} />
+      <Tabs tabs={tabs} />
+      <div id="main-content">
+        <Outlet />
+        {children}
+      </div>
+    </PlainLayout>
   );
 };

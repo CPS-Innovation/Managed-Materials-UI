@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import { useCaseMaterials, useFilters, usePager } from '../../hooks';
 
-import { CaseMaterialsType } from '../../schemas';
+import { CaseMaterialsWithDocumentIdType } from '../../schemas/caseMaterials';
 import { defaultFilterFn, defaultSearchFn, defaultSortFn, getSortFn } from '../../utils/filtering';
 import SortableTable, { Column } from './SortableTable';
 
@@ -25,7 +25,7 @@ export const CaseMaterialsTable = () => {
   const { filters } = useFilters('materials');
   const { materialTags } = useMaterialTags();
 
-  const columns = useMemo<Column<CaseMaterialsType>[]>(
+  const columns = useMemo<Column<CaseMaterialsWithDocumentIdType>[]>(
     () => [
       {
         key: 'subject',
@@ -74,14 +74,14 @@ export const CaseMaterialsTable = () => {
 
   const filteredSortedData = useMemo(() => {
     const sortFn = getSortFn(columns, filters?.sort, (sortConfig) =>
-      defaultSortFn<CaseMaterialsType>(sortConfig),
+      defaultSortFn<CaseMaterialsWithDocumentIdType>(sortConfig),
     );
-    const sortByStatusFn = defaultSortFn<CaseMaterialsType>({
+    const sortByStatusFn = defaultSortFn<CaseMaterialsWithDocumentIdType>({
       column: 'statusLabel',
       direction: 'descending',
     });
-    const filterFn = defaultFilterFn<CaseMaterialsType>(filters?.filters);
-    const searchFn = defaultSearchFn<CaseMaterialsType>('subject', filters?.search);
+    const filterFn = defaultFilterFn<CaseMaterialsWithDocumentIdType>(filters?.filters);
+    const searchFn = defaultSearchFn<CaseMaterialsWithDocumentIdType>('subject', filters?.search);
 
     return filteredData
       ?.map((material) => {
@@ -115,7 +115,7 @@ export const CaseMaterialsTable = () => {
       initialPage: currentPageParam ? +currentPageParam - 1 : 0,
     });
 
-  const expandableRow = (row: CaseMaterialsType) => <DocumentPreview row={row} />;
+  const expandableRow = (row: CaseMaterialsWithDocumentIdType) => <DocumentPreview row={row} />;
 
   const recordsOnCurrentPage = endIndex + 1 - startIndex;
 

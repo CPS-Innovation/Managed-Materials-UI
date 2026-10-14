@@ -7,6 +7,7 @@
   "scripts": {
     "postinstall": "husky",
     "tsc": "cd materials_ui && npm run tsc",
-    "dev": "cd materials_ui && npm run dev"
+    "dev": "cd materials_ui && npm run dev",
+    "build:tailwind": "cd materials_ui && npm run build:tailwind"
   }
 }

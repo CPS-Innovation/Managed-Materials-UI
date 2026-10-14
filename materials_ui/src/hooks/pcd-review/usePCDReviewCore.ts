@@ -9,14 +9,13 @@ export const usePCDReviewCore = () => {
 
   const appRoute = useAppRoute();
 
-  const urn = appRoute?.urnPrefix;
   const caseId = appRoute?.caseId?.toString();
 
-  const caseInfo = urn && caseId ? { urn, caseId } : null;
+  const caseInfo = caseId ? { caseId } : null;
 
   const getPCDReviewCore = async () => {
     try {
-      const response = await request.get(`urns/${urn}/cases/${caseId}/pcd-review-core`);
+      const response = await request.get(`cases/${caseId}/pcd-review-core`);
 
       const parsedResponse = PCDReviewCoreSchema.safeParse(response.data);
 

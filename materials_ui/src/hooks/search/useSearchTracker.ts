@@ -10,9 +10,9 @@ export const useSearchTracker = (trigger: unknown) => {
   const urn = caseInfo?.urn;
   const caseId = caseInfo?.id.toString();
 
-  const postInit = () => request.post(`/urns/${urn}/cases/${caseId}`);
+  const postInit = () => request.post(`/cases/${caseId}`);
 
-  const getTracker = () => request.get(`/urns/${urn}/cases/${caseId}/tracker`);
+  const getTracker = () => request.get(`/cases/${caseId}/tracker`);
 
   // Start pipeline once per case when first search is triggered
   const { data: postData } = useSWR(trigger ? ['tracker-init', urn, caseId] : null, postInit, {

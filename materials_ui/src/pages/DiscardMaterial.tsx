@@ -2,7 +2,8 @@ import { FormEvent, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { DISCARD_MATERIAL_OPTIONS } from '../constants';
 
-import { Layout, LoadingSpinner, RadioOption, Radios } from '../components';
+import { LoadingSpinner, RadioOption, Radios } from '../components';
+import { PlainLayout } from '../components/Layout/Layout';
 import { URL } from '../constants/url';
 import { useAppRoute, useBanner, useCaseMaterials, useDiscard } from '../hooks';
 import { trackAction } from '../telemetry/appInsights';
@@ -78,7 +79,7 @@ export const DiscardMaterialPage = () => {
     <>
       <LoadingSpinner isLoading={isDiscarding} />
       {!isDiscarding && (
-        <Layout plain title="Discard Material">
+        <PlainLayout title="Discard Material">
           <Link
             to={returnTo}
             onClick={(e) => {
@@ -126,7 +127,7 @@ export const DiscardMaterialPage = () => {
               </div>
             </form>
           </div>
-        </Layout>
+        </PlainLayout>
       )}
     </>
   );

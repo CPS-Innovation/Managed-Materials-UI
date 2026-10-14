@@ -1,28 +1,51 @@
 import useSWR from 'swr';
 import { useAppRoute, useRequest } from '..';
+import { useAxiosInstance } from '../../caseWorkApp/components/utils/getData';
 import { QUERY_KEYS } from '../../constants/query';
+import {
+  safeGetDocumentListFromAxiosInstance,
+  TDocument,
+} from '../../materials_components/DocumentSelectAccordion/getters/getDocumentList';
 import { CaseMaterialDataType, CaseMaterialsResponseType } from '../../schemas';
+import { stripCmsPrefix } from '../../utils/cmsStringTransform';
 
 type UseCaseMaterialsProps = { dataType: CaseMaterialDataType };
 
 export const useCaseMaterials = ({ dataType }: UseCaseMaterialsProps) => {
   const request = useRequest();
+  const axiosInstance = useAxiosInstance();
 
-  const { urnPrefix: urn, caseId } = useAppRoute();
-  const caseInfo = urn && caseId ? { urn, caseId } : null;
+  const { caseId } = useAppRoute();
+  const caseInfo = caseId ? { caseId } : null;
 
-  const materialsKey = caseInfo ? [QUERY_KEYS.CASE_MATERIAL, caseId, urn] : null;
+  const materialsKey = caseInfo ? [QUERY_KEYS.CASE_MATERIAL, caseId] : null;
 
   const getCaseMaterials = async () => {
-    const response = await request.get<CaseMaterialsResponseType>(
-      `/urns/${urn}/cases/${caseId}/case-materials`,
+    const caseMaterialsPromise = request.get<CaseMaterialsResponseType>(
+      `/cases/${caseId}/case-materials`,
     );
 
-    if (response.status === 422 || response.status !== 200) {
-      throw new Error(`Validation error: Unable to process ${dataType} request`);
-    }
+    const documentsListPromise = safeGetDocumentListFromAxiosInstance({ axiosInstance, caseId });
 
-    return response.data;
+    const [caseMaterialsResponse, documentsListResponse] = await Promise.all([
+      caseMaterialsPromise,
+      documentsListPromise,
+    ]);
+
+    if (caseMaterialsResponse.status !== 200 || !documentsListResponse.success)
+      throw new Error(`Validation error: Unable to process ${dataType} request`);
+
+    const indexedDocumentsList: { [k: string]: TDocument } = {};
+    documentsListResponse.data.forEach(
+      (document) => (indexedDocumentsList[stripCmsPrefix(document.parentId)] = document),
+    );
+
+    const caseMaterials = caseMaterialsResponse.data.map((material) => ({
+      ...material,
+      documentId: indexedDocumentsList[material.id]?.childId,
+    }));
+
+    return caseMaterials;
   };
 
   const { data, error, isLoading, isValidating, mutate } = useSWR(materialsKey, getCaseMaterials, {

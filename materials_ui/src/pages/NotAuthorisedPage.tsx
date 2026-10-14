@@ -1,9 +1,9 @@
 import NewWindowIcon from '../assets/images/new-window-grey.svg';
-import { Layout } from '../components';
+import { PlainLayout } from '../components/Layout/Layout';
 
 export const NotAuthorisedPage = () => {
   return (
-    <Layout plain title="Error">
+    <PlainLayout title="Error">
       <>
         <h1 className="govuk-heading-l">Authentication error</h1>
 
@@ -25,6 +25,6 @@ export const NotAuthorisedPage = () => {
 
         <div className="govuk-inset-text">CMS_AUTH_ERROR: Unable to connect to CMS.</div>
       </>
-    </Layout>
+    </PlainLayout>
   );
 };

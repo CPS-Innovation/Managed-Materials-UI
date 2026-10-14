@@ -21,12 +21,13 @@ import {
 } from './utils/DocumentSidebarLocalStorageUtils';
 import { areSetsEqual } from './utils/generalUtils';
 
-const createOpenDocumentAccordionSectionKey = (p: { caseId: number; sectionTitle: string }) =>
-  `openDocumentAccordionSection-${p.caseId}-${p.sectionTitle}`;
+const createOpenDocumentAccordionSectionKey = (p: {
+  caseId: string | number;
+  sectionTitle: string;
+}) => `openDocumentAccordionSection-${p.caseId}-${p.sectionTitle}`;
 
 export const DocumentSidebarAccordion = (p: {
-  caseId: number;
-  urn: string;
+  caseId: string | number;
   documentList: TDocumentList;
   openDocumentIds: string[];
   activeDocumentId: string | undefined | null;
@@ -131,7 +132,6 @@ export const DocumentSidebarAccordion = (p: {
                     ActionComponent={
                       p.ActionComponent ? <p.ActionComponent document={document} /> : null
                     }
-                    urn={p.urn}
                     caseId={p.caseId}
                   />
                 ))

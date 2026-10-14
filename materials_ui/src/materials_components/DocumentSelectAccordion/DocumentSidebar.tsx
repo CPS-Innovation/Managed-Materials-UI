@@ -4,8 +4,7 @@ import { DocumentSidebarNotes } from './DocumentSidebarNotes';
 import { TDocument, useGetDocumentList } from './getters/getDocumentList';
 
 export const DocumentSidebar = (p: {
-  urn: string;
-  caseId: number;
+  caseId: string | number;
   openDocumentIds: string[];
   activeDocumentId: string | null | undefined;
   newVersionDocumentId: string | null | undefined;
@@ -15,7 +14,7 @@ export const DocumentSidebar = (p: {
   onDocumentClick?: (docId: string) => void;
   ActionComponent?: (p: { document: TDocument }) => React.ReactNode;
 }) => {
-  const { caseId, urn } = p;
+  const { caseId } = p;
   const [mode, setMode] = useState<{ view: 'accordion' } | { view: 'notes'; documentId: string }>({
     view: 'accordion',
   });
@@ -29,7 +28,6 @@ export const DocumentSidebar = (p: {
       <div>
         <DocumentSidebarAccordion
           caseId={caseId}
-          urn={urn}
           documentList={p.documentListState.data}
           activeDocumentId={p.activeDocumentId}
           newVersionDocumentId={p.newVersionDocumentId}
@@ -49,7 +47,6 @@ export const DocumentSidebar = (p: {
       <DocumentSidebarNotes
         documentId={documentId}
         caseId={caseId}
-        urn={urn}
         onBackButtonClick={() => setMode({ view: 'accordion' })}
         onNoteSavedSuccess={() => setMode({ view: 'accordion' })}
       />

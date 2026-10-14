@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { TLookupsResponse } from '../../caseWorkApp/types/redaction';
 import { CHARGE_STATUS_SELECT_OPTIONS } from '../../constants/chargeStatus';
+import { CaseType } from '../../schemas/caseDetails';
 import { Popover } from './Popover';
 import { RedactionLogFormInputs } from './RedactionLogModal';
 import styles from './RedactionLogModal.module.scss';
 import { SelectDropdown } from './templates/Select';
 
-type RedactionLogModalHeaderProps = { urn: string; lookups?: TLookupsResponse };
-
-export const RedactionLogModalHeader = ({ urn, lookups }: RedactionLogModalHeaderProps) => {
+export const RedactionLogModalHeader = (p: { lookups?: TLookupsResponse; case: CaseType }) => {
+  const { lookups } = p;
   const areas = lookups?.areas || [];
   const divisions = lookups?.divisions || [];
   const investigatingAgencies = lookups?.investigatingAgencies || [];
@@ -45,7 +45,9 @@ export const RedactionLogModalHeader = ({ urn, lookups }: RedactionLogModalHeade
           position: 'relative',
         }}
       >
-        <h1 className="govuk-heading-l govuk-!-margin-bottom-0">{urn} - Redaction Log</h1>
+        <h1 className="govuk-heading-l govuk-!-margin-bottom-0">
+          {p.case.uniqueReferenceNumber} - Redaction Log
+        </h1>
         <a
           className="govuk-link"
           style={{ fontSize: '19px' }}

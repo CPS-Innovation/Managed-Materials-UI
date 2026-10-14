@@ -52,8 +52,7 @@ const Tooltip = (p: { text: string }) => {
 };
 
 export const DocumentSidebarAccordionDocument = (p: {
-  urn: string;
-  caseId: number;
+  caseId: string | number;
   document: TDocument;
   activeDocumentId: string | null | undefined;
   newVersionDocumentId: string | null | undefined;
@@ -64,7 +63,6 @@ export const DocumentSidebarAccordionDocument = (p: {
   ActionComponent?: React.ReactNode;
 }) => {
   const documentNotes = useGetDocumentNotes({
-    urn: p.urn,
     caseId: p.caseId,
     documentId: p.document.parentId,
     revalidateOnMount: false,
@@ -90,7 +88,6 @@ export const DocumentSidebarAccordionDocument = (p: {
       showLeftBorder={p.activeDocumentId === p.document.parentId}
       showRightBorder={p.openDocumentIds.includes(p.document.parentId)}
       backgroundColor={p.readDocumentIds.includes(p.document.parentId) ? 'white' : 'blue'}
-      // backgroundColor="blue"
       notesStatus={(() => {
         if (
           p.document.cmsDocType.documentType === 'PCD' ||

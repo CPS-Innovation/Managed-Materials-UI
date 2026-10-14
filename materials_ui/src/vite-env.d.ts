@@ -5,6 +5,8 @@ interface ImportMetaEnv {
   readonly VITE_REDACTION_LOG_SCOPE: string;
   readonly VITE_POLARIS_GATEWAY_SCOPE: string;
   readonly VITE_POLARIS_GATEWAY_URL: string;
+  readonly VITE_REAUTH_REDIRECT_URL_OUTBOUND: string;
+  readonly VITE_REAUTH_REDIRECT_URL_INBOUND: string;
   readonly VITE_REDACTION_LOG_URL: string;
   readonly VITE_APPLICATIONINSIGHTS_CONNECTION_STRING: string;
   readonly VITE_APPLICATIONINSIGHTS_SAMPLING_PERCENTAGE: string;

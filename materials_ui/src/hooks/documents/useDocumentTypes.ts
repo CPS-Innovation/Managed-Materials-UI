@@ -11,7 +11,7 @@ export const useDocumentTypes = () => {
 
   const getDocumentTypes = async () =>
     await request
-      .get<DocumentTypeResponseType>(`/urns/${caseInfo?.urn}/cases/${caseInfo?.id}/document-types`)
+      .get<DocumentTypeResponseType>(`/cases/${caseInfo?.id}/document-types`)
       .then((response) => response.data);
 
   const { data: documentTypes, isLoading } = useSWR(

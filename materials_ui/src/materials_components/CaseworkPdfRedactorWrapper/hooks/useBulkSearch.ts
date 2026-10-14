@@ -12,7 +12,7 @@ export type TBulkSearchInternalState =
 
 export const useBulkSearch = (p: {
   axiosInstance: AxiosInstance;
-  caseId: number;
+  caseId: string | number;
   materialId: string;
   documentId: number;
 }) => {

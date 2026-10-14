@@ -1,12 +1,13 @@
 import { useMsal } from '@azure/msal-react';
 import axios from 'axios';
+import { addCmsReauthInterceptor } from '../../../auth/cmsReauth';
 import { getAccessTokenFromMsalInstance } from './getAccessTokenFromMsalInstance';
 
 export const useAxiosInstance = () => {
   const { instance: msalInstance } = useMsal();
 
   const axiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_POLARIS_GATEWAY_URL,
+    baseURL: import.meta.env.VITE_POLARIS_GATEWAY_URL + '/api/',
     withCredentials: true,
   });
 
@@ -19,5 +20,5 @@ export const useAxiosInstance = () => {
     return config;
   });
 
-  return axiosInstance;
+  return addCmsReauthInterceptor(axiosInstance);
 };

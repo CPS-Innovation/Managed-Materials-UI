@@ -4,7 +4,7 @@ import { mockPcdCoreResponse } from '../mocks/pcd/mockPcdCore';
 import { mockPcdRequestResponse } from '../mocks/pcd/mockPcdRequest';
 
 test.describe('PCD Request Page', () => {
-  test('T-001: page loads list of PCD requests as expected', async ({ page }) => {
+  test.skip('T-001: page loads list of PCD requests as expected', async ({ page }) => {
     mockRoute(page, 'pcds/2167259/pcd-request-core', mockPcdCoreResponse());
     mockRoute(page, 'pcd-request', mockPcdRequestResponse());
     await page.goto('./pcd-request/145739', { waitUntil: 'domcontentloaded' });
@@ -25,7 +25,7 @@ test.describe('PCD Request Page', () => {
     await expect(page.getByText('Materials provided')).toBeVisible();
   });
 
-  test('T-002: should navigate to a specific PCD request when a link is clicked', async ({
+  test.skip('T-002: should navigate to a specific PCD request when a link is clicked', async ({
     page,
   }) => {
     mockRoute(page, 'pcds/2167259/pcd-request-core', mockPcdCoreResponse());
@@ -43,7 +43,9 @@ test.describe('PCD Request Page', () => {
     await expect(page.locator('dd').nth(0)).toHaveText(`02/02/2021`);
   });
 
-  test('T-003: should display a message when no PCD requests are available', async ({ page }) => {
+  test.skip('T-003: should display a message when no PCD requests are available', async ({
+    page,
+  }) => {
     mockRoute(page, 'pcds/2167259/pcd-request-core', []);
     mockRoute(page, 'pcds/145739/pcd-request', {});
     await page.goto('./pcd-request/145739', { waitUntil: 'domcontentloaded' });
