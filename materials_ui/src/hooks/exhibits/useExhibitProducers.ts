@@ -12,9 +12,7 @@ export const useExhibitProducers = () => {
 
   const getExhibitProducers = async () =>
     await request
-      .get<ExhibitProducerResponseType>(
-        `urns/${caseInfo?.urn}/cases/${caseInfo?.id}/case-exhibit-producers`,
-      )
+      .get<ExhibitProducerResponseType>(`/cases/${caseInfo?.id}/case-exhibit-producers`)
       .then((response) => response.data);
 
   const { data, isLoading, isValidating } = useSWR(
