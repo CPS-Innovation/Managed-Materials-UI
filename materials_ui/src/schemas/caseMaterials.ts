@@ -2,11 +2,13 @@ import { z } from 'zod';
 
 export const CaseMaterialsSchema = z.object({
   id: z.number(),
+  materialId: z.number(),
+  documentId: z.number(),
+  // TODO: remove. parentId is temporary until the backend drops prefixes
+  parentId: z.string(),
   originalFileName: z.string(),
   subject: z.string(),
   documentTypeId: z.number(),
-  materialId: z.number(),
-  link: z.string(),
   category: z.string(),
   type: z.string(),
   hasAttachments: z.boolean(),
@@ -19,12 +21,20 @@ export const CaseMaterialsSchema = z.object({
   date: z.date(),
   recordedDate: z.date().nullable(),
   witnessId: z.number().nullable(),
-  title: z.string(),
-  producer: z.string(),
-  reference: z.string(),
-  item: z.string(),
-  existingproducerOrWitnessId: z.number(),
+  title: z.string().nullable(),
+  producer: z.string().nullable(),
+  item: z.string().nullable(),
+  existingProducerOrWitnessId: z.number().nullable(),
   isReclassifiable: z.boolean(),
+  cmsDocType: z.object({
+    documentTypeId: z.number(),
+    documentType: z.string().nullable(),
+    documentCategory: z.string(),
+  }),
+  presentationFlags: z.object({ read: z.string(), write: z.string() }),
+  hasNotes: z.boolean(),
+  isUnused: z.boolean(),
+  reference: z.string().nullable(),
 });
 
 export const CaseMaterialDataSchema = z.enum(['materials', 'communications']);
@@ -41,7 +51,6 @@ export const CaseMaterialRenameResponseSchema = z.object({
 });
 
 export type CaseMaterialsType = z.infer<typeof CaseMaterialsSchema>;
-export type CaseMaterialsWithDocumentIdType = CaseMaterialsType & { documentId?: number };
 export type CaseMaterialsRequestType = z.infer<typeof CaseMaterialsRequestSchema>;
 export type CaseMaterialsResponseType = z.infer<typeof CaseMaterialsResponseSchema>;
 export type CaseMaterialRenameType = z.infer<typeof CaseMaterialRenameSchema>;

@@ -3,7 +3,7 @@ import { Checkbox, DocumentActions, LoadingSpinner } from '..';
 import { FilterItem } from '../../context/FiltersContext/helpers/types';
 import { useAutoReclassify, useCaseMaterial, useFilters } from '../../hooks';
 import { CaseMaterialDataType } from '../../schemas';
-import { CaseMaterialsWithDocumentIdType } from '../../schemas/caseMaterials';
+import { CaseMaterialsType } from '../../schemas/caseMaterials';
 import { useSelectedItemsStore } from '../../stores';
 import { ColumnSortFn } from '../../utils/filtering';
 import { SortDirection, SortDirectionIcon } from './SortDirectionIcon';
@@ -18,7 +18,7 @@ export type Column<T> = {
 };
 
 type SortableTableProps<T> = {
-  data: CaseMaterialsWithDocumentIdType[];
+  data: CaseMaterialsType[];
   caption: string;
   filters?: FilterItem;
   columns: Column<T>[];
@@ -64,7 +64,7 @@ const SortableTable = <T,>({
     setSort(key);
   };
 
-  const handleSelectItem = (material: CaseMaterialsWithDocumentIdType) => {
+  const handleSelectItem = (material: CaseMaterialsType) => {
     const isSelected = selectedItems[materialType]?.some(
       (m) => m.materialId === material.materialId,
     );
@@ -179,7 +179,7 @@ const SortableTable = <T,>({
                             className="govuk-table__cell"
                             style={{ fontVariantLigatures: 'none' }}
                           >
-                            {/* @ts-expect-error generic type mismatch with CaseMaterialsWithDocumentIdType */}
+                            {/* @ts-expect-error generic type mismatch with CaseMaterialsType */}
                             {col.render ? col.render(row) : row[col.key]}
                           </td>
                         ))}

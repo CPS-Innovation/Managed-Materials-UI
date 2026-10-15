@@ -1,18 +1,17 @@
 import { beforeEach, describe } from 'vitest';
 
-import { CaseMaterialsWithDocumentIdType } from '../../schemas/caseMaterials';
+import { CaseMaterialsType } from '../../schemas/caseMaterials';
 import { useSelectedItemsStore } from '../../stores';
 
-function getMaterial(
-  override?: Partial<CaseMaterialsWithDocumentIdType>,
-): CaseMaterialsWithDocumentIdType {
+function getMaterial(override?: Partial<CaseMaterialsType>): CaseMaterialsType {
   return {
     id: 1,
+    materialId: 1,
+    documentId: 1,
+    parentId: 'CMS-1',
     originalFileName: 'test0filename.pdf',
     subject: 'test subject',
     documentTypeId: 22,
-    materialId: 1,
-    link: '',
     category: 'some category',
     type: '',
     hasAttachments: false,
@@ -28,8 +27,12 @@ function getMaterial(
     producer: '',
     reference: '',
     item: '',
-    existingproducerOrWitnessId: 0,
+    existingProducerOrWitnessId: 0,
     isReclassifiable: false,
+    cmsDocType: { documentTypeId: 22, documentType: null, documentCategory: 'some category' },
+    presentationFlags: { read: 'Ok', write: 'Ok' },
+    hasNotes: false,
+    isUnused: false,
     ...override,
   };
 }

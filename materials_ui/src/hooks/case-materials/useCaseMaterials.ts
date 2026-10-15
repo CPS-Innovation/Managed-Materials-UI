@@ -1,19 +1,12 @@
 import useSWR from 'swr';
 import { useAppRoute, useRequest } from '..';
-import { useAxiosInstance } from '../../caseWorkApp/components/utils/getData';
 import { QUERY_KEYS } from '../../constants/query';
-import {
-  safeGetDocumentListFromAxiosInstance,
-  TDocument,
-} from '../../materials_components/DocumentSelectAccordion/getters/getDocumentList';
 import { CaseMaterialDataType, CaseMaterialsResponseType } from '../../schemas';
-import { stripCmsPrefix } from '../../utils/cmsStringTransform';
 
 type UseCaseMaterialsProps = { dataType: CaseMaterialDataType };
 
 export const useCaseMaterials = ({ dataType }: UseCaseMaterialsProps) => {
   const request = useRequest();
-  const axiosInstance = useAxiosInstance();
 
   const { caseId } = useAppRoute();
   const caseInfo = caseId ? { caseId } : null;
@@ -21,31 +14,13 @@ export const useCaseMaterials = ({ dataType }: UseCaseMaterialsProps) => {
   const materialsKey = caseInfo ? [QUERY_KEYS.CASE_MATERIAL, caseId] : null;
 
   const getCaseMaterials = async () => {
-    const caseMaterialsPromise = request.get<CaseMaterialsResponseType>(
-      `/cases/${caseId}/case-materials`,
-    );
+    const response = await request.get<CaseMaterialsResponseType>(`/cases/${caseId}/documents`);
 
-    const documentsListPromise = safeGetDocumentListFromAxiosInstance({ axiosInstance, caseId });
-
-    const [caseMaterialsResponse, documentsListResponse] = await Promise.all([
-      caseMaterialsPromise,
-      documentsListPromise,
-    ]);
-
-    if (caseMaterialsResponse.status !== 200 || !documentsListResponse.success)
+    if (response.status !== 200)
       throw new Error(`Validation error: Unable to process ${dataType} request`);
 
-    const indexedDocumentsList: { [k: string]: TDocument } = {};
-    documentsListResponse.data.forEach(
-      (document) => (indexedDocumentsList[stripCmsPrefix(document.parentId)] = document),
-    );
-
-    const caseMaterials = caseMaterialsResponse.data.map((material) => ({
-      ...material,
-      documentId: indexedDocumentsList[material.id]?.childId,
-    }));
-
-    return caseMaterials;
+    // TODO: will need to adapt filter when backend removes prefix and parentId
+    return response.data.filter((material) => material.parentId.startsWith('CMS-'));
   };
 
   const { data, error, isLoading, isValidating, mutate } = useSWR(materialsKey, getCaseMaterials, {

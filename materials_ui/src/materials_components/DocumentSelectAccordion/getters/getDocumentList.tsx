@@ -62,11 +62,11 @@ export const getDocumentListFromAxiosInstance = async (p: {
 export const getDocumentFromAxiosInstance = async (p: {
   axiosInstance: AxiosInstance;
   caseId: number | undefined;
-  documentId: string | undefined;
-  versionId: number | undefined;
+  materialId: string | undefined;
+  documentId: number | undefined;
 }) => {
   const response = await p.axiosInstance.get(
-    `/cases/${p.caseId}/materials/${p.documentId}/documents/${p.versionId}`,
+    `/cases/${p.caseId}/materials/${p.materialId}/documents/${p.documentId}`,
   );
 
   return response.data;
