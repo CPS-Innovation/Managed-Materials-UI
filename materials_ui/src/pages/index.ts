@@ -1,6 +1,7 @@
 export { CommunicationsPage } from './Communications';
 export { DiscardMaterialPage } from './DiscardMaterial';
 export { EditMaterialPage } from './EditMaterial';
+export { InboundHandoverPage } from './InboundHandover';
 export { MaterialsPage } from './Materials';
 export { NotAuthorisedPage } from './NotAuthorisedPage';
 export { NotFoundPage } from './NotFoundPage';
