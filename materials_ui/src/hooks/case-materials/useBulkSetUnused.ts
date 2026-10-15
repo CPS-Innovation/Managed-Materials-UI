@@ -24,10 +24,7 @@ export const useBulkSetUnused = ({ onError, onSuccess }: UseBulkSetUnusedOptions
     resetBanner();
 
     return request
-      .post<BulkSetUnusedResponseType>(
-        `urns/${caseInfo?.urn}/cases/${caseInfo?.id}/bulk-set-unused`,
-        data,
-      )
+      .post<BulkSetUnusedResponseType>(`/cases/${caseInfo?.id}/bulk-set-unused`, data)
       .then((response) => response);
   };
 
