@@ -17,7 +17,6 @@ export const APP_ROUTES = {
   CASE_SEARCH: 'case-search',
   TWO_TABS: 'two-tabs',
   UPDATE_MATERIAL: 'update-material',
-  INBOUND_HANDOVER: 'go',
 } as const;
 
 type AppRouteKey = keyof typeof APP_ROUTES;
