@@ -4,7 +4,7 @@ import { mockCaseMaterials } from '../mocks/mockCaseMaterials';
 
 test.describe('Materials page', () => {
   test.beforeEach(async ({ page }) => {
-    await mockRoute(page, '/case-materials', mockCaseMaterials());
+    await mockRoute(page, '/documents', mockCaseMaterials());
     await page.goto('./materials', { waitUntil: 'domcontentloaded' });
     await page.waitForRequest('**/case-info/2167259');
   });
@@ -12,7 +12,7 @@ test.describe('Materials page', () => {
   test.skip('T-001: page loads list of materials', async ({ page }) => {
     mockRoute(
       page,
-      '/case-materials',
+      '/documents',
       mockCaseMaterials({
         subject: 'MG11 Shelagh  Mc Love Undated',
         type: 'Statement',
@@ -29,7 +29,7 @@ test.describe('Materials page', () => {
   test.skip('T-002: page shows no materials text if no materials are displayed', async ({
     page,
   }) => {
-    mockRoute(page, '/case-materials', []);
+    mockRoute(page, '/documents', []);
 
     // no materials
     await page.waitForSelector('tbody'); // Ensure table exists first
@@ -41,7 +41,7 @@ test.describe('Materials page', () => {
   test.skip('T-003: user is able to filter by used status', async ({ page }) => {
     mockRoute(
       page,
-      '/case-materials',
+      '/documents',
       mockCaseMaterials({
         subject: 'MG11 Shelagh  Mc Love Undated',
         type: 'Statement',
@@ -59,7 +59,7 @@ test.describe('Materials page', () => {
   test.skip('T-004: user is able to filter by unused status', async ({ page }) => {
     mockRoute(
       page,
-      '/case-materials',
+      '/documents',
       mockCaseMaterials({
         subject: 'Stmt: Twob DCPTWIFVIC',
         type: 'Statement',
@@ -77,7 +77,7 @@ test.describe('Materials page', () => {
   test.skip('T-005: user is able to filter by statement category', async ({ page }) => {
     mockRoute(
       page,
-      '/case-materials',
+      '/documents',
       mockCaseMaterials({
         subject: 'MG11 Shelagh  Mc Love Undated',
         type: 'Statement',
@@ -94,7 +94,7 @@ test.describe('Materials page', () => {
   test.skip('T-006: user is able to filter by exhibit', async ({ page }) => {
     mockRoute(
       page,
-      '/case-materials',
+      '/documents',
       mockCaseMaterials({
         subject: 'Stmt: Twob DCPTWIFVIC',
         type: 'Statement',
@@ -110,7 +110,7 @@ test.describe('Materials page', () => {
   test.skip('T-007: user is able to filter by category', async ({ page }) => {
     mockRoute(
       page,
-      '/case-materials',
+      '/documents',
       mockCaseMaterials({
         subject: 'Case Action Plan 4',
         type: 'Statement',
@@ -124,7 +124,7 @@ test.describe('Materials page', () => {
   });
 
   test.skip('T-008: user is able to hide filter', async ({ page }) => {
-    mockRoute(page, '/case-materials', mockCaseMaterials());
+    mockRoute(page, '/documents', mockCaseMaterials());
     await page.getByRole('button', { name: 'Hide filters' }).click();
     await expect(page.getByLabel('Material name')).toBeHidden();
     await page.getByRole('button', { name: 'Show filters' }).click();
@@ -135,7 +135,7 @@ test.describe('Materials page', () => {
   test.skip('T-009: user is able to search materials', async ({ page }) => {
     mockRoute(
       page,
-      '/case-materials',
+      '/documents',
       mockCaseMaterials({
         subject: 'Case Action Plan 4',
         type: 'Statement',
