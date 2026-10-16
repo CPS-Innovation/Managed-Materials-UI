@@ -167,7 +167,9 @@ const SortableTable = <T,>({
                             <Checkbox
                               id={`select-${row.subject}`}
                               label={`Select ${row.subject}`}
-                              checked={selectedItems[materialType]?.some((m) => m.id === row.id)}
+                              checked={selectedItems[materialType]?.some(
+                                (m) => m.materialId === row.materialId,
+                              )}
                               onChange={() => handleSelectItem(row)}
                               labelVisuallyHidden={true}
                             />

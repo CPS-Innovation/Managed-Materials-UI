@@ -2,7 +2,6 @@ import { CaseMaterialsType } from '../../src/schemas/caseMaterials';
 
 const material: CaseMaterialsType[] = [
   {
-    id: 8836399,
     materialId: 8836399,
     documentId: 8117437,
     parentId: 'CMS-8836399',

@@ -5,7 +5,6 @@ import { useSelectedItemsStore } from '../../stores';
 
 function getMaterial(override?: Partial<CaseMaterialsType>): CaseMaterialsType {
   return {
-    id: 1,
     materialId: 1,
     documentId: 1,
     parentId: 'CMS-1',
@@ -53,12 +52,14 @@ describe('stores > useSelectedItems', () => {
     useSelectedItemsStore.getState().addItems([getMaterial()], 'materials');
     expect(useSelectedItemsStore.getState().items.materials).toHaveLength(1);
 
-    useSelectedItemsStore.getState().addItems([getMaterial({ id: 2 })], 'materials');
+    useSelectedItemsStore.getState().addItems([getMaterial({ materialId: 2 })], 'materials');
     expect(useSelectedItemsStore.getState().items.materials).toHaveLength(2);
   });
 
   it('should add multiple material items to state (addItems())', () => {
-    useSelectedItemsStore.getState().addItems([getMaterial(), getMaterial({ id: 2 })], 'materials');
+    useSelectedItemsStore
+      .getState()
+      .addItems([getMaterial(), getMaterial({ materialId: 2 })], 'materials');
     expect(useSelectedItemsStore.getState().items.materials).toHaveLength(2);
   });
 
@@ -66,15 +67,19 @@ describe('stores > useSelectedItems', () => {
     useSelectedItemsStore.getState().addItems([getMaterial()], 'materials');
     expect(useSelectedItemsStore.getState().items.materials).toHaveLength(1);
 
-    useSelectedItemsStore.getState().addItems([getMaterial(), getMaterial({ id: 2 })], 'materials');
+    useSelectedItemsStore
+      .getState()
+      .addItems([getMaterial(), getMaterial({ materialId: 2 })], 'materials');
     expect(useSelectedItemsStore.getState().items.materials).toHaveLength(2);
   });
 
   it('should remove a single material item from state (removeItems())', () => {
-    useSelectedItemsStore.getState().addItems([getMaterial(), getMaterial({ id: 2 })], 'materials');
+    useSelectedItemsStore
+      .getState()
+      .addItems([getMaterial(), getMaterial({ materialId: 2 })], 'materials');
     expect(useSelectedItemsStore.getState().items.materials).toHaveLength(2);
 
-    useSelectedItemsStore.getState().removeItems([getMaterial({ id: 2 })], 'materials');
+    useSelectedItemsStore.getState().removeItems([getMaterial({ materialId: 2 })], 'materials');
     expect(useSelectedItemsStore.getState().items.materials).toHaveLength(1);
   });
 
@@ -82,22 +87,29 @@ describe('stores > useSelectedItems', () => {
     useSelectedItemsStore
       .getState()
       .addItems(
-        [getMaterial(), getMaterial({ id: 2 }), getMaterial({ id: 3 }), getMaterial({ id: 4 })],
+        [
+          getMaterial(),
+          getMaterial({ materialId: 2 }),
+          getMaterial({ materialId: 3 }),
+          getMaterial({ materialId: 4 }),
+        ],
         'materials',
       );
     expect(useSelectedItemsStore.getState().items.materials).toHaveLength(4);
 
     useSelectedItemsStore
       .getState()
-      .removeItems([getMaterial({ id: 2 }), getMaterial({ id: 4 })], 'materials');
+      .removeItems([getMaterial({ materialId: 2 }), getMaterial({ materialId: 4 })], 'materials');
     expect(useSelectedItemsStore.getState().items.materials).toHaveLength(2);
   });
 
   it('should clear items from one type (clear(type))', () => {
-    useSelectedItemsStore.getState().addItems([getMaterial(), getMaterial({ id: 2 })], 'materials');
     useSelectedItemsStore
       .getState()
-      .addItems([getMaterial({ id: 3 }), getMaterial({ id: 4 })], 'communications');
+      .addItems([getMaterial(), getMaterial({ materialId: 2 })], 'materials');
+    useSelectedItemsStore
+      .getState()
+      .addItems([getMaterial({ materialId: 3 }), getMaterial({ materialId: 4 })], 'communications');
     expect(useSelectedItemsStore.getState().items.materials).toHaveLength(2);
     expect(useSelectedItemsStore.getState().items.communications).toHaveLength(2);
 
@@ -107,10 +119,12 @@ describe('stores > useSelectedItems', () => {
   });
 
   it('should clear all items (clear())', () => {
-    useSelectedItemsStore.getState().addItems([getMaterial(), getMaterial({ id: 2 })], 'materials');
     useSelectedItemsStore
       .getState()
-      .addItems([getMaterial({ id: 3 }), getMaterial({ id: 4 })], 'communications');
+      .addItems([getMaterial(), getMaterial({ materialId: 2 })], 'materials');
+    useSelectedItemsStore
+      .getState()
+      .addItems([getMaterial({ materialId: 3 }), getMaterial({ materialId: 4 })], 'communications');
     expect(useSelectedItemsStore.getState().items.materials).toHaveLength(2);
     expect(useSelectedItemsStore.getState().items.communications).toHaveLength(2);
 

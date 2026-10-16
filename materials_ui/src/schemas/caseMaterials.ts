@@ -1,12 +1,11 @@
 import { z } from 'zod';
 
 export const CaseMaterialsSchema = z.object({
-  id: z.number(),
   materialId: z.number(),
-  documentId: z.number(),
+  documentId: z.number().nullable(),
   // TODO: remove. parentId is temporary until the backend drops prefixes
   parentId: z.string(),
-  originalFileName: z.string(),
+  originalFileName: z.string().nullable(),
   subject: z.string(),
   documentTypeId: z.number(),
   category: z.string(),
@@ -26,12 +25,14 @@ export const CaseMaterialsSchema = z.object({
   item: z.string().nullable(),
   existingProducerOrWitnessId: z.number().nullable(),
   isReclassifiable: z.boolean(),
-  cmsDocType: z.object({
-    documentTypeId: z.number(),
-    documentType: z.string().nullable(),
-    documentCategory: z.string(),
-  }),
-  presentationFlags: z.object({ read: z.string(), write: z.string() }),
+  cmsDocType: z
+    .object({
+      documentTypeId: z.number(),
+      documentType: z.string().nullable(),
+      documentCategory: z.string(),
+    })
+    .nullable(),
+  presentationFlags: z.object({ read: z.string(), write: z.string() }).nullable(),
   hasNotes: z.boolean(),
   isUnused: z.boolean(),
   reference: z.string().nullable(),

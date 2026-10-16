@@ -102,7 +102,7 @@ export const CommunicationsPage = () => {
     const caseId = caseInfo?.id;
 
     const documentId = row?.documentId;
-    if (!materialId || !caseId) return;
+    if (!materialId || !caseId || !documentId) return;
 
     trackAction('OpenedInNewWindow', {
       materialId: row?.materialId?.toString(),

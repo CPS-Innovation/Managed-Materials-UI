@@ -23,8 +23,8 @@ export const useSelectedItemsStore = create<SelectedItemsStore>((set) => ({
 
   addItems: (items, type) => {
     return set((state) => {
-      const stateIds = state.items[type].map((item) => item.id);
-      const dedupedState = items.filter((item) => !stateIds.includes(item.id));
+      const stateIds = state.items[type].map((item) => item.materialId);
+      const dedupedState = items.filter((item) => !stateIds.includes(item.materialId));
 
       return { items: { ...state.items, [type]: [...(state.items[type] ?? []), ...dedupedState] } };
     });
@@ -32,12 +32,12 @@ export const useSelectedItemsStore = create<SelectedItemsStore>((set) => ({
 
   removeItems: (itemsToRemove, type) =>
     set((state) => {
-      const idsToRemove = new Set(itemsToRemove.map((item) => item.id));
+      const idsToRemove = new Set(itemsToRemove.map((item) => item.materialId));
 
       return {
         items: {
           ...state.items,
-          [type]: state.items[type].filter((item) => !idsToRemove.has(item.id)),
+          [type]: state.items[type].filter((item) => !idsToRemove.has(item.materialId)),
         },
       };
     }),

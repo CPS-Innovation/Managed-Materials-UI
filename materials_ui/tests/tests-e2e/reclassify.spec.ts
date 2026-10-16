@@ -166,7 +166,6 @@ test.describe('form submission', () => {
       page,
       'api/documents',
       mockCaseMaterials({
-        id: 4242662,
         type: 'MG15',
         category: 'Exhibit',
         originalFileName: 'Case Action Plan 4 (test)',
@@ -197,7 +196,6 @@ test.describe('form submission', () => {
       page,
       'api/documents',
       mockCaseMaterials({
-        id: 4242662,
         type: 'ABE',
         category: 'Exhibit',
         originalFileName: 'Case Action Plan 4 (test)',
