@@ -9,6 +9,7 @@ import {
   CommunicationsPage,
   DiscardMaterialPage,
   EditMaterialPage,
+  InboundHandoverPage,
   MaterialsPage,
   NotAuthorisedPage,
   NotFoundPage,
@@ -49,6 +50,7 @@ export const Routes = () => {
       <Route path={`/${APP_ROUTES.UNAUTHORISED}`} element={<NotAuthorisedPage />} />
       <Route path={`/${APP_ROUTES.SERVER_ERROR}`} element={<ServerErrorPage />} />
       <Route path={`/${APP_ROUTES.CASE_SEARCH}`} element={<CaseSearchPage />} />
+      <Route path={`/${APP_ROUTES.INBOUND_HANDOVER}`} element={<InboundHandoverPage />} />
 
       <Route path={`:caseId/`} element={<CaseRoute />}>
         <Route
