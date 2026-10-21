@@ -34,6 +34,10 @@ export const RedactionLogModalHeader = (p: { lookups?: TLookupsResponse; case: C
     errors.businessUnitId.message = 'Please enter valid CPS Business Unit';
   }
 
+  if (errors.documentTypeId) {
+    errors.documentTypeId.message = 'Please enter valid Document Type';
+  }
+
   return (
     <div className={styles.modalHeader}>
       <div
@@ -179,6 +183,7 @@ export const RedactionLogModalHeader = (p: { lookups?: TLookupsResponse; case: C
               options={lookups?.documentTypes ?? []}
               value={field.value}
               onChange={(e) => field.onChange(e.target.value)}
+              error={errors.documentTypeId ? 'Select a Document Type' : undefined}
             />
           )}
         />

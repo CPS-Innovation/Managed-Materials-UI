@@ -114,7 +114,7 @@ export const RedactionLogModal = (p: {
       businessUnitId: '',
       investigatingAgencyId: existingInvestigatingAgencyId || '',
       chargeStatus: chargeStatusFromCase ?? ChargeStatusCode.PreCharge,
-      documentTypeId: activeDocument?.cmsDocType.documentTypeId || '',
+      documentTypeId: '',
       supportingNotes: '',
     },
   });
