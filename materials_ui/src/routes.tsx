@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { Outlet, Route, Routes as Router, useParams } from 'react-router';
 import { Navigate } from 'react-router-dom';
 
@@ -22,6 +22,7 @@ import {
 import { CaseSearchPage } from './pages/CaseSearch';
 import { TwoTabsPage } from './pages/TwoTabsPage';
 import { ViewDocumentPage } from './pages/ViewDocumentPage';
+import { useClearLocalStorageWhenOverQuota } from './utils/localStorageHooks';
 
 const CaseRoute = () => {
   const { caseId } = useParams();
@@ -42,38 +43,8 @@ const CaseRoute = () => {
   return <Outlet />;
 };
 
-const estimateBytesOfLocalStorageUsed = () => {
-  let bytesTotal = 0;
-  for (const key in localStorage) {
-    bytesTotal += (key.length + (localStorage.getItem(key) ?? '').length) * 2;
-  }
-  return bytesTotal;
-};
-
-const useClearLocalStorageWhenOverQuota = (p: {
-  numberOfNavigationsPerCheck: number;
-  bytesQuota: number;
-}) => {
-  const params = useParams();
-  const count = useRef(0);
-
-  useEffect(() => {
-    (() => {
-      if (count.current % p.numberOfNavigationsPerCheck !== 0) return;
-
-      const bytes = estimateBytesOfLocalStorageUsed();
-      if (bytes > p.bytesQuota) localStorage.clear();
-    })();
-    count.current += 1;
-  }, [params]);
-};
-
-const LOCAL_STORAGE_QUOTA_BYTES = 4 * 1024 * 1024;
 export const Routes = () => {
-  useClearLocalStorageWhenOverQuota({
-    numberOfNavigationsPerCheck: 100,
-    bytesQuota: LOCAL_STORAGE_QUOTA_BYTES,
-  });
+  useClearLocalStorageWhenOverQuota({ navigationsPerCheck: 100, bytesQuota: 4 * 1024 * 1024 });
 
   return (
     <Router>
