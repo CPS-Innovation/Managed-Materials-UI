@@ -51,7 +51,7 @@ const estimateBytesOfLocalStorageUsed = () => {
 };
 
 const LOCAL_STORAGE_QUOTA_BYTES = 4 * 1024 * 1024;
-const useLocalStorageCleanupWhenNearQuota = () => {
+const useClearLocalStorageWhenOverQuota = () => {
   const params = useParams();
   const count = useRef(0);
 
@@ -67,7 +67,7 @@ const useLocalStorageCleanupWhenNearQuota = () => {
 };
 
 export const Routes = () => {
-  useLocalStorageCleanupWhenNearQuota();
+  useClearLocalStorageWhenOverQuota();
 
   return (
     <Router>
