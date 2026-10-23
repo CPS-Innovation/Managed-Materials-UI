@@ -22,6 +22,7 @@ import {
 import { CaseSearchPage } from './pages/CaseSearch';
 import { TwoTabsPage } from './pages/TwoTabsPage';
 import { ViewDocumentPage } from './pages/ViewDocumentPage';
+import { useClearLocalStorageWhenOverQuota } from './utils/localStorageHooks';
 
 const CaseRoute = () => {
   const { caseId } = useParams();
@@ -43,6 +44,8 @@ const CaseRoute = () => {
 };
 
 export const Routes = () => {
+  useClearLocalStorageWhenOverQuota({ navigationsPerCheck: 100, bytesQuota: 4 * 1024 * 1024 });
+
   return (
     <Router>
       <Route path="/" element={<Navigate to={`/${APP_ROUTES.CASE_SEARCH}`} replace />} />
