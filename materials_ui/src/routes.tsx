@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Outlet, Route, Routes as Router, useParams } from 'react-router';
 import { Navigate } from 'react-router-dom';
 
@@ -42,7 +42,33 @@ const CaseRoute = () => {
   return <Outlet />;
 };
 
+const estimateBytesOfLocalStorageUsed = () => {
+  let bytesTotal = 0;
+  for (const key in localStorage) {
+    bytesTotal += (key.length + (localStorage.getItem(key) ?? '').length) * 2;
+  }
+  return bytesTotal;
+};
+
+const LOCAL_STORAGE_QUOTA_BYTES = 4 * 1024 * 1024;
+const useLocalStorageCleanupWhenNearQuota = () => {
+  const params = useParams();
+  const count = useRef(0);
+
+  useEffect(() => {
+    (() => {
+      if (count.current % 100 !== 0) return;
+
+      const bytes = estimateBytesOfLocalStorageUsed();
+      if (bytes > LOCAL_STORAGE_QUOTA_BYTES) localStorage.clear();
+    })();
+    count.current += 1;
+  }, [params]);
+};
+
 export const Routes = () => {
+  useLocalStorageCleanupWhenNearQuota();
+
   return (
     <Router>
       <Route path="/" element={<Navigate to={`/${APP_ROUTES.CASE_SEARCH}`} replace />} />
