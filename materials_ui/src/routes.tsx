@@ -50,24 +50,30 @@ const estimateBytesOfLocalStorageUsed = () => {
   return bytesTotal;
 };
 
-const LOCAL_STORAGE_QUOTA_BYTES = 4 * 1024 * 1024;
-const useClearLocalStorageWhenOverQuota = () => {
+const useClearLocalStorageWhenOverQuota = (p: {
+  numberOfNavigationsPerCheck: number;
+  bytesQuota: number;
+}) => {
   const params = useParams();
   const count = useRef(0);
 
   useEffect(() => {
     (() => {
-      if (count.current % 100 !== 0) return;
+      if (count.current % p.numberOfNavigationsPerCheck !== 0) return;
 
       const bytes = estimateBytesOfLocalStorageUsed();
-      if (bytes > LOCAL_STORAGE_QUOTA_BYTES) localStorage.clear();
+      if (bytes > p.bytesQuota) localStorage.clear();
     })();
     count.current += 1;
   }, [params]);
 };
 
+const LOCAL_STORAGE_QUOTA_BYTES = 4 * 1024 * 1024;
 export const Routes = () => {
-  useClearLocalStorageWhenOverQuota();
+  useClearLocalStorageWhenOverQuota({
+    numberOfNavigationsPerCheck: 100,
+    bytesQuota: LOCAL_STORAGE_QUOTA_BYTES,
+  });
 
   return (
     <Router>
