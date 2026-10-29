@@ -2,76 +2,20 @@ import { z } from 'zod';
 
 const DefendantDetailsSchema = z.object({
   id: z.number(),
-  listOrder: z.number(),
   firstNames: z.string(),
   surname: z.string(),
-  organisationName: z.string(),
   dob: z.string().nullish(),
-  age: z.string(),
-  youth: z.boolean(),
-  type: z.string(),
 });
 
 const HeadlineChargeSchema = z.object({
-  charge: z.string().nullable(),
   date: z.string().nullable(),
-  earlyDate: z.string().nullable(),
-  lateDate: z.string().nullable(),
   nextHearingDate: z.string().nullable(),
 });
 
-const CustodyTimeLimitSchema = z.object({
-  expiryDate: z.string().nullable(),
-  expiryDays: z.number().nullable(),
-  expiryIndicator: z.boolean().nullable(),
-});
-
-const ChargesSchema = z.array(
-  z.object({
-    id: z.number(),
-    listOrder: z.number().nullable(),
-    isCharged: z.boolean(),
-    nextHearingDate: z.string().nullable(),
-    earlyDate: z.string().nullable(),
-    lateDate: z.string().nullable(),
-    code: z.string(),
-    shortDescription: z.string(),
-    longDescription: z.string(),
-    custodyTimeLimit: CustodyTimeLimitSchema,
-  }),
-);
+const ChargesSchema = z.array(z.object({ id: z.number(), shortDescription: z.string() }));
 
 const DefendantSchema = z.array(
-  z.object({
-    id: z.number(),
-    listOrder: z.number(),
-    defendantDetails: DefendantDetailsSchema,
-    custodyTimeLimit: CustodyTimeLimitSchema,
-    charges: ChargesSchema,
-    proposedCharges: z.array(z.unknown()),
-  }),
-);
-
-const WitnessSchema = z.array(
-  z.object({
-    id: z.number(),
-    shoulderNumber: z.number().nullish(),
-    title: z.string().nullish(),
-    name: z.string(),
-    hasStatements: z.boolean(),
-    listOrder: z.null(),
-    child: z.boolean(),
-    expert: z.boolean(),
-    greatestNeed: z.boolean(),
-    prisoner: z.boolean(),
-    interpreter: z.boolean(),
-    vulnerable: z.boolean(),
-    police: z.boolean(),
-    professional: z.boolean(),
-    specialNeeds: z.boolean(),
-    intimidated: z.boolean(),
-    victim: z.boolean(),
-  }),
+  z.object({ id: z.number(), charges: ChargesSchema, proposedCharges: z.array(z.unknown()) }),
 );
 
 export const CaseSchema = z.object({
@@ -79,15 +23,12 @@ export const CaseSchema = z.object({
   uniqueReferenceNumber: z.string(),
   isCaseCharged: z.boolean(),
   numberOfDefendants: z.number(),
-  owningUnit: z.string(),
   leadDefendantDetails: DefendantDetailsSchema,
   headlineCharge: HeadlineChargeSchema,
   defendants: DefendantSchema,
-  witnesses: WitnessSchema,
-  preChargeDecisionRequests: z.array(z.unknown()),
 });
+export const CasesSchema = z.array(CaseSchema);
 
-export const caseDetailsSchema = z.array(CaseSchema);
-
-export type CaseDetailsType = z.infer<typeof caseDetailsSchema>;
 export type CaseType = z.infer<typeof CaseSchema>;
+export type CasesType = z.infer<typeof CasesSchema>;
+export type CaseDetailsType = CaseType[];

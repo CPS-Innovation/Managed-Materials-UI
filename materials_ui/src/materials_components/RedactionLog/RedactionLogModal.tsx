@@ -120,7 +120,7 @@ export const RedactionLogModal = (p: {
   });
 
   useEffect(() => {
-    const cmsDocumentTypeId = activeDocument?.cmsDocType.documentTypeId;
+    const cmsDocumentTypeId = activeDocument?.cmsDocType?.documentTypeId;
 
     if (!cmsDocumentTypeId) {
       return;
@@ -140,7 +140,7 @@ export const RedactionLogModal = (p: {
       shouldTouch: false,
       shouldValidate: false,
     });
-  }, [activeDocument?.cmsDocType.documentTypeId, documentTypeMappings, form]);
+  }, [activeDocument?.cmsDocType?.documentTypeId, documentTypeMappings, form]);
 
   const onSubmit = async (values: RedactionLogFormInputs) => {
     try {

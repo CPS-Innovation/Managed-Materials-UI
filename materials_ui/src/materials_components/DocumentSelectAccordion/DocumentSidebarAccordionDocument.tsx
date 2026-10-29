@@ -90,8 +90,8 @@ export const DocumentSidebarAccordionDocument = (p: {
       backgroundColor={p.readDocumentIds.includes(p.document.parentId) ? 'white' : 'blue'}
       notesStatus={(() => {
         if (
-          p.document.cmsDocType.documentType === 'PCD' ||
-          p.document.cmsDocType.documentCategory === 'Review'
+          p.document.cmsDocType?.documentType === 'PCD' ||
+          p.document.cmsDocType?.documentCategory === 'Review'
         )
           return NOTES_STATUS.DISABLED;
         return p.document.hasNotes ? NOTES_STATUS.NEW_NOTES : NOTES_STATUS.NONE;

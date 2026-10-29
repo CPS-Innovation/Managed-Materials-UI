@@ -182,7 +182,7 @@ export const ReviewAndRedactPage = () => {
     ) {
       const filteredDocs = documentList.state.data.filter(
         (doc) =>
-          doc.cmsDocType.documentType === docTypeParam && !openParentIds.includes(doc.parentId),
+          doc.cmsDocType?.documentType === docTypeParam && !openParentIds.includes(doc.parentId),
       );
 
       if (filteredDocs.length) {

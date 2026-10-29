@@ -34,11 +34,13 @@ const safeGetDocumentListFromAxiosInstanceWithRetries = async (p: {
 export const documentSchema = z.object({
   parentId: z.string(),
   status: z.string(),
-  cmsDocType: z.object({
-    documentTypeId: z.number(),
-    documentType: z.string().nullable(),
-    documentCategory: z.string(),
-  }),
+  cmsDocType: z
+    .object({
+      documentTypeId: z.number(),
+      documentType: z.string().nullish(),
+      documentCategory: z.string(),
+    })
+    .nullish(),
   cmsOriginalFileName: z.string(),
   presentationTitle: z.string(),
   cmsFileCreatedDate: z.string(),
@@ -77,7 +79,7 @@ export const safeGetDocumentListFromAxiosInstance = async (p: {
   caseId: string | number | undefined;
 }): Promise<
   | { success: true; data: z.infer<typeof documentListSchema> }
-  | { success: false; errorMessage: string }
+  | { success: false; errorMessage: string; error: unknown }
 > => {
   try {
     const resp = await getDocumentListFromAxiosInstance({
@@ -86,12 +88,14 @@ export const safeGetDocumentListFromAxiosInstance = async (p: {
     });
 
     const parsedResp = documentListSchema.safeParse(resp);
+    if (!parsedResp.success) console.log(`getDocumentList.tsx:${/*LL*/ 89}`, { parsedResp });
     return parsedResp.success
       ? parsedResp
-      : ({
+      : {
           success: false,
-          errorMessage: 'Unable to parse response in safeGetDocumentListFromAxiosInstance',
-        } as const);
+          errorMessage: 'Unable to parse response asd - in safeGetDocumentListFromAxiosInstance',
+          error: parsedResp.error,
+        };
   } catch (error) {
     const errorSchema = z.object({ message: z.string() });
     const parsedError = errorSchema.safeParse(error);
@@ -99,7 +103,7 @@ export const safeGetDocumentListFromAxiosInstance = async (p: {
       ? parsedError.error.message
       : 'Failed to fetch all the documents - in safeGetDocumentListFromAxiosInstance';
 
-    return { success: false, errorMessage } as const;
+    return { success: false, errorMessage, error };
   }
 };
 
