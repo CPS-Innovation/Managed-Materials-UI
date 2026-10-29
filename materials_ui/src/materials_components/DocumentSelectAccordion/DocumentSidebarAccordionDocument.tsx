@@ -80,8 +80,10 @@ export const DocumentSidebarAccordionDocument = (p: {
 
   return (
     <DocumentSidebarAccordionDocumentTemplate
-      documentName={p.document.presentationTitle}
-      documentDate={formatShortDate(p.document.cmsFileCreatedDate)}
+      documentName={p.document.presentationTitle || ''}
+      documentDate={
+        p.document.cmsFileCreatedDate ? formatShortDate(p.document.cmsFileCreatedDate) : ''
+      }
       ActiveDocumentTag={p.activeDocumentId === p.document.parentId}
       NewTag={!p.readDocumentIds.includes(p.document.parentId)}
       NewVersionTag={p.newVersionDocumentId === p.document.parentId}

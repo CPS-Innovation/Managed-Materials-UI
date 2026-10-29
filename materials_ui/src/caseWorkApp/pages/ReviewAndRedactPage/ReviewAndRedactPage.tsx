@@ -203,7 +203,7 @@ export const ReviewAndRedactPage = () => {
 
   const tabItems = openDocuments.map((doc) => ({
     id: doc.parentId,
-    label: doc.presentationTitle,
+    label: doc.presentationTitle || '',
     childId: doc.childId,
     isDirty: (redactionsIndexedOnParentId[doc.parentId]?.length ?? 0) > 0,
     panel: {
