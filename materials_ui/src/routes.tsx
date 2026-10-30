@@ -22,6 +22,7 @@ import {
 import { CaseSearchPage } from './pages/CaseSearch';
 import { TwoTabsPage } from './pages/TwoTabsPage';
 import { ViewDocumentPage } from './pages/ViewDocumentPage';
+import { useClearLocalStorageWhenOverSoftLimit } from './utils/localStorageHooks';
 
 const CaseRoute = () => {
   const { caseId } = useParams();
@@ -43,6 +44,8 @@ const CaseRoute = () => {
 };
 
 export const Routes = () => {
+  useClearLocalStorageWhenOverSoftLimit({ numberOfNavigationsPerCheck: 100 });
+
   return (
     <Router>
       <Route path="/" element={<Navigate to={`/${APP_ROUTES.CASE_SEARCH}`} replace />} />
