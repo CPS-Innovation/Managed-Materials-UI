@@ -148,9 +148,9 @@ export const transformFormDataToApiFormat = (p: {
     cmsValues: {
       originalFileName: activeDocument?.cmsOriginalFileName || '',
       documentId: activeDocument?.parentId ? activeDocument.parentId.replace(/^CMS-/, '') : 0,
-      documentType: activeDocument?.cmsDocType.documentType || '',
+      documentType: activeDocument?.cmsDocType?.documentType || '',
       fileCreatedDate: activeDocument?.cmsFileCreatedDate || new Date().toISOString(),
-      documentTypeId: activeDocument?.cmsDocType.documentTypeId || 0,
+      documentTypeId: activeDocument?.cmsDocType?.documentTypeId || 0,
     },
   };
 };

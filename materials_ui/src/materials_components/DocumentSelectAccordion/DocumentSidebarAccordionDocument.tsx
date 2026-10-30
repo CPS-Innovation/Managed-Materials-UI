@@ -80,8 +80,10 @@ export const DocumentSidebarAccordionDocument = (p: {
 
   return (
     <DocumentSidebarAccordionDocumentTemplate
-      documentName={p.document.presentationTitle}
-      documentDate={formatShortDate(p.document.cmsFileCreatedDate)}
+      documentName={p.document.presentationTitle || ''}
+      documentDate={
+        p.document.cmsFileCreatedDate ? formatShortDate(p.document.cmsFileCreatedDate) : ''
+      }
       ActiveDocumentTag={p.activeDocumentId === p.document.parentId}
       NewTag={!p.readDocumentIds.includes(p.document.parentId)}
       NewVersionTag={p.newVersionDocumentId === p.document.parentId}
@@ -90,8 +92,8 @@ export const DocumentSidebarAccordionDocument = (p: {
       backgroundColor={p.readDocumentIds.includes(p.document.parentId) ? 'white' : 'blue'}
       notesStatus={(() => {
         if (
-          p.document.cmsDocType.documentType === 'PCD' ||
-          p.document.cmsDocType.documentCategory === 'Review'
+          p.document.cmsDocType?.documentType === 'PCD' ||
+          p.document.cmsDocType?.documentCategory === 'Review'
         )
           return NOTES_STATUS.DISABLED;
         return p.document.hasNotes ? NOTES_STATUS.NEW_NOTES : NOTES_STATUS.NONE;

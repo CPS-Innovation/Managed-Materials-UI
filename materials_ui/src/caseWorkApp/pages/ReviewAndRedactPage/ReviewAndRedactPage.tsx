@@ -182,7 +182,7 @@ export const ReviewAndRedactPage = () => {
     ) {
       const filteredDocs = documentList.state.data.filter(
         (doc) =>
-          doc.cmsDocType.documentType === docTypeParam && !openParentIds.includes(doc.parentId),
+          doc.cmsDocType?.documentType === docTypeParam && !openParentIds.includes(doc.parentId),
       );
 
       if (filteredDocs.length) {
@@ -203,7 +203,7 @@ export const ReviewAndRedactPage = () => {
 
   const tabItems = openDocuments.map((doc) => ({
     id: doc.parentId,
-    label: doc.presentationTitle,
+    label: doc.presentationTitle || '',
     childId: doc.childId,
     isDirty: (redactionsIndexedOnParentId[doc.parentId]?.length ?? 0) > 0,
     panel: {
