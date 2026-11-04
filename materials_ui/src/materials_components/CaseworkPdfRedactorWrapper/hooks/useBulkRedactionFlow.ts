@@ -12,8 +12,8 @@ import { useBulkSearch } from './useBulkSearch';
 export const useBulkRedactionFlow = (p: {
   axiosInstance: AxiosInstance;
   caseId: string | number;
-  parentId: string;
-  childId: number;
+  materialId: string;
+  documentId: number;
   setRedactions: Dispatch<SetStateAction<TRedaction[]>>;
   setSelectedRedactionTypes: Dispatch<SetStateAction<TRedactionType[]>>;
 }) => {
@@ -27,8 +27,8 @@ export const useBulkRedactionFlow = (p: {
   const bulkSearch = useBulkSearch({
     axiosInstance: p.axiosInstance,
     caseId: p.caseId,
-    materialId: p.parentId,
-    documentId: p.childId,
+    materialId: p.materialId,
+    documentId: p.documentId,
   });
 
   // pin the popover above whichever match is currently focused

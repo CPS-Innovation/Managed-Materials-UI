@@ -9,7 +9,7 @@ export const cmsDocTypeSchema = z.object({
 export const DocumentSchema = z.object({
   parentId: z.string(),
   status: z.string(),
-  childId: z.number(),
+  documentId: z.number(),
   cmsDocType: cmsDocTypeSchema,
   cmsOriginalFileName: z.string(),
   presentationTitle: z.string(),

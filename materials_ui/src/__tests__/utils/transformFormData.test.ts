@@ -28,8 +28,8 @@ const lookups = {
 
 const activeDocument = {
   parentId: 'CMS-9876',
-  cmsOriginalFileName: 'statement.pdf',
-  cmsFileCreatedDate: '2026-01-15T00:00:00Z',
+  originalFileName: 'statement.pdf',
+  date: '2026-01-15T00:00:00Z',
   cmsDocType: { documentTypeId: 1056, documentType: 'MG11', documentCategory: 'Statements' },
 } as TDocument;
 

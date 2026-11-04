@@ -31,32 +31,28 @@ const safeGetDocumentListFromAxiosInstanceWithRetries = async (p: {
   return { success: false, errorMessages } as const;
 };
 
-export const documentSchema = z
-  .object({
-    parentId: z.string(),
-    documentId: z.number(),
-    status: z.string(),
-    cmsDocType: z
-      .object({
-        documentTypeId: z.number(),
-        documentType: z.string().nullish(),
-        documentCategory: z.string(),
-      })
-      .nullish(),
-    cmsOriginalFileName: z.string().nullish(),
-    presentationTitle: z.string().nullish(),
-    cmsFileCreatedDate: z.string().nullish(),
-    isUnused: z.boolean(),
-    hasNotes: z.boolean(),
-    presentationFlags: z.object({ write: z.union([z.string(), z.boolean()]).nullish() }).nullish(),
-  })
-  .transform((initData) => {
-    const { documentId, ...data } = initData;
-    return { ...data, childId: documentId };
-  });
+export const documentSchema = z.object({
+  parentId: z.string(),
+  documentId: z.number(),
+  status: z.string(),
+  cmsDocType: z
+    .object({
+      documentTypeId: z.number(),
+      documentType: z.string().nullish(),
+      documentCategory: z.string(),
+    })
+    .nullish(),
+  originalFileName: z.string().nullish(),
+  subject: z.string().nullish(),
+  date: z.string().nullish(),
+  isUnused: z.boolean(),
+  hasNotes: z.boolean(),
+  presentationFlags: z.object({ write: z.union([z.string(), z.boolean()]).nullish() }).nullish(),
+});
 export const documentListSchema = z.array(documentSchema);
+
 export type TDocument = z.infer<typeof documentSchema>;
-export type TDocumentList = TDocument[];
+export type TDocumentList = z.infer<typeof documentListSchema>;
 
 export const getDocumentListFromAxiosInstance = async (p: {
   axiosInstance: AxiosInstance;

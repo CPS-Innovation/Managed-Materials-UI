@@ -4,8 +4,8 @@ import { TRedaction } from '../../PdfRedactor/utils/coordUtils';
 export const saveRedactions = async (p: {
   axiosInstance: AxiosInstance;
   caseId: string | number;
-  childId: number;
-  parentId: string;
+  documentId: number;
+  materialId: string;
   redactions: TRedaction[];
 }) => {
   const redactionsIndexedOnPageNumber: { [k: number]: TRedaction[] } = {};
@@ -26,7 +26,7 @@ export const saveRedactions = async (p: {
     }),
   };
   const response = await p.axiosInstance.put(
-    `/cases/${p.caseId}/materials/${p.parentId}/documents/${p.childId}/redact`,
+    `/cases/${p.caseId}/materials/${p.materialId}/documents/${p.documentId}/redact`,
     payload,
   );
 

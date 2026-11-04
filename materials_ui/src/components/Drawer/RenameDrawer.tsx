@@ -30,8 +30,8 @@ export const RenameDrawer = ({ material, onCancel, onSuccess }: Props) => {
     if ('subject' in material && typeof material.subject === 'string') {
       return material.subject;
     }
-    if ('presentationTitle' in material && typeof material.presentationTitle === 'string') {
-      return material.presentationTitle;
+    if ('presentationTitle' in material && typeof material.subject === 'string') {
+      return material.subject;
     }
     return '';
   };

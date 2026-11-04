@@ -170,7 +170,7 @@ export const DocumentTabPanel = ({
       {status === 'success' && pdfFileUrl && (
         <>
           <DocumentViewportArea
-            documentName={document.presentationTitle || ''}
+            documentName={document.subject || ''}
             canRedact={isRedactionPermitted(materialId)}
             mode={mode}
             onModeChange={(newMode) => {
@@ -220,8 +220,8 @@ export const DocumentTabPanel = ({
             onModeChange={onModeChange}
             onModification={onModification}
             caseId={caseId}
-            childId={documentId}
-            parentId={materialId}
+            documentId={documentId}
+            materialId={materialId}
             document={document}
             onRedactionsChange={onRedactionsChange}
             initRedactions={initRedactions ?? []}

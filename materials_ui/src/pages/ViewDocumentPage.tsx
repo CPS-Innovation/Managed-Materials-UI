@@ -46,7 +46,7 @@ const LoadAndViewPdf = (p: {
     const doc = documentList?.find(
       (x) => stripCmsPrefix(x.parentId) === stripCmsPrefix(p.materialId),
     );
-    const documentPresentationTitle = doc?.presentationTitle;
+    const documentPresentationTitle = doc?.subject;
     const documentTitleSuffix = ' - Managed Materials';
     const documentTitlePrefix = (() => {
       if (documentPresentationTitle) return `${documentPresentationTitle}`;

@@ -66,8 +66,8 @@ export const CaseworkPdfRedactorWrapper = (p: {
   mode: TMode;
   onModeChange: (x: TMode) => void;
   caseId: string | number;
-  childId: number;
-  parentId: string;
+  documentId: number;
+  materialId: string;
   onModification: (x: TDocument) => void;
   document: null | undefined | TDocument;
   onRedactionsChange: (x: TRedaction[]) => void;
@@ -90,8 +90,8 @@ export const CaseworkPdfRedactorWrapper = (p: {
   const checkInDocument = async () => {
     if (!isDocumentCheckedOut) return;
     const resp = await documentCheckOutRequest.checkIn({
-      parentId: p.parentId,
-      childId: p.childId,
+      materialId: p.materialId,
+      documentId: p.documentId,
     });
     if (resp.success) setIsDocumentCheckedOut(false);
   };
@@ -111,7 +111,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
 
   const documentCategory = p.document ? categoriseDocument(p.document) : undefined;
   const isUnredactableDocumentCategory =
-    !isRedactionPermitted(p.parentId) ||
+    !isRedactionPermitted(p.materialId) ||
     (documentCategory &&
       (['review', 'defendantPreCons'] as TCategoryName[]).includes(documentCategory));
   const isDocumentDispatched = p.document?.presentationFlags?.write === 'IsDispatched';
@@ -135,8 +135,8 @@ export const CaseworkPdfRedactorWrapper = (p: {
   const bulkFlow = useBulkRedactionFlow({
     axiosInstance,
     caseId: p.caseId,
-    childId: p.childId,
-    parentId: p.parentId,
+    documentId: p.documentId,
+    materialId: p.materialId,
     setRedactions,
     setSelectedRedactionTypes,
   });
@@ -175,8 +175,8 @@ export const CaseworkPdfRedactorWrapper = (p: {
   const checkCheckoutStatus = async () => {
     if (isDocumentCheckedOut) return { success: true } as const;
     const checkoutResponse = await documentCheckOutRequest.checkOut({
-      parentId: p.parentId,
-      childId: p.childId,
+      materialId: p.materialId,
+      documentId: p.documentId,
     });
     setIsDocumentCheckedOut(checkoutResponse.success);
     return checkoutResponse;
@@ -398,16 +398,19 @@ export const CaseworkPdfRedactorWrapper = (p: {
             await saveRedactions({
               axiosInstance,
               caseId: p.caseId,
-              childId: p.childId,
-              parentId: p.parentId,
+              documentId: p.documentId,
+              materialId: p.materialId,
               redactions,
             });
             setRedactions([]);
             setSelectedRedactionTypes([]);
-            trackAction('Redacted', { materialId: p.parentId });
+            trackAction('Redacted', { materialId: p.materialId });
             p.onRedactionSaveStatusChange('saved');
             if (p.document) p.onModification(p.document);
-            await documentCheckOutRequest.checkIn({ parentId: p.parentId, childId: p.childId });
+            await documentCheckOutRequest.checkIn({
+              materialId: p.materialId,
+              documentId: p.documentId,
+            });
           } catch (error) {
             console.error('Failed to save redactions:', error);
             p.onRedactionSaveStatusChange('error');
@@ -472,12 +475,15 @@ export const CaseworkPdfRedactorWrapper = (p: {
           await saveDeletions({
             axiosInstance,
             caseId: p.caseId,
-            childId: p.childId,
-            parentId: p.parentId,
+            documentId: p.documentId,
+            materialId: p.materialId,
             deletions: Object.values(indexedDeletion),
           });
           if (p.document) p.onModification(p.document);
-          await documentCheckOutRequest.checkIn({ parentId: p.parentId, childId: p.childId });
+          await documentCheckOutRequest.checkIn({
+            materialId: p.materialId,
+            documentId: p.documentId,
+          });
         }}
         onSaveRotations={async () => {
           const checkoutResponse = await checkCheckoutStatus();
@@ -494,17 +500,20 @@ export const CaseworkPdfRedactorWrapper = (p: {
           await saveRotations({
             axiosInstance,
             caseId: p.caseId,
-            childId: p.childId,
-            parentId: p.parentId,
+            documentId: p.documentId,
+            materialId: p.materialId,
             rotations: Object.values(indexedRotation),
           });
           if (p.document) p.onModification(p.document);
-          await documentCheckOutRequest.checkIn({ parentId: p.parentId, childId: p.childId });
+          await documentCheckOutRequest.checkIn({
+            materialId: p.materialId,
+            documentId: p.documentId,
+          });
         }}
         initRedactions={p.initRedactions}
         onNumOfDocPagesChanged={p.onNumOfPagesDocumentChange}
         highlightLayers={[searchLayer, bulkFlow.highlightLayer]}
-        autosaveKeyPrefix={`${p.parentId}-${p.childId}`}
+        autosaveKeyPrefix={`${p.materialId}-${p.documentId}`}
       />
     </div>
   );
