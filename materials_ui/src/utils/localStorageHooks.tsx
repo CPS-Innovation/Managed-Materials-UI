@@ -22,23 +22,29 @@ export const useClearLocalStorageWhenOverSoftLimit = (p: {
 
   useEffect(() => {
     (() => {
-      console.log(`localStorageHooks.tsx:${/*LL*/ 25}`, {});
+      console.log(
+        `localStorageHooks.tsx:${/*LL*/ 26}`,
+        'count.current % p.numberOfNavigationsPerCheck !== 0',
+        count.current % p.numberOfNavigationsPerCheck !== 0,
+      );
       if (count.current % p.numberOfNavigationsPerCheck !== 0) {
-        console.log(
-          `localStorageHooks.tsx:${/*LL*/ 27}`,
-          'count.current % p.numberOfNavigationsPerCheck !== 0',
-        );
+        console.log(`localStorageHooks.tsx:${/*LL*/ 31}`, {});
         return;
       }
 
       const bytes = estimateBytesOfLocalStorageUsed();
       console.log(`localStorageHooks.tsx:${/*LL*/ 35}`, { bytes });
       if (bytes > LOCAL_STORAGE_SOFT_LIMIT_BYTES) {
-        console.log(`localStorageHooks.tsx:${/*LL*/ 37}`, 'about to clear localStorage');
+        console.log(
+          `localStorageHooks.tsx:${/*LL*/ 37}`,
+          'over soft limit, about to clear localStorage',
+        );
         localStorage.clear();
         console.log(`localStorageHooks.tsx:${/*LL*/ 39}`, {
           estimateBytesOfLocalStorageUsed: estimateBytesOfLocalStorageUsed(),
         });
+      } else {
+        console.log(`localStorageHooks.tsx:${/*LL*/ 43}`, 'under soft limit');
       }
     })();
     count.current += 1;
