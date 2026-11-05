@@ -25,10 +25,8 @@ export const safeSetOpenDocumentTabsFromLocalStorage = (p: {
   activeMaterialId: string;
 }) => {
   const key = createOpenDocumentTabsKey(p.caseId);
-  window.localStorage.setItem(
-    key,
-    JSON.stringify({ openParentIds: p.openMaterialIds, activeParentId: p.activeMaterialId }),
-  );
+  const data: OpenTabsState = p;
+  window.localStorage.setItem(key, JSON.stringify(data));
 };
 
 export const clearOpenDocumentTabsFromLocalStorage = (caseId: string | number) => {
