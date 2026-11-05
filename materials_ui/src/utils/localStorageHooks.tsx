@@ -22,10 +22,24 @@ export const useClearLocalStorageWhenOverSoftLimit = (p: {
 
   useEffect(() => {
     (() => {
-      if (count.current % p.numberOfNavigationsPerCheck !== 0) return;
+      console.log(`localStorageHooks.tsx:${/*LL*/ 25}`, {});
+      if (count.current % p.numberOfNavigationsPerCheck !== 0) {
+        console.log(
+          `localStorageHooks.tsx:${/*LL*/ 27}`,
+          'count.current % p.numberOfNavigationsPerCheck !== 0',
+        );
+        return;
+      }
 
       const bytes = estimateBytesOfLocalStorageUsed();
-      if (bytes > LOCAL_STORAGE_SOFT_LIMIT_BYTES) localStorage.clear();
+      console.log(`localStorageHooks.tsx:${/*LL*/ 35}`, { bytes });
+      if (bytes > LOCAL_STORAGE_SOFT_LIMIT_BYTES) {
+        console.log(`localStorageHooks.tsx:${/*LL*/ 37}`, 'about to clear localStorage');
+        localStorage.clear();
+        console.log(`localStorageHooks.tsx:${/*LL*/ 39}`, {
+          estimateBytesOfLocalStorageUsed: estimateBytesOfLocalStorageUsed(),
+        });
+      }
     })();
     count.current += 1;
   }, [params]);
