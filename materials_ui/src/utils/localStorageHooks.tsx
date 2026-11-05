@@ -22,19 +22,30 @@ export const useClearLocalStorageWhenOverSoftLimit = (p: {
 
   useEffect(() => {
     (() => {
-      console.log(
-        `localStorageHooks.tsx:${/*LL*/ 26}`,
-        'count.current % p.numberOfNavigationsPerCheck !== 0',
-        count.current % p.numberOfNavigationsPerCheck !== 0,
-      );
-      if (count.current % p.numberOfNavigationsPerCheck !== 0) {
-        console.log(`localStorageHooks.tsx:${/*LL*/ 31}`, {});
+      console.log(`localStorageHooks.tsx:${/*LL*/ 30}`, {
+        count: count.current,
+        p: p.numberOfNavigationsPerCheck,
+      });
+      // check every nth+2 navigation, so we don't hinder performance on initial render
+      if (count.current % p.numberOfNavigationsPerCheck !== 2) {
+        console.log(
+          `localStorageHooks.tsx:${/*LL*/ 31}`,
+          'not nth+2 navigation, will not check localStorage',
+        );
         return;
       }
 
-      const bytes = estimateBytesOfLocalStorageUsed();
-      console.log(`localStorageHooks.tsx:${/*LL*/ 35}`, { bytes });
-      if (bytes > LOCAL_STORAGE_SOFT_LIMIT_BYTES) {
+      console.log(
+        `localStorageHooks.tsx:${/*LL*/ 32}`,
+        'nth+2 navigation, will check localStorage',
+      );
+
+      const remainingBytes = estimateBytesOfLocalStorageUsed();
+      console.log(`localStorageHooks.tsx:${/*LL*/ 35}`, {
+        remainingBytes,
+        LOCAL_STORAGE_SOFT_LIMIT_BYTES,
+      });
+      if (remainingBytes > LOCAL_STORAGE_SOFT_LIMIT_BYTES) {
         console.log(
           `localStorageHooks.tsx:${/*LL*/ 37}`,
           'over soft limit, about to clear localStorage',
