@@ -5,7 +5,7 @@ type PanelProps = React.DetailedHTMLProps<
 
 type ItemProps = {
   id: string;
-  childId: number;
+  documentId: number;
   label: string;
   panel: PanelProps;
   isDirty: boolean;

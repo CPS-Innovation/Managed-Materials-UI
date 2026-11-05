@@ -40,9 +40,9 @@ import { CloseTabUnsavedRedactionsModal } from './CloseTabUnsavedRedactionsModal
 import { UnsavedRedactionsModal } from './UnsavedRedactionsModal';
 
 type PendingUnsavedAction =
-  | { kind: 'closeTab'; parentId: string }
-  | { kind: 'switchTab'; parentId: string; nextParentId: string }
-  | { kind: 'stopRedacting'; parentId: string };
+  | { kind: 'closeTab'; materialId: string }
+  | { kind: 'switchTab'; materialId: string; nextMaterialId: string }
+  | { kind: 'stopRedacting'; materialId: string };
 
 type UnsavedModal = { kind: 'blockNav'; href?: string } | { kind: 'closeAll' };
 
@@ -78,11 +78,11 @@ export const ReviewAndRedactPage = () => {
     (TDocument & { materialId?: number }) | null
   >(null);
 
-  const [redactionsIndexedOnParentId, setRedactionsIndexedOnParentId] = useState<{
+  const [redactionsIndexedOnMaterialId, setRedactionsIndexedOnMaterialId] = useState<{
     [k: string]: TRedaction[];
   }>({});
 
-  const [searchContextByParentId, setSearchContextByParentId] = useState<
+  const [searchContextByMaterialId, setSearchContextByMaterialId] = useState<
     Record<string, DocSearchContext>
   >({});
 
@@ -91,13 +91,13 @@ export const ReviewAndRedactPage = () => {
   const banner = useBanner();
 
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
-  const [openParentIds, setOpenParentIds] = useState<string[]>([]);
+  const [openMaterialIds, setOpenMaterialIds] = useState<string[]>([]);
 
-  const [activeParentId, setActiveParentId] = useState('');
-  const [newVersionParentId, setNewVersionParentId] = useState('');
+  const [activeMaterialId, setActiveMaterialId] = useState('');
+  const [newVersionMaterialId, setNewVersionMaterialId] = useState('');
 
-  const [modeByParentId, setModeByParentId] = useState<Record<string, TMode>>({});
-  const [numOfPagesByParentId, setNumOfPagesByParentId] = useState<Record<string, number>>({});
+  const [modeByMaterialId, setModeByMaterialId] = useState<Record<string, TMode>>({});
+  const [numOfPagesByMaterialId, setNumOfPagesByMaterialId] = useState<Record<string, number>>({});
 
   const [searchModalOpen, setSearchModalOpen] = useState(false);
 
@@ -118,36 +118,36 @@ export const ReviewAndRedactPage = () => {
 
   useEffect(() => {
     const saved = safeGetOpenDocumentTabsFromLocalStorage(caseId);
-    if (saved && saved.openParentIds.length > 0) {
-      setOpenParentIds(saved.openParentIds);
-      setActiveParentId(saved.activeParentId);
+    if (saved && saved.openMaterialIds.length > 0) {
+      setOpenMaterialIds(saved.openMaterialIds);
+      setActiveMaterialId(saved.activeMaterialId);
     }
   }, [caseId]);
 
   useEffect(() => {
-    if (openParentIds.length === 0) {
+    if (openMaterialIds.length === 0) {
       clearOpenDocumentTabsFromLocalStorage(caseId);
     } else {
       safeSetOpenDocumentTabsFromLocalStorage({
         caseId,
-        openParentIds: openParentIds,
-        activeParentId: activeParentId,
+        openMaterialIds: openMaterialIds,
+        activeMaterialId: activeMaterialId,
       });
     }
-  }, [caseId, openParentIds, activeParentId]);
+  }, [caseId, openMaterialIds, activeMaterialId]);
 
   useEffect(() => {
     if (materialIdParam) {
-      setActiveParentId(materialIdParam);
-      setOpenParentIds((openParentIds) =>
-        openParentIds.includes(`${materialIdParam}`)
-          ? openParentIds
-          : [...openParentIds, `${materialIdParam}`],
+      setActiveMaterialId(materialIdParam);
+      setOpenMaterialIds((openMaterialIds) =>
+        openMaterialIds.includes(`${materialIdParam}`)
+          ? openMaterialIds
+          : [...openMaterialIds, `${materialIdParam}`],
       );
 
       if (searchTermParam && searchMatchesParam) {
         const highlights = convertMatchesToSearchHighlights(searchMatchesParam);
-        setSearchContextByParentId((prev) => ({
+        setSearchContextByMaterialId((prev) => ({
           ...prev,
           [materialIdParam]: { searchTerm: searchTermParam, highlights, focusedIndex: 0 },
         }));
@@ -157,19 +157,19 @@ export const ReviewAndRedactPage = () => {
     }
   }, [materialIdParam, searchTermParam, searchMatchesParam]);
 
-  const setFocusedSearchIndex = (parentId: string, index: number) => {
-    setSearchContextByParentId((prev) => {
-      const ctx = prev[parentId];
+  const setFocusedSearchIndex = (materialId: string, index: number) => {
+    setSearchContextByMaterialId((prev) => {
+      const ctx = prev[materialId];
       if (!ctx) return prev;
-      return { ...prev, [parentId]: { ...ctx, focusedIndex: index } };
+      return { ...prev, [materialId]: { ...ctx, focusedIndex: index } };
     });
   };
 
-  const clearSearchContextForDoc = (parentId: string) => {
-    setSearchContextByParentId((prev) => {
-      if (!(parentId in prev)) return prev;
+  const clearSearchContextForDoc = (materialId: string) => {
+    setSearchContextByMaterialId((prev) => {
+      if (!(materialId in prev)) return prev;
       const next = { ...prev };
-      delete next[parentId];
+      delete next[materialId];
       return next;
     });
   };
@@ -182,13 +182,13 @@ export const ReviewAndRedactPage = () => {
     ) {
       const filteredDocs = documentList.state.data.filter(
         (doc) =>
-          doc.cmsDocType?.documentType === docTypeParam && !openParentIds.includes(doc.parentId),
+          doc.cmsDocType?.documentType === docTypeParam && !openMaterialIds.includes(doc.parentId),
       );
 
       if (filteredDocs.length) {
         const newActiveParentId = filteredDocs[0]?.parentId;
-        if (newActiveParentId) setActiveParentId(newActiveParentId);
-        setOpenParentIds((prev) => [...prev, ...filteredDocs.map((doc) => doc.parentId)]);
+        if (newActiveParentId) setActiveMaterialId(newActiveParentId);
+        setOpenMaterialIds((prev) => [...prev, ...filteredDocs.map((doc) => doc.parentId)]);
       }
     }
   }, [docTypeParam, documentList.state]);
@@ -196,38 +196,38 @@ export const ReviewAndRedactPage = () => {
   const documentListState = documentList.state; // required for ts compiler to narrow
   const openDocuments =
     documentListState.status === 'success'
-      ? openParentIds
+      ? openMaterialIds
           .map((parentId) => documentListState.data.find((d) => d.parentId === parentId))
           .filter((doc): doc is TDocument => doc !== undefined)
       : [];
 
   const tabItems = openDocuments.map((doc) => ({
     id: doc.parentId,
-    label: doc.presentationTitle || '',
-    childId: doc.childId,
-    isDirty: (redactionsIndexedOnParentId[doc.parentId]?.length ?? 0) > 0,
+    label: doc.subject || '',
+    documentId: doc.documentId,
+    isDirty: (redactionsIndexedOnMaterialId[doc.parentId]?.length ?? 0) > 0,
     panel: {
       children: (
         <DocumentTabPanel
           key={doc.parentId}
           materialId={doc.parentId}
-          documentId={doc.childId}
+          documentId={doc.documentId}
           document={doc}
           caseId={caseId}
-          mode={modeByParentId[doc.parentId] ?? 'disabled'}
+          mode={modeByMaterialId[doc.parentId] ?? 'disabled'}
           onModeChange={(newMode) => handleModeChange(doc.parentId, newMode)}
           onRedactionsChange={(redactions) => {
-            setRedactionsIndexedOnParentId((prev) => ({ ...prev, [doc.parentId]: redactions }));
+            setRedactionsIndexedOnMaterialId((prev) => ({ ...prev, [doc.parentId]: redactions }));
           }}
           onModification={(document) => {
-            setNewVersionParentId(document.parentId);
+            setNewVersionMaterialId(document.parentId);
             documentList.load();
           }}
-          initRedactions={redactionsIndexedOnParentId[doc.parentId]}
+          initRedactions={redactionsIndexedOnMaterialId[doc.parentId]}
           onNumOfPagesChange={(numOfPages) =>
-            setNumOfPagesByParentId((prev) => ({ ...prev, [doc.parentId]: numOfPages }))
+            setNumOfPagesByMaterialId((prev) => ({ ...prev, [doc.parentId]: numOfPages }))
           }
-          searchContext={searchContextByParentId[doc.parentId]}
+          searchContext={searchContextByMaterialId[doc.parentId]}
           onFocusedSearchIndexChange={(index) => setFocusedSearchIndex(doc.parentId, index)}
           onBackToSearchResults={() => setSearchModalOpen(true)}
           checkInDocumentTriggerData={checkInDocumentTrigger.data}
@@ -244,37 +244,37 @@ export const ReviewAndRedactPage = () => {
       checkInDocumentFromAxiosInstance({
         axiosInstance,
         caseId,
-        parentId: document.parentId,
-        childId: document.childId,
+        materialId: document.parentId,
+        documentId: document.documentId,
       });
     }
-    if (documentId && documentId === activeParentId) {
-      const index = openParentIds.indexOf(documentId);
-      const nextDocumentId = openParentIds[index + 1] ?? openParentIds[index - 1] ?? '';
-      setActiveParentId(nextDocumentId);
+    if (documentId && documentId === activeMaterialId) {
+      const index = openMaterialIds.indexOf(documentId);
+      const nextDocumentId = openMaterialIds[index + 1] ?? openMaterialIds[index - 1] ?? '';
+      setActiveMaterialId(nextDocumentId);
     }
-    setOpenParentIds((prev) => prev.filter((id) => id !== documentId));
+    setOpenMaterialIds((prev) => prev.filter((id) => id !== documentId));
     if (documentId) clearSearchContextForDoc(documentId);
   };
 
   const hasUnsavedRedactions = (parentId: string) =>
-    (redactionsIndexedOnParentId[parentId]?.length ?? 0) > 0;
+    (redactionsIndexedOnMaterialId[parentId]?.length ?? 0) > 0;
 
   const closeAllTabs = () => {
     openDocuments.forEach((document) => {
       checkInDocumentFromAxiosInstance({
         axiosInstance,
         caseId,
-        parentId: document.parentId,
-        childId: document.childId,
+        materialId: document.parentId,
+        documentId: document.documentId,
       });
     });
 
-    setActiveParentId('');
-    setOpenParentIds([]);
-    setSearchContextByParentId({});
-    setRedactionsIndexedOnParentId({});
-    setNumOfPagesByParentId({});
+    setActiveMaterialId('');
+    setOpenMaterialIds([]);
+    setSearchContextByMaterialId({});
+    setRedactionsIndexedOnMaterialId({});
+    setNumOfPagesByMaterialId({});
 
     const sidebarFocusTarget =
       document.querySelector<HTMLElement>('#side-panel .govuk-accordion__section-button') ??
@@ -283,7 +283,7 @@ export const ReviewAndRedactPage = () => {
   };
 
   const handleCloseAll = () => {
-    const hasAnyUnsaved = openParentIds.some(hasUnsavedRedactions);
+    const hasAnyUnsaved = openMaterialIds.some(hasUnsavedRedactions);
     if (hasAnyUnsaved) {
       setUnsavedModal({ kind: 'closeAll' });
       return;
@@ -293,28 +293,32 @@ export const ReviewAndRedactPage = () => {
 
   const handleCloseTab = (documentId: string | undefined) => {
     if (documentId && hasUnsavedRedactions(documentId)) {
-      setPendingUnsavedAction({ kind: 'closeTab', parentId: documentId });
+      setPendingUnsavedAction({ kind: 'closeTab', materialId: documentId });
       return;
     }
     performCloseTab(documentId);
   };
 
   const requestActiveTabChange = (nextParentId: string) => {
-    if (nextParentId !== activeParentId && hasUnsavedRedactions(activeParentId)) {
-      setPendingUnsavedAction({ kind: 'switchTab', parentId: activeParentId, nextParentId });
+    if (nextParentId !== activeMaterialId && hasUnsavedRedactions(activeMaterialId)) {
+      setPendingUnsavedAction({
+        kind: 'switchTab',
+        materialId: activeMaterialId,
+        nextMaterialId: nextParentId,
+      });
       return;
     }
-    setActiveParentId(nextParentId);
+    setActiveMaterialId(nextParentId);
   };
 
   const handleModeChange = (parentId: string, newMode: TMode) => {
     const isStoppingRedaction =
-      isRedactionEnabledMode(modeByParentId[parentId] ?? 'disabled') && newMode === 'disabled';
+      isRedactionEnabledMode(modeByMaterialId[parentId] ?? 'disabled') && newMode === 'disabled';
     if (isStoppingRedaction && hasUnsavedRedactions(parentId)) {
-      setPendingUnsavedAction({ kind: 'stopRedacting', parentId });
+      setPendingUnsavedAction({ kind: 'stopRedacting', materialId: parentId });
       return;
     }
-    setModeByParentId((prev) => ({ ...prev, [parentId]: newMode }));
+    setModeByMaterialId((prev) => ({ ...prev, [parentId]: newMode }));
   };
 
   const proceedWithPendingAction = () => {
@@ -323,18 +327,18 @@ export const ReviewAndRedactPage = () => {
     setPendingUnsavedAction(undefined);
     switch (action.kind) {
       case 'closeTab':
-        performCloseTab(action.parentId);
+        performCloseTab(action.materialId);
         break;
       case 'switchTab':
-        setActiveParentId(action.nextParentId);
+        setActiveMaterialId(action.nextMaterialId);
         break;
       case 'stopRedacting':
-        setModeByParentId((prev) => ({ ...prev, [action.parentId]: 'disabled' }));
+        setModeByMaterialId((prev) => ({ ...prev, [action.materialId]: 'disabled' }));
         break;
     }
   };
 
-  const activeTabId = activeParentId || openParentIds[0] || '';
+  const activeTabId = activeMaterialId || openMaterialIds[0] || '';
 
   useEffect(() => {
     if (!activeTabId) return;
@@ -345,9 +349,9 @@ export const ReviewAndRedactPage = () => {
   const activeDocument = openDocuments.find((doc) => doc.parentId === activeTabId);
 
   const openUnsavedRedactions: { [k: string]: TRedaction[] } = Object.fromEntries(
-    openParentIds
+    openMaterialIds
       .filter(hasUnsavedRedactions)
-      .map((parentId) => [parentId, redactionsIndexedOnParentId[parentId] ?? []]),
+      .map((parentId) => [parentId, redactionsIndexedOnMaterialId[parentId] ?? []]),
   );
 
   useEffect(() => {
@@ -375,7 +379,7 @@ export const ReviewAndRedactPage = () => {
       title="Review and Redact"
       caseInfo={caseInfo}
       shouldBlockNavigationCheck={(tab) => {
-        const shouldBlock = Object.values(redactionsIndexedOnParentId).some(
+        const shouldBlock = Object.values(redactionsIndexedOnMaterialId).some(
           (redacts) => redacts.length > 0,
         );
         if (!shouldBlock) return false;
@@ -419,7 +423,7 @@ export const ReviewAndRedactPage = () => {
         <UnsavedRedactionsModal
           documents={documentListState.status === 'success' ? documentListState.data : []}
           redactionsIndexedOnDocumentId={
-            unsavedModal.kind === 'closeAll' ? openUnsavedRedactions : redactionsIndexedOnParentId
+            unsavedModal.kind === 'closeAll' ? openUnsavedRedactions : redactionsIndexedOnMaterialId
           }
           onReturnClick={() => setUnsavedModal(null)}
           onIgnoreClick={() => {
@@ -428,14 +432,14 @@ export const ReviewAndRedactPage = () => {
             setUnsavedModal(null);
           }}
           onDocumentClick={(documentId) => {
-            setActiveParentId(documentId);
+            setActiveMaterialId(documentId);
             setUnsavedModal(null);
           }}
         />
       )}
       {pendingUnsavedAction && (
         <CloseTabUnsavedRedactionsModal
-          redactions={redactionsIndexedOnParentId[pendingUnsavedAction.parentId]}
+          redactions={redactionsIndexedOnMaterialId[pendingUnsavedAction.materialId]}
           onReturnClick={() => setPendingUnsavedAction(undefined)}
           onIgnoreClick={proceedWithPendingAction}
         />
@@ -476,9 +480,9 @@ export const ReviewAndRedactPage = () => {
                 <DocumentSidebar
                   caseId={caseId}
                   activeDocumentId={activeTabId}
-                  newVersionDocumentId={newVersionParentId}
-                  openDocumentIds={openParentIds}
-                  onSetDocumentOpenIds={setOpenParentIds}
+                  newVersionDocumentId={newVersionMaterialId}
+                  openDocumentIds={openMaterialIds}
+                  onSetDocumentOpenIds={setOpenMaterialIds}
                   onDocumentClick={requestActiveTabChange}
                   documentListState={documentList.state}
                   onChangeSidebarModeView={(mode) => {
@@ -492,7 +496,7 @@ export const ReviewAndRedactPage = () => {
           {tabItems.length > 0 && (
             <Tabs
               items={tabItems}
-              activeTabId={activeParentId}
+              activeTabId={activeMaterialId}
               handleTabSelection={requestActiveTabChange}
               handleCloseTab={handleCloseTab}
               onCloseAllClick={handleCloseAll}
@@ -501,11 +505,11 @@ export const ReviewAndRedactPage = () => {
               isShowCategories={isSidebarVisible}
               documentActions={
                 <DocumentActionsDropdown
-                  mode={modeByParentId[activeTabId] ?? 'disabled'}
+                  mode={modeByMaterialId[activeTabId] ?? 'disabled'}
                   onModeChange={(newMode) => handleModeChange(activeTabId, newMode)}
                   onRedactionLogClick={() => setShowRedactionLogModal(true)}
                   onViewInNewWindowClick={() => {
-                    const documentId = activeDocument?.childId;
+                    const documentId = activeDocument?.documentId;
 
                     trackAction('OpenedInNewWindow', { materialId: activeTabId, documentId });
                     navigateToViewDocumentPageInNewTab({
@@ -514,7 +518,7 @@ export const ReviewAndRedactPage = () => {
                       documentId,
                     });
                   }}
-                  numOfDocumentPages={numOfPagesByParentId[activeTabId] ?? 0}
+                  numOfDocumentPages={numOfPagesByMaterialId[activeTabId] ?? 0}
                 />
               }
             />

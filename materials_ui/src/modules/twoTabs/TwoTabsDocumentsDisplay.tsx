@@ -22,7 +22,7 @@ export const TwoTabsDocumentsDisplay = (p: {
       <div className="flex flex-col gap-4">
         {p.documents.map((document) => (
           <div
-            key={`${document.parentId}-${document.childId}`}
+            key={`${document.parentId}-${document.documentId}`}
             className="flex gap-4 min-w-[300px]"
           >
             <button
@@ -31,7 +31,7 @@ export const TwoTabsDocumentsDisplay = (p: {
                 p.onDocumentActive({ documentId: document.parentId });
               }}
             >
-              {document.parentId}, {document.childId}
+              {document.parentId}, {document.documentId}
               {p.activeDocumentId === document.parentId ? ' (active)' : ''}
             </button>
             {p.openDocumentIds.includes(document.parentId) && (

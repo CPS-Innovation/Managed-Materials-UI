@@ -109,7 +109,7 @@ export const RedactionLogModalBody = ({
     <div className={styles.modalBody}>
       <ErrorSummary errors={errors} />
 
-      <h2>Redaction details for: {activeDocument?.presentationTitle}</h2>
+      <h2>Redaction details for: {activeDocument?.subject}</h2>
 
       {mode === 'list' && selectedRedactionTypes && (
         <div className="govuk-form-group">

@@ -49,13 +49,13 @@ export const useDocumentSearchResults = (
     if (matches.length > 0) {
       combinedSearchResults.push({
         parentId: doc.parentId,
-        documentTitle: doc.presentationTitle ?? '',
-        cmsFileCreatedDate: doc.cmsFileCreatedDate,
+        documentTitle: doc.subject ?? '',
+        cmsFileCreatedDate: doc.date ?? '',
         cmsDocType: doc.cmsDocType,
         status: doc.status,
-        presentationTitle: doc.presentationTitle,
+        presentationTitle: doc.subject ?? '',
         isUnused: doc.isUnused,
-        cmsOriginalFileName: doc.cmsOriginalFileName,
+        cmsOriginalFileName: doc.originalFileName ?? '',
         conversionStatus: doc.conversionStatus,
         matches: matches.map((match) => ({
           text: match.text,

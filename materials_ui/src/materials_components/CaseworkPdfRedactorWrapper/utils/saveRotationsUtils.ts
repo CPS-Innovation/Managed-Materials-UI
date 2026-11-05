@@ -4,8 +4,8 @@ import { TRotation } from '../../PdfRedactor/utils/rotationUtils';
 export const saveRotations = async (p: {
   axiosInstance: AxiosInstance;
   caseId: string | number;
-  childId: number;
-  parentId: string;
+  documentId: number;
+  materialId: string;
   rotations: TRotation[];
 }) => {
   const payload = {
@@ -17,7 +17,7 @@ export const saveRotations = async (p: {
   };
 
   const response = await p.axiosInstance.post(
-    `/cases/${p.caseId}/materials/${p.parentId}/documents/${p.childId}/modify`,
+    `/cases/${p.caseId}/materials/${p.materialId}/documents/${p.documentId}/modify`,
     payload,
   );
 
