@@ -27,7 +27,8 @@ export const useClearLocalStorageWhenOverSoftLimit = (p: {
         p: p.numberOfNavigationsPerCheck,
       });
       // check every nth+2 navigation, so we don't hinder performance on initial render
-      if (count.current % p.numberOfNavigationsPerCheck !== 2) {
+      const isCheckableNavigation = count.current % p.numberOfNavigationsPerCheck === 2;
+      if (!isCheckableNavigation) {
         console.log(
           `localStorageHooks.tsx:${/*LL*/ 31}`,
           'not nth+2 navigation, will not check localStorage',
@@ -41,11 +42,13 @@ export const useClearLocalStorageWhenOverSoftLimit = (p: {
       );
 
       const remainingBytes = estimateBytesOfLocalStorageUsed();
+      const isOverSoftLimit = remainingBytes > LOCAL_STORAGE_SOFT_LIMIT_BYTES;
       console.log(`localStorageHooks.tsx:${/*LL*/ 35}`, {
         remainingBytes,
         LOCAL_STORAGE_SOFT_LIMIT_BYTES,
+        isOverSoftLimit,
       });
-      if (remainingBytes > LOCAL_STORAGE_SOFT_LIMIT_BYTES) {
+      if (isOverSoftLimit) {
         console.log(
           `localStorageHooks.tsx:${/*LL*/ 37}`,
           'over soft limit, about to clear localStorage',
