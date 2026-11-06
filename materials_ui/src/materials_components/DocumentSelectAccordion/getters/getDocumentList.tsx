@@ -33,7 +33,7 @@ const safeGetDocumentListFromAxiosInstanceWithRetries = async (p: {
 
 export const documentSchema = z.object({
   parentId: z.string(),
-  documentId: z.number(),
+  documentId: z.number().nullish(),
   status: z.string(),
   cmsDocType: z
     .object({
