@@ -201,7 +201,10 @@ export const ReviewAndRedactPage = () => {
           .filter((doc): doc is TDocument => doc !== undefined)
       : [];
 
-  const tabItems = openDocuments.map((doc) => ({
+  const filteredTabItems = openDocuments.filter((doc) => !!doc.documentId) as (TDocument & {
+    documentId: number;
+  })[];
+  const tabItems = filteredTabItems.map((doc) => ({
     id: doc.parentId,
     label: doc.subject || '',
     documentId: doc.documentId,
@@ -212,8 +215,6 @@ export const ReviewAndRedactPage = () => {
           key={doc.parentId}
           materialId={doc.parentId}
           documentId={doc.documentId}
-          document={doc}
-          caseId={caseId}
           mode={modeByMaterialId[doc.parentId] ?? 'disabled'}
           onModeChange={(newMode) => handleModeChange(doc.parentId, newMode)}
           onRedactionsChange={(redactions) => {
@@ -231,6 +232,8 @@ export const ReviewAndRedactPage = () => {
           onFocusedSearchIndexChange={(index) => setFocusedSearchIndex(doc.parentId, index)}
           onBackToSearchResults={() => setSearchModalOpen(true)}
           checkInDocumentTriggerData={checkInDocumentTrigger.data}
+          document={doc}
+          caseId={caseId}
         />
       ),
     },
@@ -240,7 +243,7 @@ export const ReviewAndRedactPage = () => {
     if (documentListState.status !== 'success') return;
 
     const document = documentListState.data.find((x) => x.parentId === documentId);
-    if (document) {
+    if (document && document.documentId) {
       checkInDocumentFromAxiosInstance({
         axiosInstance,
         caseId,
@@ -262,6 +265,7 @@ export const ReviewAndRedactPage = () => {
 
   const closeAllTabs = () => {
     openDocuments.forEach((document) => {
+      if (!document.documentId) return;
       checkInDocumentFromAxiosInstance({
         axiosInstance,
         caseId,
@@ -512,6 +516,7 @@ export const ReviewAndRedactPage = () => {
                     const documentId = activeDocument?.documentId;
 
                     trackAction('OpenedInNewWindow', { materialId: activeTabId, documentId });
+                    if (!documentId) return;
                     navigateToViewDocumentPageInNewTab({
                       caseId,
                       materialId: activeTabId,
