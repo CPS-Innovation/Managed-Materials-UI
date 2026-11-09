@@ -21,15 +21,25 @@ const CaseContextSchema = z.object({
 });
 
 const DefaultJourneyContextSchema = CaseContextSchema.extend({ journey: z.literal('default') });
-const PcdReviewJourneyContextSchema = CaseContextSchema.extend({ journey: z.literal('review') });
+const PcdReviewJourneyContextSchema = CaseContextSchema.extend({
+  journey: z.literal('casereview'),
+});
 const ReviewAndRedactJourneyContextSchema = CaseContextSchema.extend({
-  journey: z.literal('redact'),
+  journey: z.union([z.literal('redact'), z.literal('review')]),
+});
+const PcdRequestJourneyContextSchema = CaseContextSchema.extend({
+  journey: z.literal('triage-request'),
+});
+const MaterialsJourneyContextSchema = CaseContextSchema.extend({
+  journey: z.literal('triage-materials'),
 });
 
 export const JourneyContextSchema = z.discriminatedUnion('journey', [
   DefaultJourneyContextSchema,
   PcdReviewJourneyContextSchema,
   ReviewAndRedactJourneyContextSchema,
+  PcdRequestJourneyContextSchema,
+  MaterialsJourneyContextSchema,
 ]);
 
 export type JourneyContext = z.infer<typeof JourneyContextSchema>;
@@ -54,10 +64,16 @@ export const parseJourneyContext = (search: string): ParseResult => {
 
 export const getJourneyRoute = (context: JourneyContext) => {
   switch (context.journey) {
-    case 'review':
+    case 'casereview':
       return getRoute({ routeName: 'PCD_REVIEW', prefix: String(context.caseId) });
     case 'redact':
       return getRoute({ routeName: 'REVIEW_REDACT', prefix: String(context.caseId) });
+    case 'review':
+      return getRoute({ routeName: 'REVIEW_REDACT', prefix: String(context.caseId) });
+    case 'triage-request':
+      return getRoute({ routeName: 'PCD_REQUEST', prefix: String(context.caseId) });
+    case 'triage-materials':
+      return getRoute({ routeName: 'MATERIALS', prefix: String(context.caseId) });
     case 'default':
       return getRoute({ routeName: 'MATERIALS', prefix: String(context.caseId) });
   }
