@@ -55,7 +55,6 @@ const DefendantSchema = z.array(
 const WitnessSchema = z.array(
   z.object({
     id: z.number(),
-    shoulderNumber: z.number().nullish(),
     title: z.string().nullish(),
     name: z.string(),
     hasStatements: z.boolean(),

@@ -6,14 +6,14 @@ import { documentTypeIdsMap, TCategoryName } from './categoriseDocumentHelperUti
 export const categoriseDocument = (
   doc: z.infer<typeof documentSchema> | z.infer<typeof SearchTermResultSchema>,
 ): TCategoryName | null => {
-  const id = doc.cmsDocType.documentTypeId;
+  const id = doc.cmsDocType?.documentTypeId;
 
   if (doc.isUnused) {
     return 'unusedMaterial';
   }
 
   for (const category of Object.keys(documentTypeIdsMap) as TCategoryName[]) {
-    if (documentTypeIdsMap[category].includes(id)) {
+    if (id && documentTypeIdsMap[category].includes(id)) {
       return category;
     }
   }

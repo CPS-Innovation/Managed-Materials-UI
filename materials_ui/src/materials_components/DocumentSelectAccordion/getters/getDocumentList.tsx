@@ -21,6 +21,7 @@ const safeGetDocumentListFromAxiosInstanceWithRetries = async (p: {
   const errorMessages: string[] = [];
   for (let attempt = 1; attempt <= attempts; attempt++) {
     const resp = await safeGetDocumentListFromAxiosInstance(p);
+    console.log('resp', { resp });
 
     if (resp.success) return resp;
     else errorMessages.push(resp.errorMessage);
@@ -34,14 +35,16 @@ const safeGetDocumentListFromAxiosInstanceWithRetries = async (p: {
 export const documentSchema = z.object({
   parentId: z.string(),
   status: z.string(),
-  cmsDocType: z.object({
-    documentTypeId: z.number(),
-    documentType: z.string().nullable(),
-    documentCategory: z.string(),
-  }),
-  cmsOriginalFileName: z.string(),
-  presentationTitle: z.string(),
-  cmsFileCreatedDate: z.string(),
+  cmsDocType: z
+    .object({
+      documentTypeId: z.number(),
+      documentType: z.string().nullable(),
+      documentCategory: z.string(),
+    })
+    .nullish(),
+  cmsOriginalFileName: z.string().nullish(),
+  presentationTitle: z.string().nullish(),
+  cmsFileCreatedDate: z.string().nullish(),
   isUnused: z.boolean(),
   hasNotes: z.boolean(),
   childId: z.number().nullish(),
@@ -86,6 +89,7 @@ export const safeGetDocumentListFromAxiosInstance = async (p: {
     });
 
     const parsedResp = documentListSchema.safeParse(resp);
+    console.log(`getDocumentList.tsx:${/*LL*/ 90}`, { parsedResp });
     return parsedResp.success
       ? parsedResp
       : ({

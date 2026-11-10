@@ -92,7 +92,7 @@ export const DropdownButton2 = (p: {
 
 export type DropdownButtonItem = {
   id: string;
-  label: string;
+  label: string | null | undefined;
   ariaLabel: string;
   disabled: boolean;
 };
