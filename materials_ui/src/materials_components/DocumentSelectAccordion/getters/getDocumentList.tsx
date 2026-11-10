@@ -44,7 +44,7 @@ export const documentSchema = z.object({
   cmsFileCreatedDate: z.string(),
   isUnused: z.boolean(),
   hasNotes: z.boolean(),
-  childId: z.number(),
+  childId: z.number().nullish(),
   presentationFlags: z.object({ write: z.union([z.string(), z.boolean()]).nullish() }).nullish(),
 });
 export const documentListSchema = z.array(documentSchema);
