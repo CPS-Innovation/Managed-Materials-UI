@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import { useCaseMaterials, useFilters, usePager } from '../../hooks';
 
-import { CaseMaterialsWithDocumentIdType } from '../../schemas/caseMaterials';
+import { CaseMaterialsType, CaseMaterialsWithDocumentIdType } from '../../schemas/caseMaterials';
 import { defaultFilterFn, defaultSearchFn, defaultSortFn, getSortFn } from '../../utils/filtering';
 import SortableTable, { Column } from './SortableTable';
 
@@ -74,14 +74,14 @@ export const CaseMaterialsTable = () => {
 
   const filteredSortedData = useMemo(() => {
     const sortFn = getSortFn(columns, filters?.sort, (sortConfig) =>
-      defaultSortFn<CaseMaterialsWithDocumentIdType>(sortConfig),
+      defaultSortFn<CaseMaterialsType>(sortConfig),
     );
-    const sortByStatusFn = defaultSortFn<CaseMaterialsWithDocumentIdType>({
+    const sortByStatusFn = defaultSortFn<CaseMaterialsType>({
       column: 'statusLabel',
       direction: 'descending',
     });
-    const filterFn = defaultFilterFn<CaseMaterialsWithDocumentIdType>(filters?.filters);
-    const searchFn = defaultSearchFn<CaseMaterialsWithDocumentIdType>('subject', filters?.search);
+    const filterFn = defaultFilterFn<CaseMaterialsType>(filters?.filters);
+    const searchFn = defaultSearchFn<CaseMaterialsType>('subject', filters?.search);
 
     return filteredData
       ?.map((material) => {

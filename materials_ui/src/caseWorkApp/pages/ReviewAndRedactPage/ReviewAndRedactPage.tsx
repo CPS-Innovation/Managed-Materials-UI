@@ -182,7 +182,7 @@ export const ReviewAndRedactPage = () => {
     ) {
       const filteredDocs = documentList.state.data.filter(
         (doc) =>
-          doc.cmsDocType.documentType === docTypeParam && !openParentIds.includes(doc.parentId),
+          doc.cmsDocType?.documentType === docTypeParam && !openParentIds.includes(doc.parentId),
       );
 
       if (filteredDocs.length) {
@@ -201,7 +201,10 @@ export const ReviewAndRedactPage = () => {
           .filter((doc): doc is TDocument => doc !== undefined)
       : [];
 
-  const tabItems = openDocuments.map((doc) => ({
+  type TFilteredDocument = Omit<TDocument, 'childId'> & { childId: number };
+  const filteredTabItems = openDocuments.filter((doc) => !!doc.childId) as TFilteredDocument[];
+
+  const tabItems = filteredTabItems.map((doc) => ({
     id: doc.parentId,
     label: doc.presentationTitle,
     childId: doc.childId,
@@ -240,7 +243,7 @@ export const ReviewAndRedactPage = () => {
     if (documentListState.status !== 'success') return;
 
     const document = documentListState.data.find((x) => x.parentId === documentId);
-    if (document) {
+    if (document?.childId) {
       checkInDocumentFromAxiosInstance({
         axiosInstance,
         caseId,
@@ -262,12 +265,14 @@ export const ReviewAndRedactPage = () => {
 
   const closeAllTabs = () => {
     openDocuments.forEach((document) => {
-      checkInDocumentFromAxiosInstance({
-        axiosInstance,
-        caseId,
-        parentId: document.parentId,
-        childId: document.childId,
-      });
+      if (document.childId) {
+        checkInDocumentFromAxiosInstance({
+          axiosInstance,
+          caseId,
+          parentId: document.parentId,
+          childId: document.childId,
+        });
+      }
     });
 
     setActiveParentId('');
@@ -508,11 +513,13 @@ export const ReviewAndRedactPage = () => {
                     const documentId = activeDocument?.childId;
 
                     trackAction('OpenedInNewWindow', { materialId: activeTabId, documentId });
-                    navigateToViewDocumentPageInNewTab({
-                      caseId,
-                      materialId: activeTabId,
-                      documentId,
-                    });
+                    if (documentId) {
+                      navigateToViewDocumentPageInNewTab({
+                        caseId,
+                        materialId: activeTabId,
+                        documentId,
+                      });
+                    }
                   }}
                   numOfDocumentPages={numOfPagesByParentId[activeTabId] ?? 0}
                 />

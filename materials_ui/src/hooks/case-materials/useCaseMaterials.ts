@@ -42,7 +42,7 @@ export const useCaseMaterials = ({ dataType }: UseCaseMaterialsProps) => {
 
     const caseMaterials = caseMaterialsResponse.data.map((material) => ({
       ...material,
-      documentId: indexedDocumentsList[material.id]?.childId,
+      documentId: indexedDocumentsList[material.id]?.childId ?? undefined,
     }));
 
     return caseMaterials;
