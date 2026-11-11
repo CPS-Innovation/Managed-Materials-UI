@@ -21,6 +21,7 @@ const safeGetDocumentListFromAxiosInstanceWithRetries = async (p: {
   const errorMessages: string[] = [];
   for (let attempt = 1; attempt <= attempts; attempt++) {
     const resp = await safeGetDocumentListFromAxiosInstance(p);
+    console.log('resp', { resp });
 
     if (resp.success) return resp;
     else errorMessages.push(resp.errorMessage);
