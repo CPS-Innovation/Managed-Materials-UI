@@ -20,7 +20,7 @@ export const useDocuments = () => {
   const docTypes = data
     ? Array.from(
         new Set(
-          data.map((doc) => doc.cmsDocType.documentType).filter((t) => t != null && t !== ''),
+          data.map((doc) => doc.cmsDocType?.documentType).filter((t) => t != null && t !== ''),
         ),
       )
     : [];
