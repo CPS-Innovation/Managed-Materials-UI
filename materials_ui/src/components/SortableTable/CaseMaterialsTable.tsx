@@ -15,7 +15,7 @@ import { formatDate } from '../../utils/date';
 import { DocumentPreview, LoadingSpinner, Pagination, StatusTag } from '..';
 import { useMaterialTags } from '../../stores';
 
-export const CaseMaterialsTable = () => {
+export const CaseMaterialsTable = (p: { caseId: number | string }) => {
   const [queryParams] = useSearchParams();
   const {
     filteredData,
@@ -115,7 +115,7 @@ export const CaseMaterialsTable = () => {
       initialPage: currentPageParam ? +currentPageParam - 1 : 0,
     });
 
-  const expandableRow = (row: CaseMaterialsType) => <DocumentPreview row={row} />;
+  const expandableRow = (row: CaseMaterialsType) => <DocumentPreview row={row} caseId={p.caseId} />;
 
   const recordsOnCurrentPage = endIndex + 1 - startIndex;
 

@@ -207,7 +207,7 @@ export const CommunicationsPage = () => {
                 selectedItems={selectedItems.communications}
               />
 
-              <CommunicationsTable />
+              <CommunicationsTable caseId={caseId} />
 
               <div className="action-on-selection-container">
                 <ButtonMenuComponent
