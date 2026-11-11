@@ -204,7 +204,7 @@ export const MaterialsPage = () => {
                 selectedItems={selectedItems.materials}
               />
 
-              <CaseMaterialsTable />
+              <CaseMaterialsTable caseId={caseId} />
 
               <div className="action-on-selection-container">
                 <ButtonMenuComponent
