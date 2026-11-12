@@ -39,7 +39,7 @@
     "axios": "^1.21.0",
     "dayjs": "^1.11.13",
     "dompurify": "^3.4.17",
-    "govuk-frontend": "^5.11.2",
+    "govuk-frontend": "^6.2.0",
     "home-office-kit": "^1.2.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
