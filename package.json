@@ -9,5 +9,8 @@
     "tsc": "cd materials_ui && npm run tsc",
     "dev": "cd materials_ui && npm run dev",
     "build:tailwind": "cd materials_ui && npm run build:tailwind"
+  },
+  "dependencies": {
+    "@ministryofjustice/frontend": "^12.0.0"
   }
 }
