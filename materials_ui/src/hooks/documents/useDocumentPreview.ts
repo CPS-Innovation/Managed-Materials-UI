@@ -23,7 +23,9 @@ export const useDocumentPreview = (p: {
       .then((response) => response.data);
 
   const { data, error, isLoading } = useSWR(
-    caseInfo ? `${QUERY_KEYS.CASE_MATERIAL_FULL_DOCUMENT}/${materialIdString}` : null,
+    caseInfo
+      ? `${QUERY_KEYS.CASE_MATERIAL_FULL_DOCUMENT}/${p.caseId}/${materialIdString}/${p.documentId}`
+      : null,
     getDocumentPreview,
   );
 
