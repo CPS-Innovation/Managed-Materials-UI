@@ -5,7 +5,7 @@ import { mockOchestration } from '../mocks/mockOchestrationReclassify';
 import { mockWitness } from '../mocks/mockWitness';
 
 test.beforeEach(async ({ page }) => {
-  await mockRoute(page, '/case-materials', mockCaseMaterials());
+  await mockRoute(page, '/documents', mockCaseMaterials());
   await page.goto('./materials', { waitUntil: 'domcontentloaded' });
   await page.waitForRequest('**/case-info/2167259');
   await page
@@ -127,10 +127,10 @@ test.describe('form submission', () => {
   test.skip('statement reclassify with witness', async ({ page }) => {
     await mockRoute(page, 'case-witnesses?caseId=2167259', mockWitness());
     await mockRoute(page, 'materials/8836399/reclassify-complete', mockOchestration());
-    await page.unroute('api/case-materials');
+    await page.unroute('api/documents');
     await mockRoute(
       page,
-      'api/case-materials',
+      'api/documents',
       mockCaseMaterials({
         category: 'Statement',
         type: 'MG11',
@@ -160,13 +160,12 @@ test.describe('form submission', () => {
     await mockRoute(page, 'case-witnesses?caseId=2167259', mockWitness());
     await mockRoute(page, 'api/materials/8836399/reclassify-complete', mockOchestration());
 
-    await page.unroute('api/case-materials');
+    await page.unroute('api/documents');
 
     await mockRoute(
       page,
-      'api/case-materials',
+      'api/documents',
       mockCaseMaterials({
-        id: 4242662,
         type: 'MG15',
         category: 'Exhibit',
         originalFileName: 'Case Action Plan 4 (test)',
@@ -191,13 +190,12 @@ test.describe('form submission', () => {
     await mockRoute(page, 'case-witnesses?caseId=2167259', mockWitness());
     await mockRoute(page, 'api/materials/4242662/reclassify-complete', mockOchestration());
 
-    await page.unroute('api/case-materials');
+    await page.unroute('api/documents');
 
     await mockRoute(
       page,
-      'api/case-materials',
+      'api/documents',
       mockCaseMaterials({
-        id: 4242662,
         type: 'ABE',
         category: 'Exhibit',
         originalFileName: 'Case Action Plan 4 (test)',

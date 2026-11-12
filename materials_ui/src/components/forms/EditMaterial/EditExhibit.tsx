@@ -38,10 +38,12 @@ export const EditExhibitForm = ({ cancelUrl, formState, material, onSuccess }: P
       subject: formState?.item || material?.subject || '',
       used: formState?.used || material?.status === 'Used',
       existingproducerOrWitnessId:
-        formState?.existingproducerOrWitnessId || material?.existingproducerOrWitnessId,
+        formState?.existingproducerOrWitnessId ||
+        material?.existingProducerOrWitnessId ||
+        undefined,
       producedBy:
         formState?.producedBy ||
-        (!material?.existingproducerOrWitnessId ? material?.producer?.trim() : undefined),
+        (!material?.existingProducerOrWitnessId ? material?.producer?.trim() : undefined),
     },
   });
 

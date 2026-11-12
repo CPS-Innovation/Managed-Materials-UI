@@ -3,9 +3,9 @@ import { LoadingSpinner } from '../../components';
 import { DocumentSidebarWrapper } from './DocumentSidebarWrapper';
 import { useAxiosInstance } from './getters/getAxiosInstance';
 import {
-  postDocumentNotesFromAxiosInstance,
-  useGetDocumentNotes,
-} from './getters/getDocumentNotes';
+  postMaterialNotesFromAxiosInstance,
+  useGetMaterialNotes,
+} from './getters/getMaterialNotes';
 import { CloseIconButton } from './templates/CloseIconButton';
 import { GovUkBanner } from './templates/GovUkBanner';
 import { GovUkButton } from './templates/GovUkButton';
@@ -26,7 +26,7 @@ export const DocumentSidebarNotes = (p: {
   const remainingCharacters = NOTES_CHAR_COUNT_MAX_LENGTH - text.length;
 
   const axiosInstance = useAxiosInstance();
-  const documentNotes = useGetDocumentNotes({ caseId: p.caseId, documentId: p.documentId });
+  const materialNotes = useGetMaterialNotes({ caseId: p.caseId, materialId: p.documentId });
 
   return (
     <DocumentSidebarWrapper>
@@ -67,14 +67,14 @@ export const DocumentSidebarNotes = (p: {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <GovUkButton
               onClick={async () => {
-                await postDocumentNotesFromAxiosInstance({
+                await postMaterialNotesFromAxiosInstance({
                   axiosInstance,
-                  documentId: p.documentId,
+                  materialId: p.documentId,
                   caseId: p.caseId,
                   text,
                 });
                 setSavedSuccessfully(true);
-                documentNotes.mutate();
+                materialNotes.mutate();
                 p.onNoteSavedSuccess();
               }}
             >
@@ -85,9 +85,9 @@ export const DocumentSidebarNotes = (p: {
         </div>
         <br />
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <LoadingSpinner isLoading={documentNotes.data === undefined} />
-          {documentNotes.data === null && <div>error</div>}
-          {documentNotes.data && (
+          <LoadingSpinner isLoading={materialNotes.data === undefined} />
+          {materialNotes.data === null && <div>error</div>}
+          {materialNotes.data && (
             <div
               style={{
                 borderLeft: 'solid 4px #0066cc',
@@ -96,7 +96,7 @@ export const DocumentSidebarNotes = (p: {
                 flexDirection: 'column',
               }}
             >
-              {documentNotes.data.map((note) => (
+              {materialNotes.data.map((note) => (
                 <div style={{ display: 'flex', gap: '10px' }} key={`${note.date}-${note.text}`}>
                   <div
                     style={{ width: '10px', height: '6px', borderBottom: 'solid 4px #0066cc' }}
@@ -110,7 +110,7 @@ export const DocumentSidebarNotes = (p: {
               ))}
             </div>
           )}
-          {documentNotes.data?.length === 0 && <div>No notes to display</div>}
+          {materialNotes.data?.length === 0 && <div>No notes to display</div>}
         </div>
       </div>
     </DocumentSidebarWrapper>

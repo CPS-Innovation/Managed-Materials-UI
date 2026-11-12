@@ -4,22 +4,20 @@ import { mockCaseMaterials } from '../mocks/mockCaseMaterials';
 
 test.describe('Communications page', () => {
   test.beforeEach(async ({ page }) => {
-    await mockRoute(page, '/case-materials', mockCaseMaterials());
+    await mockRoute(page, '/documents', mockCaseMaterials());
     await page.goto('./communications', { waitUntil: 'domcontentloaded' });
     await page.waitForRequest('**/case-info/2167259');
   });
   test.skip('T-001: page loads list of Communications', async ({ page }) => {
-    mockRoute(page, '/documents', []);
     mockRoute(
       page,
-      '/case-materials',
+      '/documents',
       mockCaseMaterials({
         subject: 'MG7 SMITH Will (Redacted)',
         type: 'DCF',
         category: 'Communication',
       }),
     );
-    mockRoute(page, '/documents', [{}]);
 
     await expect(page.getByText('MG7 SMITH Will (Redacted)', { exact: true })).toBeVisible();
   });
@@ -27,11 +25,11 @@ test.describe('Communications page', () => {
   test.skip('T-002: page shows no communications text if no communications are displayed', async ({
     page,
   }) => {
-    mockRoute(page, '/case-materials', mockCaseMaterials({}));
+    mockRoute(page, '/documents', mockCaseMaterials({}));
 
     // no materials
     await page.waitForSelector('tbody'); // Ensure table exists first
-    await page.route('/case-materials', (route) => route.abort());
+    await page.route('/documents', (route) => route.abort());
     expect(
       page.getByText('There are no communications that match your selection for this case'),
     ).toBeVisible();
@@ -41,7 +39,7 @@ test.describe('Communications page', () => {
   test.skip('T-003: user is able to filter by in/out', async ({ page }) => {
     mockRoute(
       page,
-      '/case-materials',
+      '/documents',
       mockCaseMaterials({
         subject: 'MG7 SMITH Will (Redacted)',
         type: 'DCF',
@@ -58,7 +56,7 @@ test.describe('Communications page', () => {
   test.skip('T-004: user is able to filter by comms type', async ({ page }) => {
     mockRoute(
       page,
-      '/case-materials',
+      '/documents',
       mockCaseMaterials({
         subject: 'test 1',
         type: 'DCF',
@@ -75,7 +73,7 @@ test.describe('Communications page', () => {
   test.skip('T-005: user is able to filter by comms with', async ({ page }) => {
     mockRoute(
       page,
-      '/case-materials',
+      '/documents',
       mockCaseMaterials({
         subject: 'test 2',
         type: 'DCF',
@@ -91,7 +89,7 @@ test.describe('Communications page', () => {
   test.skip('T-006: user is able to filter by type', async ({ page }) => {
     mockRoute(
       page,
-      '/case-materials',
+      '/documents',
       mockCaseMaterials({
         subject: 'test 3',
         type: 'Meeting',
@@ -116,7 +114,7 @@ test.describe('Communications page', () => {
   test.skip('T-008: user is able to search communications', async ({ page }) => {
     mockRoute(
       page,
-      '/case-materials',
+      '/documents',
       mockCaseMaterials({
         subject: 'test 1',
         type: 'Meeting',

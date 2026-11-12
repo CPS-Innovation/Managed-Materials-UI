@@ -21,7 +21,6 @@ const safeGetDocumentListFromAxiosInstanceWithRetries = async (p: {
   const errorMessages: string[] = [];
   for (let attempt = 1; attempt <= attempts; attempt++) {
     const resp = await safeGetDocumentListFromAxiosInstance(p);
-    console.log('resp', { resp });
 
     if (resp.success) return resp;
     else errorMessages.push(resp.errorMessage);
@@ -34,25 +33,26 @@ const safeGetDocumentListFromAxiosInstanceWithRetries = async (p: {
 
 export const documentSchema = z.object({
   parentId: z.string(),
+  documentId: z.number().nullish(),
   status: z.string(),
   cmsDocType: z
     .object({
       documentTypeId: z.number(),
-      documentType: z.string().nullable(),
+      documentType: z.string().nullish(),
       documentCategory: z.string(),
     })
     .nullish(),
-  cmsOriginalFileName: z.string().nullish(),
-  presentationTitle: z.string().nullish(),
-  cmsFileCreatedDate: z.string().nullish(),
+  originalFileName: z.string().nullish(),
+  subject: z.string().nullish(),
+  date: z.string().nullish(),
   isUnused: z.boolean(),
   hasNotes: z.boolean(),
-  childId: z.number().nullish(),
   presentationFlags: z.object({ write: z.union([z.string(), z.boolean()]).nullish() }).nullish(),
 });
 export const documentListSchema = z.array(documentSchema);
+
 export type TDocument = z.infer<typeof documentSchema>;
-export type TDocumentList = TDocument[];
+export type TDocumentList = z.infer<typeof documentListSchema>;
 
 export const getDocumentListFromAxiosInstance = async (p: {
   axiosInstance: AxiosInstance;
@@ -65,11 +65,11 @@ export const getDocumentListFromAxiosInstance = async (p: {
 export const getDocumentFromAxiosInstance = async (p: {
   axiosInstance: AxiosInstance;
   caseId: number | undefined;
-  documentId: string | undefined;
-  versionId: number | undefined;
+  materialId: string | undefined;
+  documentId: number | undefined;
 }) => {
   const response = await p.axiosInstance.get(
-    `/cases/${p.caseId}/materials/${p.documentId}/documents/${p.versionId}`,
+    `/cases/${p.caseId}/materials/${p.materialId}/documents/${p.documentId}`,
   );
 
   return response.data;
@@ -80,7 +80,7 @@ export const safeGetDocumentListFromAxiosInstance = async (p: {
   caseId: string | number | undefined;
 }): Promise<
   | { success: true; data: z.infer<typeof documentListSchema> }
-  | { success: false; errorMessage: string }
+  | { success: false; errorMessage: string; error: unknown }
 > => {
   try {
     const resp = await getDocumentListFromAxiosInstance({
@@ -89,13 +89,14 @@ export const safeGetDocumentListFromAxiosInstance = async (p: {
     });
 
     const parsedResp = documentListSchema.safeParse(resp);
-    console.log(`getDocumentList.tsx:${/*LL*/ 90}`, { parsedResp });
+    if (!parsedResp.success) console.log(`getDocumentList.tsx:${/*LL*/ 89}`, { parsedResp });
     return parsedResp.success
       ? parsedResp
-      : ({
+      : {
           success: false,
-          errorMessage: 'Unable to parse response in safeGetDocumentListFromAxiosInstance',
-        } as const);
+          errorMessage: 'Unable to parse response - in safeGetDocumentListFromAxiosInstance',
+          error: parsedResp.error,
+        };
   } catch (error) {
     const errorSchema = z.object({ message: z.string() });
     const parsedError = errorSchema.safeParse(error);
@@ -103,7 +104,7 @@ export const safeGetDocumentListFromAxiosInstance = async (p: {
       ? parsedError.error.message
       : 'Failed to fetch all the documents - in safeGetDocumentListFromAxiosInstance';
 
-    return { success: false, errorMessage } as const;
+    return { success: false, errorMessage, error };
   }
 };
 

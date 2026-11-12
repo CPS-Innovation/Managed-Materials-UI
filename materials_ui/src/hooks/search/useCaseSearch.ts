@@ -3,7 +3,7 @@ import useSWR from 'swr';
 import { AxiosInstance } from 'axios';
 import { useBanner, useRequest } from '..';
 import { QUERY_KEYS } from '../../constants/query';
-import { caseDetailsSchema, CaseDetailsType } from '../../schemas/caseDetails';
+import { CaseDetailsType, CasesSchema, CaseType } from '../../schemas/caseDetails';
 import { getSafeCaseInfo } from '../case/useCaseInfo';
 import { useAxiosInstance } from '../ui/useRequest';
 
@@ -35,7 +35,7 @@ export const useCaseSearch = (urn: string) => {
 };
 
 export const getCaseDetails = async (p: { axiosInstance: AxiosInstance; urn: string }) => {
-  return p.axiosInstance.get<CaseDetailsType>(`/urns/${p.urn}/cases`);
+  return p.axiosInstance.get<CaseType[]>(`/urns/${p.urn}/cases`);
 };
 
 const getCaseDetailsKey = (p: { urn: string }) => `getCaseDetails-${p.urn}`;
@@ -51,7 +51,7 @@ export const useCaseDetails = (p: { urn: string }) => {
 const getSafeCaseDetails = async (p: { axiosInstance: AxiosInstance; urn: string }) => {
   try {
     const caseDetails = await getCaseDetails({ axiosInstance: p.axiosInstance, urn: p.urn });
-    return caseDetailsSchema.safeParse(caseDetails.data);
+    return CasesSchema.safeParse(caseDetails.data);
   } catch (error) {
     return { success: false, error } as const;
   }

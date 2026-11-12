@@ -23,9 +23,15 @@ const aRedaction = (overrides: Partial<TRedaction> = {}): TRedaction => ({
   ...overrides,
 });
 
-const save = (redactions: TRedaction[], axiosInstance: AxiosInstance) =>
-  saveRedactions({ axiosInstance, caseId: 12345, parentId: 'CMS-987', childId: 2, redactions });
-
+const save = (redactions: TRedaction[], axiosInstance: AxiosInstance) => {
+  return saveRedactions({
+    axiosInstance,
+    caseId: 12345,
+    materialId: 'CMS-987',
+    documentId: 2,
+    redactions,
+  });
+};
 describe('saveRedactions', () => {
   it('sends every redaction to the document redact endpoint, grouped by page', async () => {
     const { axiosInstance, put } = stubAxios();

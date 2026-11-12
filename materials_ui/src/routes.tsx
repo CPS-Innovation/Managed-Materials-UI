@@ -9,6 +9,7 @@ import {
   CommunicationsPage,
   DiscardMaterialPage,
   EditMaterialPage,
+  InboundHandoverPage,
   MaterialsPage,
   NotAuthorisedPage,
   NotFoundPage,
@@ -21,6 +22,7 @@ import {
 import { CaseSearchPage } from './pages/CaseSearch';
 import { TwoTabsPage } from './pages/TwoTabsPage';
 import { ViewDocumentPage } from './pages/ViewDocumentPage';
+import { useClearLocalStorageWhenOverSoftLimit } from './utils/localStorageHooks';
 
 const CaseRoute = () => {
   const { caseId } = useParams();
@@ -42,6 +44,8 @@ const CaseRoute = () => {
 };
 
 export const Routes = () => {
+  useClearLocalStorageWhenOverSoftLimit({ numberOfNavigationsPerCheck: 100 });
+
   return (
     <Router>
       <Route path="/" element={<Navigate to={`/${APP_ROUTES.CASE_SEARCH}`} replace />} />
@@ -49,6 +53,7 @@ export const Routes = () => {
       <Route path={`/${APP_ROUTES.UNAUTHORISED}`} element={<NotAuthorisedPage />} />
       <Route path={`/${APP_ROUTES.SERVER_ERROR}`} element={<ServerErrorPage />} />
       <Route path={`/${APP_ROUTES.CASE_SEARCH}`} element={<CaseSearchPage />} />
+      <Route path={`/${APP_ROUTES.INBOUND_HANDOVER}`} element={<InboundHandoverPage />} />
 
       <Route path={`:caseId/`} element={<CaseRoute />}>
         <Route

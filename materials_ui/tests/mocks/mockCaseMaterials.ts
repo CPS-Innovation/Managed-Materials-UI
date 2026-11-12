@@ -2,12 +2,12 @@ import { CaseMaterialsType } from '../../src/schemas/caseMaterials';
 
 const material: CaseMaterialsType[] = [
   {
-    id: 8836399,
+    materialId: 8836399,
+    documentId: 8117437,
+    parentId: 'CMS-8836399',
     originalFileName: 'MG11 Abdul Tarafdar Undated.docx',
     subject: 'test',
     documentTypeId: 1062,
-    materialId: 8836399,
-    link: 'k9rTE1hWRBUI$$LCDSccY4m7E2ucUo9TGU6w$$KNSprckSf-vpqXiJ/MG11 Absul Tarafdar Undated.docx',
     category: 'Exhibit',
     type: 'MG15(CNOI)',
     hasAttachments: false,
@@ -23,8 +23,12 @@ const material: CaseMaterialsType[] = [
     producer: 'null',
     reference: 't1',
     item: 'test',
-    existingproducerOrWitnessId: 0,
+    existingProducerOrWitnessId: 0,
     isReclassifiable: true,
+    cmsDocType: { documentTypeId: 1062, documentType: null, documentCategory: 'Exhibit' },
+    presentationFlags: { read: 'Ok', write: 'Ok' },
+    hasNotes: false,
+    isUnused: false,
   },
 ];
 

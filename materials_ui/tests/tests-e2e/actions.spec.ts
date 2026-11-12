@@ -7,8 +7,7 @@ test.describe('Actions', () => {
     await page.goto('./materials', { waitUntil: 'domcontentloaded' });
   });
   test.skip('Discard material', async ({ page }) => {
-    mockRoute(page, '/documents', []);
-    mockRoute(page, '/case-materials', mockCaseMaterials({ subject: 'test 1' }));
+    mockRoute(page, '/documents', mockCaseMaterials({ subject: 'test 1' }));
     mockRoute(page, '/material/discard');
     const table = page.getByRole('table');
     const row = table.getByRole('row', { name: 'test 1' });
@@ -23,8 +22,7 @@ test.describe('Actions', () => {
   });
 
   test.skip('Rename material', async ({ page }) => {
-    mockRoute(page, '/documents', []);
-    mockRoute(page, '/case-materials', mockCaseMaterials({ subject: 'test 1' }));
+    mockRoute(page, '/documents', mockCaseMaterials({ subject: 'test 1' }));
     const table = page.getByRole('table');
     const row = table.getByRole('row', { name: 'test 1' });
     await row.getByRole('checkbox').check();
@@ -40,8 +38,7 @@ test.describe('Actions', () => {
 
   //mark as read
   test.skip('Mark as read', async ({ page }) => {
-    mockRoute(page, '/documents', []);
-    mockRoute(page, '/case-materials', mockCaseMaterials({ subject: 'test 1' }));
+    mockRoute(page, '/documents', mockCaseMaterials({ subject: 'test 1' }));
     const table = page.getByRole('table');
     const row = table.getByRole('row', { name: 'test 1' });
     await row.getByRole('checkbox').check();
@@ -53,12 +50,7 @@ test.describe('Actions', () => {
 
   //mark as unread
   test.skip('Mark as unread', async ({ page }) => {
-    mockRoute(page, '/documents', []);
-    mockRoute(
-      page,
-      '/case-materials',
-      mockCaseMaterials({ subject: 'test 2', readStatus: 'Unread' }),
-    );
+    mockRoute(page, '/documents', mockCaseMaterials({ subject: 'test 2', readStatus: 'Unread' }));
     const table = page.getByRole('table');
     const row = table.getByRole('row', { name: 'test 2' });
     await row.getByRole('checkbox').check();

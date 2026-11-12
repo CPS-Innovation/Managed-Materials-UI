@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { DocumentSidebarTag } from './DocumentSidebarTag';
 import { TDocument } from './getters/getDocumentList';
-import { useGetDocumentNotes } from './getters/getDocumentNotes';
+import { useGetMaterialNotes } from './getters/getMaterialNotes';
 import './templates/GovUkAccordion.scss';
 import { NOTES_ARIA_LABELS, NOTES_STATUS, NotesIcon, NotesStatus } from './templates/NotesIcon';
 import { formatShortDate } from './utils/dateUtils';
@@ -62,28 +62,26 @@ export const DocumentSidebarAccordionDocument = (p: {
   onNotesClick: () => void;
   ActionComponent?: React.ReactNode;
 }) => {
-  const documentNotes = useGetDocumentNotes({
+  const materialNotes = useGetMaterialNotes({
     caseId: p.caseId,
-    documentId: p.document.parentId,
+    materialId: p.document.parentId,
     revalidateOnMount: false,
   });
 
   const tooltipText = (() => {
-    if (documentNotes.data === undefined) return 'loading...';
-    if (documentNotes.data === null) return 'error';
-    if (documentNotes.data.length === 0) return 'No messages';
+    if (materialNotes.data === undefined) return 'loading...';
+    if (materialNotes.data === null) return 'error';
+    if (materialNotes.data.length === 0) return 'No messages';
 
-    const firstNote = documentNotes.data[0];
+    const firstNote = materialNotes.data[0];
 
-    return firstNote ? `${firstNote.text} (+${documentNotes.data.length - 1} more)` : '';
+    return firstNote ? `${firstNote.text} (+${materialNotes.data.length - 1} more)` : '';
   })();
 
   return (
     <DocumentSidebarAccordionDocumentTemplate
-      documentName={p.document.presentationTitle ?? ''}
-      documentDate={
-        p.document.cmsFileCreatedDate ? formatShortDate(p.document.cmsFileCreatedDate) : ''
-      }
+      documentName={p.document.subject || ''}
+      documentDate={p.document.date ? formatShortDate(p.document.date) : ''}
       ActiveDocumentTag={p.activeDocumentId === p.document.parentId}
       NewTag={!p.readDocumentIds.includes(p.document.parentId)}
       NewVersionTag={p.newVersionDocumentId === p.document.parentId}
@@ -103,7 +101,7 @@ export const DocumentSidebarAccordionDocument = (p: {
       ActionComponent={p.ActionComponent}
       tooltipText={tooltipText}
       onShowNotes={() => {
-        if (documentNotes.data === undefined) documentNotes.mutate();
+        if (materialNotes.data === undefined) materialNotes.mutate();
       }}
     />
   );

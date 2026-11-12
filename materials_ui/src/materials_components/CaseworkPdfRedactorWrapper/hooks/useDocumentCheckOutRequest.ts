@@ -17,12 +17,12 @@ const extractReadableMessageFromError = (error: unknown) => {
 const checkOutDocumentFromAxiosInstance = async (p: {
   axiosInstance: AxiosInstance;
   caseId: string | number;
-  parentId: string;
-  childId: number | string;
+  materialId: string;
+  documentId: number | string;
 }) => {
   try {
     const response = await p.axiosInstance.post(
-      `/cases/${p.caseId}/materials/${p.parentId}/documents/${p.childId}/checkout`,
+      `/cases/${p.caseId}/materials/${p.materialId}/documents/${p.documentId}/checkout`,
     );
 
     return { success: true, data: { response } } as const;
@@ -43,12 +43,12 @@ const checkOutDocumentFromAxiosInstance = async (p: {
 export const checkInDocumentFromAxiosInstance = async (p: {
   axiosInstance: AxiosInstance;
   caseId: string | number;
-  parentId: string;
-  childId: number | string;
+  materialId: string;
+  documentId: number | string;
 }) => {
   try {
     await p.axiosInstance.delete(
-      `/cases/${p.caseId}/materials/${p.parentId}/documents/${p.childId}/checkout`,
+      `/cases/${p.caseId}/materials/${p.materialId}/documents/${p.documentId}/checkout`,
       { fetchOptions: { keepalive: true } },
     );
 
@@ -64,30 +64,30 @@ export const useDocumentCheckOutRequest = ({ caseId }: { caseId: string | number
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const axiosInstance = useAxiosInstance();
 
-  const checkOut = async (fnProps: { parentId: string; childId: number | string }) => {
+  const checkOut = async (fnProps: { materialId: string; documentId: number | string }) => {
     if (!caseId) return { success: false, message: 'no caseId provided' } as const;
 
     setIsLoading(true);
     const resp = await checkOutDocumentFromAxiosInstance({
       axiosInstance,
       caseId,
-      parentId: fnProps.parentId,
-      childId: fnProps.childId,
+      materialId: fnProps.materialId,
+      documentId: fnProps.documentId,
     });
     setIsLoading(false);
 
     return resp;
   };
 
-  const checkIn = async (fnProps: { parentId: string; childId: number }) => {
+  const checkIn = async (fnProps: { materialId: string; documentId: number }) => {
     if (!caseId) return { success: false, message: 'no caseId provided' } as const;
 
     setIsLoading(true);
     const resp = await checkInDocumentFromAxiosInstance({
       axiosInstance,
       caseId,
-      parentId: fnProps.parentId,
-      childId: fnProps.childId,
+      materialId: fnProps.materialId,
+      documentId: fnProps.documentId,
     });
     setIsLoading(false);
 

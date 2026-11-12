@@ -44,7 +44,7 @@ export const UnsavedRedactionsModal = ({
             <div style={{ display: 'flex', gap: '4px', flexDirection: 'column' }}>
               {documentsWithRedactions.map((doc) => (
                 <LinkButton key={doc.parentId} onClick={() => onDocumentClick(doc.parentId)}>
-                  {doc.presentationTitle}
+                  {doc.subject}
                 </LinkButton>
               ))}
             </div>

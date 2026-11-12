@@ -1,6 +1,5 @@
 import { expect, test } from '@playwright/test';
 import { mockRoute } from '../helpers';
-import { mockCaseMaterials } from '../mocks/mockCaseMaterials';
 
 test.describe('Review redact page', () => {
   test.beforeEach(async ({ page }) => {
@@ -8,7 +7,6 @@ test.describe('Review redact page', () => {
       name: 'Loading Case',
       includeHidden: true,
     });
-    await mockRoute(page, '/case-materials', mockCaseMaterials());
     await page.goto('./review-and-redact', { waitUntil: 'domcontentloaded' });
     await page.waitForRequest('**/case-info/2167259');
     await expect(loadingDocumentHeader).toBeVisible();

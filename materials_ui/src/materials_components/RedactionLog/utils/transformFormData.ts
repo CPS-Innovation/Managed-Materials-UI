@@ -146,10 +146,10 @@ export const transformFormDataToApiFormat = (p: {
     notes: formData.supportingNotes,
     chargeStatus: formData.chargeStatus,
     cmsValues: {
-      originalFileName: activeDocument?.cmsOriginalFileName || '',
+      originalFileName: activeDocument?.originalFileName || '',
       documentId: activeDocument?.parentId ? activeDocument.parentId.replace(/^CMS-/, '') : 0,
       documentType: activeDocument?.cmsDocType?.documentType || '',
-      fileCreatedDate: activeDocument?.cmsFileCreatedDate || new Date().toISOString(),
+      fileCreatedDate: activeDocument?.date || new Date().toISOString(),
       documentTypeId: activeDocument?.cmsDocType?.documentTypeId || 0,
     },
   };

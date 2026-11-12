@@ -6,7 +6,7 @@ import { DropdownButton } from '../dropDownButton/DropdownButton';
 import classes from './Tabs.module.scss';
 
 export type TabButtonProps = {
-  items: { id: string; label: string | null | undefined; ariaLabel: string }[];
+  items: { id: string; label: string; ariaLabel: string }[];
   activeTabIndex: number;
   handleTabSelection: (documentId: string) => void;
   handleCloseTab: (v?: string) => void;
