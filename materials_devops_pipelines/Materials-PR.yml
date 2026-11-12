@@ -300,13 +300,24 @@ stages:
               VITE_GLOBAL_SCRIPT_URL: $(GLOBAL_SCRIPT_URL)
               VITE_E2E: True
 
+          - bash: |
+              if [ -d "$REPORT_PATH" ]; then
+                echo "##vso[task.setvariable variable=reportExists]true"
+              else
+                echo "##vso[task.logissue type=warning]Playwright report not found; skipping artifact publication."
+              fi
+            displayName: 'Check for E2E report'
+            condition: succeededOrFailed()
+            env:
+              REPORT_PATH: '$(System.DefaultWorkingDirectory)/$(workingDir)/tests/playwright-report'
+
           - task: PublishPipelineArtifact@1
             displayName: 'Publish E2E Artifact'
+            condition: and(succeededOrFailed(), eq(variables['reportExists'], 'true'))
             inputs:
               targetPath: '$(workingDir)/tests/playwright-report'
               artifact: 'playwright-report-$(System.JobAttempt)'
               publishLocation: 'pipeline'
-            condition: succeededOrFailed() 
 
           - task: PublishTestResults@2
             displayName: 'Publish E2E Test Results (JUnit)'
