@@ -4,28 +4,22 @@ import { mockCaseMaterials } from '../mocks/mockCaseMaterials';
 
 test.describe('Communications page', () => {
   test.beforeEach(async ({ page }) => {
-    await mockRoute(page, '/documents', mockCaseMaterials());
     await page.goto('./communications', { waitUntil: 'domcontentloaded' });
-    await page.waitForRequest('**/case-info/2167259');
   });
-  test.skip('T-001: page loads list of Communications', async ({ page }) => {
+  test('T-001: page loads list of Communications', async ({ page }) => {
     mockRoute(
       page,
       '/documents',
-      mockCaseMaterials({
-        subject: 'MG7 SMITH Will (Redacted)',
-        type: 'DCF',
-        category: 'Communication',
-      }),
+      mockCaseMaterials([{ subject: 'MG7 SMITH Will (Redacted)', category: 'Communication' }]),
     );
-
+    await page.waitForRequest('**/case-info/2167259');
     await expect(page.getByText('MG7 SMITH Will (Redacted)', { exact: true })).toBeVisible();
   });
 
-  test.skip('T-002: page shows no communications text if no communications are displayed', async ({
+  test('T-002: page shows no communications text if no communications are displayed', async ({
     page,
   }) => {
-    mockRoute(page, '/documents', mockCaseMaterials({}));
+    mockRoute(page, '/documents', mockCaseMaterials([]));
 
     // no materials
     await page.waitForSelector('tbody'); // Ensure table exists first
@@ -36,74 +30,69 @@ test.describe('Communications page', () => {
   });
 
   //in/out filter
-  test.skip('T-003: user is able to filter by in/out', async ({ page }) => {
+  test('T-003: user is able to filter by in/out', async ({ page }) => {
     mockRoute(
       page,
       '/documents',
-      mockCaseMaterials({
-        subject: 'MG7 SMITH Will (Redacted)',
-        type: 'DCF',
-        category: 'Communication',
-        direction: 'Incoming',
-      }),
+      mockCaseMaterials([
+        {
+          subject: 'MG7 SMITH Will (Redacted)',
+          type: 'DCF',
+          category: 'Communication',
+          direction: 'Incoming',
+        },
+      ]),
     );
+    await page.waitForRequest('**/case-info/2167259');
     await page.getByTestId('direction-Incoming').check();
     await page.getByTestId('applyFiltersButton').click();
     await expect(page.getByText('MG7 SMITH Will (Redacted)', { exact: true })).toBeVisible();
   });
 
   //comms type filter
-  test.skip('T-004: user is able to filter by comms type', async ({ page }) => {
+  test('T-004: user is able to filter by comms type', async ({ page }) => {
     mockRoute(
       page,
       '/documents',
-      mockCaseMaterials({
-        subject: 'test 1',
-        type: 'DCF',
-        category: 'Communication',
-        method: 'Bundle',
-      }),
+      mockCaseMaterials([
+        { subject: 'test 1', type: 'DCF', category: 'Communication', method: 'Bundle' },
+      ]),
     );
-
+    await page.waitForRequest('**/case-info/2167259');
     await page.getByTestId('method-Bundle').check();
     await page.getByTestId('applyFiltersButton').click();
     await expect(page.getByText('test 1', { exact: true })).toBeVisible();
   });
   // comms with filter
-  test.skip('T-005: user is able to filter by comms with', async ({ page }) => {
+  test('T-005: user is able to filter by comms with', async ({ page }) => {
     mockRoute(
       page,
       '/documents',
-      mockCaseMaterials({
-        subject: 'test 2',
-        type: 'DCF',
-        category: 'Communication',
-        method: 'Police',
-      }),
+      mockCaseMaterials([
+        { subject: 'test 2', type: 'DCF', category: 'Communication', method: 'Police' },
+      ]),
     );
+    await page.waitForRequest('**/case-info/2167259');
     await page.getByTestId('checkbox-party-Police').click();
     await page.getByTestId('applyFiltersButton').click();
     await expect(page.getByText('test 2', { exact: true })).toBeVisible();
   });
   // type filter
-  test.skip('T-006: user is able to filter by type', async ({ page }) => {
+  test('T-006: user is able to filter by type', async ({ page }) => {
     mockRoute(
       page,
       '/documents',
-      mockCaseMaterials({
-        subject: 'test 3',
-        type: 'Meeting',
-        category: 'Communication',
-        method: 'Police',
-      }),
+      mockCaseMaterials([
+        { subject: 'test 3', type: 'Meeting', category: 'Communication', method: 'Police' },
+      ]),
     );
-
+    await page.waitForRequest('**/case-info/2167259');
     await page.getByTestId('applyFiltersButton').click();
     await expect(page.getByText('test 3', { exact: true })).toBeVisible();
   });
 
   // hide filter
-  test.skip('T-007: user is able to hide filter', async ({ page }) => {
+  test('T-007: user is able to hide filter', async ({ page }) => {
     await page.getByRole('button', { name: 'Hide filters' }).click();
     await expect(page.getByLabel('Subject')).toBeHidden();
     await page.getByRole('button', { name: 'Show filter' }).click();
@@ -111,17 +100,15 @@ test.describe('Communications page', () => {
   });
 
   // search
-  test.skip('T-008: user is able to search communications', async ({ page }) => {
+  test('T-008: user is able to search communications', async ({ page }) => {
     mockRoute(
       page,
       '/documents',
-      mockCaseMaterials({
-        subject: 'test 1',
-        type: 'Meeting',
-        category: 'Communication',
-        method: 'Police',
-      }),
+      mockCaseMaterials([
+        { subject: 'test 1', type: 'Meeting', category: 'Communication', method: 'Police' },
+      ]),
     );
+    await page.waitForRequest('**/case-info/2167259');
     await page.getByRole('searchbox', { name: 'Subject' }).fill('test 1');
     await page.getByTestId('applyFiltersButton').click();
     await expect(page.getByText('test 1', { exact: true })).toBeVisible();
