@@ -1,8 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const e2eUrn = process.env.E2E_URN;
 const e2eCase = process.env.E2E_CASE;
-const e2eRoute = e2eUrn && e2eCase ? `${e2eUrn}/${e2eCase}/` : '';
+const e2eRoute = e2eCase ? `${e2eCase}/` : '';
 
 /**
  * Read environment variables from file.

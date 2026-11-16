@@ -14,7 +14,7 @@ test.describe('Review redact page', () => {
     await page.getByRole('heading', { name: 'Loading Document' }).waitFor({ state: 'detached' });
   });
 
-  test.skip('T-001: page loads correctly with materials', async ({ page }) => {
+  test('T-001: page loads correctly with materials', async ({ page }) => {
     mockRoute(page, '/documents', []);
     await expect(page.getByRole('searchbox', { name: 'Search within material' })).toBeVisible();
     await expect(page.getByText('Statements')).toBeVisible();
@@ -40,7 +40,7 @@ test.describe('Review redact page', () => {
   //   await expect(page.getByText('No results.')).toBeVisible();
   // });
 
-  test.skip('T-003: User is able to open all sections', async ({ page }) => {
+  test('T-003: User is able to open all sections', async ({ page }) => {
     await page.getByRole('button', { name: 'Open all sections' }).click();
     const containers = page.locator('.govuk-accordion-content-wrapper');
     await expect(containers).toHaveCount(6);

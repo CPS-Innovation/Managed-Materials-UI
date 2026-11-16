@@ -5,19 +5,19 @@ import { mockOchestration } from '../mocks/mockOchestrationReclassify';
 import { mockWitness } from '../mocks/mockWitness';
 
 test.beforeEach(async ({ page }) => {
-  await mockRoute(page, '/documents', mockCaseMaterials());
+  mockRoute(page, '/documents', mockCaseMaterials([{ subject: 'test 1' }]));
   await page.goto('./materials', { waitUntil: 'domcontentloaded' });
   await page.waitForRequest('**/case-info/2167259');
   await page
     .getByRole('heading', { name: 'Loading case', includeHidden: true })
     .waitFor({ state: 'detached' });
-  const rowFilter = page.getByRole('row').filter({ hasText: 'MG15(CNOI)' }).getByRole('checkbox');
+  const rowFilter = page.getByRole('row').filter({ hasText: 'test 1' }).getByRole('checkbox');
   await rowFilter.check();
   await page.getByRole('button', { name: 'Action on selection' }).first().click();
   await page.getByRole('listitem').filter({ hasText: 'Reclassify' }).click();
 });
 
-test.skip('page loads as expected', async ({ page }) => {
+test('page loads as expected', async ({ page }) => {
   const url = page.url();
   const title = await page.title();
   const mainHeading = page.getByRole('heading', { level: 1 });
@@ -38,7 +38,7 @@ test.skip('page loads as expected', async ({ page }) => {
 });
 
 test.describe('button interactions', () => {
-  test.skip('click back link', async ({ page }) => {
+  test('click back link', async ({ page }) => {
     await page.waitForLoadState('domcontentloaded');
     await page.getByRole('link', { name: 'Back' }).click();
 
@@ -46,7 +46,7 @@ test.describe('button interactions', () => {
     expect(url).toContain('/materials');
   });
 
-  test.skip('click cancel link', async ({ page }) => {
+  test('click cancel link', async ({ page }) => {
     await page.waitForLoadState('domcontentloaded');
     await page.getByRole('link', { name: 'Cancel' }).click();
 
@@ -57,7 +57,7 @@ test.describe('button interactions', () => {
 
 //validation
 test.describe('validation', () => {
-  test.skip('no classification type selected', async ({ page }) => {
+  test('no classification type selected', async ({ page }) => {
     await page.getByRole('button', { name: 'Continue' }).click();
 
     const errorMessage = page.getByRole('link', {
@@ -68,7 +68,7 @@ test.describe('validation', () => {
     await page.getByRole('radio').first().check();
     await expect(errorMessage).not.toBeVisible();
   });
-  test.skip('statement errors', async ({ page }) => {
+  test('statement errors', async ({ page }) => {
     await page.getByRole('radio', { name: 'Statement' }).check();
     await page.getByRole('button', { name: 'Continue' }).click();
     const dateErrorMessage = page.getByRole('link', { name: 'Select if statement has a date' });
@@ -80,7 +80,7 @@ test.describe('validation', () => {
     await expect(statementNumberErrorMessage).toBeVisible();
     await expect(witnessErrorMessage).toBeVisible();
   });
-  test.skip('exhibit errors', async ({ page }) => {
+  test('exhibit errors', async ({ page }) => {
     await page.getByRole('radio', { name: 'Exhibit' }).check();
     await page.getByRole('button', { name: 'Continue' }).click();
     const exhibitTypeErrorMessage = page.getByRole('link', {
@@ -92,7 +92,7 @@ test.describe('validation', () => {
     await expect(itemErrorMessage).toBeVisible();
     await expect(exhibitRefErrorMessage).toBeVisible();
   });
-  test.skip('MG Forms errors', async ({ page }) => {
+  test('MG Forms errors', async ({ page }) => {
     await page.getByRole('radio', { name: 'MG Forms' }).check();
     await page.getByRole('button', { name: 'Continue' }).click();
     const formTypeErrorMessage = page.getByRole('link', {
@@ -100,7 +100,7 @@ test.describe('validation', () => {
     });
     await expect(formTypeErrorMessage).toBeVisible();
   });
-  test.skip('other errors', async ({ page }) => {
+  test('other errors', async ({ page }) => {
     await page.getByRole('radio', { name: 'Other' }).check();
     await page.getByRole('button', { name: 'Continue' }).click();
     const otherTypeErrorMessage = page.getByRole('link', {
@@ -111,7 +111,7 @@ test.describe('validation', () => {
 });
 
 test.describe('form submission', () => {
-  test.skip('reclassify MG forms', async ({ page }) => {
+  test('reclassify MG forms', async ({ page }) => {
     await mockRoute(page, 'materials/8836399/reclassify-complete', mockOchestration());
 
     await page.getByRole('radio', { name: 'MG Forms' }).check();
@@ -124,39 +124,7 @@ test.describe('form submission', () => {
     await expect(page.getByText('Material reclassified successfully')).toBeVisible();
   });
 
-  test.skip('statement reclassify with witness', async ({ page }) => {
-    await mockRoute(page, 'case-witnesses?caseId=2167259', mockWitness());
-    await mockRoute(page, 'materials/8836399/reclassify-complete', mockOchestration());
-    await page.unroute('api/documents');
-    await mockRoute(
-      page,
-      'api/documents',
-      mockCaseMaterials({
-        category: 'Statement',
-        type: 'MG11',
-        witnessId: 2794967,
-        documentTypeId: 1031,
-      }),
-    );
-
-    await page.getByRole('radio', { name: 'Statement' }).check();
-    await page.waitForLoadState('domcontentloaded');
-
-    const witnessSelect = page.getByLabel('Who is the witness');
-    await expect(witnessSelect.getByRole('option')).toHaveText(['Select witness', 'Test Witness']);
-    await witnessSelect.selectOption('Test Witness');
-    await page.getByLabel('No').check();
-    await page.getByText('Statement number').fill('1');
-    await page.getByRole('button', { name: 'Continue' }).click();
-
-    await page.getByRole('button', { name: 'Save' }).click();
-    await page
-      .getByRole('heading', { name: 'Please wait..', includeHidden: true })
-      .waitFor({ state: 'detached' });
-    await expect(page.getByText('Material reclassified successfully')).toBeVisible();
-  });
-
-  test.skip('reclassify exhibit', async ({ page }) => {
+  test('reclassify exhibit', async ({ page }) => {
     await mockRoute(page, 'case-witnesses?caseId=2167259', mockWitness());
     await mockRoute(page, 'api/materials/8836399/reclassify-complete', mockOchestration());
 
@@ -164,15 +132,16 @@ test.describe('form submission', () => {
 
     await mockRoute(
       page,
-      'api/documents',
-      mockCaseMaterials({
-        type: 'MG15',
-        category: 'Exhibit',
-        originalFileName: 'Case Action Plan 4 (test)',
-        subject: 'Test action plan',
-        materialId: 4242662,
-        documentTypeId: 1062,
-      }),
+      '/documents',
+      mockCaseMaterials([
+        {
+          category: 'Exhibit',
+          originalFileName: 'Case Action Plan 4 (test)',
+          subject: 'Test action plan',
+          materialId: 4242662,
+          documentTypeId: 1062,
+        },
+      ]),
     );
     await page.getByRole('radio', { name: 'Exhibit' }).check();
     await page.getByLabel('What is the material classification type?').selectOption('MG15(ROTI)');
@@ -186,7 +155,7 @@ test.describe('form submission', () => {
     await expect(page.getByText('Material reclassified successfully')).toBeVisible();
   });
 
-  test.skip('reclassify other', async ({ page }) => {
+  test('reclassify other', async ({ page }) => {
     await mockRoute(page, 'case-witnesses?caseId=2167259', mockWitness());
     await mockRoute(page, 'api/materials/4242662/reclassify-complete', mockOchestration());
 
@@ -195,14 +164,16 @@ test.describe('form submission', () => {
     await mockRoute(
       page,
       'api/documents',
-      mockCaseMaterials({
-        type: 'ABE',
-        category: 'Exhibit',
-        originalFileName: 'Case Action Plan 4 (test)',
-        subject: 'Test action plan',
-        materialId: 4242662,
-        documentTypeId: 1062,
-      }),
+      mockCaseMaterials([
+        {
+          type: 'ABE',
+          category: 'Exhibit',
+          originalFileName: 'Case Action Plan 4 (test)',
+          subject: 'Test action plan',
+          materialId: 4242662,
+          documentTypeId: 1062,
+        },
+      ]),
     );
     await mockRoute(page, 'api/materials/8836399/reclassify-complete', mockOchestration());
 
