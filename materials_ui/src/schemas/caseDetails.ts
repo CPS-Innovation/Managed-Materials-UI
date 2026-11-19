@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const DefendantDetailsSchema = z.object({
   id: z.number(),
-  firstNames: z.string(),
+  firstNames: z.string().nullish(),
   surname: z.string(),
   dob: z.string().nullish(),
 });
