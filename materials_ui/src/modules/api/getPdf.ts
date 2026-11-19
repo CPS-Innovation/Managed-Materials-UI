@@ -50,6 +50,6 @@ export const getParsedPdf = (async (p: {
   const schema = z.instanceof(Blob);
   const parsedResp = schema.safeParse(response.data);
 
-  if (!parsedResp.success) return { ...response, userMessage: 'Failed to parse pdf blob' };
+  if (!parsedResp.success) return { ...parsedResp, userMessage: 'Failed to parse pdf blob' };
   return { ...response, userMessage: 'Successfully fetched pdf' };
 }) satisfies (p: any) => Promise<ApiParsedResponseBaseType>;
