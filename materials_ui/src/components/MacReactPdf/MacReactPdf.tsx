@@ -10,9 +10,18 @@ const wasmUrl =
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
 
+let sharedWorker: InstanceType<typeof pdfjs.PDFWorker> | null = null;
+const getSharedWorker = () => {
+  if (!sharedWorker || sharedWorker.destroyed) sharedWorker = new pdfjs.PDFWorker();
+  return sharedWorker;
+};
+
 export const MacDocument = (p: React.ComponentProps<typeof Document>) => {
   const { children, options: propOptions, ...rest } = p;
-  const options = useMemo(() => ({ wasmUrl, ...propOptions }), [propOptions]);
+  const options = useMemo(
+    () => ({ wasmUrl, worker: getSharedWorker(), ...propOptions }),
+    [propOptions],
+  );
 
   return (
     <Document options={options} {...rest}>

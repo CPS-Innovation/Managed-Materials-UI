@@ -44,6 +44,8 @@ const isAreaLargeEnoughToRedact = (corner1: TCoord, corner2: TCoord, scale: numb
   return width * scale >= MIN_REDACTION_SIZE_PX && height * scale >= MIN_REDACTION_SIZE_PX;
 };
 
+export type TPageSize = { width: number; height: number };
+
 export const PdfRedactorRotationOverlay = (p: {
   pageRotation: number;
   onPageRotationChange: (x: number) => void;
@@ -298,12 +300,15 @@ export const PdfRedactorPage = (p: {
   onPageIsDeleteChange: (x: boolean) => void;
   pageDeleteButtonDisabled: boolean;
   highlightLayers?: THighlightLayer[];
+  placeholderSize?: TPageSize;
+  onDrawn?: (size: TPageSize) => void;
 }) => {
   const { pageNumber, scale, redactions } = p;
   const pageColors = usePageColors();
   const [pageDimensions, setPageDimensions] = useState<{ width: number; height: number } | null>(
     null,
   );
+  const hasDrawn = pageDimensions !== null;
 
   const [firstCorner, setFirstCorner] = useState<TCoord | null>(null);
   const [isAreaDragging, setIsAreaDragging] = useState(false);
@@ -347,6 +352,7 @@ export const PdfRedactorPage = (p: {
   });
 
   const pdfPageWrapperElmRef = useRef<HTMLDivElement | null>(null);
+  const pageBoxElmRef = useRef<HTMLSpanElement | null>(null);
   const requestAnimationFrameRef = useRef<number | null>(null);
   useEffect(() => {
     return () => {
@@ -399,8 +405,15 @@ export const PdfRedactorPage = (p: {
   };
 
   return (
-    <div>
+    <div
+      style={
+        !hasDrawn && p.placeholderSize
+          ? { minHeight: p.placeholderSize.height, minWidth: p.placeholderSize.width }
+          : undefined
+      }
+    >
       <span
+        ref={pageBoxElmRef}
         style={{
           display: 'block',
           margin: 'auto',
@@ -436,6 +449,9 @@ export const PdfRedactorPage = (p: {
               pageNumber={p.pageNumber}
               pageColors={pageColors}
               onRenderSuccess={() => {
+                const pageBox = pageBoxElmRef.current?.getBoundingClientRect();
+                if (pageBox) p.onDrawn?.({ width: pageBox.width, height: pageBox.height });
+
                 const canvas = pdfPageWrapperElmRef.current?.querySelector(
                   '.react-pdf__Page__canvas',
                 );

@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { MacDocument } from '../../components/MacReactPdf/MacReactPdf';
 import { safeJsonParse } from '../DocumentSelectAccordion/utils/generalUtils';
 import { useDocumentFocus } from './hooks/useDocumentFocus';
+import { usePagePlaceholders } from './hooks/usePagePlaceholders';
 import { useShiftReleaseRedactTrigger } from './hooks/useShiftReleaseRedactTrigger';
 import { EditIcon } from './icons/EditIcon';
 import { TickCircleIcon } from './icons/TickCircleIcon';
@@ -196,6 +197,7 @@ const getRedactionsFromCache = (key: string) => {
 
 export const PdfRedactor = (p: {
   fileUrl: string;
+  isActive: boolean;
   redactions: TRedaction[];
   hideToolbar: boolean;
   mode: TMode;
@@ -240,6 +242,8 @@ export const PdfRedactor = (p: {
   const scaleHelper = useScaleHelper();
   const pdfRedactorWrapperElmRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const hasAutoScaledRef = useRef(false);
+  const placeholders = usePagePlaceholders();
 
   const indexedRedactions = useMemo(() => {
     return indexRedactionsOnPageNumber(p.redactions);
@@ -298,7 +302,7 @@ export const PdfRedactor = (p: {
 
   const autoScale = async (pdf: PDFDocumentProxy) => {
     const containerWidth = containerRef.current?.clientWidth;
-    if (!containerWidth) return;
+    if (!containerWidth) return false;
 
     let maxPageWidth = 0;
     for (let i = 1; i <= pdf.numPages; i++) {
@@ -307,11 +311,16 @@ export const PdfRedactor = (p: {
       maxPageWidth = Math.max(maxPageWidth, viewport.width);
     }
 
-    if (maxPageWidth > 0) {
-      const ratio = containerWidth / maxPageWidth;
-      scaleHelper.setScale(ratio * 0.98);
-    }
+    if (maxPageWidth <= 0) return false;
+    const ratio = containerWidth / maxPageWidth;
+    scaleHelper.setScale(ratio * 0.98);
+    return true;
   };
+
+  useEffect(() => {
+    const cachedRedactions = getRedactionsFromCache(getKeyForAutosaveRedactions()).data;
+    p.onRedactionsChange(p.initRedactions.length > 0 ? p.initRedactions : (cachedRedactions ?? []));
+  }, []);
 
   const redactHighlightedTextTrigger = useTrigger();
   const redactHighlightedIfTextRedactionMode = () => {
@@ -434,70 +443,72 @@ export const PdfRedactor = (p: {
             border: 'solid 1px black',
           }}
         >
-          <MacDocument
-            file={p.fileUrl}
-            externalLinkTarget="_blank"
-            onLoadSuccess={async (pdf) => {
-              const cachedRedactionsResp = getRedactionsFromCache(getKeyForAutosaveRedactions());
-              const cachedRedactions = cachedRedactionsResp.data;
-              const initOrCachedRedactions = (() => {
-                if (p.initRedactions.length > 0) return p.initRedactions;
-                return cachedRedactions ?? [];
-              })();
-              p.onRedactionsChange(initOrCachedRedactions);
-              setNumPages(pdf.numPages);
-              p.onNumOfDocPagesChanged(pdf.numPages);
-              await autoScale(pdf);
-            }}
-          >
-            {[...Array(numPages)].map((_, j) => (
-              <PdfRedactorPage
-                pageDeleteButtonDisabled={pageDeleteButtonDisabled}
-                key={`pdf-redactor-page-${j}`}
-                pageNumber={j + 1}
-                pagesAmount={numPages!}
-                scale={scaleHelper.scale}
-                onMouseMove={() => {}}
-                redactHighlightedTextTriggerData={redactHighlightedTextTrigger.data}
-                mode={p.mode}
-                onPageRedactionsChange={() => {}}
-                onAddRedactions={(x) => {
-                  p.onRedactionsChange([...p.redactions, ...x]);
-                  p.onAddRedactions({
-                    redactions: x,
-                    highlightedText: window.getSelection()?.toString(),
-                  });
-                }}
-                onRemoveRedactions={(ids) => {
-                  p.onRedactionsChange(p.redactions.filter((red) => !ids.includes(red.id)));
-                  p.onRemoveRedactions(ids);
-                }}
-                redactions={indexedRedactions[j + 1] ?? []}
-                pageRotationDegrees={(() => {
-                  const rotation = p.indexedRotation[j + 1];
-                  return rotation ? rotation.rotationDegrees : 0;
-                })()}
-                onPageRotationChange={(x) => {
-                  p.onRotationsChange({
-                    ...p.indexedRotation,
-                    [j + 1]: { id: crypto.randomUUID(), pageNumber: j + 1, rotationDegrees: x },
-                  });
-                }}
-                highlightLayers={indexedHighlightLayers.map((layer) => ({
-                  highlights: layer.byPage[j + 1] ?? [],
-                  focusedId: layer.focusedId,
-                  onHighlightClick: layer.onHighlightClick,
-                }))}
-                pageIsDelete={!!p.indexedDeletion[j + 1]?.isDeleted}
-                onPageIsDeleteChange={(isDeleted) => {
-                  const deletion = { id: crypto.randomUUID(), pageNumber: j + 1, isDeleted };
-                  const fn = isDeleted ? p.onDeletionAdd : p.onDeletionRemove;
-                  fn(deletion);
-                  p.onDeletionsChange({ ...p.indexedDeletion, [j + 1]: deletion });
-                }}
-              />
-            ))}
-          </MacDocument>
+          {p.isActive ? (
+            <MacDocument
+              file={p.fileUrl}
+              externalLinkTarget="_blank"
+              loading={placeholders.documentStyle && <div style={placeholders.documentStyle} />}
+              onLoadSuccess={async (pdf) => {
+                placeholders.setPageCount(pdf.numPages);
+                setNumPages(pdf.numPages);
+                p.onNumOfDocPagesChanged(pdf.numPages);
+                if (!hasAutoScaledRef.current)
+                  hasAutoScaledRef.current = await autoScale(pdf).catch(() => false);
+              }}
+            >
+              {[...Array(numPages)].map((_, j) => (
+                <PdfRedactorPage
+                  pageDeleteButtonDisabled={pageDeleteButtonDisabled}
+                  key={`pdf-redactor-page-${j}`}
+                  pageNumber={j + 1}
+                  pagesAmount={numPages!}
+                  scale={scaleHelper.scale}
+                  onMouseMove={() => {}}
+                  redactHighlightedTextTriggerData={redactHighlightedTextTrigger.data}
+                  mode={p.mode}
+                  onPageRedactionsChange={() => {}}
+                  onAddRedactions={(x) => {
+                    p.onRedactionsChange([...p.redactions, ...x]);
+                    p.onAddRedactions({
+                      redactions: x,
+                      highlightedText: window.getSelection()?.toString(),
+                    });
+                  }}
+                  onRemoveRedactions={(ids) => {
+                    p.onRedactionsChange(p.redactions.filter((red) => !ids.includes(red.id)));
+                    p.onRemoveRedactions(ids);
+                  }}
+                  redactions={indexedRedactions[j + 1] ?? []}
+                  pageRotationDegrees={(() => {
+                    const rotation = p.indexedRotation[j + 1];
+                    return rotation ? rotation.rotationDegrees : 0;
+                  })()}
+                  onPageRotationChange={(x) => {
+                    p.onRotationsChange({
+                      ...p.indexedRotation,
+                      [j + 1]: { id: crypto.randomUUID(), pageNumber: j + 1, rotationDegrees: x },
+                    });
+                  }}
+                  highlightLayers={indexedHighlightLayers.map((layer) => ({
+                    highlights: layer.byPage[j + 1] ?? [],
+                    focusedId: layer.focusedId,
+                    onHighlightClick: layer.onHighlightClick,
+                  }))}
+                  placeholderSize={placeholders.getPageSize(j)}
+                  onDrawn={(size) => placeholders.recordDrawnSize(j, size)}
+                  pageIsDelete={!!p.indexedDeletion[j + 1]?.isDeleted}
+                  onPageIsDeleteChange={(isDeleted) => {
+                    const deletion = { id: crypto.randomUUID(), pageNumber: j + 1, isDeleted };
+                    const fn = isDeleted ? p.onDeletionAdd : p.onDeletionRemove;
+                    fn(deletion);
+                    p.onDeletionsChange({ ...p.indexedDeletion, [j + 1]: deletion });
+                  }}
+                />
+              ))}
+            </MacDocument>
+          ) : (
+            <div style={placeholders.documentStyle} />
+          )}
         </div>
         {p.redactions.length > 0 && (
           <div style={{ position: 'absolute', bottom: '25px', left: 0, right: 0, zIndex: 800 }}>

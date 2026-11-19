@@ -42,6 +42,7 @@ export type DocumentTabPanelProps = {
   documentId: number;
   document: TDocument;
   caseId: string | number;
+  isActive: boolean;
   mode: TMode;
   onModeChange: (mode: TMode) => void;
   onRedactionsChange: (redactions: TRedaction[]) => void;
@@ -59,6 +60,7 @@ export const DocumentTabPanel = ({
   documentId,
   document,
   caseId,
+  isActive,
   mode,
   onModeChange,
   onRedactionsChange,
@@ -216,6 +218,7 @@ export const DocumentTabPanel = ({
           />
           <CaseworkPdfRedactorWrapper
             fileUrl={pdfFileUrl}
+            isActive={isActive}
             mode={mode}
             onModeChange={onModeChange}
             onModification={onModification}
