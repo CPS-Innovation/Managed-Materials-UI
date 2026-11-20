@@ -204,6 +204,9 @@ export const ReviewAndRedactPage = () => {
   const filteredTabItems = openDocuments.filter((doc) => !!doc.documentId) as (TDocument & {
     documentId: number;
   })[];
+  const displayedTabId = (
+    filteredTabItems.find((doc) => doc.parentId === activeMaterialId) ?? filteredTabItems[0]
+  )?.parentId;
   const tabItems = filteredTabItems.map((doc) => ({
     id: doc.parentId,
     label: doc.subject || '',
@@ -215,6 +218,7 @@ export const ReviewAndRedactPage = () => {
           key={doc.parentId}
           materialId={doc.parentId}
           documentId={doc.documentId}
+          isActive={doc.parentId === displayedTabId}
           mode={modeByMaterialId[doc.parentId] ?? 'disabled'}
           onModeChange={(newMode) => handleModeChange(doc.parentId, newMode)}
           onRedactionsChange={(redactions) => {

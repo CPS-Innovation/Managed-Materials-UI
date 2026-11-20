@@ -63,6 +63,7 @@ const createCheckoutMessageFromCheckoutResponse = (p: { action?: string; message
 
 export const CaseworkPdfRedactorWrapper = (p: {
   fileUrl: string;
+  isActive: boolean;
   mode: TMode;
   onModeChange: (x: TMode) => void;
   caseId: string | number;
@@ -380,6 +381,7 @@ export const CaseworkPdfRedactorWrapper = (p: {
 
       <PdfRedactor
         fileUrl={p.fileUrl}
+        isActive={p.isActive}
         mode={p.mode}
         hideToolbar
         onModeChange={p.onModeChange}
